@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
+
+   <description>Mule CoAP connector test application</description>
+   
+	<coap:udp-endpoint name="udp" logCoapMessages="true">
+		<coap:socket-params bindToHost="127.0.0.1" bindToPort="8883"/>
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="udp">
+		<coap:root-resource>
+			<coap:sub-resources>
+				<coap:resource resourceName="service">
+					<coap:sub-resources>
+						<coap:resource resourceName="get_me" get="true" />
+						<coap:resource resourceName="put_me" put="true" />
+						<coap:resource resourceName="post_me" post="true" />
+						<coap:resource resourceName="delete_me" delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+
+
+	<coap:udp-endpoint name="udpLocal" logCoapMessages="true">
+		<coap:socket-params bindToHost="127.0.0.1" bindToPort="9983" />
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="configLocal" endpoint="udpLocal">
+		<coap:root-resource>
+			<coap:sub-resources>
+				<coap:resource resourceName="service">
+					<coap:sub-resources>
+						<coap:resource resourceName="get_me" get="true" />
+						<coap:resource resourceName="put_me" put="true" />
+						<coap:resource resourceName="post_me" post="true" />
+						<coap:resource resourceName="delete_me" delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+
+   	<flow name="listen">
+		<coap:listener uriPattern="/service/*" config-ref="config">
+			<coap:response />
+		</coap:listener>
+		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="996160c2-51b6-44f9-82e0-b70bf430f9fc" variableName="valueToTest"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="225f7a91-105d-4e30-853f-3e3b9592b940" >
+
+			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
+				java.lang.String() ) == false )
+				{
+				throw new Exception(&quot;attribute is not a String&quot;);
+				}
+				return  vars.valueToTest;
+			</scripting:code>
+		</scripting:execute>
+   </flow>
+   	<flow name="listen2">
+		<coap:listener uriPattern="/service/*" config-ref="configLocal">
+			<coap:response />
+		</coap:listener>
+		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="05b1bd2c-2fc3-43a9-99a8-1cae0af230c3" variableName="valueToTest"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="73818368-43af-4e8b-8eda-a953fd4fdacb" >
+
+			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
+				java.lang.String() ) == false )
+				{
+				throw new Exception(&quot;attribute is not a String&quot;);
+				}
+				return  vars.valueToTest;
+			</scripting:code>
+		</scripting:execute>
+   </flow>
+   
+</mule>

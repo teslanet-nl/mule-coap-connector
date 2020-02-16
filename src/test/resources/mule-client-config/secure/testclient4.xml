@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+   xmlns="http://www.mulesoft.org/schema/mule/core"
+   xmlns:coap-client="http://www.mulesoft.org/schema/mule/coap-client"
+   xmlns:spring="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/3.9/mule-vm.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+http://www.mulesoft.org/schema/mule/coap-client http://www.teslanet.nl/schema/mule/coap-client/1.0/mule-coap-client.xsd 
+">
+   <description>Mule CoAP connector test application</description>
+   <coap-client:config name="config" host="127.0.0.1" logMessages="true"
+      keyStoreLocation="NOTHING_THERE/certs/keyStore.jks"
+      keyStorePassword="endPass"
+      privateKeyAlias="client"
+      trustStoreLocation="certs/trustStore.jks"
+      trustStorePassword="rootPass"
+      trustedRootCertificateAlias="root" 
+      secure="true"/>
+
+
+   <sub-flow name="get_me">
+      <coap-client:get config-ref="config" path="/secure/get_me"/>
+   </sub-flow>
+
+   <sub-flow name="do_not_get_me">
+      <coap-client:get config-ref="config" path="/secure/do_not_get_me"/>
+   </sub-flow>
+
+   <sub-flow name="post_me">
+      <coap-client:post config-ref="config" path="/secure/post_me"/>
+   </sub-flow>
+
+   <sub-flow name="do_not_post_me">
+      <coap-client:post config-ref="config" path="/secure/do_not_post_me"/>
+   </sub-flow>
+
+
+   <sub-flow name="put_me">
+      <coap-client:put config-ref="config" path="/secure/put_me"/>
+   </sub-flow>
+
+   <sub-flow name="do_not_put_me">
+      <coap-client:put config-ref="config" path="/secure/do_not_put_me"/>
+   </sub-flow>
+
+
+   <sub-flow name="delete_me">
+      <coap-client:delete config-ref="config" path="/secure/delete_me"/>
+   </sub-flow>
+
+   <sub-flow name="do_not_delete_me">
+      <coap-client:delete config-ref="config" path="/secure/do_not_delete_me"/>
+   </sub-flow>
+
+</mule>

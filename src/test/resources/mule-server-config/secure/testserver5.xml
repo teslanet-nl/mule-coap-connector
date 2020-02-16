@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+   xmlns:coap-server="http://www.mulesoft.org/schema/mule/coap-server"
+   xmlns:spring="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:validation="http://www.mulesoft.org/schema/mule/validation" 
+   
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
+   http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
+   ">
+   <description>Mule CoAP connector test application</description>
+   
+   <coap-server:config 
+   	
+   	name="config" 
+   	exchangeLifetime="20000" 
+   	logCoapMessages="true"
+   	secure="true"
+	keyStoreLocation="certs/keyStore.jks" 
+	keyStorePassword="endPass" 
+	privateKeyAlias="server"
+	privateKeyPassword="endPass"
+	trustStoreLocation="certs/trustStoreNONEXISTENT.jks" 
+	trustStorePassword="rootPass"
+	trustedRootCertificateAlias="root"
+	>
+		<coap-server:resources>
+		   <coap-server:resource name="service">
+		      <coap-server:resources>
+		         <coap-server:resource name="get_me" get="true"/>
+		         <coap-server:resource name="put_me" put="true"/>
+		         <coap-server:resource name="post_me" post="true"/>
+		         <coap-server:resource name="delete_me" delete="true"/>
+		      </coap-server:resources>
+		   </coap-server:resource>
+		</coap-server:resources>    
+   </coap-server:config>
+   
+   <flow name="listen">
+      <coap-server:listen uri="/service/*" config-ref="config"/>
+      <set-payload value="mock_or_spy"/>
+   </flow>
+   
+</mule>

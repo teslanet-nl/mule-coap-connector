@@ -1,0 +1,11 @@
+
+syntax: regexp
+^\.settings$
+syntax: regexp
+^bin$
+syntax: regexp
+^target$
+syntax: regexp
+^\.classpath$
+syntax: regexp
+^Californium\.properties$

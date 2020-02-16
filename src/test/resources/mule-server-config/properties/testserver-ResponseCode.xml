@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
+
+   <description>Mule CoAP connector test application</description>
+   
+	<coap:udp-endpoint name="udp" logCoapMessages="true">
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="udp">
+		<coap:root-resource>
+			<coap:sub-resources>
+		         <coap:resource resourceName="responsecode">
+		            <coap:sub-resources>
+		               <coap:resource resourceName="always_CREATED" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_DELETED" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_VALID" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_CHANGED" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_CONTENT" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_CONTINUE" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_BAD_REQUEST" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_UNAUTHORIZED" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_BAD_OPTION" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_FORBIDDEN" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_NOT_FOUND" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_METHOD_NOT_ALLOWED" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_NOT_ACCEPTABLE" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_REQUEST_ENTITY_INCOMPLETE" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_CONFLICT" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_PRECONDITION_FAILED" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_REQUEST_ENTITY_TOO_LARGE" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_UNSUPPORTED_CONTENT_FORMAT" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_UNPROCESSABLE_ENTITY" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_INTERNAL_SERVER_ERROR" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_NOT_IMPLEMENTED" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_BAD_GATEWAY" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_SERVICE_UNAVAILABLE" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_GATEWAY_TIMEOUT" get="true" put="true" post="true"
+		                  delete="true"/>
+		               <coap:resource resourceName="always_PROXY_NOT_SUPPORTED" get="true" put="true"
+		                  post="true" delete="true"/>
+		               <coap:resource resourceName="always_TOO_MANY_REQUESTS" get="true" put="true"
+		                  post="true" delete="true"/>
+
+          			</coap:sub-resources>
+          		</coap:resource>
+          	</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+
+
+   <flow name="listen-all">
+      <coap:listener config-ref="config">
+      	<coap:response responseCode="#[ vars.responseCode ]"/>
+      </coap:listener>
+      <logger/>
+      <set-payload value=""/>
+      <choice>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_CREATED']">
+				<set-variable value="CREATED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_DELETED']">
+            <set-variable value="DELETED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_VALID' ]">
+            <set-variable value="VALID" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_CHANGED' ]">
+            <set-variable value="CHANGED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_CONTENT' ]">
+            <set-variable value="CONTENT" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_CONTINUE' ]">
+            <set-variable value="CONTINUE" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_BAD_REQUEST' ]">
+            <set-variable value="BAD_REQUEST" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_UNAUTHORIZED' ]">
+            <set-variable value="UNAUTHORIZED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_BAD_OPTION' ]">
+            <set-variable value="BAD_OPTION" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_FORBIDDEN' ]">
+            <set-variable value="FORBIDDEN" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_NOT_FOUND' ]">
+            <set-variable value="NOT_FOUND" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_METHOD_NOT_ALLOWED' ]">
+            <set-variable value="METHOD_NOT_ALLOWED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_NOT_ACCEPTABLE' ]">
+            <set-variable value="NOT_ACCEPTABLE" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_REQUEST_ENTITY_INCOMPLETE' ]">
+            <set-variable value="REQUEST_ENTITY_INCOMPLETE" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_CONFLICT' ]">
+            <set-variable value="CONFLICT" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_PRECONDITION_FAILED' ]">
+            <set-variable value="PRECONDITION_FAILED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_REQUEST_ENTITY_TOO_LARGE' ]">
+            <set-variable value="REQUEST_ENTITY_TOO_LARGE" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_UNSUPPORTED_CONTENT_FORMAT' ]">
+            <set-variable value="UNSUPPORTED_CONTENT_FORMAT" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_UNPROCESSABLE_ENTITY' ]">
+            <set-variable value="UNPROCESSABLE_ENTITY" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_INTERNAL_SERVER_ERROR' ]">
+            <set-variable value="INTERNAL_SERVER_ERROR" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_NOT_IMPLEMENTED' ]">
+            <set-variable value="NOT_IMPLEMENTED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_BAD_GATEWAY' ]">
+            <set-variable value="BAD_GATEWAY" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_SERVICE_UNAVAILABLE' ]">
+            <set-variable value="SERVICE_UNAVAILABLE" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_GATEWAY_TIMEOUT' ]">
+            <set-variable value="GATEWAY_TIMEOUT" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_PROXY_NOT_SUPPORTED' ]">
+            <set-variable value="PROXY_NOT_SUPPORTED" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <when
+            expression="#[ attributes.requestUri == '/responsecode/always_TOO_MANY_REQUESTS' ]">
+            <set-variable value="TOO_MANY_REQUESTS" doc:name="Set responseCode" variableName="responseCode"/>
+         </when>
+         <otherwise>
+			<set-variable value="NOT A VALID RESPONSE CODE" doc:name="Set not a vaid responseCode" doc:id="1bec7e55-7192-4061-85aa-4860ce785f4d" variableName="responseCode"/>            
+         </otherwise>
+      </choice>
+   </flow>
+</mule>

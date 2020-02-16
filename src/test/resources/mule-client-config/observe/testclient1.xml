@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+	<description>Mule CoAP connector test application</description>
+
+	<coap:udp-endpoint name="Udp_Endpoint"
+		logCoapMessages="true">
+		<coap:socket-params bindToPort="0" />
+		<coap:exchange-params exchangeLifetime="10000"/>
+		<coap:notification-params notificationReregistrationBackoff="100" />
+	</coap:udp-endpoint>
+
+	<coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint" />
+
+	<flow name="start_temporary">
+		<coap:start-observer config-ref="config" handlerName="handler_temporary" path="/observe/temporary"/>
+	</flow>
+
+	<flow name="stop_temporary">
+		<coap:stop-observer config-ref="config" path="/observe/temporary"/>
+	</flow>
+
+
+	<flow name="do_put_temporary">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/temporary">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_temporary">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_temporary" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "temporary" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+
+	<flow name="start_temporary1">
+		<coap:start-observer config-ref="config" handlerName="handler_temporary1" path="/observe/temporary1"/>
+	</flow>
+
+	<flow name="stop_temporary1">
+		<coap:stop-observer config-ref="config" path="/observe/temporary1"/>
+	</flow>
+
+
+	<flow name="do_put_temporary1">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/temporary1">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_temporary1">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_temporary1" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "temporary1" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+
+
+	<flow name="start_temporary2">
+		<coap:start-observer config-ref="config" handlerName="handler_temporary2"  path="/observe/temporary2"/>
+	</flow>
+
+	<flow name="stop_temporary2">
+		<coap:stop-observer config-ref="config" path="/observe/temporary2"/>
+
+	</flow>
+
+
+	<flow name="do_put_temporary2">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/temporary2">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_temporary2">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_temporary2" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "temporary2" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+
+	<flow name="start_maxage1">
+		<coap:start-observer config-ref="config" handlerName="handler_maxage1" path="/observe/maxage1"/>
+	</flow>
+
+	<flow name="stop_maxage1">
+		<coap:stop-observer config-ref="config" path="/observe/maxage1"/>
+	</flow>
+
+	<flow name="do_put_maxage1">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/maxage1">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_maxage1">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_maxage1" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "maxage1" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+	<flow name="start_maxage1_nonotify">
+		<coap:start-observer config-ref="config" handlerName="handler_maxage1_nonotify" path="/observe/maxage1_nonotify"/>
+	</flow>
+
+	<flow name="stop_maxage1_nonotify">
+		<coap:stop-observer config-ref="config" path="/observe/maxage1_nonotify"/>
+	</flow>
+
+	<flow name="do_put_maxage1_nonotify">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/maxage1_nonotify">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_maxage1_nonotify">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_maxage1_nonotify" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "maxage1_nonotify" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+
+	<flow name="start_maxage4_nonotify">
+		<coap:start-observer config-ref="config" handlerName="handler_maxage4_nonotify" 
+			path="/observe/maxage4_nonotify"/>
+	</flow>
+
+	<flow name="stop_maxage4_nonotify">
+		<coap:stop-observer config-ref="config" path="/observe/maxage4_nonotify"/>
+	</flow>
+
+	<flow name="do_put_maxage4_nonotify">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/maxage4_nonotify">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="observe_handler_maxage4_nonotify">
+		<coap:response-handler config-ref="config"
+			handlerName="handler_maxage4_nonotify" />
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "maxage4_nonotify" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
+
+	<flow name="observe_handler_permanent">
+		<coap:observer config-ref="config" observerName="permanent" path="/observe/permanent"/>
+
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "permanent" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+
+	</flow>
+
+	<flow name="do_put_permanent">
+		<coap:request config-ref="config" requestCode="PUT"
+				path="/observe/permanent">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+	<flow name="observer_list">
+		<coap:list-observers config-ref="config" />
+	</flow>
+
+
+</mule>

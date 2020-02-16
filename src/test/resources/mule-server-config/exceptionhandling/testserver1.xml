@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+
+	<description>Mule CoAP connector test application</description>
+
+	<coap:udp-endpoint name="UDP_endpoint" logCoapMessages="true">
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="UDP_endpoint">
+		<coap:root-resource>
+			<coap:sub-resources>
+				<coap:resource resourceName="service">
+					<coap:sub-resources>
+						<coap:resource resourceName="unhandled_exception"
+							get="true" put="true" post="true" delete="true" />
+						<coap:resource resourceName="handled_exception" get="true"
+							put="true" post="true" delete="true" />
+						<coap:resource resourceName="no_listener" get="true"
+							put="true" post="true" delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+
+
+	<flow name="listen_unhandled">
+		<coap:listener uriPattern="/service/unhandled_exception"
+			config-ref="config">
+			<coap:response />
+		</coap:listener>
+      <set-payload value="server response"/>
+      <scripting:execute engine="groovy" doc:name="throw exception" doc:id="c663e99a-47db-4f21-87ac-21c6b08635af" >
+			<scripting:code >throw new java.lang.Exception(&quot;test the exception&quot;);</scripting:code>
+	  </scripting:execute>
+
+   </flow>
+
+
+   <flow name="listen_handled">
+      <coap:listener uriPattern="/service/handled_exception" config-ref="config">
+			<coap:response />
+		</coap:listener>
+      <set-payload value="server response"/>
+      <try doc:name="Try" doc:id="7c514e9a-ff5b-4115-b817-dc0de0dd58e3" >
+			<scripting:execute engine="groovy" doc:name="throw exception" doc:id="ac9a7d98-4358-49e7-bce8-0ddfec7aeb3b">
+				<scripting:code>throw new java.lang.Exception(&quot;test the exception&quot;);</scripting:code>
+	  		</scripting:execute>
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4d59f9ac-a41d-4df3-9b06-67d49d1e582f" type="SCRIPTING:EXECUTION">
+				<set-payload value="exception catched"/></on-error-continue>
+			</error-handler>
+		</try>
+   </flow>
+</mule>

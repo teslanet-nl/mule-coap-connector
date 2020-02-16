@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+">
+
+	<description>Mule CoAP connector test application</description>
+			
+	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+		<coap:exchange-params exchangeLifetime="1000" >
+			<coap:mid-tracker >
+				<coap:null-mid-tracker />
+			</coap:mid-tracker>
+		</coap:exchange-params>
+		<coap:notification-params notificationCheckIntervalCount="5" notificationCheckIntervalTime="650"/>
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="udp">
+		<coap:root-resource>
+			<coap:sub-resources>
+				<coap:resource resourceName="service" post="true">
+					<coap:sub-resources>
+						<coap:resource resourceName="observe_me" get="true" put="true" observable="true">
+						</coap:resource>
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+	<object doc:name="Object" doc:id="b494cb16-538a-41b4-9d51-4aee2a37b198" name="storage" class="java.util.HashMap" />
+	
+	<flow name="listen_service">
+		<coap:listener uriPattern="/service"
+			config-ref="config">
+			<coap:response responseCode="#[vars.response_code]" >
+				<coap:options >
+					<coap:option key="coap.opt.location_path" value="#[vars.location_path]" />
+				</coap:options>
+			</coap:response>
+			<!-- TODO location path -->
+		</coap:listener>
+		<set-variable variableName="attr" value="#[ attributes ]"
+			doc:name="set attr" />
+		<scripting:execute engine="groovy" doc:name="put payload into String" doc:id="1ebd370f-2c3d-46f7-84f2-f66e434dbfff" >
+			<scripting:code >
+			if ( payload != null )
+			{
+				return new String( payload );
+			}
+			else
+			{
+				return new String();
+			}
+			</scripting:code>
+		</scripting:execute>
+		<set-variable variableName="method" value="#[ vars.attr.requestCode ]"
+			doc:name="set method" />
+		<set-variable variableName="uri" value="#[ vars.attr.requestUri ]"
+			doc:name="set method" />
+		<!-- TODO: prepending '/' not needed in the future -->
+		<set-variable variableName="resource_path"
+			value="#['/' ++ vars.attr.options['coap.opt.location_path']!]" doc:name="set resource_path" />
+
+				<set-variable variableName="get" value="true" />
+				<set-variable variableName="post" value="false" />
+				<set-variable variableName="put" value="true" />
+				<set-variable variableName="delete" value="true" />
+				<flow-ref name="add_resource" doc:name="add_resource" />
+	</flow>
+
+	<sub-flow name="add_resource">
+
+		<java:invoke instance="storage" method="put(Object,Object)"
+			class="java.util.HashMap">
+			<java:args><![CDATA[#[{ arg0: vars.resource_path, arg1: payload }]]]></java:args>
+		</java:invoke>
+		<coap:add-resource config-ref="config"
+			uri="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
+			delete="#[vars.delete]" doc:name="add resource" observable="true"/>
+		<set-variable variableName="location_path" value="#[ vars.resource_path ]" />
+		<set-variable variableName="response_code" value="CREATED" />
+	</sub-flow>
+
+	<flow name="listen_exists">
+		<coap:listener uriPattern="/service/exists" config-ref="config">
+			<coap:response />
+		</coap:listener>
+		<!--TODO: uri attribute should be uriPattern -->
+		<logger message="#[ attributes.options['coap.opt.location_path']!]"/>
+		<!-- TODO align root resource / -->
+		<coap:resource-exists config-ref="config"
+			uriPattern="#[ '/' ++ attributes.options['coap.opt.location_path']!]" />
+			<set-payload value="#[payload as String]"/>
+	</flow>
+
+	<flow name="listen_service_resource">
+		<coap:listener uriPattern="/service/*" config-ref="config">
+			<coap:response responseCode="#[ vars.response_code]" />
+		</coap:listener>
+		
+		<set-variable variableName="method" value="#[attributes.requestCode]"
+			doc:name="set method" />
+		<set-variable variableName="uri" value="#[ attributes.requestUri ]"
+			doc:name="set method" />
+		<set-variable variableName="attr" value="#[ attributes ]"
+			doc:name="set attr" />
+		<scripting:execute engine="groovy" doc:name="put payload into String" doc:id="941069c8-c703-4a51-a80b-2e9d44ab47ea" >
+			<scripting:code >
+			if ( payload != null )
+			{
+				return new String( payload );
+			}
+			else
+			{
+				return new String();
+			}
+			</scripting:code>
+		</scripting:execute>
+
+		<choice doc:name="by method">
+			<when expression="#[vars.method == 'GET']">
+				<java:invoke instance="storage" method="get(Object)"
+					class="java.util.HashMap">
+					<java:args><![CDATA[#[{ arg0: vars.uri }]]]></java:args>
+				</java:invoke>
+				<set-variable variableName="response_code" value="CONTENT" />
+			</when>
+			<when expression="#[ vars.method == 'PUT']">
+				<java:invoke instance="storage" method="put(Object,Object)"
+					class="java.util.HashMap">
+					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
+				</java:invoke>
+				<coap:resource-changed config-ref="config"
+					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
+				<set-variable variableName="response_code" value="CHANGED" />
+				<set-payload value="OK" doc:name="return OK" doc:id="586932cb-2d51-41f8-ad1e-7a238b99aa0f" />
+				
+			</when>
+			<when expression="#[vars.method == 'POST']">
+				<java:invoke instance="storage" method="put(Object,Object)"
+					class="java.util.HashMap" target="old">
+					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
+				</java:invoke>
+				<coap:resource-changed config-ref="config"
+					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
+				<set-variable variableName="response_code" value="CHANGED" />
+				<set-payload value="OK" doc:name="return OK" doc:id="a7df4f99-f0c7-48a0-9539-da562bc7402c" />				
+			</when>
+			<when expression="#[vars.method == 'DELETE']">
+				<java:invoke instance="storage" method="remove(Object)"
+					class="java.util.HashMap" target="old">
+					<java:args><![CDATA[#[{ arg0: vars.uri }]]]></java:args>
+				</java:invoke>
+				<coap:remove-resource config-ref="config"
+					uriPattern="#[ vars.uri ]" />
+				<set-variable variableName="response_code" value="DELETED" />
+				<set-payload value="OK" doc:name="return OK" doc:id="cbe2e932-f189-4cda-b6df-9de782e6bf93" />
+				
+			</when>
+			<otherwise>
+				<set-payload value="not expected" doc:name="Set Payload" />
+				<set-variable variableName="response_code" value="INTERNAL_SERVER_ERROR" />
+			</otherwise>
+		</choice>
+	</flow>
+
+</mule>
+

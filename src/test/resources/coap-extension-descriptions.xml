@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+<extension-documentation>
+    <configs>
+        <config name="client">
+            <description><![CDATA[The Client is used to send requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default for the requests using this client. The request can override if necessary.]]></description>
+            <parameters>
+                <parameter name="endpoint">
+                    <description><![CDATA[Endpoint configuration to use for the client.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The default hostname or ip of the server to address. Can be overridden by the host setting on operations.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The default port the server is listening on. Can be overridden by the port setting on the operation.]]></description>
+                </parameter>
+            </parameters>
+        </config>
+        <config name="server">
+            <description><![CDATA[The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.]]></description>
+            <parameters>
+                <parameter name="endpoint">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpoint1">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpoint2">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="root-resource">
+                    <description><![CDATA[Resources of the server.]]></description>
+                </parameter>
+                <parameter name="protocolStageThreadCount">
+                    <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
+                </parameter>
+            </parameters>
+        </config>
+    </configs>
+    <connections/>
+    <extension name="CoAP">
+        <description><![CDATA[This is the main class of the CoAP connector, is the entry point from which configurations, connection providers, operations and sources are going to be declared.]]></description>
+        <parameters/>
+    </extension>
+    <operations>
+        <operation name="asyncRequest">
+            <description><![CDATA[The Async Request Processor issues a request on a CoAP server. The processor is asynchronous, meaning that it will not block. The response will be processed by specified response handler.]]></description>
+            <parameters>
+                <parameter name="responseHandler">
+                    <description><![CDATA[Name of the handler that will receive the response.]]></description>
+                </parameter>
+                <parameter name="requestPayload">
+                    <description><![CDATA[The payload of the request.]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="discover">
+            <description><![CDATA[The Discover processor retrieves information about CoAP resources of a server.]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="listObservers">
+            <description><![CDATA[The List observers processor returns a list containing the uri's of all active observers of the CoAP client.]]></description>
+            <parameters>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="ping">
+            <description><![CDATA[The Ping processor checks whether a CoAP server is reachable.]]></description>
+            <parameters>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="request">
+            <description><![CDATA[The Request Processor issues a request on a CoAP server. The processor blocks until a response is received or a timeout occurs.]]></description>
+            <parameters>
+                <parameter name="requestPayload">
+                    <description><![CDATA[The payload of the request]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="outputEncoding">
+                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="startObserver">
+            <description><![CDATA[The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.]]></description>
+            <parameters>
+                <parameter name="handlerName">
+                    <description><![CDATA[Name of the response handler that will process the notification received from server.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="stopObserver">
+            <description><![CDATA[Stop a running observer.]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="ListResources">
+            <description><![CDATA[The List Resources processor returns a list of uri's of the resources of the CoAP server that match given uri pattern.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="ResourceExists">
+            <description><![CDATA[The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="addResource">
+            <description><![CDATA[The Add Resource processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.]]></description>
+            <parameters>
+                <parameter name="uri">
+                    <description><![CDATA[The uri of the resource to add.]]></description>
+                </parameter>
+                <parameter name="get">
+                    <description><![CDATA[When true the resource accepts get-requests.]]></description>
+                </parameter>
+                <parameter name="put">
+                    <description><![CDATA[When true the resource accepts put-requests.]]></description>
+                </parameter>
+                <parameter name="post">
+                    <description><![CDATA[When true the resource accepts post-requests.]]></description>
+                </parameter>
+                <parameter name="delete">
+                    <description><![CDATA[When true the resource accepts delete-requests.]]></description>
+                </parameter>
+                <parameter name="observable">
+                    <description><![CDATA[When true the resource accepts observe-requests.]]></description>
+                </parameter>
+                <parameter name="earlyAck">
+                    <description><![CDATA[When true an immediate acknowledgement is sent to the client before processing the request and returning response.]]></description>
+                </parameter>
+                <parameter name="info">
+                    <description><![CDATA[Meta-information of the resource.]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="removeResource">
+            <description><![CDATA[The Remove Resource processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="resourceChanged">
+            <description><![CDATA[The Resource Changed processor is used to indicates that resources content has changed. It initiates notifications to observing clients. For every observing client and resource an internal get-request is issued on the listener of the resource concerned. The listener flow then processes the get and responses will be sent to the observing client. As a result every client will be notified of the changed resource content.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uri pattern specifies the resource(s) that have changed. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+    </operations>
+    <sources>
+        <source name="ResponseHandler">
+            <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The CoAP messages received are delivered to the flow.]]></description>
+            <parameters>
+                <parameter name="handlerName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="outputEncoding">
+                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="primaryNodeOnly">
+                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
+                </parameter>
+                <parameter name="redeliveryPolicy">
+                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
+                </parameter>
+            </parameters>
+        </source>
+        <source name="observer">
+            <description><![CDATA[The Observer message source observes a CoAP resource on a server. The CoAP notifications received from the server are delivered to the flow. The resource is observed during runtime of the flow. When an observe relation with the server could not be established or is lost, the flow is notified of the error and the observe request is retried continuously.]]></description>
+            <parameters>
+                <parameter name="observerName">
+                    <description><![CDATA[The name of the observer instance.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to observe. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path on the server of the resource to observe.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the observe request.]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="outputEncoding">
+                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="primaryNodeOnly">
+                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
+                </parameter>
+                <parameter name="redeliveryPolicy">
+                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
+                </parameter>
+            </parameters>
+        </source>
+        <source name="listener">
+            <description><![CDATA[The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern given, will be listened. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uriPattern defines the resources the listener listens on. The listener will get requests to process for a resource when it has the most specific pattern that complies to the resources path.]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="outputEncoding">
+                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="primaryNodeOnly">
+                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
+                </parameter>
+                <parameter name="redeliveryPolicy">
+                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
+                </parameter>
+                <parameter name="responseBody">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="response">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </source>
+    </sources>
+    <types>
+        <type name="nl.teslanet.mule.connectors.coap.api.ContainedResources">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="subResources">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.DiscoveredResource">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="ct">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="if">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="obs">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="rt">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="sz">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="title">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="uri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="relation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remotePort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notification">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="relation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remotePort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="success">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ResourceInfo">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="title">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="if">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="rt">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="sz">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="ct">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ResponseAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.CocoaStrong">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="cropRotationPeriod">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="markAndSweepInterval">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="encryptionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="multicastParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="encryptionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="encryptionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="midTrackerGroups">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.options.ETag">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+    </types>
+</extension-documentation>

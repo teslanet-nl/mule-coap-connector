@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
+
+   <description>Mule CoAP connector test application</description>
+   
+	<coap:udp-endpoint name="udp" logCoapMessages="true">
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="udp">
+		<coap:root-resource>
+			<coap:sub-resources>
+				<coap:resource resourceName="remote_port">
+					<coap:sub-resources>
+						<coap:resource resourceName="get_me" get="true" />
+						<coap:resource resourceName="put_me" put="true" />
+						<coap:resource resourceName="post_me" post="true" />
+						<coap:resource resourceName="delete_me" delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:sub-resources>
+		</coap:root-resource>
+	</coap:server-config>
+	
+	<flow name="listen">
+		<coap:listener uriPattern="/remote_port/*" config-ref="config">
+			<coap:response />
+		</coap:listener>
+		<set-variable value="#[attributes.remotePort]" doc:name="Set value to test" doc:id="14a950a8-7b52-4a3c-ad0a-b8cd7d4a6d8d" variableName="valueToTest"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="ee736688-f066-4f00-bb62-11ee8e9ee8bf" >
+
+			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
+				java.lang.Integer(1) ) == false )
+				{
+				throw new Exception(&quot;attribute is not a Integer&quot;);
+				}
+				return  vars.valueToTest.toString();
+			</scripting:code>
+		</scripting:execute>
+   </flow>
+</mule>
