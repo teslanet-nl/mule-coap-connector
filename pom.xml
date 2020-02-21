@@ -37,7 +37,7 @@
 	<properties>
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
-		<californium.version>2.1.0-RC1</californium.version>
+		<californium.version>2.1.0-RC2</californium.version>
 	</properties>
 
 	<scm>
