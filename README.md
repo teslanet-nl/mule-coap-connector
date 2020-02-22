@@ -2,7 +2,7 @@
 ![Mule-Coap logo](icon/icon.svg)
 
 The Mule CoAP Connector is a Mule 4 extension that adds CoAP capability to the  [Mule enterprise service bus](https://www.mulesoft.com/).
-It is used to implement IoT services and/or clients that access IoT services using the CoAP protocol.
+Mule 4 applications use this to implement IoT services and/or IoT clients that communicate by means of the CoAP protocol.
 
 The CoAP protocol is specified in [RFC7252 - Constrained Application Protocol](http://tools.ietf.org/html/rfc7252) and other specefications (see below). 
 The connector uses Californium, a Java CoAP implementation. More information about Californium and CoAP can be found at:
