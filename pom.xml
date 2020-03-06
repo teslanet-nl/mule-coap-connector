@@ -36,7 +36,7 @@
 	<version>2.0.0-M2-SNAPSHOT</version>
 	<packaging>mule-extension</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Mule CoAP Connector</description>
+	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
 	<url>http://www.teslanet.nl</url>
 	
 	<licenses>

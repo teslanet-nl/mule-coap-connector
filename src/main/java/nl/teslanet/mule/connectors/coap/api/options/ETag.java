@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -30,12 +31,6 @@ import java.util.List;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 
-
-//TODO constructor for long for convenience:
-//Long millis= ...;
-//ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-//buffer.putLong( millis );
-//etags.put( key, new ETag( buffer.array()));
 
 /**
  * Implementation of the Etag concept for convenience.
@@ -51,57 +46,88 @@ public final class ETag implements Comparable< ETag >
      */
     private final byte[] value;
 
-    private int hashCode= 0;
+    private Integer hashCode= null;
+
+    /**
+     * Default constructor that create empty etag.
+     */
+    public ETag()
+    {
+        this.value= null;
+    }
 
     /**
      * Constructs an etag from a byte array value.
-     * @param etag byte array containing the etag value
-     * @throws InvalidETagException when given etag has not a length of 1..8 bytes
+     * @param bytes byte array containing the etag value
+     * @throws InvalidETagException when given array has a length greater than 8 bytes
      */
-    public ETag( byte[] etag ) throws InvalidETagException
+    public ETag( byte[] bytes ) throws InvalidETagException
     {
-        if ( etag == null )
+        if ( bytes == null || bytes.length == 0 )
         {
-            throw new InvalidETagException( "ETag value null is not allowed" );
+            this.value= null;
         }
-        if ( etag.length < 1 || etag.length > 8 )
+        else if ( bytes.length > 8 )
         {
-            throw new InvalidETagException( "ETag length invalid, must be between 1..8 bytes. Given length is: " + etag.length );
+            throw new InvalidETagException( "ETag length is invalid, must be between 0..8 bytes. Given length is: " + bytes.length );
         }
-        this.value= etag.clone();
-
+        else
+        {
+            this.value= bytes.clone();
+        }
     }
 
     /**
      * Constructs an etag from a string containing the hexadecimal representation
-     * where two characters convert to one byte which contains the designated value.
+     * where two characters convert to one byte containing the indicated byte value.
      * For instance the string '11FF' will result in an etag value of two bytes containing
-     * the decimal values of 17 and 255.   
-     * @param hexString contains the hexadecimal representation of the etag value.
-     * @throws InvalidETagException when given string does not represent a etag length of 1..8 bytes
+     * the decimal values of 17 and 255. Only the first 16 characters will be regarded.
+     * @param etag contains the hexadecimal representation of the etag value.
+     * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
      */
     public ETag( String hexString ) throws InvalidETagException
     {
-        if ( hexString == null )
+        if ( hexString == null || hexString.length() == 0 )
         {
-            throw new InvalidETagException( "Given hexString is null." );
+            this.value= null;
         }
-        int length= hexString.length() / 2;
-        //check even number of characters
-        if ( length * 2 != hexString.length() )
+        else
         {
-            throw new InvalidETagException( "Given hexString must have even number of characters. The number found: " + hexString.length() );
+            int length= hexString.length() / 2;
+            if ( length * 2 != hexString.length() )
+            {
+                throw new InvalidETagException( "Given hexString must have even number of characters. The number found: " + hexString.length() );
+            }
+            if ( length > 8 )
+            {
+                throw new InvalidETagException( "ETag length invalid, must be between 0..8 bytes. Given length is: " + length );
+            }
+            this.value= new byte [length];
+            for ( int i= 0; i < this.value.length; i++ )
+            {
+                int index= i * 2;
+                int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
+                this.value[i]= (byte) v;
+            }
         }
-        if ( length < 1 || length > 8 )
+    }
+
+    /**
+     * Constructs an etag from a Long value.
+     * @param longValue The value to create an ETag from.
+     */
+    public ETag( Long longValue )
+    {
+        if ( longValue == null )
         {
-            throw new InvalidETagException( "ETag length invalid, must be between 1..8 bytes. Given length is: " + length );
+            this.value= null;
         }
-        value= new byte [length];
-        for ( int i= 0; i < value.length; i++ )
+        else
         {
-            int index= i * 2;
-            int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
-            value[i]= (byte) v;
+            ByteBuffer byteBuffer= ByteBuffer.allocate( Long.BYTES );
+            byteBuffer.putLong( longValue );
+            byteBuffer.flip();
+            this.value= byteBuffer.array();
         }
     }
 
@@ -111,6 +137,10 @@ public final class ETag implements Comparable< ETag >
      */
     public byte[] asBytes()
     {
+        if ( value == null )
+        {
+            return new byte []{};
+        }
         return value.clone();
     }
 
@@ -122,43 +152,57 @@ public final class ETag implements Comparable< ETag >
     @Override
     public String toString()
     {
+        if ( value == null )
+        {
+            return "";
+        }
         return toHexString( value );
     }
 
     /**
      * Static function that creates etag from byte array.
-     * @param etag The byte array containing etag value.
+     * @param bytes The byte array containing etag value.
      * @return The etag object created.
-     * @throws InvalidETagException when given etag has not a length of 1..8 bytes
+     * @throws InvalidETagException when the number of bytes > 8
      */
-    static public ETag create( byte[] etag ) throws InvalidETagException
+    static public ETag create( byte[] bytes ) throws InvalidETagException
     {
-        return new ETag( etag );
+        return new ETag( bytes );
+    }
+
+    /**
+     * Static function that creates etag from Long.
+     * @param longValue The long value to create etag from.
+     * @return The etag object created.
+     */
+    static public ETag create( Long longValue )
+    {
+        return new ETag( longValue );
     }
 
     /**
      * Static function that creates etag from hexadecimal string.
      * @param hexString the hexadecimal string to create etag from.
      * @return The etag object created.
-     * @throws InvalidETagException when given string does not represent a etag length of 1..8 bytes
+     * @throws InvalidETagException when given 
      */
-    static public ETag createFromHexString( String hexString ) throws InvalidETagException
+    static public ETag create( String hexString ) throws InvalidETagException
     {
         return new ETag( hexString );
     }
 
     /**
      * Convenience method to create a list of etags form a list of byte arrays.
-     * @param etags The List of Byte array to make a list of etags from.
+     * @param bytesList The List of Byte array to make a list of etags from.
      * @return The list of etags. 
-     * @throws InvalidETagException when a given etag has not a length of 1..8 bytes
+     * @throws InvalidETagException when etag could not be created from bytes
      */
-    static public List< ETag > getList( List< byte[] > etags ) throws InvalidETagException
+    static public List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
     {
         LinkedList< ETag > result= new LinkedList< ETag >();
-        for ( byte[] etag : etags )
+        for ( byte[] bytes : bytesList )
         {
-            result.add( new ETag( etag ) );
+            result.add( new ETag( bytes ) );
         }
         return result;
     }
@@ -187,8 +231,8 @@ public final class ETag implements Comparable< ETag >
     public boolean equals( Object o )
     {
         ETag other= (ETag) o;
-        if ( null == other ) return false;
-        if ( this == other ) return true;
+        if ( null == other && null == this.value ) return true;
+        if ( null == other && null != this.value ) return false;
         return Arrays.equals( this.value, other.value );
     }
 
@@ -198,8 +242,12 @@ public final class ETag implements Comparable< ETag >
     @Override
     public int compareTo( ETag other )
     {
-        if ( null == other ) return 1;
         if ( this == other ) return 0;
+        if ( null == other && null == this.value ) return 0;
+        if ( null == other && null != this.value ) return 1;
+        if ( null == other.value && null == this.value ) return 0;
+        if ( null == other.value && null != this.value ) return 1;
+        if ( null == this.value ) return -1;
         if ( this.value.length < other.value.length ) return -1;
         if ( this.value.length > other.value.length ) return 1;
         for ( int i= 0; i < this.value.length && i < other.value.length; i++ )
@@ -213,7 +261,7 @@ public final class ETag implements Comparable< ETag >
     @Override
     public int hashCode()
     {
-        if ( this.hashCode == 0 )
+        if ( this.hashCode == null )
         {
             this.hashCode= Arrays.hashCode( this.value );
         }

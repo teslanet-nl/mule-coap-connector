@@ -23,13 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api.error;
 
 
-import org.mule.runtime.extension.api.exception.ModuleException;
-
-
 /**
  *  Exception that is thrown when an attempt is made to construct an invalid ETag object.
  */
-public class InvalidETagException extends ModuleException
+public class InvalidETagException extends Exception
 {
 
     /**
@@ -43,6 +40,6 @@ public class InvalidETagException extends ModuleException
      */
     public InvalidETagException( String message )
     {
-        super( message, Errors.INVALID_ETAG );
+        super( message );
     }
 }

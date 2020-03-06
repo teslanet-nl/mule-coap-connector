@@ -125,8 +125,9 @@ public abstract class AbstractOutboundPropertiesTest extends AbstractClientTestC
      * Default implementation inserts the Option using getOutboundPropertyValue()
      * Needs to be overridden when other properties than an option is to be inserted
      * @param options the attributes to insert the property in
+     * @throws InvalidETagException 
      */
-    protected void insertOutboundProperty( HashMap< String, Object > options )
+    protected void insertOutboundProperty( HashMap< String, Object > options ) throws InvalidETagException
     {
         options.put( getPropertyName(), getOutboundPropertyValue() );
     }
