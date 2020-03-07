@@ -499,16 +499,9 @@ public class Options
                     {
                         Object o= e.getValue();
                         Option option= new Option( optionNr );
-                        if ( byte[].class.isAssignableFrom( o.getClass() ) )
-                        {
-                            option.setValue( (byte[]) o );
-                            optionSet.addOption( option );
-                        }
-                        else
-                        {
-                            option.setStringValue( o.toString() );
-                            optionSet.addOption( option );
-                        }
+                        option.setValue( toBytes( o ) );
+                        optionSet.addOption( option );
+
                     }
             }
         }
