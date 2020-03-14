@@ -45,9 +45,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    <coap:client-config name="config" endpoint="Udp_Endpoint" />
       
    <flow name="do_request">
-		<coap:async-request config-ref="config" responseHandler="handler" requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]" path="#[vars.path]">
+		<coap:request-async config-ref="config" responseHandler="handler" requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]" path="#[vars.path]">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:async-request>  
+		</coap:request-async>  
 	</flow>
    
    <flow name="handler">

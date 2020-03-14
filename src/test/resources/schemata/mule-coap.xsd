@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
 <xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.teslanet.nl/schema/mule/coap" attributeFormDefault="unqualified" elementFormDefault="qualified">
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
   <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"></xs:import>
@@ -758,98 +779,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="AsyncRequestType" substitutionGroup="mule:abstract-operator" name="async-request">
-    <xs:annotation>
-      <xs:documentation>The Async Request Processor issues a request on a CoAP server. The processor is asynchronous, meaning that it will not block. The response will be processed by specified response handler.</xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="AsyncRequestType">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload">
-            <xs:annotation>
-              <xs:documentation>The payload of the request.</xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="query-parameters">
-            <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-parameter">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="options">
-            <xs:annotation>
-              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
-          <xs:annotation>
-            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="responseHandler">
-          <xs:annotation>
-            <xs:documentation>Name of the handler that will receive the response.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPRequestCodeEnumType" use="required" name="requestCode">
-          <xs:annotation>
-            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
-          <xs:annotation>
-            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="host">
-          <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="port">
-          <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParameters">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="options">
-          <xs:annotation>
-            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="DiscoverType" substitutionGroup="mule:abstract-operator" name="discover">
     <xs:annotation>
       <xs:documentation>The Discover processor retrieves information about CoAP resources of a server.</xs:documentation>
@@ -912,12 +841,12 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ListObserversType" substitutionGroup="mule:abstract-operator" name="list-observers">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverListType" substitutionGroup="mule:abstract-operator" name="observer-list">
     <xs:annotation>
-      <xs:documentation>The List observers processor returns a list containing the uri's of all active observers of the CoAP client.</xs:documentation>
+      <xs:documentation>This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ListObserversType">
+  <xs:complexType name="ObserverListType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
@@ -934,6 +863,165 @@
         <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
           <xs:annotation>
             <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverStartType" substitutionGroup="mule:abstract-operator" name="observer-start">
+    <xs:annotation>
+      <xs:documentation>The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ObserverStartType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="query-parameters">
+            <xs:annotation>
+              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-parameter">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="options">
+            <xs:annotation>
+              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="handlerName">
+          <xs:annotation>
+            <xs:documentation>Name of the response handler that will process the notifications received.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
+          <xs:annotation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="host">
+          <xs:annotation>
+            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="path">
+          <xs:annotation>
+            <xs:documentation>The path of the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParameters">
+          <xs:annotation>
+            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionMap" use="optional" name="options">
+          <xs:annotation>
+            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverStopType" substitutionGroup="mule:abstract-operator" name="observer-stop">
+    <xs:annotation>
+      <xs:documentation>Stop a running observer.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ObserverStopType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="query-parameters">
+            <xs:annotation>
+              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-parameter">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="options">
+            <xs:annotation>
+              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
+          <xs:annotation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="host">
+          <xs:annotation>
+            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="path">
+          <xs:annotation>
+            <xs:documentation>The path of the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParameters">
+          <xs:annotation>
+            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionMap" use="optional" name="options">
+          <xs:annotation>
+            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1083,15 +1171,20 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="StartObserverType" substitutionGroup="mule:abstract-operator" name="start-observer">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RequestAsyncType" substitutionGroup="mule:abstract-operator" name="request-async">
     <xs:annotation>
-      <xs:documentation>The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.</xs:documentation>
+      <xs:documentation>The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="StartObserverType">
+  <xs:complexType name="RequestAsyncType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload">
+            <xs:annotation>
+              <xs:documentation>The payload of the request.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="query-parameters">
             <xs:annotation>
               <xs:documentation>The query parameters to send with the request.</xs:documentation>
@@ -1127,86 +1220,14 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="handlerName">
+        <xs:attribute type="mule:expressionString" use="required" name="responseHandler">
           <xs:annotation>
-            <xs:documentation>Name of the response handler that will process the notification received from server.</xs:documentation>
+            <xs:documentation>Name of the handler that will receive the response.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPRequestCodeEnumType" use="required" name="requestCode">
           <xs:annotation>
-            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="host">
-          <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="port">
-          <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParameters">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="options">
-          <xs:annotation>
-            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="StopObserverType" substitutionGroup="mule:abstract-operator" name="stop-observer">
-    <xs:annotation>
-      <xs:documentation>Stop a running observer.</xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="StopObserverType">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="query-parameters">
-            <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-parameter">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="options">
-            <xs:annotation>
-              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
-          <xs:annotation>
-            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
+            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
@@ -1437,12 +1458,12 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ListResourcesType" substitutionGroup="mule:abstract-operator" name="list-resources">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="NotifyType" substitutionGroup="mule:abstract-operator" name="notify">
     <xs:annotation>
-      <xs:documentation>The List Resources processor returns a list of uri's of the resources of the CoAP server that match given uri pattern.</xs:documentation>
+      <xs:documentation>The Notify processor initiates notifications to observing clients. Use this when the resource content has changed. For every observing client and resource an internal get-request is issued on the listener concerned. The response that the listener flow will be used as notication as is sent to the observing client.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ListResourcesType">
+  <xs:complexType name="NotifyType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
@@ -1453,60 +1474,18 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
           <xs:annotation>
-            <xs:documentation>The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="target">
-          <xs:annotation>
-            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
-          <xs:annotation>
-            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+            <xs:documentation>The uri pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceExistsType" substitutionGroup="mule:abstract-operator" name="resource-exists">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceAddType" substitutionGroup="mule:abstract-operator" name="resource-add">
     <xs:annotation>
-      <xs:documentation>The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.</xs:documentation>
+      <xs:documentation>The Resource Add processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ResourceExistsType">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
-        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
-          <xs:annotation>
-            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
-          <xs:annotation>
-            <xs:documentation>The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="target">
-          <xs:annotation>
-            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
-          <xs:annotation>
-            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="AddResourceType" substitutionGroup="mule:abstract-operator" name="add-resource">
-    <xs:annotation>
-      <xs:documentation>The Add Resource processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.</xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="AddResourceType">
+  <xs:complexType name="ResourceAddType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
@@ -1569,12 +1548,76 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RemoveResourceType" substitutionGroup="mule:abstract-operator" name="remove-resource">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceExistsType" substitutionGroup="mule:abstract-operator" name="resource-exists">
     <xs:annotation>
-      <xs:documentation>The Remove Resource processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.</xs:documentation>
+      <xs:documentation>The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="RemoveResourceType">
+  <xs:complexType name="ResourceExistsType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
+          <xs:annotation>
+            <xs:documentation>The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceListType" substitutionGroup="mule:abstract-operator" name="resource-list">
+    <xs:annotation>
+      <xs:documentation>Returns a list of uri's of the resources, that match given uri pattern.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ResourceListType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
+          <xs:annotation>
+            <xs:documentation>The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceRemoveType" substitutionGroup="mule:abstract-operator" name="resource-remove">
+    <xs:annotation>
+      <xs:documentation>The  Resource Remove processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ResourceRemoveType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
@@ -1586,28 +1629,6 @@
         <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
           <xs:annotation>
             <xs:documentation>The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResourceChangedType" substitutionGroup="mule:abstract-operator" name="resource-changed">
-    <xs:annotation>
-      <xs:documentation>The Resource Changed processor is used to indicates that resources content has changed. It initiates notifications to observing clients. For every observing client and resource an internal get-request is issued on the listener of the resource concerned. The listener flow then processes the get and responses will be sent to the observing client. As a result every client will be notified of the changed resource content.</xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="ResourceChangedType">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
-        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
-          <xs:annotation>
-            <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="uriPattern">
-          <xs:annotation>
-            <xs:documentation>The uri pattern specifies the resource(s) that have changed. Wildcards can be used, like "/*" or "/some/deeper/resources/*".</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>

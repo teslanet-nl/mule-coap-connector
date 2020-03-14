@@ -55,7 +55,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.AsyncRequestErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
@@ -66,8 +66,8 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseEx
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.StartObserverErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.StopObserverErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
 
 
 //TODO add error tests
@@ -134,17 +134,17 @@ public class ClientOperations
     }
 
     /**
-     * The Async Request Processor issues a request on a CoAP server.
-     * The processor is asynchronous, meaning that it will not block. The response 
-     * will be processed by specified response handler.
-     * @param client The client to use to issue the request.
+     * The  RequestAsync Processor issues a request on a CoAP server asynchronously.
+     * The processor doea not wait for the response and will not block. The handling 
+     * of a response (if any) is delegated to the response handler.
+     * @param client The client to use for the request.
      * @param responseHandler Name of the handler that will receive the response.
      * @param requestAttributes The request attributes.
      * @param requestPayload The payload of the request.
      */
     @MediaType(value= "*/*", strict= false)
-    @Throws({ AsyncRequestErrorProvider.class })
-    public void asyncRequest(
+    @Throws({ RequestAsyncErrorProvider.class })
+    public void requestAsync(
         @Config Client client,
         String responseHandler,
         @ParameterGroup(name= "Request configuration") RequestAttributes requestAttributes,
@@ -304,8 +304,8 @@ public class ClientOperations
      * @param handlerName Name of the response handler that will process the notification received from server.
      * @param observerAttributes Attributes of the observe request.
      */
-    @Throws({ StartObserverErrorProvider.class })
-    public void startObserver( @Config Client client, String handlerName, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
+    @Throws({ ObserverStartErrorProvider.class })
+    public void observerStart( @Config Client client, String handlerName, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
     {
         try
         {
@@ -336,8 +336,8 @@ public class ClientOperations
      * @param client The client instance that stops the observer.
      * @param observerAttributes Attributes of the observe request
      */
-    @Throws({ StopObserverErrorProvider.class })
-    public void stopObserver( @Config Client client, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
+    @Throws({ ObserverStopErrorProvider.class })
+    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
     {
         //TODO confirmable is not applicable
         try
@@ -355,11 +355,11 @@ public class ClientOperations
     }
 
     /**
-     * The List observers processor returns a list containing the uri's of all active observers of the CoAP client.
+     * This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.
      * @param client The client instance of which the observers are listed.
      * @return the list of observed uri's 
      */
-    public List< String > listObservers( @Config Client client )
+    public List< String > observerList( @Config Client client )
     {
         CopyOnWriteArrayList< String > list= new CopyOnWriteArrayList< String >();
         list.addAll( client.getRelations().keySet() );

@@ -64,38 +64,6 @@
         <parameters/>
     </extension>
     <operations>
-        <operation name="asyncRequest">
-            <description><![CDATA[The Async Request Processor issues a request on a CoAP server. The processor is asynchronous, meaning that it will not block. The response will be processed by specified response handler.]]></description>
-            <parameters>
-                <parameter name="responseHandler">
-                    <description><![CDATA[Name of the handler that will receive the response.]]></description>
-                </parameter>
-                <parameter name="requestPayload">
-                    <description><![CDATA[The payload of the request.]]></description>
-                </parameter>
-                <parameter name="requestCode">
-                    <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
-                </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
-                </parameter>
-                <parameter name="queryParameters">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
-                </parameter>
-            </parameters>
-        </operation>
         <operation name="discover">
             <description><![CDATA[The Discover processor retrieves information about CoAP resources of a server.]]></description>
             <parameters>
@@ -119,14 +87,63 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="listObservers">
-            <description><![CDATA[The List observers processor returns a list containing the uri's of all active observers of the CoAP client.]]></description>
+        <operation name="observerList">
+            <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
             <parameters>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
                 </parameter>
                 <parameter name="targetValue">
                     <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="observerStart">
+            <description><![CDATA[The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.]]></description>
+            <parameters>
+                <parameter name="handlerName">
+                    <description><![CDATA[Name of the response handler that will process the notification received from server.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="observerStop">
+            <description><![CDATA[Stop a running observer.]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParameters">
+                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -188,11 +205,17 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="startObserver">
-            <description><![CDATA[The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.]]></description>
+        <operation name="requestAsync">
+            <description><![CDATA[The  RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.]]></description>
             <parameters>
-                <parameter name="handlerName">
-                    <description><![CDATA[Name of the response handler that will process the notification received from server.]]></description>
+                <parameter name="responseHandler">
+                    <description><![CDATA[Name of the handler that will receive the response.]]></description>
+                </parameter>
+                <parameter name="requestPayload">
+                    <description><![CDATA[The payload of the request.]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
                 </parameter>
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
@@ -214,59 +237,16 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="stopObserver">
-            <description><![CDATA[Stop a running observer.]]></description>
-            <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
-                </parameter>
-                <parameter name="queryParameters">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
-                </parameter>
-            </parameters>
-        </operation>
-        <operation name="ListResources">
-            <description><![CDATA[The List Resources processor returns a list of uri's of the resources of the CoAP server that match given uri pattern.]]></description>
+        <operation name="notify">
+            <description><![CDATA[The Notify processor initiates notifications to observing clients. Use this when the resource content has changed. For every observing client and resource an internal get-request is issued on the listener concerned. The response that the listener flow will be used as notication as is sent to the observing client.]]></description>
             <parameters>
                 <parameter name="uriPattern">
-                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
-                </parameter>
-                <parameter name="target">
-                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
-                </parameter>
-                <parameter name="targetValue">
-                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                    <description><![CDATA[The uri pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
                 </parameter>
             </parameters>
         </operation>
-        <operation name="ResourceExists">
-            <description><![CDATA[The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.]]></description>
-            <parameters>
-                <parameter name="uriPattern">
-                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
-                </parameter>
-                <parameter name="target">
-                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
-                </parameter>
-                <parameter name="targetValue">
-                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
-                </parameter>
-            </parameters>
-        </operation>
-        <operation name="addResource">
-            <description><![CDATA[The Add Resource processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.]]></description>
+        <operation name="resourceAdd">
+            <description><![CDATA[The Resource Add processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.]]></description>
             <parameters>
                 <parameter name="uri">
                     <description><![CDATA[The uri of the resource to add.]]></description>
@@ -294,19 +274,39 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="removeResource">
-            <description><![CDATA[The Remove Resource processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
+        <operation name="resourceExists">
+            <description><![CDATA[The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.]]></description>
             <parameters>
                 <parameter name="uriPattern">
-                    <description><![CDATA[The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
                 </parameter>
             </parameters>
         </operation>
-        <operation name="resourceChanged">
-            <description><![CDATA[The Resource Changed processor is used to indicates that resources content has changed. It initiates notifications to observing clients. For every observing client and resource an internal get-request is issued on the listener of the resource concerned. The listener flow then processes the get and responses will be sent to the observing client. As a result every client will be notified of the changed resource content.]]></description>
+        <operation name="resourceList">
+            <description><![CDATA[Returns a list of uri's of the resources, that match given uri pattern.]]></description>
             <parameters>
                 <parameter name="uriPattern">
-                    <description><![CDATA[The uri pattern specifies the resource(s) that have changed. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                    <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="resourceRemove">
+            <description><![CDATA[The  Resource Remove processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
+            <parameters>
+                <parameter name="uriPattern">
+                    <description><![CDATA[The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
                 </parameter>
             </parameters>
         </operation>

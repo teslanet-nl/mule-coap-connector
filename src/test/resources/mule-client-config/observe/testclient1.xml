@@ -45,11 +45,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint" />
 
 	<flow name="start_temporary">
-		<coap:start-observer config-ref="config" handlerName="handler_temporary" path="/observe/temporary"/>
+		<coap:observer-start config-ref="config" handlerName="handler_temporary" path="/observe/temporary"/>
 	</flow>
 
 	<flow name="stop_temporary">
-		<coap:stop-observer config-ref="config" path="/observe/temporary"/>
+		<coap:observer-stop config-ref="config" path="/observe/temporary"/>
 	</flow>
 
 
@@ -77,11 +77,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_temporary1">
-		<coap:start-observer config-ref="config" handlerName="handler_temporary1" path="/observe/temporary1"/>
+		<coap:observer-start config-ref="config" handlerName="handler_temporary1" path="/observe/temporary1"/>
 	</flow>
 
 	<flow name="stop_temporary1">
-		<coap:stop-observer config-ref="config" path="/observe/temporary1"/>
+		<coap:observer-stop config-ref="config" path="/observe/temporary1"/>
 	</flow>
 
 
@@ -110,11 +110,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_temporary2">
-		<coap:start-observer config-ref="config" handlerName="handler_temporary2"  path="/observe/temporary2"/>
+		<coap:observer-start config-ref="config" handlerName="handler_temporary2"  path="/observe/temporary2"/>
 	</flow>
 
 	<flow name="stop_temporary2">
-		<coap:stop-observer config-ref="config" path="/observe/temporary2"/>
+		<coap:observer-stop config-ref="config" path="/observe/temporary2"/>
 
 	</flow>
 
@@ -143,11 +143,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage1">
-		<coap:start-observer config-ref="config" handlerName="handler_maxage1" path="/observe/maxage1"/>
+		<coap:observer-start config-ref="config" handlerName="handler_maxage1" path="/observe/maxage1"/>
 	</flow>
 
 	<flow name="stop_maxage1">
-		<coap:stop-observer config-ref="config" path="/observe/maxage1"/>
+		<coap:observer-stop config-ref="config" path="/observe/maxage1"/>
 	</flow>
 
 	<flow name="do_put_maxage1">
@@ -173,11 +173,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="start_maxage1_nonotify">
-		<coap:start-observer config-ref="config" handlerName="handler_maxage1_nonotify" path="/observe/maxage1_nonotify"/>
+		<coap:observer-start config-ref="config" handlerName="handler_maxage1_nonotify" path="/observe/maxage1_nonotify"/>
 	</flow>
 
 	<flow name="stop_maxage1_nonotify">
-		<coap:stop-observer config-ref="config" path="/observe/maxage1_nonotify"/>
+		<coap:observer-stop config-ref="config" path="/observe/maxage1_nonotify"/>
 	</flow>
 
 	<flow name="do_put_maxage1_nonotify">
@@ -204,12 +204,12 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage4_nonotify">
-		<coap:start-observer config-ref="config" handlerName="handler_maxage4_nonotify" 
+		<coap:observer-start config-ref="config" handlerName="handler_maxage4_nonotify" 
 			path="/observe/maxage4_nonotify"/>
 	</flow>
 
 	<flow name="stop_maxage4_nonotify">
-		<coap:stop-observer config-ref="config" path="/observe/maxage4_nonotify"/>
+		<coap:observer-stop config-ref="config" path="/observe/maxage4_nonotify"/>
 	</flow>
 
 	<flow name="do_put_maxage4_nonotify">
@@ -258,7 +258,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</coap:request>
 	</flow>
 	<flow name="observer_list">
-		<coap:list-observers config-ref="config" />
+		<coap:observer-list config-ref="config" />
 	</flow>
 
 

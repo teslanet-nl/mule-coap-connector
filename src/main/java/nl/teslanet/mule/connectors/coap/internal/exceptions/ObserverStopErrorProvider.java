@@ -33,10 +33,10 @@ import nl.teslanet.mule.connectors.coap.api.error.Errors;
 
 
 /**
- * Provider of errors that can be thrown by start observe operation.
+ * Provider of errors that can be thrown by stop observe operation.
  *
  */
-public class StartObserverErrorProvider implements ErrorTypeProvider
+public class ObserverStopErrorProvider implements ErrorTypeProvider
 {
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
@@ -46,7 +46,6 @@ public class StartObserverErrorProvider implements ErrorTypeProvider
     public Set< ErrorTypeDefinition > getErrorTypes()
     {
         Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
-        errors.add( Errors.INVALID_HANDLER_NAME );
         errors.add( Errors.MALFORMED_URI );
         errors.add( Errors.INVALID_OBSERVER );
         return errors;

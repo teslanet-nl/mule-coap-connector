@@ -47,57 +47,57 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    <coap:client-config name="configNOR" host="ditbestaatniet"  port="6767" endpoint="Udp_Endpoint" />
         
     <flow name="get_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/get_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/get_me">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="do_not_get_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/do_not_get_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/do_not_get_me">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="post_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/post_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/post_me">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="do_not_post_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/do_not_post_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/do_not_post_me">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
 
    <flow name="put_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/put_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/put_me">
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="do_not_put_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/do_not_put_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/do_not_put_me">
 
             
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
 
    <flow name="delete_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/delete_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/delete_me">
 
 
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="do_not_delete_me">
-        <coap:async-request config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/do_not_delete_me">
+        <coap:request-async config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/do_not_delete_me">
 
             
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:async-request>
+        </coap:request-async>
    </flow>
    
    <flow name="handler">

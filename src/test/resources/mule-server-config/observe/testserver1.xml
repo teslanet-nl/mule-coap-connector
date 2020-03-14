@@ -105,7 +105,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			class="java.util.HashMap">
 			<java:args><![CDATA[#[{ arg0: vars.resource_path, arg1: payload }]]]></java:args>
 		</java:invoke>
-		<coap:add-resource config-ref="config"
+		<coap:resource-add config-ref="config"
 			uri="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
 			delete="#[vars.delete]" doc:name="add resource" observable="true"/>
 		<set-variable variableName="location_path" value="#[ vars.resource_path ]" />
@@ -161,7 +161,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 					class="java.util.HashMap">
 					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
 				</java:invoke>
-				<coap:resource-changed config-ref="config"
+				<coap:notify config-ref="config"
 					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="586932cb-2d51-41f8-ad1e-7a238b99aa0f" />
@@ -172,7 +172,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 					class="java.util.HashMap" target="old">
 					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
 				</java:invoke>
-				<coap:resource-changed config-ref="config"
+				<coap:notify config-ref="config"
 					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="a7df4f99-f0c7-48a0-9539-da562bc7402c" />				
@@ -182,7 +182,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 					class="java.util.HashMap" target="old">
 					<java:args><![CDATA[#[{ arg0: vars.uri }]]]></java:args>
 				</java:invoke>
-				<coap:remove-resource config-ref="config"
+				<coap:resource-remove config-ref="config"
 					uriPattern="#[ vars.uri ]" />
 				<set-variable variableName="response_code" value="DELETED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="cbe2e932-f189-4cda-b6df-9de782e6bf93" />

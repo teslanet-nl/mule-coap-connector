@@ -61,13 +61,13 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    <flow name="listen_add_resources">
       <coap:listener uriPattern="/service/add_resources" config-ref="config"><coap:response/></coap:listener>
 
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_ct" get="true" ><coap:info ct="0,41"/></coap:add-resource>
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_if" get="true" ><coap:info if="if1,if2"/></coap:add-resource>
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_obs" get="true" observable="true"/>
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_rt" get="true" ><coap:info rt="rt1,rt2"/></coap:add-resource>
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_sz" get="true" ><coap:info sz="123456"/></coap:add-resource>
-      <coap:add-resource config-ref="config" uri="/service/resource2_with_title" get="true">
-         <coap:info title="another resource with a title"/>   </coap:add-resource>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_ct" get="true" ><coap:info ct="0,41"/></coap:resource-add>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_if" get="true" ><coap:info if="if1,if2"/></coap:resource-add>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_obs" get="true" observable="true"/>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_rt" get="true" ><coap:info rt="rt1,rt2"/></coap:resource-add>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_sz" get="true" ><coap:info sz="123456"/></coap:resource-add>
+      <coap:resource-add config-ref="config" uri="/service/resource2_with_title" get="true">
+         <coap:info title="another resource with a title"/>   </coap:resource-add>
    </flow>
 
    <flow name="listen_service_resource">
