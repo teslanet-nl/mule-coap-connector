@@ -55,7 +55,7 @@ import nl.teslanet.shaded.org.eclipse.californium.elements.exception.ConnectorEx
 
 //TODO add null payload test
 @RunnerDelegateTo(Parameterized.class)
-public abstract class PayloadTest extends AbstractServerTestCase
+public class PayloadTest extends AbstractServerTestCase
 {
     @Parameters(name= "Request= {0}, port= {1}, path= {2}, contentSize= {3}")
     public static Collection< Object[] > data()
