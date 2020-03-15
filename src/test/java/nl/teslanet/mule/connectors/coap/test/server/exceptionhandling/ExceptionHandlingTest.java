@@ -122,10 +122,10 @@ public class ExceptionHandlingTest extends AbstractServerTestCase
         return "mule-server-config/exceptionhandling/testserver1.xml";
     };
 
-    @Test(timeout= 4000L)
+    @Test(timeout= 8000L)
     public void testException() throws Exception
     {
-        client.setTimeout( 3000L );
+        client.setTimeout( 5000L );
         setClientPath( resourcePath );
         Request request= new Request( requestCode );
         if ( unintendedPayload ) request.setUnintendedPayload();

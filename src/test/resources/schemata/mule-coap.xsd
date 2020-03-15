@@ -914,7 +914,7 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="required" name="handlerName">
           <xs:annotation>
-            <xs:documentation>Name of the response handler that will process the notifications received.</xs:documentation>
+            <xs:documentation>Name of the response handler that will process the notification received from server.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
@@ -1173,7 +1173,7 @@
   </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RequestAsyncType" substitutionGroup="mule:abstract-operator" name="request-async">
     <xs:annotation>
-      <xs:documentation>The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.</xs:documentation>
+      <xs:documentation>The  RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="RequestAsyncType">
