@@ -126,18 +126,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Placement(order= 1, tab= "Endpoint 2")
     Endpoint endpoint2;
 
-    
-    /**
-     * Resources of the server.
-     * /
-    @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    //@ParameterGroup(name= "Server resources")
-    @Alias("root-resource")
-    private ContainedResources serverResources;
-    */
-
     /**
      * The root resources of the server.
      */
@@ -304,7 +292,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         return registry;
     }
-    
+
     /**
      * @return the resources
      */
