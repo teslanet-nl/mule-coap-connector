@@ -23,13 +23,15 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -118,15 +120,15 @@ public class ResourceConfig
     private ResourceInfo info;
 
     /**
-     * The list of child-resources. 
+     * The subordinate resources of the resource..
      */
     @Parameter
+    @Optional
+    @NullSafe
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
-    @Summary("The list of resources contained by this resource.")
-    @ParameterGroup(name= "Contained resources")
-    //@Placement(tab= "Resources", order=1)
-    private ContainedResources containedResources;
+    @Summary(value= "The subordinate resources of the resource.")
+    private List< ResourceConfig > subResources;
 
     /**
     * @return the resourceName
@@ -257,25 +259,28 @@ public class ResourceConfig
     }
 
     /**
-     * @return the containedResources
+     * @return the subordinate resources
      */
-    public ContainedResources getContainedResources()
+    public List< ResourceConfig > getSubResources()
     {
-        return containedResources;
+        return subResources;
     }
 
     /**
-     * @param containedResources the containedResources to set
+     * @param resources the subordinate resources to set on this resource.
      */
-    public void setContainedResources( ContainedResources containedResources )
+    public void setResources( List< ResourceConfig > resources )
     {
-        this.containedResources= containedResources;
+        this.subResources= resources;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString()
     {
         String printName= ( resourceName == null ? "nullName" : resourceName );
-        String printResources= ( containedResources == null || containedResources.getSubResources() == null ? "leaf" : containedResources.getSubResources().toString() );
+        String printResources= ( subResources == null ? "leaf" : subResources.toString() );
         return printName + " : " + printResources;
     }
 }

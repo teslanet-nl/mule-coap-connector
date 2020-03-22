@@ -39,8 +39,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config" endpoint="udp">
-		<coap:root-resource>
-			<coap:sub-resources>
+		<coap:resources>
 				<coap:resource resourceName="service">
 					<coap:sub-resources>
 						<coap:resource resourceName="get_me" get="true" />
@@ -49,8 +48,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 						<coap:resource resourceName="delete_me" delete="true" />
 					</coap:sub-resources>
 				</coap:resource>
-			</coap:sub-resources>
-		</coap:root-resource>
+			</coap:resources>
 	</coap:server-config>
 
 
@@ -60,8 +58,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:udp-endpoint>
 
 	<coap:server-config name="configLocal" endpoint="udpLocal">
-		<coap:root-resource>
-			<coap:sub-resources>
+		<coap:resources>
 				<coap:resource resourceName="service">
 					<coap:sub-resources>
 						<coap:resource resourceName="get_me" get="true" />
@@ -70,8 +67,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 						<coap:resource resourceName="delete_me" delete="true" />
 					</coap:sub-resources>
 				</coap:resource>
-			</coap:sub-resources>
-		</coap:root-resource>
+			</coap:resources>
 	</coap:server-config>
 
    	<flow name="listen">

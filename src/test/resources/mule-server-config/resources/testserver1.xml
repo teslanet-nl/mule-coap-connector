@@ -42,8 +42,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config" endpoint="udp">
-		<coap:root-resource>
-			<coap:sub-resources>
+		<coap:resources>
 				<coap:resource resourceName="service">
 					<coap:sub-resources>
 						<coap:resource resourceName="add_resource">
@@ -62,8 +61,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 							get="true" post="true" put="true" delete="true" observable="true" />
 					</coap:sub-resources>
 				</coap:resource>
-			</coap:sub-resources>
-		</coap:root-resource>
+			</coap:resources>
 	</coap:server-config>
 	<object doc:name="Object" doc:id="2a2f2072-4b90-43dd-ba47-73795a916690" name="storage" class="java.util.HashMap" />
 	<flow name="listen_add_resource">

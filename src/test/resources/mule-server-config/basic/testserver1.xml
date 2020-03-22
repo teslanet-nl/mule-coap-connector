@@ -39,8 +39,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 				<coap:exchange-params exchangeLifetime="1000" />
 			</coap:udp-endpoint>
 		</coap:endpoint>
-		<coap:root-resource>
-			<coap:sub-resources>
+		<coap:resources>
          <coap:resource resourceName="basic">
             <coap:sub-resources>
                <coap:resource resourceName="get_me" get="true"/>
@@ -57,8 +56,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
                <coap:resource resourceName="do_not_delete_me2"/>
             </coap:sub-resources>
 				</coap:resource>
-			</coap:sub-resources>
-		</coap:root-resource>
+		</coap:resources>
    </coap:server-config>
 
 

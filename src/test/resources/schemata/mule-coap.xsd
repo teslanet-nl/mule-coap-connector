@@ -21,6 +21,7 @@
   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
   #L%
   -->
+
 <xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.teslanet.nl/schema/mule/coap" attributeFormDefault="unqualified" elementFormDefault="qualified">
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
   <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"></xs:import>
@@ -1270,7 +1271,7 @@
           <xs:annotation>
             <xs:documentation>The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.</xs:documentation>
           </xs:annotation>
-          <xs:sequence minOccurs="1" maxOccurs="1">
+          <xs:sequence minOccurs="0" maxOccurs="1">
             <xs:element minOccurs="0" maxOccurs="1" name="endpoint">
               <xs:complexType>
                 <xs:choice minOccurs="1" maxOccurs="1">
@@ -1295,14 +1296,14 @@
                 </xs:choice>
               </xs:complexType>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="root-resource">
+            <xs:element minOccurs="0" maxOccurs="1" name="resources">
               <xs:annotation>
-                <xs:documentation>Resources of the server.</xs:documentation>
+                <xs:documentation>The root resources of the server.</xs:documentation>
               </xs:annotation>
               <xs:complexType>
-                <xs:complexContent>
-                  <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ContainedResources"></xs:extension>
-                </xs:complexContent>
+                <xs:sequence>
+                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-resource"></xs:element>
+                </xs:sequence>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -1310,6 +1311,11 @@
           <xs:attribute type="xs:string" use="optional" name="endpoint"></xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="endpoint1"></xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="endpoint2"></xs:attribute>
+          <xs:attribute type="mule:substitutableName" use="optional" name="resources">
+            <xs:annotation>
+              <xs:documentation>The root resources of the server.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
           <xs:attribute type="mule:substitutableInt" use="optional" name="protocolStageThreadCount">
             <xs:annotation>
               <xs:documentation>Thread pool size of endpoint executor. Default value is equal to the number of cores.</xs:documentation>
@@ -1369,25 +1375,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ContainedResources">
-    <xs:annotation>
-      <xs:documentation>Resources of the server.</xs:documentation>
-    </xs:annotation>
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="sub-resources">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-resource"></xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="optional" name="subResources"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ListenerType" substitutionGroup="mule:abstract-message-source" name="listener">
     <xs:annotation>
       <xs:documentation>The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern given, will be listened. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow.</xs:documentation>
@@ -1439,7 +1426,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
@@ -1476,7 +1463,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
@@ -1509,7 +1496,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
@@ -1566,7 +1553,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
@@ -1598,7 +1585,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
@@ -1630,7 +1617,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
-        <xs:attribute type="mule:substitutableName" use="required" name="config-ref">
+        <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>

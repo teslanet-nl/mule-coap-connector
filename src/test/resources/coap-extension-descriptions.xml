@@ -21,6 +21,7 @@
   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
   #L%
   -->
+
 <extension-documentation>
     <configs>
         <config name="client">
@@ -49,8 +50,8 @@
                 <parameter name="endpoint2">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="root-resource">
-                    <description><![CDATA[Resources of the server.]]></description>
+                <parameter name="resources">
+                    <description><![CDATA[The root resources of the server.]]></description>
                 </parameter>
                 <parameter name="protocolStageThreadCount">
                     <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
@@ -398,14 +399,6 @@
         </source>
     </sources>
     <types>
-        <type name="nl.teslanet.mule.connectors.coap.api.ContainedResources">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="subResources">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.DiscoveredResource">
             <description><![CDATA[]]></description>
             <parameters>
@@ -495,6 +488,38 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="success">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ResourceConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="resourceName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="get">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="post">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="put">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="delete">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="observable">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="earlyAck">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="info">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="subResources">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

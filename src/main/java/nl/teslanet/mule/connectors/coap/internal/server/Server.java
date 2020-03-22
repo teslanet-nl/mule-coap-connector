@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
@@ -35,12 +36,12 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
@@ -50,7 +51,6 @@ import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ContainedResources;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
@@ -94,6 +94,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
     @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @ParameterDsl(allowReferences= true)
     @Placement(order= 1, tab= "Endpoint")
     Endpoint endpoint;
 
@@ -107,6 +108,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
     @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @ParameterDsl(allowReferences= true)
     @Placement(order= 1, tab= "Endpoint 1")
     Endpoint endpoint1;
 
@@ -120,18 +122,32 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
     @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @ParameterDsl(allowReferences= true)
     @Placement(order= 1, tab= "Endpoint 2")
     Endpoint endpoint2;
 
+    
     /**
      * Resources of the server.
-     */
+     * /
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     //@ParameterGroup(name= "Server resources")
     @Alias("root-resource")
     private ContainedResources serverResources;
+    */
+
+    /**
+     * The root resources of the server.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @ParameterDsl(allowReferences= false)
+    @Summary(value= "The root resources of the server.")
+    private List< ResourceConfig > resources;
 
     /**
      * Thread pool size of endpoint executor. Default value is equal to the number
@@ -139,10 +155,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Summary("Thread pool size of endpoint executor. Default value is equal to the number of cores.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @Placement(tab= "Advanced")
+    @Summary("Thread pool size of endpoint executor. Default value is equal to the number of cores.")
     private Integer protocolStageThreadCount= null;
 
     /**
@@ -224,9 +240,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void start() throws MuleException
     {
         //TODO add testcase when null
-        if ( serverResources != null && serverResources.getSubResources() != null ) try
+        if ( resources != null ) try
         {
-            for ( ResourceConfig resourceConfig : serverResources.getSubResources() )
+            for ( ResourceConfig resourceConfig : resources )
             {
                 registry.add( null, resourceConfig );
             }
@@ -237,7 +253,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             throw new DefaultMuleException( "CoAP configuration error", e );
         }
         server.start();
-        LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") started -> " + serverResources );
+        LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") started -> " + resources );
 
     }
 
@@ -287,6 +303,22 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public ResourceRegistry getRegistry()
     {
         return registry;
+    }
+    
+    /**
+     * @return the resources
+     */
+    public List< ResourceConfig > getResources()
+    {
+        return resources;
+    }
+
+    /**
+     * @param resources the resources to set
+     */
+    public void setResources( List< ResourceConfig > resources )
+    {
+        this.resources= resources;
     }
 
 }

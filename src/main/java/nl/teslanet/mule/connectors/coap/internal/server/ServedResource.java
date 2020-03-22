@@ -143,10 +143,10 @@ public class ServedResource extends CoapResource
             }
         }
         //process resource configuration
-        if ( resourceConfig.getContainedResources() != null && resourceConfig.getContainedResources().getSubResources() != null )
+        if ( resourceConfig.getSubResources() != null )
         {
             //also create children (recursively) 
-            for ( ResourceConfig childResourceConfig : resourceConfig.getContainedResources().getSubResources() )
+            for ( ResourceConfig childResourceConfig : resourceConfig.getSubResources() )
             {
                 ServedResource child= new ServedResource( childResourceConfig );
                 add( child );
