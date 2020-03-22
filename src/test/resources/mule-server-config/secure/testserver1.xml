@@ -63,8 +63,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener uriPattern="/service/*" config-ref="config">
-			<coap:response-body ><![CDATA[#[vars.replacement]]]></coap:response-body>
-			<coap:response />
+			<coap:response >
+				<coap:response-payload ><![CDATA[#[vars.replacement]]]></coap:response-payload>
+				
+			</coap:response>
 		</coap:listener>
 		<java:new doc:name="New spy" doc:id="e8b6ab2a-b8bd-4661-8568-404428785a07" 
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

@@ -33,10 +33,10 @@ import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.execution.OnTerminate;
 import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -45,9 +45,9 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.ResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
@@ -101,19 +101,20 @@ public class Listener extends Source< byte[], ReceivedRequestAttributes >
 
     @OnSuccess
     @MediaType(value= "*/*", strict= false)
-    public void onSuccess( @Content TypedValue< byte[] > responseBody, ResponseAttributes response, SourceCallbackContext callbackContext ) throws Exception
+    public void onSuccess( @ParameterGroup(name= "Response", showInDsl= true) ResponseBuilder response, SourceCallbackContext callbackContext ) throws Exception
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
             CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
             Response coapResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
             //TODO give user control
-            coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responseBody.getDataType().getMediaType() ) );
+            TypedValue< byte[] > payload= response.getResponsePayload();
+            coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( payload.getDataType().getMediaType() ) );
             if ( response.getOptions() != null )
             {
                 Options.fillOptionSet( coapResponse.getOptions(), response.getOptions(), false );
             }
-            coapResponse.setPayload( responseBody.getValue() );
+            coapResponse.setPayload( payload.getValue() );
             exchange.respond( coapResponse );
         }
     }

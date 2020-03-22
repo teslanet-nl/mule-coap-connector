@@ -1398,11 +1398,43 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractMessageSourceType">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-redelivery-policy"></xs:element>
-          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="response-body"></xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="response">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResponseAttributes"></xs:extension>
+                <xs:extension base="mule:abstractExtensionType">
+                  <xs:sequence>
+                    <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="response-payload">
+                      <xs:annotation>
+                        <xs:documentation>The payload of the CoAP response message.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" maxOccurs="1" name="options">
+                      <xs:annotation>
+                        <xs:documentation>The CoAP options to be set in the CoAP response.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
+                            <xs:complexType>
+                              <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                              <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPResponseCodeEnumType" use="optional" name="responseCode">
+                    <xs:annotation>
+                      <xs:documentation>The CoAP response code to be set in the CoAP response.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute type="mule:expressionMap" use="optional" name="options">
+                    <xs:annotation>
+                      <xs:documentation>The CoAP options to be set in the CoAP response.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -1432,29 +1464,6 @@
             <xs:documentation>Whether this source should only be executed on the primary node when runnning in Cluster</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="response"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ResponseAttributes">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="options">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="option">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPResponseCodeEnumType" use="optional" name="responseCode"></xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="options"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

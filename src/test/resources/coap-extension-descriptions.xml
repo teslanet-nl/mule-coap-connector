@@ -60,7 +60,7 @@
     </configs>
     <connections/>
     <extension name="CoAP">
-        <description><![CDATA[This is the main class of the CoAP connector, is the entry point from which configurations, connection providers, operations and sources are going to be declared.]]></description>
+        <description><![CDATA[A Mule extension that adds CoAP functionality to create CoAP clients and CoAP servers.]]></description>
         <parameters/>
     </extension>
     <operations>
@@ -385,11 +385,14 @@
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
-                <parameter name="responseBody">
-                    <description><![CDATA[]]></description>
+                <parameter name="responseCode">
+                    <description><![CDATA[The CoAP response code to be set in the CoAP response.]]></description>
                 </parameter>
-                <parameter name="response">
-                    <description><![CDATA[]]></description>
+                <parameter name="responsePayload">
+                    <description><![CDATA[The payload of the CoAP response message.]]></description>
+                </parameter>
+                <parameter name="options">
+                    <description><![CDATA[The CoAP options to be set in the CoAP response.]]></description>
                 </parameter>
             </parameters>
         </source>
@@ -512,17 +515,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="ct">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.ResponseAttributes">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="responseCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="options">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

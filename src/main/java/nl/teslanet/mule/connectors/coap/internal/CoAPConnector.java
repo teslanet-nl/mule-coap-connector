@@ -58,9 +58,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
 
 /**
- * This is the main class of the CoAP connector, is the entry point from which
- * configurations, connection providers, operations and sources are going to be
- * declared.
+ * A Mule extension that adds CoAP functionality to create CoAP clients and CoAP servers.
  */
 @Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
 @Extension(name= "CoAP", vendor= "teslanet.nl")

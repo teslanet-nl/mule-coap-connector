@@ -26,17 +26,20 @@ package nl.teslanet.mule.connectors.coap.api;
 import java.util.Map;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The attributes os a CoAP response that is received or that will be returned.
+ * The attributes of a CoAP response that is received or that will be returned.
  *
  */
-public class ResponseAttributes
+public class ResponseBuilder
 {
     /**
      * The CoAP response code to be set in the CoAP response.
@@ -44,8 +47,18 @@ public class ResponseAttributes
     @Parameter
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
+    @Placement(tab= "Response", order= 1)
     @Summary("The CoAP response code of the response.")
     private CoAPResponseCode responseCode;
+
+    /**
+     * The payload of the CoAP response message. 
+     */
+    @Parameter
+    @Content(primary= true)
+    @Placement(tab= "Response", order= 2)
+    @Summary("The payload of the CoAP response.")
+    private TypedValue< byte[] > responsePayload;
 
     /**
      * The CoAP options to be set in the CoAP response.
@@ -53,8 +66,9 @@ public class ResponseAttributes
     @Parameter
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
+    @Placement(tab= "Response", order= 3)
     @Summary("The CoAP options of the response.")
-    Map< String, Object > options;
+    private Map< String, Object > options;
 
     /**
      * @return the responseCode
@@ -70,6 +84,22 @@ public class ResponseAttributes
     public void setResponseCode( CoAPResponseCode responseCode )
     {
         this.responseCode= responseCode;
+    }
+
+    /**
+     * @return the responsePayload
+     */
+    public TypedValue< byte[] > getResponsePayload()
+    {
+        return responsePayload;
+    }
+
+    /**
+     * @param responsePayload the responsePayload to set
+     */
+    public void setResponsePayload( TypedValue< byte[] > responsePayload )
+    {
+        this.responsePayload= responsePayload;
     }
 
     /**
