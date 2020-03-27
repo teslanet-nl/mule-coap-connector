@@ -33,7 +33,7 @@
 	
 	<groupId>nl.teslanet.mule.connectors.coap</groupId>
 	<artifactId>mule-coap-connector</artifactId>
-	<version>2.0.0-M2-13-SNAPSHOT</version>
+	<version>2.0.0-M2-SNAPSHOT</version>
 	<packaging>mule-extension</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
@@ -58,7 +58,7 @@
 	<properties>
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
-		<californium.version>2.0.0</californium.version>
+		<californium.version>2.2.0</californium.version>
 	</properties>
 
 	<scm>
