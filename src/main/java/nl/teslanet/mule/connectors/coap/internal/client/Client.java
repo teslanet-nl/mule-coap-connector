@@ -71,6 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.config.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
@@ -336,20 +337,33 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     /**
      * Get a querystring containing containing query parameters that can be use as part of a an Uri-string.
-     * @param queryParameters List of query parameters.
+     * @param list List of query parameters.
      * @return The querystring. 
      */
-    String toQueryString( List< String > queryParameters )
+    String toQueryString( List< ? extends AbstractQueryParam > list )
     {
-        if ( queryParameters == null ) return null;
+        if ( list == null ) return null;
 
         StringBuilder builder= new StringBuilder();
         boolean first;
-        Iterator< String > it;
-        for ( first= true, it= queryParameters.iterator(); it.hasNext(); first= false )
+        Iterator< ? extends AbstractQueryParam > it;
+        for ( first= true, it= list.iterator(); it.hasNext(); )
         {
-            if ( !first ) builder.append( "&" );
-            builder.append( it.next() );
+            AbstractQueryParam queryParamWithExpressionSupport= it.next();
+            if ( queryParamWithExpressionSupport.hasKey() )
+            {
+                if ( first )
+                {
+                    builder.append( "&" );
+                    first= false;
+                }
+                builder.append( queryParamWithExpressionSupport.getKey() );
+                if ( queryParamWithExpressionSupport.hasValue() )
+                {
+                    builder.append( "=" );
+                    builder.append( queryParamWithExpressionSupport.getValue() );
+                }
+            }
         }
         return builder.toString();
     }
@@ -591,7 +605,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws IOException 
      * @throws ConnectorException 
      */
-    Set< WebLink > discover( boolean confirmable, String host, Integer port, List< String > query ) throws InternalMalformedUriException,
+    Set< WebLink > discover( boolean confirmable, String host, Integer port, List< ? extends AbstractQueryParam > query ) throws InternalMalformedUriException,
         InternalNoResponseException,
         InternalUnexpectedResponseException,
         ConnectorException,
@@ -627,7 +641,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalMalformedUriException
      * @throws InternalInvalidHandlerNameException
      */
-    void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< String > queryParameters ) throws InternalInvalidObserverException,
+    void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters )
+        throws InternalInvalidObserverException,
         InternalMalformedUriException,
         InternalInvalidHandlerNameException
     {
@@ -718,7 +733,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalMalformedUriException
      * @throws InternalInvalidObserverException
      */
-    void stopObserver( String host, Integer port, String path, List< String > queryParameters ) throws InternalMalformedUriException, InternalInvalidObserverException
+    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalMalformedUriException, InternalInvalidObserverException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
         CoapObserveRelation relation= getRelation( uri );

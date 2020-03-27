@@ -30,8 +30,11 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.config.QueryParam;
 
 
 /**
@@ -84,8 +87,9 @@ public class ObserverAttributes
     @Parameter
     @Expression(ExpressionSupport.SUPPORTED)
     @Optional
+    @DisplayName("Query parameters")
     @Summary("The query parameters to send with the observe request.")
-    private List< String > queryParameters= null;
+    private List< QueryParam > queryParams= null;
 
     /**
      * The CoAP options to send with the request.
@@ -147,17 +151,17 @@ public class ObserverAttributes
     /**
      * @return the queryParameters
      */
-    public List< String > getQueryParameters()
+    public List< QueryParam > getQueryParams()
     {
-        return queryParameters;
+        return queryParams;
     }
 
     /**
      * @param queryParameters the queryParameters to set
      */
-    public void setQueryParameters( List< String > queryParameters )
+    public void setQueryParams( List< QueryParam > queryParameters )
     {
-        this.queryParameters= queryParameters;
+        this.queryParams= queryParameters;
     }
 
     /**

@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.californium.core.server.resources.Resource;
 
 import nl.teslanet.mule.connectors.coap.internal.Defs;
-import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.config.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 
 import java.util.ArrayList;

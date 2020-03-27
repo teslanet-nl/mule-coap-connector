@@ -31,6 +31,8 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.QueryParam;
+
 
 /**
  * The attributes of a CoAP discover request.
@@ -74,7 +76,7 @@ public class DiscoverAttributes
     @Expression(ExpressionSupport.SUPPORTED)
     @Optional
     @Summary("The query parameters to send with the request.")
-    private List< String > queryParameters= null;
+    private List< QueryParam > queryParams= null;
 
     /**
      * @return the host
@@ -111,17 +113,17 @@ public class DiscoverAttributes
     /**
      * @return the queryParameters
      */
-    public List< String > getQueryParameters()
+    public List< QueryParam > getQueryParams()
     {
-        return queryParameters;
+        return queryParams;
     }
 
     /**
      * @param queryParameters the queryParameters to set
      */
-    public void setQueryParameters( List< String > queryParameters )
+    public void setQueryParams( List< QueryParam > queryParameters )
     {
-        this.queryParameters= queryParameters;
+        this.queryParams= queryParameters;
     }
 
     /**

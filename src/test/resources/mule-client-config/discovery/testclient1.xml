@@ -73,7 +73,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
    </flow>
    
    <flow name="discover_dynamic">
-        <coap:discover config-ref="dynamic_service" host="#[vars.host]" port="#[vars.port]" queryParameters="#[vars.query]"/>
+        <coap:discover config-ref="dynamic_service" host="#[vars.host]" port="#[vars.port]" queryParams="#[vars.query]"/>
    </flow>
    
    <flow name="post">

@@ -31,6 +31,7 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
@@ -49,6 +50,7 @@ public class ResponseBuilder
     @Expression(ExpressionSupport.SUPPORTED)
     @Placement(tab= "Response", order= 1)
     @Summary("The CoAP response code of the response.")
+    @Example("CONTENT")
     private CoAPResponseCode responseCode;
 
     /**

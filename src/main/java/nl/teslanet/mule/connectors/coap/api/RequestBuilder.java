@@ -27,19 +27,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.config.QueryParam;
 
 
 /**
  * The attributes of a CoAP request.
  *
  */
-public class RequestAttributes
+public class RequestBuilder
 {
     /**
      * The CoAP request code specifying the requested action on the resource on the server.
@@ -50,13 +55,18 @@ public class RequestAttributes
     @Summary("The CoAP request code specifying the requested action on the resource on the server.")
     private CoAPRequestCode requestCode;
 
-    /**
+    @Parameter
+    @Content(primary= true)
+    @Summary("The CoAP request payload.")
+    private TypedValue< byte[] > requestPayload;
+
+    /**private
      * When true the server is expected to acknowledge reception of the request.
      */
     @Parameter
     @Optional(defaultValue= "true")
     @Expression(ExpressionSupport.SUPPORTED)
-    @Summary(" When true the server is expected to acknowledge reception of the request.")
+    @Summary("When true the server is expected to acknowledge reception of the request.")
     private boolean confirmable= true;
 
     /**
@@ -92,11 +102,12 @@ public class RequestAttributes
      * The query parameters to send with the request.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
     @Optional
     @NullSafe
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("The query parameters to send with the request.")
-    private List< String > queryParameters= null;
+    @DisplayName("Query Parameters")
+    private List< QueryParam > queryParams= null;
 
     /**
      * The CoAP options to send with the request.
@@ -106,6 +117,7 @@ public class RequestAttributes
     @NullSafe
     @Expression(ExpressionSupport.SUPPORTED)
     @Summary("The CoAP options to send with the request.")
+    @DisplayName("Options")
     private Map< String, Object > options;
 
     /**
@@ -122,6 +134,22 @@ public class RequestAttributes
     public void setRequestCode( CoAPRequestCode requestCode )
     {
         this.requestCode= requestCode;
+    }
+
+    /**
+     * @return the requestPayload
+     */
+    public TypedValue< byte[] > getRequestPayload()
+    {
+        return requestPayload;
+    }
+
+    /**
+     * @param requestPayload the requestPayload to set
+     */
+    public void setRequestPayload( TypedValue< byte[] > requestPayload )
+    {
+        this.requestPayload= requestPayload;
     }
 
     /**
@@ -175,17 +203,17 @@ public class RequestAttributes
     /**
      * @return the queryParameters
      */
-    public List< String > getQueryParameters()
+    public List< QueryParam > getQueryParams()
     {
-        return queryParameters;
+        return queryParams;
     }
 
     /**
      * @param queryParameters the queryParameters to set
      */
-    public void setQueryParameters( List< String > queryParameters )
+    public void setQueryParams( List< QueryParam > queryParameters )
     {
-        this.queryParameters= queryParameters;
+        this.queryParams= queryParameters;
     }
 
     /**

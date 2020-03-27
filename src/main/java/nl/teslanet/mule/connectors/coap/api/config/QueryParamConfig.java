@@ -20,49 +20,57 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api;
+package nl.teslanet.mule.connectors.coap.api.config;
 
-
-import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-
+//TODO make separate config possible
 /**
- * Container of a list of resource configurations.
- *
+ * CoAP URI Query Parameter without expression support. 
  */
-public class ContainedResources
+public class QueryParamConfig extends AbstractQueryParam
 {
     /**
-     * A set of resources that are contained by a server or parent resource"
+     * The key of the query parameter.
      */
     @Parameter
     @Optional
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "A set of resources that are contained.")
-    private List< ResourceConfig > subResources;
+    @Summary("The key of query parameter. When empty the parameter is ignored.")
+    @Example("some_key")
+    private String key= null;
 
     /**
-     * @return the resources
+     * The value of the query parameter.
      */
-    public List< ResourceConfig > getSubResources()
+    @Parameter
+    @Optional
+    @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @Summary("The value of the query parameters. When empty only the key will be added to request.")
+    @Example("some_value_if_any")
+    private String value= null;
+
+    /**
+     * @return the key of the query parameter.
+     */
+    @Override
+    public String getKey()
     {
-        return subResources;
+        return key;
     }
 
     /**
-     * @param resources the resources to set
+     * @return the value of the query parameter.
      */
-    public void setSubResources( List< ResourceConfig > resources )
+    @Override
+    public String getValue()
     {
-        this.subResources= resources;
+        return value;
     }
-
 }

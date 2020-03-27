@@ -32,12 +32,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
-import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
@@ -46,7 +43,7 @@ import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ObserverAttributes;
 import nl.teslanet.mule.connectors.coap.api.PingAttributes;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.ExchangeException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
@@ -55,7 +52,6 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
@@ -64,10 +60,11 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidReque
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
 
 
 //TODO add error tests
@@ -80,7 +77,7 @@ public class ClientOperations
      * The Request Processor issues a request on a CoAP server.
      * The processor blocks until a response is received or a timeout occurs. 
      * @param client The client to use to issue the request.
-     * @param requestAttributes The request attributes
+     * @param requestBuilder The request attributes
      * @param requestPayload The payload of the request
      * @return The result containing the response received (if any) and the context of the request.
      */
@@ -88,22 +85,22 @@ public class ClientOperations
     @Throws({ RequestErrorProvider.class })
     public Result< byte[], ReceivedResponseAttributes > request(
         @Config Client client,
-        @ParameterGroup(name= "Request configuration") RequestAttributes requestAttributes,
-        @Optional @Content TypedValue< byte[] > requestPayload )
+        @ParameterGroup(name= "Request") RequestBuilder requestBuilder
+        )
     {
         try
         {
             String uri= client.getURI(
-                requestAttributes.getHost(),
-                requestAttributes.getPort(),
-                requestAttributes.getPath(),
-                client.toQueryString( requestAttributes.getQueryParameters() ) ).toString();
+                requestBuilder.getHost(),
+                requestBuilder.getPort(),
+                requestBuilder.getPath(),
+                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             return client.doRequest(
-                requestAttributes.isConfirmable(),
-                AttibuteUtils.toCode( requestAttributes.getRequestCode() ),
+                requestBuilder.isConfirmable(),
+                AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
                 uri,
-                requestPayload,
-                requestAttributes.getOptions(),
+                requestBuilder.getRequestPayload(),
+                requestBuilder.getOptions(),
                 null );
         }
         catch ( InternalInvalidHandlerNameException e )
@@ -139,7 +136,7 @@ public class ClientOperations
      * of a response (if any) is delegated to the response handler.
      * @param client The client to use for the request.
      * @param responseHandler Name of the handler that will receive the response.
-     * @param requestAttributes The request attributes.
+     * @param requestBuilder The request attributes.
      * @param requestPayload The payload of the request.
      */
     @MediaType(value= "*/*", strict= false)
@@ -147,22 +144,21 @@ public class ClientOperations
     public void requestAsync(
         @Config Client client,
         String responseHandler,
-        @ParameterGroup(name= "Request configuration") RequestAttributes requestAttributes,
-        @Optional @Content TypedValue< byte[] > requestPayload )
+        @ParameterGroup(name= "Request") RequestBuilder requestBuilder )
     {
         try
         {
             String uri= client.getURI(
-                requestAttributes.getHost(),
-                requestAttributes.getPort(),
-                requestAttributes.getPath(),
-                client.toQueryString( requestAttributes.getQueryParameters() ) ).toString();
+                requestBuilder.getHost(),
+                requestBuilder.getPort(),
+                requestBuilder.getPath(),
+                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             client.doRequest(
-                requestAttributes.isConfirmable(),
-                AttibuteUtils.toCode( requestAttributes.getRequestCode() ),
+                requestBuilder.isConfirmable(),
+                AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
                 uri,
-                requestPayload,
-                requestAttributes.getOptions(),
+                requestBuilder.getRequestPayload(),
+                requestBuilder.getOptions(),
                 responseHandler );
         }
         catch ( InternalInvalidHandlerNameException e )
@@ -199,7 +195,7 @@ public class ClientOperations
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
     @Throws({ PingErrorProvider.class })
-    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping configuration") PingAttributes pingAttributes )
+    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping") PingAttributes pingAttributes )
     {
         try
         {
@@ -231,12 +227,12 @@ public class ClientOperations
      * @return The resources description on the server that have been discovered.
      */
     @Throws({ DiscoverErrorProvider.class })
-    public CopyOnWriteArraySet< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover configuration") DiscoverAttributes discoverAttributes )
+    public CopyOnWriteArraySet< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverAttributes discoverAttributes )
     {
         Set< WebLink > links= null;
         try
         {
-            links= client.discover( discoverAttributes.isConfirmable(), discoverAttributes.getHost(), discoverAttributes.getPort(), discoverAttributes.getQueryParameters() );
+            links= client.discover( discoverAttributes.isConfirmable(), discoverAttributes.getHost(), discoverAttributes.getPort(), discoverAttributes.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {
@@ -305,7 +301,7 @@ public class ClientOperations
      * @param observerAttributes Attributes of the observe request.
      */
     @Throws({ ObserverStartErrorProvider.class })
-    public void observerStart( @Config Client client, String handlerName, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
+    public void observerStart( @Config Client client, String handlerName, @ParameterGroup(name= "Observer") ObserverAttributes observerAttributes )
     {
         try
         {
@@ -315,7 +311,7 @@ public class ClientOperations
                 observerAttributes.getHost(),
                 observerAttributes.getPort(),
                 observerAttributes.getPath(),
-                observerAttributes.getQueryParameters() );
+                observerAttributes.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {
@@ -337,12 +333,12 @@ public class ClientOperations
      * @param observerAttributes Attributes of the observe request
      */
     @Throws({ ObserverStopErrorProvider.class })
-    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer configuration") ObserverAttributes observerAttributes )
+    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer") ObserverAttributes observerAttributes )
     {
         //TODO confirmable is not applicable
         try
         {
-            client.stopObserver( observerAttributes.getHost(), observerAttributes.getPort(), observerAttributes.getPath(), observerAttributes.getQueryParameters() );
+            client.stopObserver( observerAttributes.getHost(), observerAttributes.getPort(), observerAttributes.getPath(), observerAttributes.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {

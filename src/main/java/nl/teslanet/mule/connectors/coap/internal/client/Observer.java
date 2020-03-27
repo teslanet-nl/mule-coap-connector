@@ -37,6 +37,7 @@ import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.source.Source;
@@ -45,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.config.QueryParamConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
@@ -119,9 +121,11 @@ public class Observer extends Source< byte[], ReceivedResponseAttributes >
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @Optional
+    @DisplayName( "Query paremeters")
     @Summary("The query parameters to send with the observe request.")
-    private List< String > queryParameters= null;
+    private List< QueryParamConfig > queryParamConfigs= null;
 
+    //TODO add options confi
     /**
      * The CoAP relation that has been established
      */
@@ -136,7 +140,7 @@ public class Observer extends Source< byte[], ReceivedResponseAttributes >
         String uri;
         try
         {
-            uri= client.getURI( host, port, path, client.toQueryString( queryParameters ) ).toString();
+            uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
         }
         catch ( InternalMalformedUriException e )
         {
@@ -244,7 +248,7 @@ public class Observer extends Source< byte[], ReceivedResponseAttributes >
         String uri;
         try
         {
-            uri= client.getURI( host, port, path, client.toQueryString( queryParameters ) ).toString();
+            uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
         }
         catch ( InternalMalformedUriException e )
         {
