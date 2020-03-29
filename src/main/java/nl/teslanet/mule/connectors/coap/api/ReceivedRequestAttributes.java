@@ -23,11 +23,7 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import java.util.HashMap;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
 
 
 public class ReceivedRequestAttributes
@@ -70,7 +66,7 @@ public class ReceivedRequestAttributes
     /**
      * The CoAP options that accompanied the request.
      */
-    HashMap< String, Object > options= new HashMap< String, Object >();
+    private OptionAttributes options= new OptionAttributes();
 
     /**
      * @return the requestCode
@@ -187,7 +183,7 @@ public class ReceivedRequestAttributes
     /**
      * @return the options
      */
-    public HashMap< String, Object > getOptions()
+    public OptionAttributes getOptions()
     {
         return options;
     }
@@ -195,7 +191,7 @@ public class ReceivedRequestAttributes
     /**
      * @param options the options to set
      */
-    public void setOptions( HashMap< String, Object > options )
+    public void setOptions( OptionAttributes options )
     {
         this.options= options;
     }
@@ -206,19 +202,18 @@ public class ReceivedRequestAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
-        //        StringBuilder builder= new StringBuilder();
-        //        builder.append( "CoAP Request Attributes:" );
-        //        builder.append( "\n  {" );
-        //        builder.append( "\n    requestCode: ").append( requestCode );
-        //        builder.append( "\n    confirmable: ").append( confirmable );
-        //        builder.append( "\n    requestUri: ").append( requestUri );
-        //        builder.append( "\n    relation: ").append( relation );
-        //        builder.append( "\n    localAddress: ").append( localAddress );
-        //        builder.append( "\n    remoteAddress: ").append( remoteAddress );
-        //        builder.append( "\n    remotePort: ").append( remotePort );
-        //        builder.append( "\n    options: ").append( options );
-        //        builder.append( "\n  }");
-        //        return builder.toString();
+        StringBuilder builder= new StringBuilder();
+        builder.append( "CoAP Request Attributes:" );
+        builder.append( "\n  {" );
+        builder.append( "\n    requestCode: " ).append( requestCode );
+        builder.append( "\n    confirmable: " ).append( confirmable );
+        builder.append( "\n    requestUri: " ).append( requestUri );
+        builder.append( "\n    relation: " ).append( relation );
+        builder.append( "\n    localAddress: " ).append( localAddress );
+        builder.append( "\n    remoteAddress: " ).append( remoteAddress );
+        builder.append( "\n    remotePort: " ).append( remotePort );
+        builder.append( "\n    options: " ).append( options );
+        builder.append( "\n  }" );
+        return builder.toString();
     }
 }

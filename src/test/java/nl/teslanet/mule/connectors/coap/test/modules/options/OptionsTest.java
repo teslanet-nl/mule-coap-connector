@@ -35,7 +35,7 @@ import org.junit.rules.ExpectedException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.options.Options;
+import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 
 import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.Option;
@@ -54,9 +54,9 @@ public class OptionsTest
     @Test
     public void testConstructorDefault()
     {
-        Options options= null;
+        CoAPOptions options= null;
 
-        options= new Options();
+        options= new CoAPOptions();
 
         assertNotNull( "Options default contruction failed", options );
     }
@@ -66,8 +66,8 @@ public class OptionsTest
     {
         OptionSet optionSet= new OptionSet();
 
-        Options options= null;
-        options= new Options( optionSet );
+        CoAPOptions options= null;
+        options= new CoAPOptions( optionSet );
 
         assertNotNull( "Options contruction with optionset failed", options );
         assertTrue( "Options contuction failed to deliver the same optionSet", options.getOptionSet() == optionSet );
@@ -78,8 +78,8 @@ public class OptionsTest
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options options= null;
-        options= new Options( props );
+        CoAPOptions options= null;
+        options= new CoAPOptions( props );
 
         assertNotNull( "Options contruction with empty property map failed", options );
     }
@@ -90,8 +90,8 @@ public class OptionsTest
         HashMap< String, Object > props= new HashMap< String, Object >();
         props.put( "coap.opt.observe", 123 );
 
-        Options options= null;
-        options= new Options( props );
+        CoAPOptions options= null;
+        options= new CoAPOptions( props );
 
         assertNotNull( "Options contruction with empty property map failed", options );
         assertEquals( "Options contruction with one property failed", new Integer( 123 ), options.getOptionSet().getObserve() );
@@ -102,7 +102,7 @@ public class OptionsTest
     {
         OptionSet optionSet= new OptionSet();
 
-        Options options= new Options();
+        CoAPOptions options= new CoAPOptions();
         options.setOptionSet( optionSet );
 
         assertNotNull( "Options contruction with optionset failed", options );
@@ -114,7 +114,7 @@ public class OptionsTest
     {
         OptionSet optionSet= new OptionSet();
 
-        Options options= new Options();
+        CoAPOptions options= new CoAPOptions();
         options.setOptionSet( optionSet );
 
         assertNotNull( "Options contruction with optionset failed", options );
@@ -128,7 +128,7 @@ public class OptionsTest
         Long value= new Long( 45 );
         props.put( "coap.opt.observe", value );
 
-        Options options= new Options( props );
+        CoAPOptions options= new CoAPOptions( props );
         options.getOptionSet().getObserve();
 
         assertEquals( "Options contruction with empty property map failed", new Integer( 45 ), options.getOptionSet().getObserve() );
@@ -141,7 +141,7 @@ public class OptionsTest
         Integer value= new Integer( 45 );
         props.put( "coap.opt.observe", value );
 
-        Options options= new Options( props );
+        CoAPOptions options= new CoAPOptions( props );
         options.getOptionSet().getObserve();
 
         assertEquals( "Options contruction with empty property map failed", new Integer( 45 ), options.getOptionSet().getObserve() );
@@ -154,7 +154,7 @@ public class OptionsTest
         String value= new String( "45" );
         props.put( "coap.opt.observe", value );
 
-        Options options= new Options( props );
+        CoAPOptions options= new CoAPOptions( props );
         options.getOptionSet().getObserve();
 
         assertEquals( "Options contruction with empty property map failed", new Integer( 45 ), options.getOptionSet().getObserve() );
@@ -170,7 +170,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< ETag > list= (List< ETag >) props.get( "coap.opt.if_match.list" );
@@ -191,7 +191,7 @@ public class OptionsTest
         props.put( "coap.opt.if_match.list", new ETag( etagValue1 ) );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", 1, set.getIfMatchCount() );
 
@@ -204,7 +204,7 @@ public class OptionsTest
         props.put( "coap.opt.if_match.list", etagValue1 );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", 1, set.getIfMatchCount() );
 
@@ -226,7 +226,7 @@ public class OptionsTest
         exception.expectMessage( "If-Match" );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", 1, set.getIfMatchCount() );
 
@@ -249,7 +249,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< ETag > list= (List< ETag >) props.get( "coap.opt.if_match.list" );
@@ -275,7 +275,7 @@ public class OptionsTest
         props.put( "coap.opt.if_match.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", 2, set.getIfMatchCount() );
 
@@ -290,7 +290,7 @@ public class OptionsTest
         props.put( "coap.opt.if_match.list", list );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", 2, set.getIfMatchCount() );
 
@@ -310,7 +310,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.uri_host: wrong value", host, props.get( "coap.opt.uri_host" ) );
     }
@@ -324,7 +324,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_host", host );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_host: wrong value", host, set.getUriHost() );
 
@@ -332,7 +332,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_host", new StringWrapper( host ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_host: wrong value", host, set.getUriHost() );
     }
@@ -347,7 +347,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< ETag > list= (List< ETag >) props.get( "coap.opt.etag.list" );
@@ -368,7 +368,7 @@ public class OptionsTest
         props.put( "coap.opt.etag.list", new ETag( etagValue1 ) );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "etag option has wrong count", set.getETagCount(), 1 );
 
@@ -381,7 +381,7 @@ public class OptionsTest
         props.put( "coap.opt.etag.list", etagValue1.clone() );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "etag option has wrong count", 1, set.getETagCount() );
 
@@ -404,7 +404,7 @@ public class OptionsTest
         //exception.expectMessage( "ETag" );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
     }
 
@@ -421,7 +421,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< ETag > list= (List< ETag >) props.get( "coap.opt.etag.list" );
@@ -447,7 +447,7 @@ public class OptionsTest
         props.put( "coap.opt.etag.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "etag option has wrong count", set.getETagCount(), 2 );
 
@@ -462,7 +462,7 @@ public class OptionsTest
         props.put( "coap.opt.etag.list", list );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "if_match option has wrong count", set.getETagCount(), 2 );
 
@@ -481,7 +481,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertTrue( "coap.opt.if_none_match: wrong value", (Boolean) props.get( "coap.opt.if_none_match" ) );
 
@@ -489,7 +489,7 @@ public class OptionsTest
 
         props.clear();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertFalse( "coap.opt.if_none_match: wrong value", (Boolean) props.get( "coap.opt.if_none_match" ) );
     }
@@ -501,7 +501,7 @@ public class OptionsTest
         props.put( "coap.opt.if_none_match", new Boolean( true ) );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.if_none_match: wrong value", set.hasIfNoneMatch() );
 
@@ -509,7 +509,7 @@ public class OptionsTest
         props.put( "coap.opt.if_none_match", new StringWrapper( "true" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.if_none_match: wrong value", set.hasIfNoneMatch() );
 
@@ -517,7 +517,7 @@ public class OptionsTest
         props.put( "coap.opt.if_none_match", new Boolean( false ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertFalse( "coap.opt.if_none_match: wrong value", set.hasIfNoneMatch() );
 
@@ -525,7 +525,7 @@ public class OptionsTest
         props.put( "coap.opt.if_none_match", new StringWrapper( "false" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertFalse( "coap.opt.if_none_match: wrong value", set.hasIfNoneMatch() );
     }
@@ -539,7 +539,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.uri_port: wrong value", port, (Integer) props.get( "coap.opt.uri_port" ) );
     }
@@ -552,7 +552,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_port", port );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_port: wrong value", port, set.getUriPort() );
 
@@ -560,7 +560,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_port", new StringWrapper( "5337" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_port: wrong value", new Integer( 5337 ), set.getUriPort() );
 
@@ -580,7 +580,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< String > list= (List< String >) props.get( "coap.opt.location_path.list" );
@@ -609,7 +609,7 @@ public class OptionsTest
         props.put( "coap.opt.location_path.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.location_path.list: wrong number of path segment", 2, set.getLocationPathCount() );
         List< String > locationlist= set.getLocationPath();
@@ -622,7 +622,7 @@ public class OptionsTest
         props.put( "coap.opt.location_path", total );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.location_path.list: wrong number of path segment", 2, set.getLocationPathCount() );
         locationlist= set.getLocationPath();
@@ -646,7 +646,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< String > list= (List< String >) props.get( "coap.opt.uri_path.list" );
@@ -675,7 +675,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_path.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_path.list: wrong number of path segment", 2, set.getURIPathCount() );
         List< String > uripathlist= set.getUriPath();
@@ -688,7 +688,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_path", total );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_path.list: wrong number of path segment", 2, set.getURIPathCount() );
         uripathlist= set.getUriPath();
@@ -707,7 +707,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.content_format: wrong value", format, (Integer) props.get( "coap.opt.content_format" ) );
     }
@@ -720,7 +720,7 @@ public class OptionsTest
         props.put( "coap.opt.content_format", format );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.content_format: wrong value", format, new Integer( set.getContentFormat() ) );
 
@@ -728,7 +728,7 @@ public class OptionsTest
         props.put( "coap.opt.content_format", new String( "40" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.content_format: wrong value", format, new Integer( set.getContentFormat() ) );
 
@@ -736,7 +736,7 @@ public class OptionsTest
         props.put( "coap.opt.content_format", new StringWrapper( "40" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.content_format: wrong value", format, new Integer( set.getContentFormat() ) );
 
@@ -751,7 +751,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.max_age: wrong value", maxage, (Long) props.get( "coap.opt.max_age" ) );
     }
@@ -764,7 +764,7 @@ public class OptionsTest
         props.put( "coap.opt.max_age", maxage );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.max_age: wrong value", maxage, set.getMaxAge() );
 
@@ -772,7 +772,7 @@ public class OptionsTest
         props.put( "coap.opt.max_age", new Integer( 120 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.max_age: wrong value", maxage, set.getMaxAge() );
 
@@ -780,7 +780,7 @@ public class OptionsTest
         props.put( "coap.opt.max_age", new String( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.max_age: wrong value", maxage, set.getMaxAge() );
 
@@ -788,7 +788,7 @@ public class OptionsTest
         props.put( "coap.opt.max_age", new StringWrapper( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.max_age: wrong value", maxage, set.getMaxAge() );
 
@@ -808,7 +808,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< String > list= (List< String >) props.get( "coap.opt.uri_query.list" );
@@ -837,7 +837,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_query.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_query.list: wrong number of query segments", 2, set.getURIQueryCount() );
         List< String > uriquerylist= set.getUriQuery();
@@ -850,7 +850,7 @@ public class OptionsTest
         props.put( "coap.opt.uri_query", total );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.uri_query.list: wrong number of query segments", 2, set.getURIQueryCount() );
         uriquerylist= set.getUriQuery();
@@ -869,7 +869,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.accept: wrong value", format, (Integer) props.get( "coap.opt.accept" ) );
     }
@@ -882,7 +882,7 @@ public class OptionsTest
         props.put( "coap.opt.accept", format );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.accept: wrong value", format, (Integer) set.getAccept() );
 
@@ -890,7 +890,7 @@ public class OptionsTest
         props.put( "coap.opt.accept", new Integer( 41 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.accept: wrong value", format, (Integer) set.getAccept() );
 
@@ -898,7 +898,7 @@ public class OptionsTest
         props.put( "coap.opt.accept", new String( "41" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.accept: wrong value", format, (Integer) set.getAccept() );
 
@@ -906,7 +906,7 @@ public class OptionsTest
         props.put( "coap.opt.accept", new StringWrapper( "41" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.accept: wrong value", format, (Integer) set.getAccept() );
 
@@ -926,7 +926,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         @SuppressWarnings("unchecked")
         List< String > list= (List< String >) props.get( "coap.opt.location_query.list" );
@@ -955,7 +955,7 @@ public class OptionsTest
         props.put( "coap.opt.location_query.list", list );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.location_query.list: wrong number of query segments", 2, set.getLocationQueryCount() );
         List< String > querylist= set.getLocationQuery();
@@ -968,7 +968,7 @@ public class OptionsTest
         props.put( "coap.opt.location_query", total );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.location_query.list: wrong number of query segments", 2, set.getLocationQueryCount() );
         querylist= set.getLocationQuery();
@@ -987,7 +987,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.proxy_uri: wrong value", uri, props.get( "coap.opt.proxy_uri" ) );
     }
@@ -1001,7 +1001,7 @@ public class OptionsTest
         props.put( "coap.opt.proxy_uri", uri );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.proxy_uri: wrong value", uri, set.getProxyUri() );
 
@@ -1009,7 +1009,7 @@ public class OptionsTest
         props.put( "coap.opt.proxy_uri", new StringWrapper( uri ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.proxy_uri: wrong value", uri, set.getProxyUri() );
     }
@@ -1023,7 +1023,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.proxy_scheme: wrong value", scheme, props.get( "coap.opt.proxy_scheme" ) );
     }
@@ -1037,7 +1037,7 @@ public class OptionsTest
         props.put( "coap.opt.proxy_scheme", scheme );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.proxy_scheme: wrong value", scheme, set.getProxyScheme() );
 
@@ -1045,7 +1045,7 @@ public class OptionsTest
         props.put( "coap.opt.proxy_scheme", new StringWrapper( scheme ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.proxy_scheme: wrong value", scheme, set.getProxyScheme() );
     }
@@ -1063,7 +1063,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.block1.szx: wrong value", szx, props.get( "coap.opt.block1.szx" ) );
         assertEquals( "coap.opt.block1.size: wrong value", size, props.get( "coap.opt.block1.size" ) );
@@ -1086,7 +1086,7 @@ public class OptionsTest
         props.put( "coap.opt.block1.num", num );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block1: wrong value", set.getBlock1(), block );
 
@@ -1096,7 +1096,7 @@ public class OptionsTest
         props.put( "coap.opt.block1.num", new StringWrapper( num.toString() ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block1: wrong value", set.getBlock1(), block );
 
@@ -1106,7 +1106,7 @@ public class OptionsTest
         props.put( "coap.opt.block1.num", num );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block1: wrong value", set.getBlock1(), block );
 
@@ -1116,7 +1116,7 @@ public class OptionsTest
         props.put( "coap.opt.block1.num", new StringWrapper( num.toString() ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block1: wrong value", set.getBlock1(), block );
     }
@@ -1134,7 +1134,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.block2.szx: wrong value", szx, props.get( "coap.opt.block2.szx" ) );
         assertEquals( "coap.opt.block2.size: wrong value", size, props.get( "coap.opt.block2.size" ) );
@@ -1157,7 +1157,7 @@ public class OptionsTest
         props.put( "coap.opt.block2.num", num );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block2: wrong value", set.getBlock2(), block );
 
@@ -1167,7 +1167,7 @@ public class OptionsTest
         props.put( "coap.opt.block2.num", new StringWrapper( num.toString() ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block2: wrong value", set.getBlock2(), block );
 
@@ -1177,7 +1177,7 @@ public class OptionsTest
         props.put( "coap.opt.block2.num", num );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block2: wrong value", set.getBlock2(), block );
 
@@ -1187,7 +1187,7 @@ public class OptionsTest
         props.put( "coap.opt.block2.num", new StringWrapper( num.toString() ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.block2: wrong value", set.getBlock2(), block );
     }
@@ -1201,7 +1201,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.size1: wrong value", size, props.get( "coap.opt.size1" ) );
     }
@@ -1214,7 +1214,7 @@ public class OptionsTest
         props.put( "coap.opt.size1", size );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size1: wrong value", size, set.getSize1() );
 
@@ -1222,7 +1222,7 @@ public class OptionsTest
         props.put( "coap.opt.size1", new Integer( 120 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size1: wrong value", size, set.getSize1() );
 
@@ -1230,7 +1230,7 @@ public class OptionsTest
         props.put( "coap.opt.size1", new String( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size1: wrong value", size, set.getSize1() );
 
@@ -1238,7 +1238,7 @@ public class OptionsTest
         props.put( "coap.opt.size1", new StringWrapper( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size1: wrong value", size, set.getSize1() );
 
@@ -1253,7 +1253,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.size2: wrong value", size, props.get( "coap.opt.size2" ) );
     }
@@ -1266,7 +1266,7 @@ public class OptionsTest
         props.put( "coap.opt.size2", size );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size2: wrong value", size, set.getSize2() );
 
@@ -1274,7 +1274,7 @@ public class OptionsTest
         props.put( "coap.opt.size2", new Integer( 120 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size2: wrong value", size, set.getSize2() );
 
@@ -1282,7 +1282,7 @@ public class OptionsTest
         props.put( "coap.opt.size2", new String( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size2: wrong value", size, set.getSize2() );
 
@@ -1290,7 +1290,7 @@ public class OptionsTest
         props.put( "coap.opt.size2", new StringWrapper( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.size2: wrong value", size, set.getSize2() );
 
@@ -1305,7 +1305,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertEquals( "coap.opt.observe: wrong value", seqnum, props.get( "coap.opt.observe" ) );
     }
@@ -1318,7 +1318,7 @@ public class OptionsTest
         props.put( "coap.opt.observe", seqnum );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.observe: wrong value", seqnum, set.getObserve() );
 
@@ -1326,7 +1326,7 @@ public class OptionsTest
         props.put( "coap.opt.observe", new Integer( 120 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.observe: wrong value", seqnum, set.getObserve() );
 
@@ -1334,7 +1334,7 @@ public class OptionsTest
         props.put( "coap.opt.observe", new String( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.observe: wrong value", seqnum, set.getObserve() );
 
@@ -1342,7 +1342,7 @@ public class OptionsTest
         props.put( "coap.opt.observe", new StringWrapper( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertEquals( "coap.opt.observe: wrong value", seqnum, set.getObserve() );
 
@@ -1369,7 +1369,7 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        Options.fillPropertyMap( set, props );
+        CoAPOptions.fillPropertyMap( set, props );
 
         assertArrayEquals( "coap.opt.other." + optionNr1.toString() + ": wrong value", value1, (byte[]) props.get( "coap.opt.other." + optionNr1.toString() ) );
         assertEquals( "coap.opt.other." + optionNr1.toString() + ".critical: wrong value", true, props.get( "coap.opt.other." + optionNr1.toString() + ".critical" ) );
@@ -1400,7 +1400,7 @@ public class OptionsTest
         props.put( "coap.opt.other.65001", value1.clone() );
 
         OptionSet set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.other.65001: option should exist", set.hasOption( 65001 ) );
         assertFalse( "coap.opt.other.65002: option should not exist", set.hasOption( 65002 ) );
@@ -1413,7 +1413,7 @@ public class OptionsTest
         props.put( "coap.opt.other.65001", new Integer( 120 ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.other.65001: option should exist", set.hasOption( 65001 ) );
         assertFalse( "coap.opt.other.65002: option should not exist", set.hasOption( 65002 ) );
@@ -1426,7 +1426,7 @@ public class OptionsTest
         props.put( "coap.opt.other.65001", new String( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.other.65001: option should exist", set.hasOption( 65001 ) );
         assertFalse( "coap.opt.other.65002: option should not exist", set.hasOption( 65002 ) );
@@ -1439,7 +1439,7 @@ public class OptionsTest
         props.put( "coap.opt.other.65001", new StringWrapper( "120" ) );
 
         set= new OptionSet();
-        Options.fillOptionSet( set, props, true );
+        CoAPOptions.fillOptionSet( set, props, true );
 
         assertTrue( "coap.opt.other.65001: option should exist", set.hasOption( 65001 ) );
         assertFalse( "coap.opt.other.65002: option should not exist", set.hasOption( 65002 ) );

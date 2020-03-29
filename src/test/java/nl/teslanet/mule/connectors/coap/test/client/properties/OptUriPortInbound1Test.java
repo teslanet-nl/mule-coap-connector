@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 
 /**
  * Test inbound uri port property
@@ -73,5 +74,11 @@ public class OptUriPortInbound1Test extends AbstractInboundPropertyTestCase
     protected OptionStrategy getStrategy()
     {
         return new OptUriPortStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getUriPort();
     }
 }

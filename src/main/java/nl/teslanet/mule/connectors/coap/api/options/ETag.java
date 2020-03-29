@@ -230,9 +230,11 @@ public final class ETag implements Comparable< ETag >
     @Override
     public boolean equals( Object o )
     {
+        if ( !( o instanceof ETag ) )
+        {
+            return false;
+        }
         ETag other= (ETag) o;
-        if ( null == other && null == this.value ) return true;
-        if ( null == other && null != this.value ) return false;
         return Arrays.equals( this.value, other.value );
     }
 

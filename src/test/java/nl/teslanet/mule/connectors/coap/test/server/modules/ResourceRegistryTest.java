@@ -34,7 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import nl.teslanet.mule.connectors.coap.api.config.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;

@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config;
+package nl.teslanet.mule.connectors.coap.api.query;
 
 
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -52,7 +52,7 @@ public class QueryParam extends AbstractQueryParam
     @Parameter
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The value of the query parameters. When empty only the key will be added to request.")
+    @Summary("The value of the query parameter. When empty only the key will be added to the request.")
     @Example("some_value_if_any")
     private String value= null;
 

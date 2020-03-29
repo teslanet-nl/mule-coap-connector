@@ -30,14 +30,15 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test inbound other option no cache key property
  *
  */
-public class OptOtherInbound3NoCacheKeyTest extends AbstractInboundPropertyTestCase
+public class OptOtherInbound3NoCacheKeyTest extends AbstractOtherOptionInboundPropertyTestCase
 {
 
     /**
      * Test other option
      * @return the option to use in test
      */
-    private Option getOption()
+    @Override
+    protected Option getOption()
     {
         byte[] value= { (byte) 0x12, (byte) 0x23, (byte) 0x45, (byte) 0x22 };
         return new Option( 65308, value );

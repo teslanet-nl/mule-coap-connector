@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 
 /**
  * Test inbound uri host property
@@ -73,5 +74,11 @@ public class OptUriHostInbound1Test extends AbstractInboundPropertyTestCase
     protected OptionStrategy getStrategy()
     {
         return new OptUriHostStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getUriHost();
     }
 }

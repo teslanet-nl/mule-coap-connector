@@ -108,14 +108,19 @@ public class PropertyNames
 
     public static final String COAP_OPT_OBSERVE= "coap.opt.observe";
 
+    @Deprecated
     public static final String PREFIX_COAP_OPT_OTHER= "coap.opt.other.";
 
+    @Deprecated
     public static final String POSTFIX_CRITICAL= ".critical";
 
+    @Deprecated
     public static final String POSTFIX_NOCACHEKEY= ".no_cache_key";
 
+    @Deprecated
     public static final String POSTFIX_UNSAFE= ".unsafe";
 
+    @Deprecated
     public static final Pattern otherPattern= Pattern.compile( "^" + PREFIX_COAP_OPT_OTHER + "([0-9]+)" );
 
     protected PropertyNames()

@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config;
+package nl.teslanet.mule.connectors.coap.api.query;
 
 
 import static java.util.Objects.hash;
@@ -68,7 +68,7 @@ public abstract class AbstractQueryParam
     {
         if ( object instanceof AbstractQueryParam )
         {
-            QueryParamConfig other= (QueryParamConfig) object;
+            AbstractQueryParam other= (AbstractQueryParam) object;
             return Objects.equals( getKey(), other.getKey() ) && Objects.equals( getValue(), other.getValue() );
         }
         return false;

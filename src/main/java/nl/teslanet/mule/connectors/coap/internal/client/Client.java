@@ -71,10 +71,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.config.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.options.Options;
+import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
@@ -84,7 +85,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUri
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
-import nl.teslanet.mule.connectors.coap.internal.options.Options;
+import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 
 
 /**
@@ -408,7 +409,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Code requestCode,
         String uri,
         TypedValue< byte[] > requestPayload,
-        Map< String, Object > options,
+        Options options,
         String handlerName ) throws InternalInvalidHandlerNameException,
         ConnectorException,
         IOException,
@@ -430,7 +431,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             request.setPayload( requestPayload.getValue() );
             request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
         }
-        Options.fillOptionSet( request.getOptions(), options, false );
+        CoAPOptions.copyOptions( options, request.getOptions(), false );
         if ( handlerName != null )
         {
             final SourceCallback< byte[], ReceivedResponseAttributes > callback= getHandler( handlerName );
@@ -491,7 +492,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             attributes.setNotification( response.advanced().isNotification() );
             //attributes.setRemoteAddress( response.advanced().getDestinationContext().getPeerAddress().getHostString() );
             //attributes.setRemotePort( response.advanced().getDestinationContext().getPeerAddress().getPort() );
-            Options.fillPropertyMap( response.getOptions(), attributes.getOptions() );
+            CoAPOptions.copyOptions( response.getOptions(), attributes.getOptions() );
         }
         return attributes;
     }

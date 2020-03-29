@@ -25,9 +25,9 @@ package nl.teslanet.mule.connectors.coap.api;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import java.util.HashMap;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
+import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
 
 
 /**
@@ -90,7 +90,7 @@ public class ReceivedResponseAttributes
     /**
      * The CoAP options that accompanied the response.
      */
-    HashMap< String, Object > options= new HashMap< String, Object >();
+    private OptionAttributes options= new OptionAttributes();
 
     /**
      * @return the requestCode
@@ -255,7 +255,7 @@ public class ReceivedResponseAttributes
     /**
      * @return the options
      */
-    public HashMap< String, Object > getOptions()
+    public OptionAttributes getOptions()
     {
         return options;
     }
@@ -263,7 +263,7 @@ public class ReceivedResponseAttributes
     /**
      * @param options the options to set
      */
-    public void setOptions( HashMap< String, Object > options )
+    public void setOptions( OptionAttributes options )
     {
         this.options= options;
     }

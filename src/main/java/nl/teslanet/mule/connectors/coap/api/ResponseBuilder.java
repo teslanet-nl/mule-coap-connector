@@ -23,8 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-import java.util.Map;
-
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -34,6 +32,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.options.OptionsParam;
 
 
 /**
@@ -70,7 +70,7 @@ public class ResponseBuilder
     @Expression(ExpressionSupport.SUPPORTED)
     @Placement(tab= "Response", order= 3)
     @Summary("The CoAP options of the response.")
-    private Map< String, Object > options;
+    private OptionsParam options;
 
     /**
      * @return the responseCode
@@ -107,7 +107,7 @@ public class ResponseBuilder
     /**
      * @return the options
      */
-    public Map< String, Object > getOptions()
+    public OptionsParam getOptions()
     {
         return options;
     }
@@ -115,7 +115,7 @@ public class ResponseBuilder
     /**
      * @param options the options to set
      */
-    public void setOptions( Map< String, Object > options )
+    public void setOptions( OptionsParam options )
     {
         this.options= options;
     }

@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.config.QueryParamConfig;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;

@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config;
+package nl.teslanet.mule.connectors.coap.api;
 
 
 import java.util.List;

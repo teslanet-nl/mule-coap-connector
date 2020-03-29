@@ -30,14 +30,15 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test inbound other option property
  *
  */
-public class OptOtherInbound2Test extends AbstractInboundPropertyTestCase
+public abstract class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTestCase
 {
 
     /**
      * Test other option
      * @return the option to use in test
      */
-    private Option getOption()
+    @Override
+    protected Option getOption()
     {
         byte[] value= { (byte) 0x12, (byte) 0x00, (byte) 0x45, (byte) 0x33 };
         return new Option( 65013, value );

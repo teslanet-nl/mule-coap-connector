@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 
 
@@ -30,14 +31,15 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test inbound other option critical property
  *
  */
-public class OptOtherInbound2CriticalTest extends AbstractInboundPropertyTestCase
+public class OptOtherInbound2CriticalTest extends AbstractOtherOptionInboundPropertyTestCase
 {
 
     /**
      * Test other option
      * @return the option to use in test
      */
-    private Option getOption()
+    @Override
+    protected Option getOption()
     {
         byte[] value= { (byte) 0x12, (byte) 0x00, (byte) 0x45, (byte) 0x11 };
         return new Option( 65013, value );

@@ -51,7 +51,7 @@ import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
-import nl.teslanet.mule.connectors.coap.internal.options.Options;
+import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 
 
 /**
@@ -106,16 +106,16 @@ public class Listener extends Source< byte[], ReceivedRequestAttributes >
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
             CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
-            Response coapResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
+            Response cfResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
             //TODO give user control
             TypedValue< byte[] > payload= response.getResponsePayload();
-            coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( payload.getDataType().getMediaType() ) );
+            cfResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( payload.getDataType().getMediaType() ) );
             if ( response.getOptions() != null )
             {
-                Options.fillOptionSet( coapResponse.getOptions(), response.getOptions(), false );
+                CoAPOptions.copyOptions( response.getOptions(), cfResponse.getOptions(), false );
             }
-            coapResponse.setPayload( payload.getValue() );
-            exchange.respond( coapResponse );
+            cfResponse.setPayload( payload.getValue() );
+            exchange.respond( cfResponse );
         }
     }
 

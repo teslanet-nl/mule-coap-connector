@@ -51,7 +51,7 @@ import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.config.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;

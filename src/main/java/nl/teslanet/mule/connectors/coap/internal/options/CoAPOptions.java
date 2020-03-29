@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.internal.options;
 
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -36,27 +37,30 @@ import org.slf4j.Logger;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.Options;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
 
 /**
- * {@code Options} is a collection of all options of a CoAP request or a response.
- * {@code Options} provides methods for converting Californium OptionSet to 
- * Mule message properties and vice versa.
+ * {@code CoAPOptions} is a collection of all options of a CoAP request or a response.
+ * {@code CoAPOptions} provides methods for converting Californium OptionSet to 
+ * connector API and vice versa.
  * When constructed based on a existing OptionSet it keeps a reference to this 
  * set in stead of making a deep copy, for performance reasons.
  * Notice that Californium OptionSet is not entirely thread-safe: hasObserve =&gt; (int) getObserve()
  * @see Option
  */
-public class Options
+public class CoAPOptions
 {
     private OptionSet optionSet= null;
 
     /**
      * Default constructor
      */
-    public Options()
+    public CoAPOptions()
     {
         super();
         setOptionSet( new OptionSet() );
@@ -67,22 +71,33 @@ public class Options
      * Note that is keeps a reference to the OptionSet in stead of a deep copy - handle with care.
      * @param optionSet Set of options that will be used as a reference.
      */
-    public Options( OptionSet optionSet )
+    public CoAPOptions( OptionSet optionSet )
     {
         super();
         this.optionSet= optionSet;
     }
 
     /**
-     * Constructs Options based on a property map.
+     * Constructs CoAPOptions based on a property map.
      * @param props The map of properties. 
      */
-    public Options( Map< String, Object > props )
+    public CoAPOptions( Map< String, Object > props )
     {
         super();
         this.optionSet= new OptionSet();
         fillOptionSet( this.optionSet, props, false );
 
+    }
+
+    /**
+     * Constructs @{code CoAPOptions}  based on {@Code Options}.
+     * @param options The options. 
+     */
+    public CoAPOptions( Options options )
+    {
+        super();
+        this.optionSet= new OptionSet();
+        copyOptions( options, this.optionSet, false );
     }
 
     /**
@@ -102,24 +117,6 @@ public class Options
     {
         this.optionSet= optionSet;
     }
-
-    //    private void assureBlock1Exists()
-    //    {
-    //        if ( !hasBlock1() )
-    //        {
-    //            setBlock1( new BlockOption() );
-    //        }
-    //
-    //    }
-    //
-    //    private void assureBlock2Exists()
-    //    {
-    //        if ( !hasBlock1() )
-    //        {
-    //            setBlock2( new BlockOption() );
-    //        }
-    //
-    //    }
 
     private static Long toLong( Object object )
     {
@@ -184,6 +181,169 @@ public class Options
         return null;
     }
 
+    /**
+     * Copy options from {@link Options} to {@link OptionSet}.
+     * @param options to copy from
+     * @param optionSet to copy to
+     * @param clear when {@code true } the optionSet will be cleared before copying. 
+     */
+    public static void copyOptions( Options options, OptionSet optionSet, boolean clear )
+    {
+        //make sure Optionset is empty, if needed
+        if ( clear ) optionSet.clear();
+
+        /* if_match_list       = null; // new LinkedList<byte[]>();*/
+        if ( options.getIfMatchList() != null )
+        {
+            for ( ETag etag : options.getIfMatchList() )
+            {
+                optionSet.addIfMatch( etag.asBytes() );
+            }
+        }
+        /*uri_host            = null; // from sender */
+        if ( options.getUriHost() != null )
+        {
+            optionSet.setUriHost( options.getUriHost() );
+        }
+        /* etag_list           = null; // new LinkedList<byte[]>();*/
+        if ( options.getEtagList() != null )
+        {
+            for ( ETag etag : options.getEtagList() )
+            {
+                optionSet.addETag( etag.asBytes() );
+            }
+        }
+        /* if_none_match       = false; */
+        if ( options.getIfNoneMatch() != null )
+        {
+            optionSet.setIfNoneMatch( options.getIfNoneMatch() );
+        }
+        /* uri_port            = null; // from sender*/
+        if ( options.getUriPort() != null )
+        {
+            optionSet.setUriPort( options.getUriPort() );
+        }
+        /* location_path_list  = null; // new LinkedList<String>();*/
+        if ( options.getLocationPathList() != null )
+        {
+            for ( String path : options.getLocationPathList() )
+            {
+                optionSet.addLocationPath( path );
+            }
+        }
+        //            case PropertyNames.COAP_OPT_LOCATIONPATH:
+        //                //TODO prefix with "/" ?
+        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+        //                {
+        //                    optionSet.setLocationPath( otherOption.getValue().toString() );
+        //                }
+        //                break;
+        /* uri_path_list       = null; // new LinkedList<String>();*/
+        if ( options.getUriPathList() != null )
+        {
+            for ( String path : options.getUriPathList() )
+            {
+                optionSet.addUriPath( path );
+            }
+        }
+        //            case PropertyNames.COAP_OPT_URIPATH:
+        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+        //                {
+        //                    optionSet.setUriPath( otherOption.getValue().toString() );
+        //                }
+        //                break;
+        /* content_format      = null;*/
+        if ( options.getContentFormat() != null )
+        {
+            optionSet.setContentFormat( options.getContentFormat() );
+        }
+        /* max_age             = null;*/
+        if ( options.getMaxAge() != null )
+        {
+            optionSet.setMaxAge( options.getMaxAge() );
+        }
+        /* uri_query_list      = null; // new LinkedList<String>();*/
+        //TODO queryparam object
+        if ( options.getUriQueryList() != null )
+        {
+            for ( String query : options.getUriQueryList() )
+            {
+                optionSet.addUriQuery( query );
+            }
+        }
+        //            case PropertyNames.COAP_OPT_URIQUERY:
+        //
+        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+        //                {
+        //                    optionSet.setUriQuery( otherOption.getValue().toString() );
+        //                }
+        //                break;
+        /* accept              = null;*/
+        if ( options.getAccept() != null )
+        {
+            optionSet.setAccept( options.getAccept() );
+        }
+        /* location_query_list = null; // new LinkedList<String>();*/
+        if ( options.getLocationQueryList() != null )
+        {
+            for ( String path : options.getLocationQueryList() )
+            {
+                optionSet.addLocationQuery( path );
+            }
+        }
+        //            case PropertyNames.COAP_OPT_LOCATIONQUERY:
+        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+        //                {
+        //                    optionSet.setLocationQuery( otherOption.getValue().toString() );
+        //                }
+        //                break;
+        /* proxy_uri           = null;*/
+        if ( options.getProxyUri() != null )
+        {
+            optionSet.setProxyUri( options.getProxyUri() );
+        }
+        /* proxy_scheme        = null;*/
+        if ( options.getProxyScheme() != null )
+        {
+            optionSet.setProxyScheme( options.getProxyScheme() );
+        }
+        /* block1              = null;*/
+        if ( options.getBlock1() != null )
+        {
+            optionSet.setBlock1( options.getBlock1().getSzx(), options.getBlock1().isM(), options.getBlock1().getNum() );
+        }
+        /* block2              = null;*/
+        if ( options.getBlock2() != null )
+        {
+            optionSet.setBlock2( options.getBlock2().getSzx(), options.getBlock2().isM(), options.getBlock2().getNum() );
+        }
+        /* size1               = null;*/
+        if ( options.getSize1() != null )
+        {
+            optionSet.setSize1( options.getSize1() );
+        }
+        /* size2               = null;*/
+        if ( options.getSize2() != null )
+        {
+            optionSet.setSize2( options.getSize2() );
+        }
+        /* observe             = null;*/
+        if ( options.getObserve() != null )
+        {
+            optionSet.setObserve( options.getObserve() );
+        }
+        // process other options
+        for ( Entry< String, Object > otherOption : options.getOtherOptions().entryList() )
+        {
+            if ( !otherOption.getKey().isEmpty())
+            {
+                int optionNr= Integer.parseInt( otherOption.getKey() );
+                optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+            }
+        }
+    }
+
+    //TODO drop
     @SuppressWarnings("unchecked")
     public static void fillOptionSet( OptionSet optionSet, Map< String, Object > props, boolean clear )
     {
@@ -507,6 +667,197 @@ public class Options
         }
     }
 
+    //TODO rename
+    /**
+     * Copy options to option attributes from given optionSet.
+     * Processing options stops when an exception occurs.
+     * @param optionSet source of the properties
+     * @param options Options to fill
+     * @throws InvalidOptionValueException when option value could not be converted into a property
+     */
+    public static void copyOptions( OptionSet optionSet, OptionAttributes options ) throws InternalInvalidOptionValueException
+    {
+        String errorMsg= "cannot create property";
+        copyOptionsLoggingOrThrowingErrors( optionSet, options, null, errorMsg );
+    }
+
+    /**
+     * Copy options to option attributes from given optionSet.
+     * Processing options continues when an exception occurs, after logging an error message.
+     * @param optionSet source of the properties
+     * @param options Options attributes to copy to
+     * @param logger uses for logging errors
+     * @param errorMsg message to log on errors
+     * @throws InternalInvalidOptionValueException should not be thrown
+     */
+    public static void copyOptions( OptionSet optionSet, OptionAttributes options, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
+    {
+        copyOptionsLoggingOrThrowingErrors( optionSet, options, logger, errorMsg );
+    }
+
+    /**
+     * Handle error that occurs during property processing
+     * @param propertyName 
+     * @param e cause exception
+     * @param logger logger to use for logging when not null
+     * @param errorMsg that will be logged or put into exception
+     * @throws InternalInvalidOptionValueException when when logger is null in stead of logging
+     */
+    private static void handlePropertyError( String propertyName, Exception e, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
+    {
+        InternalInvalidOptionValueException exception= new InternalInvalidOptionValueException( propertyName, errorMsg, e );
+        if ( logger == null )
+        {
+            throw exception;
+        }
+        else
+        {
+            logger.error( errorMsg + " { " + propertyName + " }", exception );
+        }
+
+    }
+
+    /**
+     * Copy options to option attributes from given optionSet.
+     * Processing options continues when an exception occurs and logger is given.
+     * @param optionSet source of the properties
+     * @param options Options attributes to copy to
+     * @param logger uses for logging errors
+     * @param errorMsg message to log on errors
+     * @throws InternalInvalidOptionValueException when an option cannot be converted.
+     */
+    private static void copyOptionsLoggingOrThrowingErrors( OptionSet optionSet, OptionAttributes options, final Logger logger, String errorMsg )
+        throws InternalInvalidOptionValueException
+    {
+        // List<byte[]> if_match_list;
+        if ( !optionSet.getIfMatch().isEmpty() )
+        {
+            try
+            {
+                options.setIfMatchList( ETag.getList( optionSet.getIfMatch() ) );
+            }
+            catch ( InvalidETagException e )
+            {
+                handlePropertyError( PropertyNames.COAP_OPT_IFMATCH_LIST, e, logger, errorMsg );
+            }
+        }
+        // String       uri_host;
+        if ( optionSet.hasUriHost() )
+        {
+            options.setUriHost( optionSet.getUriHost() );
+        }
+        // List<byte[]> etag_list;
+        if ( !optionSet.getETags().isEmpty() )
+        {
+            try
+            {
+                options.setEtagList( ETag.getList( optionSet.getETags() ) );
+            }
+            catch ( InvalidETagException e )
+            {
+                handlePropertyError( PropertyNames.COAP_OPT_ETAG_LIST, e, logger, errorMsg );
+            }
+        }
+        // boolean      if_none_match; // true if option is set
+        options.setIfNoneMatch( optionSet.hasIfNoneMatch() );
+
+        // Integer      uri_port; // null if no port is explicitly defined
+        if ( optionSet.hasUriPort() )
+        {
+            options.setUriPort( optionSet.getUriPort() );
+        }
+        // List<String> location_path_list;
+        if ( !optionSet.getLocationPath().isEmpty() )
+        {
+            options.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
+            options.setLocationPath( optionSet.getLocationPathString() );
+        }
+        // List<String> uri_path_list;
+        if ( !optionSet.getUriPath().isEmpty() )
+        {
+            options.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
+            options.setUriPath( optionSet.getUriPathString() );
+        }
+        // Integer      content_format;
+        if ( optionSet.hasContentFormat() )
+        {
+            options.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
+        }
+        // Long         max_age; // (0-4 bytes)
+        if ( optionSet.hasMaxAge() )
+        {
+            options.setMaxAge( optionSet.getMaxAge() );
+        }
+        // List<String> uri_query_list;
+        if ( !optionSet.getUriQuery().isEmpty() )
+        {
+            options.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
+            options.setUriQuery( optionSet.getUriQueryString() );
+        }
+        // Integer      accept;
+        if ( optionSet.hasAccept() )
+        {
+            options.setAccept( Integer.valueOf( optionSet.getAccept() ) );
+        }
+        // List<String> location_query_list;
+        if ( !optionSet.getLocationQuery().isEmpty() )
+        {
+            options.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
+            options.setLocationQuery( optionSet.getLocationQueryString() );
+        }
+        // String       proxy_uri;
+        if ( optionSet.hasProxyUri() )
+        {
+            options.setProxyUri( optionSet.getProxyUri() );
+        }
+        // String       proxy_scheme;
+        if ( optionSet.hasProxyScheme() )
+        {
+            options.setProxyScheme( optionSet.getProxyScheme() );
+        }
+        // BlockOption  block1;
+        if ( optionSet.hasBlock1() )
+        {
+            options.setBlock1( toBlockValue( optionSet.getBlock1() ) );
+        }
+        // BlockOption  block2;
+        if ( optionSet.hasBlock2() )
+        {
+            options.setBlock2( toBlockValue( optionSet.getBlock2() ) );
+        }
+        // Integer      size1;
+        if ( optionSet.hasSize1() )
+        {
+            options.setSize1( optionSet.getSize1() );
+        }
+        // Integer      size2;
+        if ( optionSet.hasSize2() )
+        {
+            options.setSize2( optionSet.getSize2() );
+        }
+        // Integer      observe;
+        if ( optionSet.hasObserve() )
+        {
+            options.setObserve( optionSet.getObserve() );
+        }
+        // Arbitrary options
+        // List<Option> others;
+        for ( Option other : optionSet.getOthers() )
+        {
+            options.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
+        }
+    }
+
+    /**
+     * Creates a BlockValue from a Cf block option 
+     * @param block1 block option to use the values from
+     * @return a BlockValue that corresponds to the block option
+     */
+    private static BlockValue toBlockValue( BlockOption block )
+    {
+        return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
+    }
+
     /**
      * Fill property map with properties contained in given optionSet.
      * Processing options stops when an exception occurs.
@@ -532,28 +883,6 @@ public class Options
     public static void fillPropertyMap( OptionSet options, Map< String, Object > props, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
     {
         fillPropertyMapLoggingOrThrowingErrors( options, props, logger, errorMsg );
-    }
-
-    /**
-     * Handle error that occurs during property processing
-     * @param propertyName 
-     * @param e cause exception
-     * @param logger logger to use for logging when not null
-     * @param errorMsg that will be logged or put into exception
-     * @throws InternalInvalidOptionValueException when when logger is null in stead of logging
-     */
-    private static void handlePropertyError( String propertyName, Exception e, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
-    {
-        InternalInvalidOptionValueException exception= new InternalInvalidOptionValueException( propertyName, errorMsg, e );
-        if ( logger == null )
-        {
-            throw exception;
-        }
-        else
-        {
-            logger.error( errorMsg + " { " + propertyName + " }", exception );
-        }
-
     }
 
     private static void fillPropertyMapLoggingOrThrowingErrors( OptionSet options, Map< String, Object > props, final Logger logger, String errorMsg )
@@ -704,5 +1033,4 @@ public class Options
             return -1;
         }
     }
-
 }

@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 import java.util.List;
-import java.util.Map;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
@@ -37,7 +36,8 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.config.QueryParam;
+import nl.teslanet.mule.connectors.coap.api.options.OptionsParam;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
 /**
@@ -118,7 +118,7 @@ public class RequestBuilder
     @Expression(ExpressionSupport.SUPPORTED)
     @Summary("The CoAP options to send with the request.")
     @DisplayName("Options")
-    private Map< String, Object > options;
+    private OptionsParam options;
 
     /**
      * @return the requestCode
@@ -219,7 +219,7 @@ public class RequestBuilder
     /**
      * @return the options
      */
-    public Map< String, Object > getOptions()
+    public OptionsParam getOptions()
     {
         return options;
     }
@@ -227,7 +227,7 @@ public class RequestBuilder
     /**
      * @param options the options to set
      */
-    public void setOptions( Map< String, Object > options )
+    public void setOptions( OptionsParam options )
     {
         this.options= options;
     }

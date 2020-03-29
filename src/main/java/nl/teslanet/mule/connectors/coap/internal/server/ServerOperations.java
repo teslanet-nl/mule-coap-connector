@@ -32,8 +32,8 @@ import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 
-import nl.teslanet.mule.connectors.coap.api.config.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.config.ResourceInfo;
+import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceInfo;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ServerOperationErrorProvider;
 

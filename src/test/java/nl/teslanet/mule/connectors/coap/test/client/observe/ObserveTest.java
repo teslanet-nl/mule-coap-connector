@@ -138,11 +138,11 @@ public class ObserveTest extends AbstractClientTestCase
                 new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
                 response.getAttributes().getClass() );
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-            if ( i == 0 ) obsOffset= ( (Integer) attributes.getOptions().get( "coap.opt.observe" ) ).intValue();
+            if ( i == 0 ) obsOffset= attributes.getOptions().getObserve().intValue();
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
-            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, ( (Integer) attributes.getOptions().get( "coap.opt.observe" ) ).intValue() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
 
     }
@@ -231,11 +231,11 @@ public class ObserveTest extends AbstractClientTestCase
                 new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
                 response.getAttributes().getClass() );
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-            if ( i == 1 ) obsOffset= ( (Integer) attributes.getOptions().get( "coap.opt.observe" ) ).intValue() - 1;
+            if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
-            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, ( (Integer) attributes.getOptions().get( "coap.opt.observe" ) ).intValue() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
     }
 

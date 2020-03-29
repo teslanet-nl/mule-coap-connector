@@ -22,46 +22,22 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
+
 
 /**
- * Test inbound Content Format property 
+ * Abstract class for testing inbound other options
  *
  */
-public class OptContentFormatInboundTest extends AbstractInboundPropertyTestCase
+public abstract class AbstractOtherOptionInboundPropertyTestCase extends AbstractInboundPropertyTestCase
 {
-    private final int value= 41;
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
-     */
-    @Override
-    protected String getPropertyName()
-    {
-        return "coap.opt.content_format";
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
-    @Override
-    protected Object getExpectedInboundPropertyValue()
-    {
-        return new Integer( value );
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
-    @Override
-    protected OptionStrategy getStrategy()
-    {
-        return new OptContentFormatStrategy( value );
-    }
-
+    abstract protected  Option getOption();
+    
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {
-        return attributes.getOptions().getContentFormat();
+        return attributes.getOptions().getOtherOptions().get( getOption().getNumber() );
     }
 }

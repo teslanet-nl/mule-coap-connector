@@ -22,8 +22,6 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
-import nl.teslanet.mule.connectors.coap.api.config.ResourceInfo;
-
 /**
  * Resource of a coap-server that has been discovered. The class holds 
  * information given by the server such as the resource uri and attributes.

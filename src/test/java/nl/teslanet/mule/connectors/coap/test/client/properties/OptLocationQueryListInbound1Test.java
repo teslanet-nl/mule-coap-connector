@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+
 
 /**
  * Test inbound location query property, single value
@@ -79,5 +81,11 @@ public class OptLocationQueryListInbound1Test extends AbstractInboundPropertyTes
     protected OptionStrategy getStrategy()
     {
         return new OptLocationQueryStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getLocationQueryList();
     }
 }

@@ -31,7 +31,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.config.QueryParam;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
 /**

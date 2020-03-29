@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+
 
 /**
  * Test inbound uri query property, multiple values
@@ -82,5 +84,11 @@ public class OptUriQueryInbound1mTest extends AbstractInboundPropertyTestCase
     protected OptionStrategy getStrategy()
     {
         return new OptUriQueryStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getUriQueryList();
     }
 }

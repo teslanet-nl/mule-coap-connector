@@ -169,10 +169,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
      * @param attributes the attributes to fetch the property from
      * @return the property value
      */
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
-    {
-        return attributes.getOptions().get( getPropertyName() );
-    }
+    abstract protected Object fetchInboundProperty( ReceivedResponseAttributes attributes );
 
     /**
      * Test inbound property

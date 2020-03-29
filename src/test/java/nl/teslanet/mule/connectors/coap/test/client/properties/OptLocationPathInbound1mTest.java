@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+
 
 /**
  * Test inbound location path property, multiple values
@@ -82,5 +84,11 @@ public class OptLocationPathInbound1mTest extends AbstractInboundPropertyTestCas
     protected OptionStrategy getStrategy()
     {
         return new OptLocationPathStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getLocationPathList();
     }
 }
