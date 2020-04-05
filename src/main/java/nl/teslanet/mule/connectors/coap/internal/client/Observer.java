@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.californium.core.CoapHandler;
@@ -61,7 +62,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  */
 @Alias("observer")
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class Observer extends Source< byte[], ReceivedResponseAttributes >
+public class Observer extends Source< InputStream, ReceivedResponseAttributes >
 {
     private final Logger LOGGER= LoggerFactory.getLogger( Observer.class );
 
@@ -135,7 +136,7 @@ public class Observer extends Source< byte[], ReceivedResponseAttributes >
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< byte[], ReceivedResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, ReceivedResponseAttributes > sourceCallback ) throws MuleException
     {
         String uri;
         try

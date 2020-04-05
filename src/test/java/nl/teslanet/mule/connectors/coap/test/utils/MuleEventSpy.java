@@ -23,9 +23,23 @@
 package nl.teslanet.mule.connectors.coap.test.utils;
 
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.api.streaming.object.CursorIterator;
+import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
+import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
 
 
 /**
@@ -97,12 +111,15 @@ public class MuleEventSpy
      * Handle occurred event
      * @param payload the payload to collect
      * @return the replacement payload
+     * @throws IOException 
      * @throws InvalidETagException 
      */
-    public Object event( Object msg )
+    public Object event( Object msg ) throws IOException
     {
+        Object consumedMessage= consume( msg );
+
         SpyData spydata= spyData.get( id );
-        spydata.getCollector().add( new Event( msg ) );
+        spydata.getCollector().add( new Event( consumedMessage ) );
         Object replacement= spydata.getReplacement();
         if ( replacement != null )
         {
@@ -110,8 +127,63 @@ public class MuleEventSpy
         }
         else
         {
-            return msg;
+            return consumedMessage;
         }
+    }
+
+    /**
+     * When msg is a stream it is consumed so t can be stored
+     * @param msg to consume
+     * @return
+     * @throws IOException 
+     */
+    private Object consume( Object msg ) throws IOException
+    {
+        Object result= null;
+        if ( msg != null )
+        {
+            if ( msg instanceof byte[] || msg instanceof Byte[] )
+            {
+                result= msg;
+            }
+            else if ( msg instanceof CursorStreamProvider )
+            {
+                result= IOUtils.toByteArray( (CursorStreamProvider) msg );
+            }
+            else if ( msg instanceof InputStream )
+            {
+                result= IOUtils.toByteArray( (InputStream) msg );
+                IOUtils.closeQuietly( (InputStream) msg );
+            }
+            else if ( msg instanceof CursorIteratorProvider )
+            {
+                LinkedList< Object > list= new LinkedList< Object >();
+                CursorIteratorProvider provider= (CursorIteratorProvider) msg;
+                @SuppressWarnings("unchecked")
+                CursorIterator< Object > cursor= (CursorIterator< Object >)provider.openCursor();
+                while ( cursor.hasNext() )
+                {
+                    list.add( cursor.next() );
+                }
+                result= Collections.unmodifiableList( list );
+                cursor.close();
+            }
+            else if ( msg instanceof Message )
+            {
+                Message mulemessage= (Message) msg;
+                TypedValue< Object > payload= mulemessage.getPayload();
+                Object consumedPayload= consume( payload.getValue());
+                DefaultMessageBuilder muleMessageBuilder= new DefaultMessageBuilder( mulemessage );
+                muleMessageBuilder.value( consumedPayload );
+                result= muleMessageBuilder.build();
+            }
+            else
+            {
+                //assume no stream
+                result= msg;
+            }
+        }
+        return result;
     }
 
     /**

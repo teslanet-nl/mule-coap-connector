@@ -73,6 +73,16 @@ public class Data
 
     /**
      * Validates the test content of standard size
+     * @param content to validate as String
+     * @param size the content size, when -1 content should be null
+     * @return true when the content is as expected, otherwise false
+     */
+    public static boolean validateContent( String content, int size )
+    {
+        return validateContent( content.getBytes(), size );
+    }
+    /**
+     * Validates the test content of standard size
      * @param content to validate
      * @param size the content size, when -1 content should be null
      * @return true when the content is as expected, otherwise false

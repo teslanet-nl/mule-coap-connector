@@ -61,7 +61,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
  * A Mule extension that adds CoAP functionality to create CoAP clients and CoAP servers.
  */
 @Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
-@Extension(name= "CoAP", vendor= "teslanet.nl")
+@Extension(name= "CoAP", vendor= "Teslanet.nl")
 @SubTypeMapping(baseType= Endpoint.class, subTypes= {
     UDPEndpoint.class,
     MulticastUDPEndpoint.class,

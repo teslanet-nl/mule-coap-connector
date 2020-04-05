@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import java.io.InputStream;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -32,8 +34,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import nl.teslanet.mule.connectors.coap.api.options.OptionsParam;
 
 
 /**
@@ -60,17 +60,7 @@ public class ResponseBuilder
     @Content(primary= true)
     @Placement(tab= "Response", order= 2)
     @Summary("The payload of the CoAP response.")
-    private TypedValue< byte[] > responsePayload;
-
-    /**
-     * The CoAP options to be set in the CoAP response.
-     */
-    @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Placement(tab= "Response", order= 3)
-    @Summary("The CoAP options of the response.")
-    private OptionsParam options;
+    private TypedValue< InputStream > responsePayload;
 
     /**
      * @return the responseCode
@@ -91,7 +81,7 @@ public class ResponseBuilder
     /**
      * @return the responsePayload
      */
-    public TypedValue< byte[] > getResponsePayload()
+    public TypedValue< InputStream > getResponsePayload()
     {
         return responsePayload;
     }
@@ -99,24 +89,8 @@ public class ResponseBuilder
     /**
      * @param responsePayload the responsePayload to set
      */
-    public void setResponsePayload( TypedValue< byte[] > responsePayload )
+    public void setResponsePayload( TypedValue< InputStream > responsePayload )
     {
         this.responsePayload= responsePayload;
-    }
-
-    /**
-     * @return the options
-     */
-    public OptionsParam getOptions()
-    {
-        return options;
-    }
-
-    /**
-     * @param options the options to set
-     */
-    public void setOptions( OptionsParam options )
-    {
-        this.options= options;
     }
 }

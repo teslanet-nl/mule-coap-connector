@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.InputStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -348,7 +350,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, callback );
     }
 
-    private void assertOperationalListener( OperationalListener listener, String uri, SourceCallback< byte[], ReceivedRequestAttributes > callback )
+    private void assertOperationalListener( OperationalListener listener, String uri, SourceCallback< InputStream, ReceivedRequestAttributes > callback )
     {
         assertNotNull( "listener construction failed", listener );
         assertEquals( "listener uri has wrong value", uri, listener.getUriPattern() );

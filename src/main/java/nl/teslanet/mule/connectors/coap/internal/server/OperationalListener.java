@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
+import java.io.InputStream;
+
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
@@ -41,7 +43,7 @@ public class OperationalListener
     /**
      * The callback of the Mule flow that will process requests.
      */
-    SourceCallback< byte[], ReceivedRequestAttributes > callback= null;
+    SourceCallback< InputStream, ReceivedRequestAttributes > callback= null;
 
     /**
      * Constructor
@@ -49,7 +51,7 @@ public class OperationalListener
      * @param callback
      * @throws InvalidResourceUriException
      */
-    public OperationalListener( String uriPattern, SourceCallback< byte[], ReceivedRequestAttributes > callback ) throws InvalidResourceUriException
+    public OperationalListener( String uriPattern, SourceCallback< InputStream, ReceivedRequestAttributes > callback ) throws InvalidResourceUriException
     {
         super();
         setUriPattern( uriPattern );
@@ -89,7 +91,7 @@ public class OperationalListener
     /**
      * @return the callback
      */
-    public SourceCallback< byte[], ReceivedRequestAttributes > getCallback()
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getCallback()
     {
         return callback;
     }
@@ -97,7 +99,7 @@ public class OperationalListener
     /**
      * @param callback the callback to set
      */
-    public void setCallback( SourceCallback< byte[], ReceivedRequestAttributes > callback )
+    public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > callback )
     {
         //TODO assure not null
         this.callback= callback;

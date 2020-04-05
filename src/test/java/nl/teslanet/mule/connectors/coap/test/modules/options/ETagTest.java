@@ -290,9 +290,7 @@ public class ETagTest
     {
         String etagValue1= "1122334455667788";
         ETag etag1= new ETag( etagValue1 );;
-        exception.expect( ClassCastException.class );
-        etag1.equals( new Boolean( false ) );
-        assertNotNull( etag1 );
+        assertFalse( "ETag.equals Boolean returned true", etag1.equals( new Boolean( false ) ) );
     }
 
     @Test

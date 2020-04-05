@@ -23,20 +23,26 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
+import java.io.InputStream;
+
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.execution.OnTerminate;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -49,9 +55,11 @@ import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
-import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
+import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 
 
 /**
@@ -63,7 +71,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 @Alias("listener")
 @EmitsResponse
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class Listener extends Source< byte[], ReceivedRequestAttributes >
+public class Listener extends Source< InputStream, ReceivedRequestAttributes >
 {
     private final Logger LOGGER= LoggerFactory.getLogger( Listener.class );
 
@@ -85,7 +93,7 @@ public class Listener extends Source< byte[], ReceivedRequestAttributes >
     OperationalListener operationalListener= null;
 
     @Override
-    public void onStart( SourceCallback< byte[], ReceivedRequestAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback ) throws MuleException
     {
         try
         {
@@ -101,20 +109,35 @@ public class Listener extends Source< byte[], ReceivedRequestAttributes >
 
     @OnSuccess
     @MediaType(value= "*/*", strict= false)
-    public void onSuccess( @ParameterGroup(name= "Response", showInDsl= true) ResponseBuilder response, SourceCallbackContext callbackContext ) throws Exception
+    public void onSuccess(
+        @Placement(tab= "Response", order= 1) ResponseBuilder response,
+        @Optional @Expression(ExpressionSupport.SUPPORTED) @Placement(tab= "Response Options", order= 1) @Summary("The CoAP options of the response.") ResponseOptions responseOptions,
+        SourceCallbackContext callbackContext ) throws Exception
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
             CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
             Response cfResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
             //TODO give user control
-            TypedValue< byte[] > payload= response.getResponsePayload();
+            TypedValue< InputStream > payload= response.getResponsePayload();
             cfResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( payload.getDataType().getMediaType() ) );
-            if ( response.getOptions() != null )
+            if ( responseOptions != null )
             {
-                CoAPOptions.copyOptions( response.getOptions(), cfResponse.getOptions(), false );
+                CoAPOptions.copyOptions( responseOptions, cfResponse.getOptions(), false );
             }
-            cfResponse.setPayload( payload.getValue() );
+            //TODO add streaming & blockwise cooperation
+            try
+            {
+                cfResponse.setPayload( IOUtils.toByteArray( payload.getValue() ));
+            }
+            catch ( RuntimeException e )
+            {
+                throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
+            }
+            finally
+            {
+                IOUtils.closeQuietly( payload.getValue() );
+            }
             exchange.respond( cfResponse );
         }
     }

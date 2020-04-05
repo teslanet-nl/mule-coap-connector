@@ -34,6 +34,7 @@ import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 
@@ -74,7 +75,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testConstructorEmptyProperties()
+    public void testConstructorEmptyProperties() throws InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
 
@@ -85,7 +86,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testConstructorOneProperty()
+    public void testConstructorOneProperty() throws InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         props.put( "coap.opt.observe", 123 );
@@ -122,7 +123,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testLongProperty()
+    public void testLongProperty() throws InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Long value= new Long( 45 );
@@ -135,7 +136,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testIntegerProperty()
+    public void testIntegerProperty() throws InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer value= new Integer( 45 );
@@ -148,7 +149,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testStringProperty()
+    public void testStringProperty() throws InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         String value= new String( "45" );
@@ -182,7 +183,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapIfMatch() throws InvalidETagException
+    public void testMapIfMatch() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
@@ -215,7 +216,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapIfMatchInvalid() throws InvalidETagException
+    public void testMapIfMatchInvalid() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09 };
 
@@ -262,7 +263,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapIfMatchMultiple() throws InvalidETagException
+    public void testMapIfMatchMultiple() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
@@ -316,7 +317,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapUrihost() throws InvalidETagException
+    public void testMapUrihost() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String host= "testhost";
 
@@ -359,7 +360,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapETag() throws InvalidETagException
+    public void testMapETag() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
@@ -392,7 +393,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapETagInvalid() throws InvalidETagException
+    public void testMapETagInvalid() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09 };
 
@@ -434,7 +435,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapETagMultiple() throws InvalidETagException
+    public void testMapETagMultiple() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
@@ -495,7 +496,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapIfNoneMatch() throws InvalidETagException
+    public void testMapIfNoneMatch() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         props.put( "coap.opt.if_none_match", new Boolean( true ) );
@@ -545,7 +546,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapUriPort() throws InvalidETagException
+    public void testMapUriPort() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer port= 5336;
@@ -595,7 +596,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapLocationPath() throws InvalidETagException
+    public void testMapLocationPath() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String value1= "this";
         String value2= "is";
@@ -661,7 +662,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapUriPath() throws InvalidETagException
+    public void testMapUriPath() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String value1= "this";
         String value2= "is";
@@ -713,7 +714,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapContentFormat() throws InvalidETagException
+    public void testMapContentFormat() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer format= 40;
@@ -757,7 +758,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapMaxAge() throws InvalidETagException
+    public void testMapMaxAge() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Long maxage= new Long( 120 );
@@ -823,7 +824,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapUriQuery() throws InvalidETagException
+    public void testMapUriQuery() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String value1= "this";
         String value2= "is";
@@ -875,7 +876,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapAccept() throws InvalidETagException
+    public void testMapAccept() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer format= new Integer( 41 );
@@ -941,7 +942,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapLocationQuery() throws InvalidETagException
+    public void testMapLocationQuery() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String value1= "this";
         String value2= "is";
@@ -993,7 +994,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapProxyUri() throws InvalidETagException
+    public void testMapProxyUri() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         String uri= "testproxyuri";
 
@@ -1029,7 +1030,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapProxyScheme()
+    public void testMapProxyScheme() throws InternalInvalidByteArrayValueException
     {
         String scheme= "testproxyscheme";
 
@@ -1072,7 +1073,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapBlock1() throws InvalidETagException
+    public void testMapBlock1() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         Integer szx= 3;
         Integer size= 128;
@@ -1143,7 +1144,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapBlock2() throws InvalidETagException
+    public void testMapBlock2() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         Integer szx= 3;
         Integer size= 128;
@@ -1207,7 +1208,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapSize1() throws InvalidETagException
+    public void testMapSize1() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer size= new Integer( 120 );
@@ -1259,7 +1260,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapSize2() throws InvalidETagException
+    public void testMapSize2() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer size= new Integer( 120 );
@@ -1311,7 +1312,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapObserve() throws InvalidETagException
+    public void testMapObserve() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         Integer seqnum= new Integer( 120 );
@@ -1393,7 +1394,7 @@ public class OptionsTest
     }
 
     @Test
-    public void testMapOther() throws InvalidETagException
+    public void testMapOther() throws InvalidETagException, InternalInvalidByteArrayValueException
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         byte[] value1= { (byte) 0x31, (byte) 0x32, (byte) 0x30 };

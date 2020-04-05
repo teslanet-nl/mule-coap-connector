@@ -36,10 +36,13 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
@@ -115,17 +118,22 @@ public class ResponseTest extends AbstractClientTestCase
     @Test
     public void testResponse() throws Exception
     {
+        MuleEventSpy spy= new MuleEventSpy( "do_request" );
+        spy.clear();
+        
         Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
             "5683" ).withVariable( "path", resourcePath ).run();
-        Message response= result.getMessage();
+        
+        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
+        Message response= (Message) spy.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        byte[] payload= (byte[]) (response.getPayload().getValue());
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-        byte[] payload= (byte[]) response.getPayload().getValue();
         assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
         assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
         //TODO test for property clienterror, servererror

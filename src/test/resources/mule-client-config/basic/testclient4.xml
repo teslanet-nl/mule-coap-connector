@@ -53,12 +53,12 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    <flow name="handler">
        <coap:response-handler config-ref="config" handlerName="handler"/>
        
-        <java:new doc:name="New spy" 
+        <java:new 
             class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
             constructor="MuleEventSpy(String)" target="spy">
             <java:args><![CDATA[#[{ arg0: "async-handler2" }]]]></java:args>
         </java:new>
-        <java:invoke doc:name="Invoke"
+        <java:invoke
             instance="#[vars.spy]"
             class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
             method="event(Object)">

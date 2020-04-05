@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
+import java.io.InputStream;
+
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -44,7 +46,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  * The CoAP messages received are delivered to the flow.
  */
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class ResponseHandler extends Source< byte[], ReceivedResponseAttributes >
+public class ResponseHandler extends Source< InputStream, ReceivedResponseAttributes >
 {
 
     private final Logger LOGGER= LoggerFactory.getLogger( ResponseHandler.class );
@@ -60,7 +62,7 @@ public class ResponseHandler extends Source< byte[], ReceivedResponseAttributes 
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< byte[], ReceivedResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, ReceivedResponseAttributes > sourceCallback ) throws MuleException
     {
         try
         {

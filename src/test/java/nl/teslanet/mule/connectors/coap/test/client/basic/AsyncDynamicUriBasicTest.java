@@ -39,6 +39,8 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
@@ -173,10 +175,11 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        byte[] payload= (byte[]) (response.getPayload().getValue());
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
+        assertArrayEquals( "wrong response payload", expectedPayload, payload );
     }
 
 }

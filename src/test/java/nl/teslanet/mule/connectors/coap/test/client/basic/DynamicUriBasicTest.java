@@ -41,6 +41,7 @@ import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 
 
@@ -59,11 +60,11 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []{
                 { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "coap://127.0.0.1:8976/basic/get_me", "GET called on: /basic/get_me".getBytes() },
-                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", null },
+                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", new byte[0] },
                 { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "coap://127.0.0.1:8976/basic/post_me", "POST called on: /basic/post_me".getBytes() },
-                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", null },
+                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", new byte[0] },
                 { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "coap://127.0.0.1:8976/basic/put_me", "PUT called on: /basic/put_me".getBytes() },
-                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", null },
+                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", new byte[0] },
                 {
                     "do_request",
                     "DELETE",
@@ -73,7 +74,7 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
                     "DELETED",
                     "coap://127.0.0.1:8976/basic/delete_me",
                     "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", null } } );
+                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", new byte[0] } } );
     }
 
     /**
@@ -149,9 +150,15 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
     @Test
     public void testRequest() throws Exception
     {
-        Event result= flowRunner( flowName ).withVariable( "code", requestCode ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", path ).withPayload(
+        MuleEventSpy spy= new MuleEventSpy( "do_request" );
+        spy.clear();
+
+        flowRunner( flowName ).withVariable( "code", requestCode ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", path ).withPayload(
             "nothing_important" ).run();
-        Message response= result.getMessage();
+        
+        Message response= (Message) spy.getEvents().get( 0 ).getContent();
+        byte[] payload= (byte[]) response.getPayload().getValue();
+        
         assertEquals(
             "wrong attributes class",
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
@@ -160,7 +167,6 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        byte[] payload= (byte[]) response.getPayload().getValue();
         assertArrayEquals( "wrong response payload", expectedPayload, payload );
     }
 }

@@ -48,6 +48,15 @@ public class OptIfNoneMatchOutbound3Test extends AbstractOutboundPropertiesTest
     }
 
     /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.client.properties.AbstractOutboundPropertiesTest#getFlowNameExtension()
+     */
+    @Override
+    protected String getFlowNameExtension()
+    {
+        return "";
+    }
+    
+    /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override

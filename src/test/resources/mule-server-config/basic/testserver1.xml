@@ -64,7 +64,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
       <coap:listener config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<scripting:execute engine="groovy" doc:name="toString"
+		<!--scripting:execute engine="groovy" doc:name="toString"
 			doc:id="6ee82e3d-1d98-4702-98ce-62ed11ac539f" target="response_message">
 			<scripting:code >
 				if ( payload == null )
@@ -76,9 +76,9 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 					return new String( payload );
 				}
 			</scripting:code>
-		</scripting:execute>
+		</scripting:execute-->
 		<set-payload
-			value='#[output text/plain --- attributes.requestUri! ++ vars.response_message]'
+			value='#[output text/plain --- attributes.requestUri! ++ ( payload as String ) ]'
 			doc:id="f8a91183-323d-4bf9-a5bf-b32a9d9c11db" mimeType="text/plain" />
 		<logger level="INFO" doc:name="Logger"
 			doc:id="6cd1b913-1a4a-43ae-9ddf-ba45292217d1" />

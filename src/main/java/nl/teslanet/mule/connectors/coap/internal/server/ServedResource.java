@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.eclipse.californium.core.CoapResource;
@@ -55,7 +57,7 @@ public class ServedResource extends CoapResource
      * The callback of the messagesource.
      * It is used to handle messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< byte[], ReceivedRequestAttributes > callback= null;
+    private SourceCallback< InputStream, ReceivedRequestAttributes > callback= null;
 
     /**
      * Flag that indicates whether the resource accepts Get requests.
@@ -255,10 +257,32 @@ public class ServedResource extends CoapResource
         SourceCallbackContext requestcontext= callback.createContext();
         requestcontext.addVariable( "defaultCoAPResponseCode", defaultCoAPResponseCode );
         requestcontext.addVariable( "CoapExchange", exchange );
-        callback.handle(
-            Result.< byte[], ReceivedRequestAttributes > builder().output( exchange.getRequestPayload() ).attributes( requestAttributes ).mediaType(
-                MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
-            requestcontext );
+        //TODO add streaming & blockwise cooperation
+        byte[] requestPayload= exchange.getRequestPayload(); 
+        if ( requestPayload != null )
+        {
+            callback.handle(
+                Result.< InputStream, ReceivedRequestAttributes > builder()
+                    .output( new ByteArrayInputStream( requestPayload ) )
+                    .length( requestPayload.length )
+                    .attributes( requestAttributes )
+                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
+                    .build()
+                ,
+                requestcontext );
+        }
+        else
+        {
+            callback.handle(
+                Result.< InputStream, ReceivedRequestAttributes > builder()
+                    .attributes( requestAttributes )
+                    .output( new ByteArrayInputStream( new byte[0] ) )
+                    .length( 0 )
+                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
+                    .build()
+                ,
+                requestcontext );
+        }
 
     }
 
@@ -320,16 +344,16 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource.
      */
-    public void setCallback( SourceCallback< byte[], ReceivedRequestAttributes > callback )
+    public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
     {
-        this.callback= callback;
+        this.callback= sourceCallback;
     }
 
     /**
      * Get the Mule MessageSource callback
      * @return the callback
      */
-    public SourceCallback< byte[], ReceivedRequestAttributes > getCallback()
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getCallback()
     {
         return callback;
     }

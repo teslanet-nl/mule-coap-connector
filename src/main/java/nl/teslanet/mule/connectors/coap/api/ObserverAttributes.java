@@ -33,7 +33,6 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.options.OptionsParam;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
@@ -90,15 +89,6 @@ public class ObserverAttributes
     @DisplayName("Query parameters")
     @Summary("The query parameters to send with the observe request.")
     private List< QueryParam > queryParams= null;
-
-    /**
-     * The CoAP options to send with the request.
-     */
-    @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to send with the observe request.")
-    private OptionsParam options;
 
     /**
      * @return the host
@@ -162,22 +152,6 @@ public class ObserverAttributes
     public void setQueryParams( List< QueryParam > queryParameters )
     {
         this.queryParams= queryParameters;
-    }
-
-    /**
-     * @return the options
-     */
-    public OptionsParam getOptions()
-    {
-        return options;
-    }
-
-    /**
-     * @param options the options to set
-     */
-    public void setOptions( OptionsParam options )
-    {
-        this.options= options;
     }
 
     /**

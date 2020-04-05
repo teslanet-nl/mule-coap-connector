@@ -40,6 +40,12 @@ public class OptUriHostOutbound2Test extends AbstractOutboundPropertiesTest
         return "coap.opt.uri_host";
     }
 
+    @Override
+    protected String getFlowNameExtension()
+    {
+        return "";
+    }
+    
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */

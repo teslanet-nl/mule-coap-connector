@@ -127,6 +127,7 @@ public abstract class AbstractOutboundPropertiesTest extends AbstractClientTestC
      * @param options the attributes to insert the property in
      * @throws InvalidETagException 
      */
+    @Deprecated
     protected void insertOutboundProperty( HashMap< String, Object > options ) throws InvalidETagException
     {
         options.put( getPropertyName(), getOutboundPropertyValue() );
@@ -155,7 +156,7 @@ public abstract class AbstractOutboundPropertiesTest extends AbstractClientTestC
      */
     protected String getFlowNameExtension()
     {
-        return "";
+        return getPropertyName();
     }
 
     /**
@@ -169,11 +170,14 @@ public abstract class AbstractOutboundPropertiesTest extends AbstractClientTestC
         requestAttibutes.setRequestCode( requestCode );
         requestAttibutes.setHost( "127.0.0.1" );
         requestAttibutes.setPath( getResourcePath() );
-        HashMap< String, Object > options= new HashMap< String, Object >();
-        insertOutboundProperty( options );
-        Event result= flowRunner( "do_request" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
-            "host",
-            "127.0.0.1" ).withVariable( "path", getResourcePath() ).withVariable( "options", options ).run();
+        Event result= flowRunner( "do_request-" + getFlowNameExtension() )
+                .withPayload( "nothing_important" )
+                .withVariable( "requestCode", requestCode )
+                .withVariable("host",
+            "127.0.0.1" )
+                .withVariable( "path", getResourcePath() )
+                .withVariable( "option", getOutboundPropertyValue() )
+                .run();
         Message response= result.getMessage();
         assertEquals(
             "wrong attributes class",

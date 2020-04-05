@@ -82,7 +82,7 @@ public final class ETag implements Comparable< ETag >
      * where two characters convert to one byte containing the indicated byte value.
      * For instance the string '11FF' will result in an etag value of two bytes containing
      * the decimal values of 17 and 255. Only the first 16 characters will be regarded.
-     * @param etag contains the hexadecimal representation of the etag value.
+     * @param hexString contains the hexadecimal representation of the etag value.
      * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
      */
     public ETag( String hexString ) throws InvalidETagException
@@ -230,6 +230,7 @@ public final class ETag implements Comparable< ETag >
     @Override
     public boolean equals( Object o )
     {
+        if ( o == null && this.value == null ) return true;
         if ( !( o instanceof ETag ) )
         {
             return false;

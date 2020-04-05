@@ -23,7 +23,9 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +55,7 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -74,9 +77,10 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
-import nl.teslanet.mule.connectors.coap.api.options.Options;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -84,8 +88,8 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidReque
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
-import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
+import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 
 
 /**
@@ -172,7 +176,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * The list of response handlers
      */
-    private ConcurrentSkipListMap< String, SourceCallback< byte[], ReceivedResponseAttributes > > handlers= new ConcurrentSkipListMap< String, SourceCallback< byte[], ReceivedResponseAttributes > >();;
+    private ConcurrentSkipListMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentSkipListMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > >();;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.api.lifecycle.Startable#start()
@@ -254,7 +258,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param callback the source callback that will process the responses
      * @throws InternalInvalidHandlerNameException 
      */
-    void addHandler( String handlerName, SourceCallback< byte[], ReceivedResponseAttributes > callback ) throws InternalInvalidHandlerNameException
+    void addHandler( String handlerName, SourceCallback< InputStream, ReceivedResponseAttributes > callback ) throws InternalInvalidHandlerNameException
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name not allowed" );
         if ( handlers.get( handlerName ) != null ) throw new InternalInvalidHandlerNameException( "responsehandler name { " + handlerName + " } not unique" );
@@ -267,7 +271,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return the handler or null when no handler with that name is found.
      * @throws InternalInvalidHandlerNameException 
      */
-    SourceCallback< byte[], ReceivedResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerNameException
+    SourceCallback< InputStream, ReceivedResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerNameException
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name is not allowed" );
         return handlers.get( handlerName );
@@ -376,65 +380,94 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param requestAttributes the attributes of the originating request
      * @throws InternalInvalidOptionValueException 
      */
-    void processMuleFlow( String requestUri, Code requestCode, CoapResponse response, SourceCallback< byte[], ReceivedResponseAttributes > callback )
+    void processMuleFlow( String requestUri, Code requestCode, CoapResponse response, SourceCallback< InputStream, ReceivedResponseAttributes > callback )
         throws InternalInvalidOptionValueException
     {
         ReceivedResponseAttributes responseAttributes;
         responseAttributes= createReceivedResponseAttributes( requestUri, requestCode, response );
         SourceCallbackContext requestcontext= callback.createContext();
         //requestcontext.addVariable( "CoapExchange", exchange );
-        callback.handle(
-            Result.< byte[], ReceivedResponseAttributes > builder().output( response.getPayload() ).attributes( responseAttributes ).mediaType(
-                MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-            requestcontext );
+        byte[] responsePayload= response.getPayload();
+        if ( responsePayload != null )
+        {
+            callback.handle(
+                Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
+                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
+                requestcontext );
+        }
+        else
+        {
+            callback.handle(
+                Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType(
+                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
+                requestcontext );
+        }
     }
 
     // TODO add custom timeout
     // TODO destination context?
     /**
      * Issue a request on a CoAP resource residing on a server.
-     * @param requestAttributes the attributes of the request
-     * @param requestPayload the optional payload of the request
+     * @param confirmable indicating the requst must be confirmed
+     * @param requestCode indicating the request type to issue
+     * @param uri addresses the resource of the server for which the request is intended 
+     * @param requestPayload is the contents of the request
+     * @param options the CoAP options to add to the request
+     * @param otherOptions the not standard options to add to the request
      * @param handlerName when a handler is specified the response will be handled asynchronously
-     * @return the response on the request. Null when a handler is specified. 
-     * @throws InternalInvalidHandlerNameException 
-     * @throws IOException 
-     * @throws ConnectorException 
-     * @throws InternalMalformedUriException 
-     * @throws InternalInvalidRequestCodeException 
-     * @throws InternalInvalidOptionValueException 
+     * @return the result of the request
+     * @throws InternalInvalidHandlerNameException
+     * @throws ConnectorException
+     * @throws IOException
+     * @throws InternalMalformedUriException
+     * @throws InternalInvalidRequestCodeException
+     * @throws InternalInvalidOptionValueException
+     * @throws InternalInvalidByteArrayValueException 
      */
-    Result< byte[], ReceivedResponseAttributes > doRequest(
+    Result< InputStream, ReceivedResponseAttributes > doRequest(
         boolean confirmable,
         Code requestCode,
         String uri,
-        TypedValue< byte[] > requestPayload,
-        Options options,
+        TypedValue< InputStream > requestPayload,
+        RequestOptions options,
         String handlerName ) throws InternalInvalidHandlerNameException,
         ConnectorException,
         IOException,
         InternalMalformedUriException,
         InternalInvalidRequestCodeException,
-        InternalInvalidOptionValueException
+        InternalInvalidOptionValueException,
+        InternalInvalidByteArrayValueException
     {
-        Result< byte[], ReceivedResponseAttributes > result= null;
+        Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;
         Request request= new Request( requestCode, ( confirmable ? Type.CON : Type.NON ) );
         request.setURI( uri );
-        if ( requestPayload != null )
+        if ( requestPayload.getValue() != null )
         {
             //TODO review unintended payloads
             if ( request.getCode() == Code.GET || request.getCode() == Code.DELETE )
             {
                 request.setUnintendedPayload();
             }
-            request.setPayload( requestPayload.getValue() );
+            //TODO add streaming & blockwise cooperation
+            try
+            {
+                request.setPayload( IOUtils.toByteArray( requestPayload.getValue() ) );
+            }
+            catch ( RuntimeException e )
+            {
+                throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
+            }
+            finally
+            {
+                IOUtils.closeQuietly( requestPayload.getValue() );
+            }
             request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
         }
         CoAPOptions.copyOptions( options, request.getOptions(), false );
         if ( handlerName != null )
         {
-            final SourceCallback< byte[], ReceivedResponseAttributes > callback= getHandler( handlerName );
+            final SourceCallback< InputStream, ReceivedResponseAttributes > callback= getHandler( handlerName );
             // verify handler existence
             if ( callback == null ) throw new InternalInvalidHandlerNameException( "referenced handler { " + handlerName + " } not found" );
             handler= createCoapHandler( uri, request.getCode(), callback );
@@ -448,12 +481,28 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             //TODO error when no response configurable
             if ( response == null )
             {
-                result= Result.< byte[], ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
+                result= Result.< InputStream, ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
             }
             else
             {
-                result= Result.< byte[], ReceivedResponseAttributes > builder().output( response.getPayload() ).attributes( responseAttributes ).mediaType(
-                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                byte[] payload= response.getPayload();
+                if ( payload != null )
+                {
+                    result= Result.< InputStream, ReceivedResponseAttributes > builder()
+                            .output( new ByteArrayInputStream( response.getPayload() ) )
+                            .length( payload.length )
+                            .attributes(
+                        responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                }
+                else
+                {
+                    result= Result.< InputStream, ReceivedResponseAttributes > builder()
+                            .output( new ByteArrayInputStream( new byte[0]) )
+                            .length( 0L )
+                            .attributes( responseAttributes )
+                            .mediaType(
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                }
             }
         }
         else
@@ -504,7 +553,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param requestCode The coap request code from the request context
      * @return
      */
-    private CoapHandler createCoapHandler( final String requestUri, final Code requestCode, final SourceCallback< byte[], ReceivedResponseAttributes > callback )
+    private CoapHandler createCoapHandler( final String requestUri, final Code requestCode, final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
     {
         final Client thisClient= this;
 
@@ -648,7 +697,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalInvalidHandlerNameException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
-        SourceCallback< byte[], ReceivedResponseAttributes > callback= getHandler( handlerName );
+        SourceCallback< InputStream, ReceivedResponseAttributes > callback= getHandler( handlerName );
         if ( callback == null ) throw new InternalInvalidHandlerNameException( "referenced handler { " + handlerName + " } not found" );
 
         CoapHandler handler= new CoapHandler()
@@ -734,7 +783,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalMalformedUriException
      * @throws InternalInvalidObserverException
      */
-    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalMalformedUriException, InternalInvalidObserverException
+    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalMalformedUriException,
+        InternalInvalidObserverException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
         CoapObserveRelation relation= getRelation( uri );

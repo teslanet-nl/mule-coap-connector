@@ -89,7 +89,7 @@ public class OptionAttributes
     /**
      * The other CoAP options received.
      */
-    private MultiMap< String, byte[] > otherOptions= new MultiMap< String, byte[] >();
+    private MultiMap< String, Object > otherOptions= new MultiMap< String, Object >();
 
     /**
      * @return the ifMatchList
@@ -462,7 +462,7 @@ public class OptionAttributes
     /**
      * @return other options map.
      */
-    public MultiMap< String, byte[] > getOtherOptions()
+    public MultiMap< String, Object > getOtherOptions()
     {
         return otherOptions;
     }
@@ -470,7 +470,7 @@ public class OptionAttributes
     /**
      * @param otherOptions the other options to set
      */
-    public void setOtherOptions( MultiMap< String, byte[] > otherOptions )
+    public void setOtherOptions( MultiMap< String, Object > otherOptions )
     {
         this.otherOptions= otherOptions;
     }
@@ -478,7 +478,12 @@ public class OptionAttributes
     /**
      * @param otherOptions the other options to set
      */
-    public void addOtherOption( String optionNr, byte[] value )
+    /**
+     * Add other option to attributes.
+     * @param optionNr the option number.
+     * @param value the option value.
+     */
+    public void addOtherOption( String optionNr, Object value )
     {
         this.otherOptions.put( optionNr, value );
     }

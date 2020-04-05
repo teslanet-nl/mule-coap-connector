@@ -23,11 +23,16 @@
 package nl.teslanet.mule.connectors.coap.test.modules.options;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+
+import org.eclipse.californium.core.coap.Option;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,10 +43,6 @@ import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
-
-import org.eclipse.californium.core.coap.BlockOption;
-import org.eclipse.californium.core.coap.Option;
-import org.eclipse.californium.core.coap.OptionSet;
 
 
 /**
@@ -63,8 +64,6 @@ public class OptionSetToAttributesTest
         assertNotNull( "Options default contruction failed", options );
     }
 
-
-
     @Test
     public void testOptionSetIfMatch() throws InvalidETagException, InternalInvalidOptionValueException
     {
@@ -84,7 +83,6 @@ public class OptionSetToAttributesTest
         assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue1 ) ) );
         assertFalse( "coap.opt.if_match.list: etag not expected", list.contains( new ETag( etagValue2 ) ) );
     }
-
 
     @Test
     public void testOptionSetIfMatchMultiple() throws InvalidETagException, InternalInvalidOptionValueException
@@ -109,7 +107,6 @@ public class OptionSetToAttributesTest
         assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue2 ) ) );
         assertFalse( "coap.opt.if_match.list: etag not expected", list.contains( new ETag( etagValue3 ) ) );
     }
-
 
     @Test
     public void testOptionUrihost() throws InvalidETagException, InternalInvalidOptionValueException
@@ -184,7 +181,6 @@ public class OptionSetToAttributesTest
         assertEquals( "coap.opt.uri_port: wrong value", port, attr );
     }
 
-
     @Test
     public void testOptionSetLocationPath() throws InvalidETagException, InternalInvalidOptionValueException
     {
@@ -192,7 +188,7 @@ public class OptionSetToAttributesTest
         String value1= "this";
         String value2= "is";
         String value3= "some location";
-        String total= "this/is";
+        //String total= "this/is";
 
         set.addLocationPath( value1 );
         set.addLocationPath( value2 );
@@ -210,7 +206,6 @@ public class OptionSetToAttributesTest
 
     }
 
-
     @Test
     public void testOptionSetUriPath() throws InvalidETagException, InternalInvalidOptionValueException
     {
@@ -218,7 +213,7 @@ public class OptionSetToAttributesTest
         String value1= "this";
         String value2= "is";
         String value3= "some path";
-        String total= "this/is";
+        //String total= "this/is";
 
         set.addUriPath( value1 );
         set.addUriPath( value2 );
@@ -249,7 +244,6 @@ public class OptionSetToAttributesTest
         assertEquals( "coap.opt.content_format: wrong value", format, attr );
     }
 
-
     @Test
     public void testOptionMaxAge() throws InvalidETagException, InternalInvalidOptionValueException
     {
@@ -271,7 +265,7 @@ public class OptionSetToAttributesTest
         String value1= "this";
         String value2= "is";
         String value3= "some=query";
-        String total= "this&is";
+        //String total= "this&is";
 
         set.addUriQuery( value1 );
         set.addUriQuery( value2 );
@@ -310,7 +304,7 @@ public class OptionSetToAttributesTest
         String value1= "this";
         String value2= "is";
         String value3= "some=locationquery";
-        String total= "this&is";
+        //String total= "this&is";
 
         set.addLocationQuery( value1 );
         set.addLocationQuery( value2 );
@@ -340,7 +334,6 @@ public class OptionSetToAttributesTest
 
         assertEquals( "coap.opt.proxy_uri: wrong value", uri, attr );
     }
-
 
     @Test
     public void testOptionProxyScheme() throws InvalidETagException, InternalInvalidOptionValueException
@@ -393,7 +386,7 @@ public class OptionSetToAttributesTest
         BlockValue attr= attributes.getBlock2();
 
         assertEquals( "coap.opt.block2.szx: wrong value", szx, attr.getSzx() );
-        assertEquals( "coap.opt.block2.size: wrong value", size, attr.getSize()  );
+        assertEquals( "coap.opt.block2.size: wrong value", size, attr.getSize() );
         assertEquals( "coap.opt.block2.num", num, attr.getNum() );
         assertTrue( "coap.opt.block2.m: wrong value", attr.isM() );
     }
@@ -411,7 +404,6 @@ public class OptionSetToAttributesTest
 
         assertEquals( "coap.opt.size1: wrong value", size, attr );
     }
-
 
     @Test
     public void testOptionSize2() throws InvalidETagException, InternalInvalidOptionValueException
@@ -462,29 +454,29 @@ public class OptionSetToAttributesTest
 
         OptionAttributes attributes= new OptionAttributes();
         CoAPOptions.copyOptions( set, attributes );
-        byte[] attr1= attributes.getOtherOptions().get( optionNr1 );
-        byte[] attr2= attributes.getOtherOptions().get( optionNr2 );
-        byte[] attr3= attributes.getOtherOptions().get( optionNr3 );
-        byte[] attr4= attributes.getOtherOptions().get( optionNr4 );
+        byte[] attr1= (byte[]) attributes.getOtherOptions().get( optionNr1.toString() );
+        byte[] attr2= (byte[]) attributes.getOtherOptions().get( optionNr2.toString() );
+        byte[] attr3= (byte[]) attributes.getOtherOptions().get( optionNr3.toString() );
+        byte[] attr4= (byte[]) attributes.getOtherOptions().get( optionNr4.toString() );
 
         assertArrayEquals( "coap.opt.other." + optionNr1.toString() + ": wrong value", value1, attr1 );
-//        assertEquals( "coap.opt.other." + optionNr1.toString() + ".critical: wrong value", true, props.get( "coap.opt.other." + optionNr1.toString() + ".critical" ) );
-//        assertEquals( "coap.opt.other." + optionNr1.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr1.toString() + ".unsafe" ) );
-//        assertEquals( "coap.opt.other." + optionNr1.toString() + ".no_cache_key: wrong value", false, props.get( "coap.opt.other." + optionNr1.toString() + ".no_cache_key" ) );
+        //        assertEquals( "coap.opt.other." + optionNr1.toString() + ".critical: wrong value", true, props.get( "coap.opt.other." + optionNr1.toString() + ".critical" ) );
+        //        assertEquals( "coap.opt.other." + optionNr1.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr1.toString() + ".unsafe" ) );
+        //        assertEquals( "coap.opt.other." + optionNr1.toString() + ".no_cache_key: wrong value", false, props.get( "coap.opt.other." + optionNr1.toString() + ".no_cache_key" ) );
 
         assertArrayEquals( "coap.opt.other." + optionNr2.toString() + ": wrong value", value2, attr2 );
-//        assertEquals( "coap.opt.other." + optionNr2.toString() + ".critical: wrong value", false, props.get( "coap.opt.other." + optionNr2.toString() + ".critical" ) );
-//        assertEquals( "coap.opt.other." + optionNr2.toString() + ".unsafe: wrong value", true, props.get( "coap.opt.other." + optionNr2.toString() + ".unsafe" ) );
-//        assertEquals( "coap.opt.other." + optionNr2.toString() + ".no_cache_key: wrong value", false, props.get( "coap.opt.other." + optionNr2.toString() + ".no_cache_key" ) );
+        //        assertEquals( "coap.opt.other." + optionNr2.toString() + ".critical: wrong value", false, props.get( "coap.opt.other." + optionNr2.toString() + ".critical" ) );
+        //        assertEquals( "coap.opt.other." + optionNr2.toString() + ".unsafe: wrong value", true, props.get( "coap.opt.other." + optionNr2.toString() + ".unsafe" ) );
+        //        assertEquals( "coap.opt.other." + optionNr2.toString() + ".no_cache_key: wrong value", false, props.get( "coap.opt.other." + optionNr2.toString() + ".no_cache_key" ) );
 
         assertArrayEquals( "coap.opt.other." + optionNr3.toString() + ": wrong value", value3, attr3 );
-//        assertEquals( "coap.opt.other." + optionNr3.toString() + ".critical: wrong value", false, props.get( "coap.opt.other." + optionNr3.toString() + ".critical" ) );
-//        assertEquals( "coap.opt.other." + optionNr3.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr3.toString() + ".unsafe" ) );
-//        assertEquals( "coap.opt.other." + optionNr3.toString() + ".no_cache_key: wrong value", true, props.get( "coap.opt.other." + optionNr3.toString() + ".no_cache_key" ) );
+        //        assertEquals( "coap.opt.other." + optionNr3.toString() + ".critical: wrong value", false, props.get( "coap.opt.other." + optionNr3.toString() + ".critical" ) );
+        //        assertEquals( "coap.opt.other." + optionNr3.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr3.toString() + ".unsafe" ) );
+        //        assertEquals( "coap.opt.other." + optionNr3.toString() + ".no_cache_key: wrong value", true, props.get( "coap.opt.other." + optionNr3.toString() + ".no_cache_key" ) );
 
         assertArrayEquals( "coap.opt.other." + optionNr4.toString() + ": wrong value", value4, attr4 );
-//        assertEquals( "coap.opt.other." + optionNr4.toString() + ".critical: wrong value", true, props.get( "coap.opt.other." + optionNr4.toString() + ".critical" ) );
-//        assertEquals( "coap.opt.other." + optionNr4.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr4.toString() + ".unsafe" ) );
-//        assertEquals( "coap.opt.other." + optionNr4.toString() + ".no_cache_key: wrong value", true, props.get( "coap.opt.other." + optionNr4.toString() + ".no_cache_key" ) );
+        //        assertEquals( "coap.opt.other." + optionNr4.toString() + ".critical: wrong value", true, props.get( "coap.opt.other." + optionNr4.toString() + ".critical" ) );
+        //        assertEquals( "coap.opt.other." + optionNr4.toString() + ".unsafe: wrong value", false, props.get( "coap.opt.other." + optionNr4.toString() + ".unsafe" ) );
+        //        assertEquals( "coap.opt.other." + optionNr4.toString() + ".no_cache_key: wrong value", true, props.get( "coap.opt.other." + optionNr4.toString() + ".no_cache_key" ) );
     }
 }

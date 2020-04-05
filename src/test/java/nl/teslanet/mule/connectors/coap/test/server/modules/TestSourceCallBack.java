@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 
+import java.io.InputStream;
+
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -35,14 +37,14 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
  * Test class for testing connector modules that use SourceCallBack instances.
  *
  */
-public class TestSourceCallBack implements SourceCallback< byte[], ReceivedRequestAttributes >
+public class TestSourceCallBack implements SourceCallback< InputStream, ReceivedRequestAttributes >
 {
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.SourceCallback#handle(org.mule.runtime.extension.api.runtime.operation.Result)
      */
     @Override
-    public void handle( Result< byte[], ReceivedRequestAttributes > result )
+    public void handle( Result< InputStream, ReceivedRequestAttributes > result )
     {
         // not needed for test
     }
@@ -51,7 +53,7 @@ public class TestSourceCallBack implements SourceCallback< byte[], ReceivedReque
      * @see org.mule.runtime.extension.api.runtime.source.SourceCallback#handle(org.mule.runtime.extension.api.runtime.operation.Result, org.mule.runtime.extension.api.runtime.source.SourceCallbackContext)
      */
     @Override
-    public void handle( Result< byte[], ReceivedRequestAttributes > result, SourceCallbackContext context )
+    public void handle( Result< InputStream, ReceivedRequestAttributes > result, SourceCallbackContext context )
     {
         // not needed for test         
     }

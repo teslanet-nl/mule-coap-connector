@@ -35,7 +35,7 @@ public interface Options
     /**
      * @return the ifMatchList
      */
-    public List< ETag > getIfMatchList();
+    public List< Object > getIfMatchList();
 
     /**
      * @return the uriHost
@@ -45,7 +45,7 @@ public interface Options
     /**
      * @return the etagList
      */
-    public List< ETag > getEtagList();
+    public List< Object > getEtagList();
 
     /**
      * @return the ifNoneMatch

@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -36,7 +37,6 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.options.OptionsParam;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
@@ -58,7 +58,7 @@ public class RequestBuilder
     @Parameter
     @Content(primary= true)
     @Summary("The CoAP request payload.")
-    private TypedValue< byte[] > requestPayload;
+    private TypedValue< InputStream > requestPayload;
 
     /**private
      * When true the server is expected to acknowledge reception of the request.
@@ -110,17 +110,6 @@ public class RequestBuilder
     private List< QueryParam > queryParams= null;
 
     /**
-     * The CoAP options to send with the request.
-     */
-    @Parameter
-    @Optional
-    @NullSafe
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to send with the request.")
-    @DisplayName("Options")
-    private OptionsParam options;
-
-    /**
      * @return the requestCode
      */
     public CoAPRequestCode getRequestCode()
@@ -139,7 +128,7 @@ public class RequestBuilder
     /**
      * @return the requestPayload
      */
-    public TypedValue< byte[] > getRequestPayload()
+    public TypedValue< InputStream > getRequestPayload()
     {
         return requestPayload;
     }
@@ -147,7 +136,7 @@ public class RequestBuilder
     /**
      * @param requestPayload the requestPayload to set
      */
-    public void setRequestPayload( TypedValue< byte[] > requestPayload )
+    public void setRequestPayload( TypedValue< InputStream > requestPayload )
     {
         this.requestPayload= requestPayload;
     }
@@ -214,22 +203,6 @@ public class RequestBuilder
     public void setQueryParams( List< QueryParam > queryParameters )
     {
         this.queryParams= queryParameters;
-    }
-
-    /**
-     * @return the options
-     */
-    public OptionsParam getOptions()
-    {
-        return options;
-    }
-
-    /**
-     * @param options the options to set
-     */
-    public void setOptions( OptionsParam options )
-    {
-        this.options= options;
     }
 
     /**

@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -32,10 +33,16 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
+import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoverAttributes;
@@ -51,8 +58,10 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -74,19 +83,31 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider
 public class ClientOperations
 {
     /**
-     * The Request Processor issues a request on a CoAP server.
-     * The processor blocks until a response is received or a timeout occurs. 
-     * @param client The client to use to issue the request.
+     * The Request Processor issues a request on a CoAP server. The processor blocks
+     * until a response is received or a timeout occurs.
+     * 
+     * @param client         The client to use to issue the request.
      * @param requestBuilder The request attributes
      * @param requestPayload The payload of the request
-     * @return The result containing the response received (if any) and the context of the request.
+     * @return The result containing the response received (if any) and the context
+     *         of the request.
+     */
+    /**
+     * The Request Processor issues a request on a CoAP server. The processor blocks
+     * until a response is received or a timeout occurs.
+     * 
+     * @param client
+     * @param requestBuilder The request attributes.
+     * @param requestOptions The request options.
+     * @return the result of the request which contains the received server response
+     *         - if any.
      */
     @MediaType(value= "*/*", strict= false)
     @Throws({ RequestErrorProvider.class })
-    public Result< byte[], ReceivedResponseAttributes > request(
+    public Result< InputStream, ReceivedResponseAttributes > request(
         @Config Client client,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder
-        )
+        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
+        @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
         try
         {
@@ -100,12 +121,12 @@ public class ClientOperations
                 AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
-                requestBuilder.getOptions(),
+                requestOptions,
                 null );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            //TODO should not occur, restructure doRequest to solve
+            // TODO should not occur, restructure doRequest to solve
             throw new InvalidHandlerNameException( e.getMessage(), e );
         }
         catch ( ConnectorException e )
@@ -128,23 +149,29 @@ public class ClientOperations
         {
             throw new InvalidOptionValueException( e.getMessage(), e );
         }
+        catch ( InternalInvalidByteArrayValueException e )
+        {
+            throw new InvalidOptionValueException( e.getMessage(), e );
+        }
     }
 
     /**
-     * The  RequestAsync Processor issues a request on a CoAP server asynchronously.
-     * The processor doea not wait for the response and will not block. The handling 
+     * The RequestAsync Processor issues a request on a CoAP server asynchronously.
+     * The processor doea not wait for the response and will not block. The handling
      * of a response (if any) is delegated to the response handler.
-     * @param client The client to use for the request.
+     * 
+     * @param client          The client to use for the request.
      * @param responseHandler Name of the handler that will receive the response.
-     * @param requestBuilder The request attributes.
-     * @param requestPayload The payload of the request.
+     * @param requestBuilder  The request attributes.
+     * @param requestPayload  The payload of the request.
      */
     @MediaType(value= "*/*", strict= false)
     @Throws({ RequestAsyncErrorProvider.class })
     public void requestAsync(
         @Config Client client,
         String responseHandler,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder )
+        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
+        @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
         try
         {
@@ -158,7 +185,7 @@ public class ClientOperations
                 AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
-                requestBuilder.getOptions(),
+                requestOptions,
                 responseHandler );
         }
         catch ( InternalInvalidHandlerNameException e )
@@ -185,12 +212,17 @@ public class ClientOperations
         {
             throw new InvalidOptionValueException( e.getMessage(), e );
         }
+        catch ( InternalInvalidByteArrayValueException e )
+        {
+            throw new InvalidOptionValueException( e.getMessage(), e );
+        }
     }
 
     // TODO add custom timeout
     /**
      * The Ping processor checks whether a CoAP server is reachable.
-     * @param client The client to use to issue the request.
+     * 
+     * @param client         The client to use to issue the request.
      * @param pingAttributes The request attributes to use.
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
@@ -221,8 +253,10 @@ public class ClientOperations
     }
 
     /**
-     * The Discover processor retrieves information about CoAP resources of a server.
-     * @param client The client to use to issue the request.
+     * The Discover processor retrieves information about CoAP resources of a
+     * server.
+     * 
+     * @param client             The client to use to issue the request.
      * @param discoverAttributes The attributes of the discover request
      * @return The resources description on the server that have been discovered.
      */
@@ -257,7 +291,7 @@ public class ClientOperations
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {
-            //TODO change members in resourceinfo to list?
+            // TODO change members in resourceinfo to list?
             StringBuilder ifBuilder= new StringBuilder();
             Iterator< String > ifIterator= link.getAttributes().getInterfaceDescriptions().iterator();
             while ( ifIterator.hasNext() )
@@ -294,10 +328,12 @@ public class ClientOperations
     }
 
     /**
-     * The Start Observer processor creates an observer on the CoAP client. 
-     * It starts observing the specified server resource immediately.
-     * @param client The client instance that starts the observer.
-     * @param handlerName Name of the response handler that will process the notification received from server.
+     * The Start Observer processor creates an observer on the CoAP client. It
+     * starts observing the specified server resource immediately.
+     * 
+     * @param client             The client instance that starts the observer.
+     * @param handlerName        Name of the response handler that will process the
+     *                           notification received from server.
      * @param observerAttributes Attributes of the observe request.
      */
     @Throws({ ObserverStartErrorProvider.class })
@@ -329,13 +365,14 @@ public class ClientOperations
 
     /**
      * Stop a running observer.
-     * @param client The client instance that stops the observer.
+     * 
+     * @param client             The client instance that stops the observer.
      * @param observerAttributes Attributes of the observe request
      */
     @Throws({ ObserverStopErrorProvider.class })
     public void observerStop( @Config Client client, @ParameterGroup(name= "Observer") ObserverAttributes observerAttributes )
     {
-        //TODO confirmable is not applicable
+        // TODO confirmable is not applicable
         try
         {
             client.stopObserver( observerAttributes.getHost(), observerAttributes.getPort(), observerAttributes.getPath(), observerAttributes.getQueryParams() );
@@ -351,9 +388,11 @@ public class ClientOperations
     }
 
     /**
-     * This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.
+     * This processor returns a list of observers. The list contains the uri's of
+     * the active observers of the CoAP client.
+     * 
      * @param client The client instance of which the observers are listed.
-     * @return the list of observed uri's 
+     * @return the list of observed uri's
      */
     public List< String > observerList( @Config Client client )
     {
