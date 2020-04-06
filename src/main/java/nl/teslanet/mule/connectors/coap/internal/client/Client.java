@@ -55,7 +55,6 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -90,6 +89,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseEx
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -428,7 +428,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         boolean confirmable,
         Code requestCode,
         String uri,
-        TypedValue< InputStream > requestPayload,
+        TypedValue< Object > requestPayload,
         RequestOptions options,
         String handlerName ) throws InternalInvalidHandlerNameException,
         ConnectorException,
@@ -452,15 +452,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             //TODO add streaming & blockwise cooperation
             try
             {
-                request.setPayload( IOUtils.toByteArray( requestPayload.getValue() ) );
+                request.setPayload( MessageUtils.toByteArray( requestPayload ) );
             }
             catch ( RuntimeException e )
             {
-                throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
-            }
-            finally
-            {
-                IOUtils.closeQuietly( requestPayload.getValue() );
+                throw new InternalInvalidByteArrayValueException( "cannot convert payload to byte[]", e );
             }
             request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
         }

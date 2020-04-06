@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -165,11 +166,10 @@ public class ClientOperations
      * @param requestBuilder  The request attributes.
      * @param requestPayload  The payload of the request.
      */
-    @MediaType(value= "*/*", strict= false)
     @Throws({ RequestAsyncErrorProvider.class })
     public void requestAsync(
         @Config Client client,
-        String responseHandler,
+        @Alias( "responseHandler" ) @Expression(ExpressionSupport.SUPPORTED) @Summary("The name of the Response handler that will receive the response. The handler must exist.") String responseHandler,
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
         @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {

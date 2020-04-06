@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -58,7 +57,7 @@ public class RequestBuilder
     @Parameter
     @Content(primary= true)
     @Summary("The CoAP request payload.")
-    private TypedValue< InputStream > requestPayload;
+    private TypedValue< Object > requestPayload;
 
     /**private
      * When true the server is expected to acknowledge reception of the request.
@@ -128,7 +127,7 @@ public class RequestBuilder
     /**
      * @return the requestPayload
      */
-    public TypedValue< InputStream > getRequestPayload()
+    public TypedValue< Object > getRequestPayload()
     {
         return requestPayload;
     }
@@ -136,7 +135,7 @@ public class RequestBuilder
     /**
      * @param requestPayload the requestPayload to set
      */
-    public void setRequestPayload( TypedValue< InputStream > requestPayload )
+    public void setRequestPayload( TypedValue< Object > requestPayload )
     {
         this.requestPayload= requestPayload;
     }
