@@ -32,7 +32,6 @@ import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
@@ -58,8 +57,10 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -101,44 +102,39 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         }
         catch ( InvalidResourceUriException e )
         {
-            new DefaultMuleException( "CoAP listener on { " + uriPattern + " } could not be started.", e );
+            new DefaultMuleException( "listener on resource(s) { " + uriPattern + " }  could not start.", e );
         }
         server.addListener( operationalListener );
-        LOGGER.info( "listener start: " + uriPattern );
+        LOGGER.info( "listener on resource(s) { " + uriPattern + " } has started." );
     }
 
     @OnSuccess
     @MediaType(value= "*/*", strict= false)
     public void onSuccess(
         @Placement(tab= "Response", order= 1) ResponseBuilder response,
-        @Optional @Expression(ExpressionSupport.SUPPORTED) @Placement(tab= "Response Options", order= 1) @Summary("The CoAP options of the response.") ResponseOptions responseOptions,
-        SourceCallbackContext callbackContext ) throws Exception
+        @Optional @Expression(ExpressionSupport.SUPPORTED) @Placement(tab= "Response", order= 3) @Summary("The CoAP options of the response.") ResponseOptions responseOptions,
+        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException, InternalInvalidResponseCodeException
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
-            CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
-            Response cfResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
+            Response coapResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
             //TODO give user control
-            TypedValue< InputStream > payload= response.getResponsePayload();
-            cfResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( payload.getDataType().getMediaType() ) );
+            TypedValue< Object > responsePayload= response.getResponsePayload();
+            coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
             if ( responseOptions != null )
             {
-                CoAPOptions.copyOptions( responseOptions, cfResponse.getOptions(), false );
+                CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
             }
             //TODO add streaming & blockwise cooperation
             try
             {
-                cfResponse.setPayload( IOUtils.toByteArray( payload.getValue() ));
+                coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ));
             }
-            catch ( RuntimeException e )
+            catch ( Exception e )
             {
                 throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
             }
-            finally
-            {
-                IOUtils.closeQuietly( payload.getValue() );
-            }
-            exchange.respond( cfResponse );
+            ((CoapExchange) callbackContext.getVariable( "CoapExchange" ).get()).respond( coapResponse );
         }
     }
 
@@ -168,8 +164,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         server.removeListener( operationalListener );
         operationalListener= null;
-        LOGGER.info( "listener stop" );
-
+        LOGGER.info( "listener on resource(s) { " + uriPattern + " } has stopped" );
     }
 
     /**

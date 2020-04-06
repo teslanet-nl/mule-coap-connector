@@ -23,12 +23,10 @@
 package nl.teslanet.mule.connectors.coap.test.utils;
 
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -40,6 +38,8 @@ import org.mule.runtime.api.streaming.object.CursorIterator;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
+
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 
 
 /**

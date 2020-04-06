@@ -35,6 +35,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
 {
     abstract protected  Option getOption();
     
+    @SuppressWarnings("unlikely-arg-type")
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {

@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 
 
@@ -78,10 +77,5 @@ public class OptOtherInbound2UnsafeTest extends AbstractOtherOptionInboundProper
     protected OptionStrategy getStrategy()
     {
         return new OptOtherStrategy( getOption() );
-    }
-    @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
-    {
-        return attributes.getOptions().getOtherOptions().get( getOption().getNumber() );
     }
 }

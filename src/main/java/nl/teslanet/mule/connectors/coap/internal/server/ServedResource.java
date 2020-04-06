@@ -276,8 +276,7 @@ public class ServedResource extends CoapResource
             callback.handle(
                 Result.< InputStream, ReceivedRequestAttributes > builder()
                     .attributes( requestAttributes )
-                    .output( new ByteArrayInputStream( new byte[0] ) )
-                    .length( 0 )
+                    .output( null )
                     .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
                     .build()
                 ,

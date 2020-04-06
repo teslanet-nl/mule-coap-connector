@@ -23,8 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-import java.io.InputStream;
-
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -60,7 +58,7 @@ public class ResponseBuilder
     @Content(primary= true)
     @Placement(tab= "Response", order= 2)
     @Summary("The payload of the CoAP response.")
-    private TypedValue< InputStream > responsePayload;
+    private TypedValue< Object > responsePayload;
 
     /**
      * @return the responseCode
@@ -81,7 +79,7 @@ public class ResponseBuilder
     /**
      * @return the responsePayload
      */
-    public TypedValue< InputStream > getResponsePayload()
+    public TypedValue< Object > getResponsePayload()
     {
         return responsePayload;
     }
@@ -89,7 +87,7 @@ public class ResponseBuilder
     /**
      * @param responsePayload the responsePayload to set
      */
-    public void setResponsePayload( TypedValue< InputStream > responsePayload )
+    public void setResponsePayload( TypedValue< Object > responsePayload )
     {
         this.responsePayload= responsePayload;
     }
