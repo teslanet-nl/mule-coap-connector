@@ -62,9 +62,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:listener uriPattern="/service"
 			config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" >
-				<coap:options >
-					<coap:option key="coap.opt.location_path" value="#[vars.location_path]" />
-				</coap:options>
+				<coap:options locationPath="#[vars.location_path]"/>
 			</coap:response>
 			<!-- TODO location path -->
 		</coap:listener>

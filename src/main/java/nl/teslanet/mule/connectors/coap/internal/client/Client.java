@@ -493,8 +493,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 else
                 {
                     result= Result.< InputStream, ReceivedResponseAttributes > builder()
-                            .output( new ByteArrayInputStream( new byte[0]) )
-                            .length( 0L )
+                            .output( null )
                             .attributes( responseAttributes )
                             .mediaType(
                         MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();

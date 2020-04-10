@@ -22,7 +22,9 @@
   #L%
   -->
 
-<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+<mule 
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" 
 	xmlns="http://www.mulesoft.org/schema/mule/core"
@@ -33,13 +35,16 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
-">
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+	">
 
 	<description>Mule CoAP connector test application</description>
 			
 	<coap:udp-endpoint name="udp" logCoapMessages="true" >
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
+	
+	
 
 	<coap:server-config name="config" endpoint="udp">
 		<coap:resources>
@@ -63,34 +68,24 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 				</coap:resource>
 			</coap:resources>
 	</coap:server-config>
-	<object doc:name="Object" doc:id="2a2f2072-4b90-43dd-ba47-73795a916690" name="storage" class="java.util.HashMap" />
+	
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="249c6420-a649-4d60-8331-17c6eeca6ca8" persistent="false" />
+	
 	<flow name="listen_add_resource">
-		<coap:listener uriPattern="/service/add_resource/*"
+		<coap:listener pathPattern="/service/add_resource/*"
 			config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<!-- TODO location path -->
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
-		<scripting:execute engine="groovy" doc:name="put payload into String" doc:id="024257f5-4f0a-40af-b970-da49ce2016ee" >
-			<scripting:code >
-			if ( payload != null )
-			{
-				return new String( payload );
-			}
-			else
-			{
-				return new String();
-			}
-			</scripting:code>
-		</scripting:execute>
 		<set-variable variableName="method" value="#[ vars.attr.requestCode ]"
 			doc:name="set method" />
 		<set-variable variableName="uri" value="#[ vars.attr.requestUri ]"
 			doc:name="set method" />
 		<!-- TODO: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
-			value="#['/' ++ vars.attr.options['coap.opt.location_path']!]" doc:name="set resource_path" />
+			value="#['/' ++ vars.attr.options.locationPath!]" doc:name="set resource_path" />
 
 		<choice doc:name="by method">
 			<when expression="#[ vars.uri == '/service/add_resource/all_methods' ]">
@@ -136,33 +131,30 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<sub-flow name="add_resource">
-
-		<java:invoke instance="storage" method="put(Object,Object)"
-			class="java.util.HashMap">
-			<java:args><![CDATA[#[{ arg0: vars.resource_path, arg1: payload }]]]></java:args>
-		</java:invoke>
+		<os:store doc:name="Store" key="#[ vars.resource_path ]" failOnNullValue="false"/>
 		<coap:resource-add config-ref="config"
-			uri="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
+			resourcePath="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
 			delete="#[vars.delete]" doc:name="add resource" />
 		<set-variable variableName="location_path" value="#[ vars.resource_path ]" />
 		<set-variable variableName="response_code" value="CREATED" />
 	</sub-flow>
 
 	<flow name="listen_exists">
-		<coap:listener uriPattern="/service/exists" config-ref="config">
+		<coap:listener pathPattern="/service/exists" config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<!--TODO: uri attribute should be uriPattern -->
-		<logger message="#[ attributes.options['coap.opt.location_path']!]"/>
+		<logger message="#[ attributes.options.locationPath! ]"/>
 		<!-- TODO align root resource / -->
 		<coap:resource-exists config-ref="config"
-			uriPattern="#[ '/' ++ attributes.options['coap.opt.location_path']!]" />
-			<set-payload value="#[payload as String]"/>
+			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
+			<set-payload value="#[ payload as String]"/>
 	</flow>
 
 	<flow name="listen_service_resource">
-		<coap:listener uriPattern="/service/*" config-ref="config">
+		<coap:listener pathPattern="/service/*" config-ref="config">
+			
 			<coap:response responseCode="#[ vars.response_code]" />
+			
 		</coap:listener>
 		
 		<set-variable variableName="method" value="#[ attributes.requestCode ]"
@@ -171,58 +163,40 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			doc:name="set method" />
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
-		<scripting:execute engine="groovy" doc:name="put payload into String" doc:id="9af9a6b1-ea7c-45fc-a044-1583e61da300" >
-			<scripting:code >
-			if ( payload != null )
-			{
-				return new String( payload );
-			}
-			else
-			{
-				return new String();
-			}
-			</scripting:code>
-		</scripting:execute>
 
 		<choice doc:name="by method">
 			<when expression="#[vars.method == 'GET']">
-				<java:invoke instance="storage" method="get(Object)"
-					class="java.util.HashMap">
-					<java:args><![CDATA[#[{ arg0: vars.uri }]]]></java:args>
-				</java:invoke>
+				<os:retrieve doc:name="Retrieve" key="#[ vars.uri ]" objectStore="Object_store">
+					<os:default-value ><![CDATA[#['']]]></os:default-value>
+				</os:retrieve>
 				<set-variable variableName="response_code" value="CONTENT" />
 			</when>
 			<when expression="#[ vars.method == 'PUT']">
-				<java:invoke instance="storage" method="put(Object,Object)"
-					class="java.util.HashMap">
-					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
-				</java:invoke>
+				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false"/>
 				<coap:notify config-ref="config"
-					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
+					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="509de38a-e978-4b5c-a35a-6aa803eee68e" />
 				
 			</when>
 			<when expression="#[vars.method == 'POST']">
-				<java:invoke instance="storage" method="put(Object,Object)"
-					class="java.util.HashMap" target="old">
-					<java:args><![CDATA[#[{ arg0: vars.uri, arg1: payload }]]]></java:args>
-				</java:invoke>
+				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false"/>
 				<coap:notify config-ref="config"
-					uriPattern="#[ vars.uri ]" doc:name="resource changed" />
+					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="1fa85d9c-0c23-4641-a3a0-198b0ed45d7a" />				
 			</when>
 			<when expression="#[vars.method == 'DELETE']">
-				<java:invoke instance="storage" method="remove(Object)"
-					class="java.util.HashMap" target="old">
-					<java:args><![CDATA[#[{ arg0: vars.uri }]]]></java:args>
-				</java:invoke>
+				<os:contains doc:name="Contains" key="#[ vars.uri ]" objectStore="Object_store" target="exists"/>
+				<choice doc:name="Choice" >
+					<when expression="#[vars.exists]">
+						<os:remove doc:name="Remove" key="#[ vars.uri ]" objectStore="Object_store"/>
+					</when>
+				</choice>
 				<coap:resource-remove config-ref="config"
-					uriPattern="#[ vars.uri ]" />
+					pathPattern="#[ vars.uri ]" />
 				<set-variable variableName="response_code" value="DELETED" />
 				<set-payload value="OK" doc:name="return OK" doc:id="8046e2bd-abbb-4996-b58d-cbe7c19ab447" />
-				
 			</when>
 			<otherwise>
 				<set-payload value="not expected" doc:name="Set Payload" />

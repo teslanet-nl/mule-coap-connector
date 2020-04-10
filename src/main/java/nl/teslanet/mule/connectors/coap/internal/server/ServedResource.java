@@ -37,10 +37,11 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
+import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 
 
 /**
@@ -87,21 +88,21 @@ public class ServedResource extends CoapResource
     /**
      * Constuctor that creates a ServedResource object according to given configuration.
      * The ServedResource and its child resources will be constructed.
-     * @param resourceConfig the description of the resource to create. 
+     * @param resource the configuration of the resource to create. 
      */
-    public ServedResource( ResourceConfig resourceConfig )
+    public ServedResource( ResourceConfig resource )
     {
-        super( resourceConfig.getResourceName() );
+        super( resource.getResourceName() );
 
         //TODO make use of visible/invisible?
 
-        get= resourceConfig.isGet();
-        put= resourceConfig.isPut();
-        post= resourceConfig.isPost();
-        delete= resourceConfig.isDelete();
-        earlyAck= resourceConfig.isEarlyAck();
+        get= resource.isGet();
+        put= resource.isPut();
+        post= resource.isPost();
+        delete= resource.isDelete();
+        earlyAck= resource.isEarlyAck();
 
-        if ( resourceConfig.isObservable() )
+        if ( resource.isObservable() )
         {
             setObservable( true );
             getAttributes().setObservable();
@@ -112,46 +113,108 @@ public class ServedResource extends CoapResource
         }
 
         //process info configuration
-        if ( resourceConfig.getInfo() != null )
+        if ( resource.getInfoConfig() != null )
         {
-            if ( resourceConfig.getInfo().getTitle() != null )
+            if ( resource.getInfoConfig().getTitle() != null )
             {
-                getAttributes().setTitle( resourceConfig.getInfo().getTitle() );
+                getAttributes().setTitle( resource.getInfoConfig().getTitle() );
             } ;
-            if ( resourceConfig.getInfo().getRt() != null )
+            if ( resource.getInfoConfig().getRt() != null )
             {
-                for ( String rt : resourceConfig.getInfo().getRt().split( "\\s*,\\s*" ) )
+                for ( String rt : resource.getInfoConfig().getRt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             } ;
-            if ( resourceConfig.getInfo().getIfdesc() != null )
+            if ( resource.getInfoConfig().getIfdesc() != null )
             {
-                for ( String ifdesc : resourceConfig.getInfo().getIfdesc().split( "\\s*,\\s*" ) )
+                for ( String ifdesc : resource.getInfoConfig().getIfdesc().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             } ;
-            if ( resourceConfig.getInfo().getCt() != null )
+            if ( resource.getInfoConfig().getCt() != null )
             {
-                for ( String ct : resourceConfig.getInfo().getCt().split( "\\s*,\\s*" ) )
+                for ( String ct : resource.getInfoConfig().getCt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }
             }
-            if ( resourceConfig.getInfo().getSz() != null )
+            if ( resource.getInfoConfig().getSz() != null )
             {
-                getAttributes().setMaximumSizeEstimate( resourceConfig.getInfo().getSz() );
+                getAttributes().setMaximumSizeEstimate( resource.getInfoConfig().getSz() );
             }
         }
         //process resource configuration
-        if ( resourceConfig.getSubResources() != null )
+        if ( resource.getSubResources() != null )
         {
             //also create children (recursively) 
-            for ( ResourceConfig childResourceConfig : resourceConfig.getSubResources() )
+            for ( ResourceConfig childResourceConfig : resource.getSubResources() )
             {
                 ServedResource child= new ServedResource( childResourceConfig );
                 add( child );
+            }
+        }
+    }
+
+    /**
+     * Constructor that creates a ServedResource object using given builder.
+     * The ServedResource and its child resources will be constructed.
+     * @param resource the builder of the resource to create. 
+     */
+    public ServedResource( ResourceBuilder resource )
+    {
+        super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ) );
+
+        //TODO make use of visible/invisible?
+
+        get= resource.isGet();
+        put= resource.isPut();
+        post= resource.isPost();
+        delete= resource.isDelete();
+        earlyAck= resource.isEarlyAck();
+
+        if ( resource.isObservable() )
+        {
+            setObservable( true );
+            getAttributes().setObservable();
+        }
+        else
+        {
+            setObservable( false );
+        }
+
+        //process info configuration
+        if ( resource.getInfo() != null )
+        {
+            if ( resource.getInfo().getTitle() != null )
+            {
+                getAttributes().setTitle( resource.getInfo().getTitle() );
+            } ;
+            if ( resource.getInfo().getRt() != null )
+            {
+                for ( String rt : resource.getInfo().getRt().split( "\\s*,\\s*" ) )
+                {
+                    getAttributes().addResourceType( rt );
+                }
+            } ;
+            if ( resource.getInfo().getIfdesc() != null )
+            {
+                for ( String ifdesc : resource.getInfo().getIfdesc().split( "\\s*,\\s*" ) )
+                {
+                    getAttributes().addInterfaceDescription( ifdesc );
+                }
+            } ;
+            if ( resource.getInfo().getCt() != null )
+            {
+                for ( String ct : resource.getInfo().getCt().split( "\\s*,\\s*" ) )
+                {
+                    getAttributes().addContentType( Integer.parseInt( ct ) );
+                }
+            }
+            if ( resource.getInfo().getSz() != null )
+            {
+                getAttributes().setMaximumSizeEstimate( resource.getInfo().getSz() );
             }
         }
     }
@@ -258,28 +321,19 @@ public class ServedResource extends CoapResource
         requestcontext.addVariable( "defaultCoAPResponseCode", defaultCoAPResponseCode );
         requestcontext.addVariable( "CoapExchange", exchange );
         //TODO add streaming & blockwise cooperation
-        byte[] requestPayload= exchange.getRequestPayload(); 
+        byte[] requestPayload= exchange.getRequestPayload();
         if ( requestPayload != null )
         {
             callback.handle(
-                Result.< InputStream, ReceivedRequestAttributes > builder()
-                    .output( new ByteArrayInputStream( requestPayload ) )
-                    .length( requestPayload.length )
-                    .attributes( requestAttributes )
-                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
-                    .build()
-                ,
+                Result.< InputStream, ReceivedRequestAttributes > builder().output( new ByteArrayInputStream( requestPayload ) ).length( requestPayload.length ).attributes(
+                    requestAttributes ).mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
                 requestcontext );
         }
         else
         {
             callback.handle(
-                Result.< InputStream, ReceivedRequestAttributes > builder()
-                    .attributes( requestAttributes )
-                    .output( null )
-                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
-                    .build()
-                ,
+                Result.< InputStream, ReceivedRequestAttributes > builder().attributes( requestAttributes ).output( null ).mediaType(
+                    MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
                 requestcontext );
         }
 

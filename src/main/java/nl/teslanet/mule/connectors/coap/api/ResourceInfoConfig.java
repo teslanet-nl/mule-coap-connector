@@ -38,7 +38,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * Information for discovering the resource 
  *
  */
-public class ResourceInfo
+public class ResourceInfoConfig
+
 {
     /**
      * Human readable title of the resource. 
@@ -100,20 +101,20 @@ public class ResourceInfo
     /**
      * Default constructor of ResourceInfo.
      */
-    public ResourceInfo()
+    public ResourceInfoConfig()
     {
     }
 
     /**
      * Copy constructor of ResourceInfo.
      */
-    public ResourceInfo( ResourceInfo info )
+    public ResourceInfoConfig( ResourceInfoConfig info )
     {
-        this.title= info.title;
-        this.ifdesc= info.ifdesc;
-        this.rt= info.rt;
-        this.sz= info.sz;
-        this.ct= info.ct;
+        this.title= info.getTitle();
+        this.ifdesc= info.getIfdesc();
+        this.rt= info.getRt();
+        this.sz= info.getSz();
+        this.ct= info.getCt();
     }
 
     /**

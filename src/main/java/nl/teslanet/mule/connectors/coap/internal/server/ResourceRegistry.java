@@ -23,18 +23,18 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.eclipse.californium.core.server.resources.Resource;
-
-import nl.teslanet.mule.connectors.coap.internal.Defs;
-import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.eclipse.californium.core.server.resources.Resource;
+
+import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.Defs;
 
 
 /**
@@ -70,13 +70,13 @@ public class ResourceRegistry
      * The resource will be added as a child of resource with given parentUri. 
      * When parentUri is null the resource will be added to the root. 
      * @param parentUri the uri of the parent of the new resource. 
-     * @param config the definition of the resource to create
+     * @param resourceDesciption the definition of the resource to create
      * @throws InvalidResourceUriException the parent uri does not resolve to an existing resource
      */
-    public void add( String parentUri, ResourceConfig config ) throws InvalidResourceUriException
+    public void add( String parentUri, ResourceConfig resourceDesciption ) throws InvalidResourceUriException
     {
         ServedResource parent= getResource( parentUri );
-        ServedResource resource= new ServedResource( config );
+        ServedResource resource= new ServedResource( resourceDesciption );
         if ( parent == null )
         {
             root.add( resource );
@@ -89,6 +89,27 @@ public class ResourceRegistry
     }
 
     /**
+     * Add a new resource to the registry based on given resource configuration. 
+     * The resource will be added as a child of resource with given parentUri. 
+     * When parentUri is null the resource will be added to the root. 
+     * @param parentUri the uri of the parent of the new resource. 
+     * @param resourceDesciption the definition of the resource to create
+     * @throws InvalidResourceUriException the parent uri does not resolve to an existing resource
+     */
+    public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InvalidResourceUriException
+    {
+        ServedResource parent= getResource( parentUri );
+        ServedResource resource= new ServedResource( resourceDesciption );
+        if ( parent == null )
+        {
+            root.add( resource );
+        }
+        else
+        {
+            parent.add( resource );
+        }
+        register( resource );
+    }    /**
      * Register resource and its children.
      * @param resource to be registered
      */

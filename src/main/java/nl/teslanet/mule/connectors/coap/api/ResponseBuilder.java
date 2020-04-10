@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.api;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -32,6 +33,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 
 
 /**
@@ -60,6 +63,16 @@ public class ResponseBuilder
     @Summary("The payload of the CoAP response.")
     private TypedValue< Object > responsePayload;
 
+    /**
+     * The response options.
+     */
+    @Parameter
+    @Alias( "options")
+    @Optional
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Summary("The CoAP options to add to the response.") 
+    private ResponseOptions responseOptions;
+    
     /**
      * @return the responseCode
      */
@@ -90,5 +103,21 @@ public class ResponseBuilder
     public void setResponsePayload( TypedValue< Object > responsePayload )
     {
         this.responsePayload= responsePayload;
+    }
+
+    /**
+     * @return the responseOptions
+     */
+    public ResponseOptions getResponseOptions()
+    {
+        return responseOptions;
+    }
+
+    /**
+     * @param responseOptions the responseOptions to set
+     */
+    public void setResponseOptions( ResponseOptions responseOptions )
+    {
+        this.responseOptions= responseOptions;
     }
 }

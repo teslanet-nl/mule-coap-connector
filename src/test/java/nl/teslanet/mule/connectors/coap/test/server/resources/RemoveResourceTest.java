@@ -94,7 +94,7 @@ public class RemoveResourceTest extends AbstractServerTestCase
         assertEquals( "wrong response code", ResponseCode.NOT_FOUND, response.getCode() );
     }
 
-    @Test(timeout= 20000L)
+    @Test(timeout= 2000000L)
     public void testRemoveAddedResource() throws Exception
     {
         setClientPath( "/service/resource1" );

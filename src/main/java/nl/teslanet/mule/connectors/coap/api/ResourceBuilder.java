@@ -23,42 +23,36 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-import java.util.List;
-
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of a CoAP resource.
- * The configuration is the resource description used to construct resources on a CoAP server.
+ * Builder of a CoAP resource.
  */
-@Alias("resource")
-public class ResourceConfig
+public class ResourceBuilder
 {
     /**
-    * The name of the resource that will be used to identify it in CoAP uri's.
+    * The absolute path of the resource that will be used to identify it in CoAP uri's.
     */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The name of the resource that will be used to identify it in CoAP uri's.")
-    @Example("my_resource")
-    private String resourceName;
+    @Expression(ExpressionSupport.SUPPORTED)
+    @ParameterDsl(allowReferences= true)
+    @Summary("The absolute path of the resource to create.")
+    @Example("/my_parent_resource/my_resource")
+    private String resourcePath;
 
     /**
      * When true, Get requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true, GET requests are allowed on the resource.")
     private boolean get;
 
@@ -66,8 +60,7 @@ public class ResourceConfig
      * When true, Post requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true, POST requests are allowed on the resource.")
     private boolean post= false;
 
@@ -75,9 +68,7 @@ public class ResourceConfig
      * When true, Put requests are allowed on the resource.
      */
     @Parameter
-    //@ParameterGroup(name= "Methods")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true, PUT requests are allowed on the resource.")
     private boolean put= false;
 
@@ -85,8 +76,7 @@ public class ResourceConfig
      * When true, Delete requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true, DELETE requests are allowed on the resource")
     private boolean delete= false;
 
@@ -94,8 +84,7 @@ public class ResourceConfig
      * When true, the resource can be observed by clients.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true, the resource can be observed by clients")
     private boolean observable= false;
 
@@ -104,43 +93,32 @@ public class ResourceConfig
      * Use this when processing takes longer than the acknowledgment-timeout of the client.  
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression(ExpressionSupport.SUPPORTED)
     @Summary("When true an acknowledgement is immediately sent to the client, before processing the request.")
     private boolean earlyAck= false;
 
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The list of resources contained by this resource.")
-    private ResourceInfoConfig infoConfig;
+    @Expression(ExpressionSupport.SUPPORTED)
+    @ParameterDsl(allowReferences= true)
+    @Summary("The discovery info of the resource.")
+    @DisplayName("Discovery info")
+    private ResourceInfoBuilder info;
 
     /**
-     * The subordinate resources of the resource..
-     */
-    @Parameter
-    @Optional
-    @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "The subordinate resources of the resource.")
-    private List< ResourceConfig > subResources;
-
-    /**
-    * @return the resourceName
+    * @return the absolute path of the resource.
     */
-    public String getResourceName()
+    public String getResourcePath()
     {
-        return resourceName;
+        return resourcePath;
     }
 
     /**
-     * @param resourceName the name to set
+     * @param resourcePath the absolute path of the resource to set.
      */
-    public void setResourceName( String resourceName )
+    public void setResourcePath( String resourcePath )
     {
-        this.resourceName= resourceName;
+        this.resourcePath= resourcePath;
     }
 
     /**
@@ -240,44 +218,28 @@ public class ResourceConfig
     }
 
     /**
-     * @return the info
+     * @return the discovery info of the resource
      */
-    public ResourceInfoConfig getInfoConfig()
+    public ResourceInfoBuilder getInfo()
     {
-        return infoConfig;
+        return info;
     }
-
+    
     /**
-     * @param infoConfig the infoConfig to set
+     * @param addInfo The discovery info to add to the resource
      */
-    public void setInfoCOnfig( ResourceInfoConfig infoConfig )
+    public void setAddInfo( ResourceInfoBuilder info )
     {
-        this.infoConfig= infoConfig;
-    }
-
-    /**
-     * @return the subordinate resources
-     */
-    public List< ResourceConfig > getSubResources()
-    {
-        return subResources;
-    }
-
-    /**
-     * @param resources the subordinate resources to set on this resource.
-     */
-    public void setResources( List< ResourceConfig > resources )
-    {
-        this.subResources= resources;
+        this.info= info;
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString()
     {
-        String printName= ( resourceName == null ? "nullName" : resourceName );
-        String printResources= ( subResources == null ? "leaf" : subResources.toString() );
-        return printName + " : " + printResources;
+        return "resource { " + resourcePath + " }";
     }
+
 }

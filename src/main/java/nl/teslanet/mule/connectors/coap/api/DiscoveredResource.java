@@ -30,9 +30,9 @@ package nl.teslanet.mule.connectors.coap.api;
 public final class DiscoveredResource implements Comparable< DiscoveredResource >
 {
     /**
-     * The uri of the resource.
+     * The uri-path of the resource.
      */
-    private final String uri;
+    private final String path;
 
     /**
      * When true, the resource can be observed by clients.
@@ -40,25 +40,26 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     private boolean obs= false;
 
     /**
-     * The attibute inforamtion of the resource.
+     * The CoRE attribute information of the resource.
      */
-    private final ResourceInfo info;
+    //TODO change to ResourceInfo or CoreInfo
+    private final ResourceInfoConfig info;
 
     /**
      * Construct DiscoveredResource from uri and ResourceInfo.
-     * @param uri Identifies the resource.
+     * @param path Identifies the resource.
      * @param info The resource attributes.
      */
-    public DiscoveredResource( String uri, ResourceInfo info )
+    public DiscoveredResource( String path, ResourceInfoConfig info )
     {
-        if ( uri == null ) throw new NullPointerException( "DiscoveredResource uri: null is not allowed" );
-        this.uri= uri;
-        this.info= new ResourceInfo( info );
+        if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path: null is not allowed" );
+        this.path= path;
+        this.info= new ResourceInfoConfig( info );
     }
 
     /**
-     * Construct DiscoveredResource from uri and meta info.
-     * @param uri Identifies the resource.
+     * Construct DiscoveredResource from uri-path and meta info.
+     * @param path Identifies the resource.
      * @param obs Flag indicating the resource is observable ({@code True}), or not ({@code False})
      * @param title Human readable title of the resource.
      * @param ifdesc Interface designators.
@@ -66,12 +67,12 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      * @param sz Content size estimation of the resource.
      * @param ct Content formats of the resource.
      */
-    public DiscoveredResource( String uri, boolean obs, String title, String ifdesc, String rt, String sz, String ct )
+    public DiscoveredResource( String path, boolean obs, String title, String ifdesc, String rt, String sz, String ct )
     {
-        if ( uri == null ) throw new NullPointerException( "DiscoveredResource uri: null is not allowed" );
-        this.uri= uri;
+        if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path of null is not allowed" );
+        this.path= path;
         this.obs= obs;
-        this.info= new ResourceInfo();
+        this.info= new ResourceInfoConfig();
         this.info.setTitle( title );
         this.info.setIfdesc( ifdesc );
         this.info.setRt( rt );
@@ -80,12 +81,12 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     }
 
     /**
-     * Get resource uri.
-     * @return the uri of the resource
+     * Get resource uri-path.
+     * @return the uri-path of the resource
      */
-    public String getUri()
+    public String getPath()
     {
-        return uri;
+        return path;
     }
 
     /**
@@ -148,7 +149,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     @Override
     public int compareTo( DiscoveredResource other )
     {
-        return this.uri.compareTo( other.uri );
+        return this.path.compareTo( other.path );
     }
 
 }

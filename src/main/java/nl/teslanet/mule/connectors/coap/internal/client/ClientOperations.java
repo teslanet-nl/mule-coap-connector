@@ -34,7 +34,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -46,12 +45,13 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
-import nl.teslanet.mule.connectors.coap.api.DiscoverAttributes;
+import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.ObserverAttributes;
-import nl.teslanet.mule.connectors.coap.api.PingAttributes;
+import nl.teslanet.mule.connectors.coap.api.ObserverBuilder;
+import nl.teslanet.mule.connectors.coap.api.PingBuilder;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.ExchangeException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
@@ -169,7 +169,7 @@ public class ClientOperations
     @Throws({ RequestAsyncErrorProvider.class })
     public void requestAsync(
         @Config Client client,
-        @Alias( "responseHandler" ) @Expression(ExpressionSupport.SUPPORTED) @Summary("The name of the Response handler that will receive the response. The handler must exist.") String responseHandler,
+        @ParameterGroup(name= "Response handling") ResponseHandlerBuilder responseHandlerBuilder,
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
         @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
@@ -186,7 +186,7 @@ public class ClientOperations
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestOptions,
-                responseHandler );
+                responseHandlerBuilder.responseHandler );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
@@ -223,15 +223,15 @@ public class ClientOperations
      * The Ping processor checks whether a CoAP server is reachable.
      * 
      * @param client         The client to use to issue the request.
-     * @param pingAttributes The request attributes to use.
+     * @param pingBuilder The request attributes to use.
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
     @Throws({ PingErrorProvider.class })
-    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping") PingAttributes pingAttributes )
+    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping uri") PingBuilder pingBuilder )
     {
         try
         {
-            return client.ping( pingAttributes.getHost(), pingAttributes.getPort() );
+            return client.ping( pingBuilder.getHost(), pingBuilder.getPort() );
         }
         catch ( InternalMalformedUriException e )
         {
@@ -257,16 +257,16 @@ public class ClientOperations
      * server.
      * 
      * @param client             The client to use to issue the request.
-     * @param discoverAttributes The attributes of the discover request
+     * @param discoverBuilder The attributes of the discover request
      * @return The resources description on the server that have been discovered.
      */
     @Throws({ DiscoverErrorProvider.class })
-    public CopyOnWriteArraySet< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverAttributes discoverAttributes )
+    public CopyOnWriteArraySet< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
     {
         Set< WebLink > links= null;
         try
         {
-            links= client.discover( discoverAttributes.isConfirmable(), discoverAttributes.getHost(), discoverAttributes.getPort(), discoverAttributes.getQueryParams() );
+            links= client.discover( discoverBuilder.isConfirmable(), discoverBuilder.getHost(), discoverBuilder.getPort(), discoverBuilder.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {
@@ -336,18 +336,25 @@ public class ClientOperations
      *                           notification received from server.
      * @param observerAttributes Attributes of the observe request.
      */
+    /**
+     * @param client
+     * @param responseHandlerBuilder Name of the response handler that will process the notification received from server.
+     * @param observerBuilder The observe request parameters.
+     */
     @Throws({ ObserverStartErrorProvider.class })
-    public void observerStart( @Config Client client, String handlerName, @ParameterGroup(name= "Observer") ObserverAttributes observerAttributes )
+    public void observerStart( @Config Client client, 
+        @ParameterGroup(name= "Notification handling") ResponseHandlerBuilder responseHandlerBuilder,
+        @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {
         try
         {
             client.startObserver(
-                handlerName,
-                observerAttributes.isConfirmable(),
-                observerAttributes.getHost(),
-                observerAttributes.getPort(),
-                observerAttributes.getPath(),
-                observerAttributes.getQueryParams() );
+                responseHandlerBuilder.getResponseHandler(),
+                observerBuilder.isConfirmable(),
+                observerBuilder.getHost(),
+                observerBuilder.getPort(),
+                observerBuilder.getPath(),
+                observerBuilder.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {
@@ -367,15 +374,15 @@ public class ClientOperations
      * Stop a running observer.
      * 
      * @param client             The client instance that stops the observer.
-     * @param observerAttributes Attributes of the observe request
+     * @param observerBuilder Attributes of the observe request
      */
     @Throws({ ObserverStopErrorProvider.class })
-    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer") ObserverAttributes observerAttributes )
+    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {
         // TODO confirmable is not applicable
         try
         {
-            client.stopObserver( observerAttributes.getHost(), observerAttributes.getPort(), observerAttributes.getPath(), observerAttributes.getQueryParams() );
+            client.stopObserver( observerBuilder.getHost(), observerBuilder.getPort(), observerBuilder.getPath(), observerBuilder.getQueryParams() );
         }
         catch ( InternalMalformedUriException e )
         {

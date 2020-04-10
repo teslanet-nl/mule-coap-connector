@@ -118,7 +118,7 @@ public class AddResourceTest extends AbstractServerTestCase
      * Test adding a resource on the server
      * @throws Exception
      */
-    @Test(timeout= 20000L)
+    @Test(timeout= 30000L)
     public void testAddResource() throws Exception
     {
         setClientPath( resourcePath );

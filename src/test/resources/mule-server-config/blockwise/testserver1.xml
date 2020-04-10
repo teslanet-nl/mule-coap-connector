@@ -24,7 +24,8 @@
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -53,8 +54,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:server-config>
 
 	<coap:server-config name="config2">
-		<!-- coap-server:config name="config2" bindToPort="5685" logCoapMessages="true" 
-			maxResourceBodySize="16000" -->
 		<coap:endpoint>
 			<coap:udp-endpoint logCoapMessages="true" >
 				<coap:socket-params  bindToPort="5685" />
@@ -78,7 +77,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen1">
 		<coap:listener uriPattern="/service/*" config-ref="config1">
-			<coap:response responsePayload="#[payload as Binary]"/>
 		</coap:listener>
 		<java:new doc:name="New spy" doc:id="5bb95d63-aab2-4453-95c7-fa180f548484"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -94,10 +92,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="listen2">
-		<coap:listener uriPattern="/service/*" config-ref="config2">
-			<coap:response responsePayload="#[payload as Binary]"/>
-			
-		</coap:listener>
+		<coap:listener uriPattern="/service/*" config-ref="config2"/>
+
 		<java:new doc:name="New spy" doc:id="014fd2f6-7f4d-4c39-9dc0-6f44cd2bee01"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			constructor="MuleEventSpy(String)" target="spy">

@@ -60,13 +60,13 @@ public class BasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []{
                 { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", new byte[0] },
+                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
                 { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", new byte[0] },
+                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
                 { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", new byte[0] },
+                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
                 { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", new byte[0] } } );
+                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
     }
 
     /**

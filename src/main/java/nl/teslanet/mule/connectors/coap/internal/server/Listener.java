@@ -30,18 +30,16 @@ import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.execution.OnTerminate;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -54,7 +52,6 @@ import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
@@ -80,13 +77,13 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     private Server server;
 
     /**
-     * The uriPattern defines the resources the listener listens on.
-     * The listener will get requests to process for a resource when it 
+     * The pathPattern defines the resources the listener listens on.
+     * The listener will receive the requests to process for a resource when it 
      * has the most specific pattern that complies to the resources path. 
      */
     @Parameter
     @Optional(defaultValue= "/*")
-    private String uriPattern;
+    private String pathPattern;
 
     /**
      * The operational listener that will handle requests.
@@ -98,21 +95,20 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         try
         {
-            operationalListener= new OperationalListener( uriPattern, sourceCallback );
+            operationalListener= new OperationalListener( pathPattern, sourceCallback );
         }
         catch ( InvalidResourceUriException e )
         {
-            new DefaultMuleException( "listener on resource(s) { " + uriPattern + " }  could not start.", e );
+            new DefaultMuleException( "listener on resource(s) { " + pathPattern + " }  could not start.", e );
         }
         server.addListener( operationalListener );
-        LOGGER.info( "listener on resource(s) { " + uriPattern + " } has started." );
+        LOGGER.info( "listener on resource(s) { " + pathPattern + " } has started." );
     }
 
     @OnSuccess
     @MediaType(value= "*/*", strict= false)
     public void onSuccess(
-        @Placement(tab= "Response", order= 1) ResponseBuilder response,
-        @Optional @Expression(ExpressionSupport.SUPPORTED) @Placement(tab= "Response", order= 3) @Summary("The CoAP options of the response.") ResponseOptions responseOptions,
+        @Optional @NullSafe @Alias( "response" ) @Placement(tab= "Response", order= 1) ResponseBuilder response,
         SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException, InternalInvalidResponseCodeException
     {
         {
@@ -121,9 +117,9 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
             //TODO give user control
             TypedValue< Object > responsePayload= response.getResponsePayload();
             coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
-            if ( responseOptions != null )
+            if ( response.getResponseOptions() != null )
             {
-                CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
+                CoAPOptions.copyOptions( response.getResponseOptions(), coapResponse.getOptions(), false );
             }
             //TODO add streaming & blockwise cooperation
             try
@@ -164,7 +160,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         server.removeListener( operationalListener );
         operationalListener= null;
-        LOGGER.info( "listener on resource(s) { " + uriPattern + " } has stopped" );
+        LOGGER.info( "listener on resource(s) { " + pathPattern + " } has stopped" );
     }
 
     /**
@@ -190,7 +186,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      */
     public String getUriPattern()
     {
-        return uriPattern;
+        return pathPattern;
     }
 
     /**

@@ -70,15 +70,6 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     private Client client;
 
     /**
-     * The name of the observer instance.
-     */
-    @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Example(value= "my_observer")
-    @Summary("The name of the observer instance.")
-    private String observerName;
-
-    /**
      * When true the server is expected to acknowledge reception of the observe request.
      */
     @Parameter
@@ -153,7 +144,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
                 @Override
                 public void onError()
                 {
-                    LOGGER.warn( "permanent observer failed on resource { " + observerName + " }" );
+                    LOGGER.warn( "permanent observer failed on resource { " + uri + " }" );
                     if ( coapRelation != null )
                     {
                         //TODO wait time?

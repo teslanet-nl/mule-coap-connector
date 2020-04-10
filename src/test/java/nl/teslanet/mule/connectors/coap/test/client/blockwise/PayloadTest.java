@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
@@ -42,6 +41,7 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
+import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 
 
@@ -183,9 +183,16 @@ public class PayloadTest extends AbstractClientTestCase
     @Test(timeout= 100000)
     public void testPayload() throws Exception
     {
-        Event result= flowRunner( flowName ).withVariable( "path", resourcePath ).withPayload( Data.getContent( requestPayloadSize ) ).run();
+        MuleEventSpy spy= new MuleEventSpy( flowName );
+        spy.clear();
 
-        Message response= result.getMessage();
+        flowRunner( flowName ).withVariable( "path", resourcePath ).withPayload( Data.getContent( requestPayloadSize ) ).run();
+
+        assertEquals( "spy has wrong number of events", 1, spy.getEvents().size());
+        
+        Message response= (Message) spy.getEvents().get( 0 ).getContent();
+        byte[] payload= (byte[]) response.getPayload().getValue();
+        
         assertEquals(
             "wrong attributes class",
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
@@ -200,8 +207,8 @@ public class PayloadTest extends AbstractClientTestCase
         {
             assertTrue( "request failed", attributes.isSuccess() );
             assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-            byte[] payload= (byte[]) response.getPayload().getValue();
-            assertTrue( "wrong response payload", Data.validateContent( payload, expectedResponsePayloadSize ) );
+            assertEquals( "wrong response size", expectedResponsePayloadSize.intValue(), ( payload == null ? -1 : payload.length ));
+            assertTrue( "wrong response payload contents", Data.validateContent( payload, expectedResponsePayloadSize ) );
         }
     }
 }

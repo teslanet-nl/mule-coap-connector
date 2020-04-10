@@ -77,7 +77,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         HashMap< String, DiscoveredResource > map= new HashMap< String, DiscoveredResource >();
         for ( DiscoveredResource link : set )
         {
-            map.put( link.getUri(), link );
+            map.put( link.getPath(), link );
         }
         return map;
     }
