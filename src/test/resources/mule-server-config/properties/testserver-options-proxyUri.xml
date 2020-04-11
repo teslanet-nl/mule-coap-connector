@@ -24,8 +24,7 @@
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -34,58 +33,42 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
-
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:exchange-params exchangeLifetime="1000"/>
+			
+	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config" endpoint="udp">
 		<coap:resources>
-			<coap:resource resourceName="service">
-				<coap:sub-resources>
-					<coap:resource resourceName="get_me" get="true"/>
-					<coap:resource resourceName="put_me" put="true"/>
-					<coap:resource resourceName="post_me" post="true"/>
-					<coap:resource resourceName="delete_me" delete="true"/>
-				</coap:sub-resources>
-			</coap:resource>
-		</coap:resources>
+				<coap:resource resourceName="service">
+					<coap:sub-resources>
+						<coap:resource resourceName="get_me" get="true" />
+						<coap:resource resourceName="put_me" put="true" />
+						<coap:resource resourceName="post_me" post="true" />
+						<coap:resource resourceName="delete_me"
+							delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:resources>
 
 	</coap:server-config>
 
 	<flow name="listen">
-		<coap:listener pathPattern="/service/*" config-ref="config">
-			<coap:response>
-				<coap:response-options>
-					<coap:other-response-options>
-						
-					</coap:other-response-options>
-				</coap:response-options>
-			</coap:response> responseoptions="#[vars.options]"
-		</coap:listener>
-		<set-variable value="#[attributes]" doc:name="Set attr"
-			doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>
+		<coap:listener pathPattern="/service/*" config-ref="config" />
+		<set-variable value="#[attributes]" doc:name="Set attr" doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy( String )" target="spy">
-			<java:args><![CDATA[#[{ arg0: "listener2" }]]]></java:args>
+			constructor="MuleEventSpy( String )"
+		 	target="spy">
+			<java:args><![CDATA[#[{ arg0: "listener1" }]]]></java:args>
 		</java:new>
 
-		<java:invoke doc:name="get test key" doc:id="4d1282b5-24b8-4bdc-9cbd-0d4bff08e4cf"
-			instance="#[vars.spy]" class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="getTestKey()" target="key">
-			<java:args><![CDATA[#[{ }]]]></java:args>
-		</java:invoke>
-		<java:invoke doc:name="Invoke" doc:id="6bc9b5f9-21a9-4057-a2ea-eefddefd4606"
-			instance="#[vars.spy]" class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+		<java:invoke doc:name="Invoke"
+			doc:id="53784292-e82f-49df-8bab-5aa0846717d2" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			method="event(Object)" target="value">
-			<java:args><![CDATA[#[{ arg0: 'nothing_important' }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: vars.attr.options.proxyUri }]]]></java:args>
 		</java:invoke>
-		<scripting:execute doc:name="Execute" doc:id="5cc068d4-611d-4967-94c2-3886bc2421a7"
-			engine="groovy" target="options">
-			<scripting:code>def map = new HashMap&lt;String,Object&gt;() map.put( vars.key,
-				vars.value ); return map;</scripting:code>
-		</scripting:execute>
 		<set-payload value="nothing_important"/>
 	</flow>
 

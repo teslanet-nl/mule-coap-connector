@@ -51,4 +51,5 @@ public class OptContentFormatOutbound2Test extends AbstractOutboundPropertyTestc
     {
         return new Integer( 41 );
     }
+    
 }

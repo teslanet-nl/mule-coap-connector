@@ -45,4 +45,13 @@ public class OptContentFormatInboundTest extends AbstractInboundPropertyTestcase
     {
         return new Integer( 41 );
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-contentFormat.xml";
+    };
 }

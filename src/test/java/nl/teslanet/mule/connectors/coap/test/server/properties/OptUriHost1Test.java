@@ -47,5 +47,14 @@ public class OptUriHost1Test extends AbstractInboundPropertyTestcase
     {
         return new String( "some.server.org" );
     }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-uriHost.xml";
+    };
 
 }

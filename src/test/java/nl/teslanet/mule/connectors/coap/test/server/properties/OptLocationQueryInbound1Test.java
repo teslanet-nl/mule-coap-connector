@@ -46,4 +46,13 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestcas
         //TODO also prepending ?
         return new String( "first=1&second=2" );
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-locationQuery.xml";
+    };
 }

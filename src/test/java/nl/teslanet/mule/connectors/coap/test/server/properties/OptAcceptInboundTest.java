@@ -40,6 +40,15 @@ public class OptAcceptInboundTest extends AbstractInboundPropertyTestcase
     {
         return "coap.opt.accept";
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-accept.xml";
+    };
 
     @Override
     protected Object getExpectedPropertyValue()

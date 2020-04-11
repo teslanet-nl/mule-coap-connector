@@ -46,4 +46,13 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestcase
     {
         return resourcePath.substring( 1 );
     }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-uriPath.xml";
+    };
 }

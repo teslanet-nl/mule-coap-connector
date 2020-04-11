@@ -50,5 +50,13 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
     {
         return new Integer( 456 );
     }
-
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-size2.xml";
+    };
 }

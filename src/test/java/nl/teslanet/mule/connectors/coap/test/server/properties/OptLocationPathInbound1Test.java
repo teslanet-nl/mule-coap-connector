@@ -46,4 +46,13 @@ public class OptLocationPathInbound1Test extends AbstractInboundPropertyTestcase
         //TODO make this coherent with other paths with prepending / => /test/this/path
         return new String( "test/this/path" );
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-locationPath.xml";
+    };
 }

@@ -51,4 +51,13 @@ public class OptProxySchemeInbound1Test extends AbstractInboundPropertyTestcase
         return new String( "coapsx" );
     }
 
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-proxyScheme.xml";
+    };
+
 }
