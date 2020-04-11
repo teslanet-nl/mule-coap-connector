@@ -43,13 +43,13 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 				<coap:resource resourceName="service">
 					<coap:sub-resources>
                <coap:resource resourceName="add_resources" post="true"/>
-               <coap:resource resourceName="resource_with_ct" get="true"  ><coap:info ct="0,41"/></coap:resource>
-               <coap:resource resourceName="resource_with_if" get="true"  ><coap:info if="if1,if2"/></coap:resource>
+               <coap:resource resourceName="resource_with_ct" get="true"  ><coap:info-config ct="0,41"/></coap:resource>
+               <coap:resource resourceName="resource_with_if" get="true"  ><coap:info-config if="if1,if2"/></coap:resource>
                <coap:resource resourceName="resource_with_obs" get="true" observable="true"/>
-               <coap:resource resourceName="resource_with_rt" get="true"  ><coap:info rt="rt1,rt2"/></coap:resource>
-               <coap:resource resourceName="resource_with_sz" get="true"  ><coap:info sz="123456"/></coap:resource>
+               <coap:resource resourceName="resource_with_rt" get="true"  ><coap:info-config rt="rt1,rt2"/></coap:resource>
+               <coap:resource resourceName="resource_with_sz" get="true"  ><coap:info-config sz="123456"/></coap:resource>
                <coap:resource resourceName="resource_with_title" get="true"
-                   ><coap:info title="a resource with a title"/></coap:resource>
+                   ><coap:info-config title="a resource with a title"/></coap:resource>
 					</coap:sub-resources>
 				</coap:resource>
 			</coap:resources>

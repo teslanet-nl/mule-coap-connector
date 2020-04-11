@@ -131,7 +131,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</flow>
 
 	<sub-flow name="add_resource">
-		<os:store doc:name="Store" key="#[ vars.resource_path ]" failOnNullValue="false"/>
+		<os:store objectStore="Object_store" doc:name="Store" key="#[ vars.resource_path ]" failOnNullValue="false"/>
 		<coap:resource-add config-ref="config"
 			resourcePath="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
 			delete="#[vars.delete]" doc:name="add resource" />
@@ -141,20 +141,17 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 	<flow name="listen_exists">
 		<coap:listener pathPattern="/service/exists" config-ref="config">
-			<coap:response />
+			<coap:response responsePayload="#[ payload as String ]"/>
 		</coap:listener>
 		<logger message="#[ attributes.options.locationPath! ]"/>
 		<!-- TODO align root resource / -->
 		<coap:resource-exists config-ref="config"
 			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
-			<set-payload value="#[ payload as String]"/>
 	</flow>
 
 	<flow name="listen_service_resource">
 		<coap:listener pathPattern="/service/*" config-ref="config">
-			
 			<coap:response responseCode="#[ vars.response_code]" />
-			
 		</coap:listener>
 		
 		<set-variable variableName="method" value="#[ attributes.requestCode ]"
@@ -172,7 +169,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<set-variable variableName="response_code" value="CONTENT" />
 			</when>
 			<when expression="#[ vars.method == 'PUT']">
-				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false"/>
+				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false" objectStore="Object_store"/>
 				<coap:notify config-ref="config"
 					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />
@@ -180,7 +177,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				
 			</when>
 			<when expression="#[vars.method == 'POST']">
-				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false"/>
+				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false" objectStore="Object_store"/>
 				<coap:notify config-ref="config"
 					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
 				<set-variable variableName="response_code" value="CHANGED" />

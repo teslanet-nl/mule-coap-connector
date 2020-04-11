@@ -40,7 +40,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			keyStoreLocation="certs/keyStore.jks" 
 			keyStorePassword="endPass" 
 			privateKeyAlias="server"
-			privateKeyPassword="endPass" 
+			privateKeyPassword="endPass"
 			trustStoreLocation="certs/trustStore.jks" 
 			trustStorePassword="rootPass" 
 			trustedRootCertificateAlias="root"/>
@@ -60,11 +60,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:server-config>
 
 	<flow name="listen">
-		<coap:listener uriPattern="/service/*" config-ref="config">
-			<coap:response >
-				<coap:response-payload ><![CDATA[#[vars.replacement]]]></coap:response-payload>
-				
-			</coap:response>
+		<coap:listener pathPattern="/service/*" config-ref="config">
+			<coap:response responsePayload="#[vars.replacement]"/>
 		</coap:listener>
 		<java:new doc:name="New spy" doc:id="e8b6ab2a-b8bd-4661-8568-404428785a07" 
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
