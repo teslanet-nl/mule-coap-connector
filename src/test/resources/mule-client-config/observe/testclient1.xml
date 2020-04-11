@@ -236,7 +236,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="observe_handler_permanent">
-		<coap:observer config-ref="config" observerName="permanent" path="/observe/permanent"/>
+		<coap:observer config-ref="config" path="/observe/permanent"/>
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
