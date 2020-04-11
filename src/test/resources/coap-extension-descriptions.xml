@@ -100,10 +100,10 @@
             </parameters>
         </operation>
         <operation name="observerStart">
-            <description><![CDATA[The Start Observer processor creates an observer on the CoAP client. It starts observing the specified server resource immediately.]]></description>
+            <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="handlerName">
-                    <description><![CDATA[Name of the response handler that will process the notification received from server.]]></description>
+                <parameter name="responseHandler">
+                    <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
@@ -119,9 +119,6 @@
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -142,9 +139,6 @@
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -168,11 +162,17 @@
         <operation name="request">
             <description><![CDATA[The Request Processor issues a request on a CoAP server. The processor blocks until a response is received or a timeout occurs.]]></description>
             <parameters>
+                <parameter name="request-options">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
                 </parameter>
                 <parameter name="outputEncoding">
                     <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
                 </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
@@ -194,9 +194,6 @@
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -207,10 +204,13 @@
             </parameters>
         </operation>
         <operation name="requestAsync">
-            <description><![CDATA[The  RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.]]></description>
+            <description><![CDATA[The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.]]></description>
             <parameters>
+                <parameter name="requestOptions">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="responseHandler">
-                    <description><![CDATA[Name of the handler that will receive the response.]]></description>
+                    <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
@@ -233,52 +233,49 @@
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
                 </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
-                </parameter>
             </parameters>
         </operation>
         <operation name="notify">
             <description><![CDATA[The Notify processor initiates notifications to observing clients. Use this when the resource content has changed. For every observing client and resource an internal get-request is issued on the listener concerned. The response that the listener flow will be used as notication as is sent to the observing client.]]></description>
             <parameters>
-                <parameter name="uriPattern">
-                    <description><![CDATA[The uri pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                <parameter name="pathPattern">
+                    <description><![CDATA[The path pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
                 </parameter>
             </parameters>
         </operation>
         <operation name="resourceAdd">
             <description><![CDATA[The Resource Add processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.]]></description>
             <parameters>
-                <parameter name="uri">
-                    <description><![CDATA[The uri of the resource to add.]]></description>
+                <parameter name="resourcePath">
+                    <description><![CDATA[The absolute path of the resource that will be used to identify it in CoAP uri's.]]></description>
                 </parameter>
                 <parameter name="get">
-                    <description><![CDATA[When true the resource accepts get-requests.]]></description>
-                </parameter>
-                <parameter name="put">
-                    <description><![CDATA[When true the resource accepts put-requests.]]></description>
+                    <description><![CDATA[When true, Get requests are allowed on the resource.]]></description>
                 </parameter>
                 <parameter name="post">
-                    <description><![CDATA[When true the resource accepts post-requests.]]></description>
+                    <description><![CDATA[When true, Post requests are allowed on the resource.]]></description>
+                </parameter>
+                <parameter name="put">
+                    <description><![CDATA[When true, Put requests are allowed on the resource.]]></description>
                 </parameter>
                 <parameter name="delete">
-                    <description><![CDATA[When true the resource accepts delete-requests.]]></description>
+                    <description><![CDATA[When true, Delete requests are allowed on the resource.]]></description>
                 </parameter>
                 <parameter name="observable">
-                    <description><![CDATA[When true the resource accepts observe-requests.]]></description>
+                    <description><![CDATA[When true, the resource can be observed by clients.]]></description>
                 </parameter>
                 <parameter name="earlyAck">
-                    <description><![CDATA[When true an immediate acknowledgement is sent to the client before processing the request and returning response.]]></description>
+                    <description><![CDATA[When true an acknowledgement is immediately sent to the client, before processing the request and returning the response. Use this when processing takes longer than the acknowledgment-timeout of the client.]]></description>
                 </parameter>
                 <parameter name="info">
-                    <description><![CDATA[Meta-information of the resource.]]></description>
+                    <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
         </operation>
         <operation name="resourceExists">
             <description><![CDATA[The Resource Exists processor checks whether the CoAP server has one or more resources matching given uri pattern.]]></description>
             <parameters>
-                <parameter name="uriPattern">
+                <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
                 </parameter>
                 <parameter name="target">
@@ -292,7 +289,7 @@
         <operation name="resourceList">
             <description><![CDATA[Returns a list of uri's of the resources, that match given uri pattern.]]></description>
             <parameters>
-                <parameter name="uriPattern">
+                <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
                 </parameter>
                 <parameter name="target">
@@ -306,7 +303,7 @@
         <operation name="resourceRemove">
             <description><![CDATA[The  Resource Remove processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
             <parameters>
-                <parameter name="uriPattern">
+                <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
                 </parameter>
             </parameters>
@@ -328,6 +325,9 @@
                 <parameter name="primaryNodeOnly">
                     <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
                 </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
+                </parameter>
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
@@ -336,9 +336,6 @@
         <source name="observer">
             <description><![CDATA[The Observer message source observes a CoAP resource on a server. The CoAP notifications received from the server are delivered to the flow. The resource is observed during runtime of the flow. When an observe relation with the server could not be established or is lost, the flow is notified of the error and the observe request is retried continuously.]]></description>
             <parameters>
-                <parameter name="observerName">
-                    <description><![CDATA[The name of the observer instance.]]></description>
-                </parameter>
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
                 </parameter>
@@ -363,6 +360,9 @@
                 <parameter name="primaryNodeOnly">
                     <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
                 </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
+                </parameter>
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
@@ -371,8 +371,8 @@
         <source name="listener">
             <description><![CDATA[The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern given, will be listened. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow.]]></description>
             <parameters>
-                <parameter name="uriPattern">
-                    <description><![CDATA[The uriPattern defines the resources the listener listens on. The listener will get requests to process for a resource when it has the most specific pattern that complies to the resources path.]]></description>
+                <parameter name="pathPattern">
+                    <description><![CDATA[The pathPattern defines the resources the listener listens on. The listener will receive the requests to process for a resource when it has the most specific pattern that complies to the resources path.]]></description>
                 </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
@@ -383,17 +383,14 @@
                 <parameter name="primaryNodeOnly">
                     <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
                 </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
+                </parameter>
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
-                <parameter name="responseCode">
-                    <description><![CDATA[The CoAP response code to be set in the CoAP response.]]></description>
-                </parameter>
-                <parameter name="responsePayload">
-                    <description><![CDATA[The payload of the CoAP response message.]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[The CoAP options to be set in the CoAP response.]]></description>
+                <parameter name="response">
+                    <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
         </source>
@@ -411,6 +408,9 @@
                 <parameter name="obs">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="path">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="rt">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -418,9 +418,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="title">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="uri">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -492,29 +489,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.config.QueryParam">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="key">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.config.QueryParamConfig">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="key">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.config.ResourceConfig">
+        <type name="nl.teslanet.mule.connectors.coap.api.ResourceConfig">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="resourceName">
@@ -538,7 +513,7 @@
                 <parameter name="earlyAck">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="info">
+                <parameter name="infoConfig">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="subResources">
@@ -546,7 +521,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.config.ResourceInfo">
+        <type name="nl.teslanet.mule.connectors.coap.api.ResourceInfoBuilder">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="title">
@@ -562,6 +537,20 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="ct">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ResponseBuilder">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responsePayload">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseOptions">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -884,5 +873,60 @@
             <description><![CDATA[]]></description>
             <parameters/>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="proxyUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="contentFormat">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="accept">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxAge">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="etagList">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="ifMatchList">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="ifNoneMatch">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="otherRequestOptions">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="key">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="key">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
     </types>
 </extension-documentation>
+

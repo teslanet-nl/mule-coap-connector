@@ -52,46 +52,46 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
     
     <flow name="do_request-coap.opt.accept">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options accept="#[vars.option]"/>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options accept="#[vars.option]"/>
         </coap:request>  
     </flow>
     
     <flow name="do_request-coap.opt.content_format">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options  contentFormat="#[vars.option]"/>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options  contentFormat="#[vars.option]"/>
         </coap:request>  
     </flow>
     <flow name="do_request-coap.opt.if_none_match">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options ifNoneMatch="#[vars.option]"/>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options ifNoneMatch="#[vars.option]"/>
         </coap:request>  
     </flow>
     
      <flow name="do_request-coap.opt.other.65008">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options>
+                <coap:other-request-options>
+                    <coap:other-request-option key="65008" value="#[vars.option]"/>
+                </coap:other-request-options>
+            </coap:request-options>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options>
-                <coap:other-options>
-                    <coap:other-option key="65008" value="#[vars.option]"/>
-                </coap:other-options>
-            </coap:options>
         </coap:request>  
     </flow>
     
     <flow name="do_request-coap.opt.proxy_scheme">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options proxyScheme="#[vars.option]"/>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options proxyScheme="#[vars.option]"/>
         </coap:request>  
     </flow>
     
     <flow name="do_request-coap.opt.proxy_uri">
         <coap:request config-ref="config" requestCode="#[vars.requestCode]" host="#[vars.host]" path="#[vars.path]" >
+            <coap:request-options  proxyUri="#[vars.option]"/>
             <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-            <coap:options  proxyUri="#[vars.option]"/>
         </coap:request>  
     </flow>
     

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -169,7 +168,6 @@ public class ResponseOptions {
 	 * The CoAP other options to send with the request.
 	 */
 	@Parameter
-	@Alias( "other-options")
 	@Optional
 	@NullSafe
 	@Expression(ExpressionSupport.SUPPORTED)

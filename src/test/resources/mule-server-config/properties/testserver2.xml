@@ -54,7 +54,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:server-config>
 
 	<flow name="listen">
-		<coap:listener uriPattern="/service/*" config-ref="config" ><coap:response options="#[vars.options]"/></coap:listener>
+		<coap:listener pathPattern="/service/*" config-ref="config" ><coap:response options="#[vars.options]"/></coap:listener>
 		<set-variable value="#[attributes]" doc:name="Set attr" doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

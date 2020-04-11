@@ -67,7 +67,6 @@ public class ResponseBuilder
      * The response options.
      */
     @Parameter
-    @Alias( "options")
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
     @Summary("The CoAP options to add to the response.") 
