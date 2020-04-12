@@ -47,6 +47,7 @@ public class OptProxyUri1Test extends AbstractInboundPropertyTestcase
     {
         return new String( "coap://some.server.org/test" );
     }
+
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */

@@ -145,7 +145,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      */
     private MuleEventSpy spyMessage( final String propertyName )
     {
-        MuleEventSpy spy= new MuleEventSpy( "listener1", propertyName, null );
+        MuleEventSpy spy= new MuleEventSpy( propertyName, propertyName, null );
         spy.clear();
         return spy;
     }

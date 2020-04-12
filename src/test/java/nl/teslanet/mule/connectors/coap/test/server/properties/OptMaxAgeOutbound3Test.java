@@ -23,44 +23,41 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import org.junit.Ignore;
-
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
-//TODO manual support for outbound needed?
-@Ignore
-public class OptSize1Outbound1Test extends AbstractOutboundPropertyTestcase
+
+public class OptMaxAgeOutbound3Test extends AbstractOutboundPropertyTestcase
 {
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.size1";
+        return "coap.opt.max_age";
     }
 
     @Override
     protected Object fetchOption( OptionSet options )
     {
-        return options.getSize1();
+        return options.getMaxAge();
     }
 
     @Override
     protected Object getPropertyValue()
     {
-        return new Integer( 231 );
+        return new Integer( 120 );
     }
 
     @Override
     protected Object getExpectedOptionValue()
     {
-        return new Integer( 231 );
+        return new Long( 120 );
     }
     
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-size1.xml";
+        return "mule-server-config/properties/testserver-options-maxAge.xml";
     };
 }

@@ -25,9 +25,12 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import java.util.LinkedList;
 
+import org.junit.Ignore;
+
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
-
+//TODO add list support
+@Ignore
 public class OptLocationQueryListInbound1Test extends AbstractInboundPropertyTestcase
 {
     @Override

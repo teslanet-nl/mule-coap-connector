@@ -60,7 +60,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			constructor="MuleEventSpy( String )"
 		 	target="spy">
-			<java:args><![CDATA[#[{ arg0: "listener1" }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: 'coap.opt.proxy_scheme' }]]]></java:args>
 		</java:new>
 
 		<java:invoke doc:name="Invoke"

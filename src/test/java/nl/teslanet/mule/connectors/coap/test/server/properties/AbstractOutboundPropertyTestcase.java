@@ -149,7 +149,7 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
      */
     private MuleEventSpy mockMessage( String propertyName, Object propertyValue )
     {
-        MuleEventSpy spy= new MuleEventSpy( "listener2", propertyName, propertyValue );
+        MuleEventSpy spy= new MuleEventSpy( propertyName, propertyName, propertyValue );
         spy.clear();
         return spy;
     }

@@ -51,4 +51,13 @@ public class OptMaxAgeOutbound1Test extends AbstractOutboundPropertyTestcase
     {
         return new Long( 120 );
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-maxAge.xml";
+    };
 }

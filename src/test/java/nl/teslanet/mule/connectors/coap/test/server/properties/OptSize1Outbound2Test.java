@@ -22,10 +22,12 @@
  */
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
+import org.junit.Ignore;
 
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
-
+//TODO manual support for outbound needed?
+@Ignore
 public class OptSize1Outbound2Test extends AbstractOutboundPropertyTestcase
 {
     @Override
@@ -51,4 +53,13 @@ public class OptSize1Outbound2Test extends AbstractOutboundPropertyTestcase
     {
         return new Integer( 231 );
     }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-size1.xml";
+    };
 }

@@ -57,4 +57,13 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestc
 
         return list;
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-locationQuery.xml";
+    };
 }
