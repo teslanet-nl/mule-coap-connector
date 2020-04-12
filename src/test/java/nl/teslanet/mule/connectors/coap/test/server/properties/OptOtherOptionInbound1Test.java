@@ -69,5 +69,14 @@ public class OptOtherOptionInbound1Test extends AbstractInboundPropertyTestcase
         byte[] value= { (byte) 0x12, (byte) 0xFF, (byte) 0x45 };
         return value;
     }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-other65012.xml";
+    };
 
 }

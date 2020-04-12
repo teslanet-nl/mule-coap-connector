@@ -26,12 +26,15 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Before;
+import org.junit.Ignore;
 
 
 /**
  * Test inbound critical other option
  *
  */
+//TODO implement operation
+@Ignore
 public class OptOtherOptionCriticalInbound2Test extends AbstractInboundPropertyTestcase
 {
     private Option option;

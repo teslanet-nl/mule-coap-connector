@@ -26,16 +26,13 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Before;
-import org.junit.Ignore;
 
 
 /**
- * Test inbound critical other option option
+ * Test inbound other option
  *
  */
-//TODO implement operation
-@Ignore
-public class OptOtherOptionCriticalInbound1Test extends AbstractInboundPropertyTestcase
+public class OptOtherOptionOutbound1Test extends AbstractOutboundPropertyTestcase
 {
     private Option option;
 
@@ -49,22 +46,47 @@ public class OptOtherOptionCriticalInbound1Test extends AbstractInboundPropertyT
     }
 
     @Override
-    protected void addOption( OptionSet options )
-    {
-        options.addOption( option );
-    }
-
-    @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other.65012.critical";
+        return "coap.opt.other.65012";
     }
 
     @Override
-    protected Object getExpectedPropertyValue()
+    protected Object getPropertyValue() throws Exception
     {
-        return Boolean.FALSE;
-
+        return option.getValue();
     }
 
+    @Override
+    protected Object getExpectedOptionValue() throws Exception
+    {
+        return option.getValue();
+    };
+    
+    protected boolean optionValueIsByteArray()
+    {
+        return true;
+    }
+
+    @Override
+    protected Object fetchOption( OptionSet options )
+    {
+        for ( Option other : options.getOthers() )
+        {
+            if ( other.getNumber() == 65012 )
+            {
+                return other.getValue();
+            }
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-other65012.xml";
+    }
 }

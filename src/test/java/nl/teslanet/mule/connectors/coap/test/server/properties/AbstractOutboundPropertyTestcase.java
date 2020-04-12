@@ -134,14 +134,23 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
     abstract protected Object getExpectedOptionValue() throws Exception;
 
     /**
-     * Override to specify whether the option is an ByteArray
-     * @return {@code true} when option is a ByteArray
+     * Override to specify whether the option is an collection of ByteArray
+     * @return {@code true} when option is a collection of ByteArray
      */
     protected boolean optionValueIsCollectionOfByteArray()
     {
         return false;
     }
 
+    /**
+     * Override to specify whether the option is an ByteArray
+     * @return {@code true} when option is a ByteArray
+     */
+    protected boolean optionValueIsByteArray()
+    {
+        return false;
+    }
+    
     /**
      * Mock that sets the outbound property in the Mule flow
      * @param propertyName name of the outbound property to set
@@ -189,6 +198,10 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
                 byte[] expectedValue= expectedIt.next();
                 assertArrayEquals( "value in collection not equal", expectedValue, optionValue );
             } ;
+        }
+        else if ( optionValueIsByteArray() )
+        {
+            assertArrayEquals( "option has wrong value", (byte[]) getExpectedOptionValue(), (byte[]) fetchOption( response.getOptions() ) );
         }
         else
         {

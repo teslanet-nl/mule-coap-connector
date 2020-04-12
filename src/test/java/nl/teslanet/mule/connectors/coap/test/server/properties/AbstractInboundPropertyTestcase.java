@@ -181,7 +181,6 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         Request request= new Request( requestCode );
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
-
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
