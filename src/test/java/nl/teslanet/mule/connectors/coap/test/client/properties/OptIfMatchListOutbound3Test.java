@@ -31,7 +31,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  * Test outbound If Match list property, single String value
  *
  */
-public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     private ETag getValue() throws InvalidETagException
     {
@@ -53,7 +53,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTest
     @Override
     protected Object getOutboundPropertyValue() throws InvalidETagException
     {
-        return new String( getValue().getBytes() );
+        return new String( getValue().getHexString() );
     }
 
     /* (non-Javadoc)

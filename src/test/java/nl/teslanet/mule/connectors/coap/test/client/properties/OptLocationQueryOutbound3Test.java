@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * Test outbound location query property, single value and leading '?'
  *
  */
-public class OptLocationQueryOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptLocationQueryOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

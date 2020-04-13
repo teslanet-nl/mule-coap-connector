@@ -31,7 +31,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  * Test Etag list property, signle value
  *
  */
-public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTest
+public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * the value to test

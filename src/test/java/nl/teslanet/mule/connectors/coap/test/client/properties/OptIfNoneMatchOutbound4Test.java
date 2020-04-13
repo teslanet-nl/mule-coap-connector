@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound If None Match property as String with value true 
  *
  */
-public class OptIfNoneMatchOutbound4Test extends AbstractOutboundPropertiesTest
+public class OptIfNoneMatchOutbound4Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

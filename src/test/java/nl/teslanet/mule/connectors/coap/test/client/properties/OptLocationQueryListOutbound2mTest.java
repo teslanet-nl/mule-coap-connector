@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * Test outbound location query list property, multiple values
  *
  */
-public class OptLocationQueryListOutbound2mTest extends AbstractOutboundPropertiesTest
+public class OptLocationQueryListOutbound2mTest extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

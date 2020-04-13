@@ -28,6 +28,10 @@ import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -108,7 +112,7 @@ public class MessageUtils
             return (byte[]) transformationService.transform( Message.builder().payload( typedValueObject ).build(), BYTE_ARRAY ).getPayload().getValue();
         }
     }
-    
+
     /**
      * Convert a typed value to ETag.
      * @param object is the value to convert.
@@ -116,10 +120,10 @@ public class MessageUtils
      * @throws IOException when the value is an outputhandler that cannot write.
      * @throws InvalidETagException when object has content that is invalid as etag value.
      */
-    public static ETag toETag( TypedValue<Object> typedValue ) throws IOException, InvalidETagException
+    public static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
-        Object object = typedValue.getValue();
-        
+        Object object= typedValue.getValue();
+
         if ( object == null )
         {
             return new ETag();
@@ -134,11 +138,11 @@ public class MessageUtils
         }
         if ( object instanceof CursorStreamProvider )
         {
-            return new ETag( IOUtils.toByteArray( (CursorStreamProvider) object ));
+            return new ETag( IOUtils.toByteArray( (CursorStreamProvider) object ) );
         }
         else if ( object instanceof InputStream )
         {
-            return new ETag( IOUtils.toByteArray( (InputStream) object ));
+            return new ETag( IOUtils.toByteArray( (InputStream) object ) );
         }
         else if ( object instanceof byte[] )
         {
@@ -152,11 +156,41 @@ public class MessageUtils
         {
             ByteArrayOutputStream output= new ByteArrayOutputStream();
             ( (OutputHandler) object ).write( null, output );
-            return new ETag( output.toByteArray());
+            return new ETag( output.toByteArray() );
         }
         else //do transform using Mule's transformers.
         {
-            return new ETag( (byte[]) transformationService.transform( Message.builder().payload( typedValue ).build(), BYTE_ARRAY ).getPayload().getValue());
+            return new ETag( (byte[]) transformationService.transform( Message.builder().payload( typedValue ).build(), BYTE_ARRAY ).getPayload().getValue() );
         }
+    }
+
+    /**
+     * Create a list of ETags
+     * @param typedValue is the types value to create a list of etags from.
+     * @return List of ETags.
+     * @throws InvalidETagException 
+     * @throws IOException 
+     */
+    public static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    {
+        Object object= typedValue.getValue();
+        LinkedList< ETag > list= new LinkedList< ETag >();
+
+        if ( object == null )
+        {
+            //noop
+        }
+        else if ( object instanceof Collection< ? > )
+        {
+            for ( Object item : (Collection< ? >) object )
+            {
+                list.add( toETag( new TypedValue< Object >( item, null ) ) );
+            }
+        }
+        else
+        {
+            list.add( toETag( typedValue ) );
+        }
+        return Collections.unmodifiableList( list );
     }
 }

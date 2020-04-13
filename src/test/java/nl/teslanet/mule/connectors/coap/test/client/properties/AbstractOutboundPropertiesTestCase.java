@@ -48,7 +48,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo(Parameterized.class)
-public abstract class AbstractOutboundPropertiesTest extends AbstractClientTestCase
+public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters

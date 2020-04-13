@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * Test outbound location path list property, single value, without root '/'
  *
  */
-public class OptLocationPathOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptLocationPathOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

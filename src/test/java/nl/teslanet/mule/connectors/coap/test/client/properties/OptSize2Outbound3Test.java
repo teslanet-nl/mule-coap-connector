@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound size2 property, as Stringable
  *
  */
-public class OptSize2Outbound3Test extends AbstractOutboundPropertiesTest
+public class OptSize2Outbound3Test extends AbstractOutboundPropertiesTestCase
 {
     private final int value= 133;
 

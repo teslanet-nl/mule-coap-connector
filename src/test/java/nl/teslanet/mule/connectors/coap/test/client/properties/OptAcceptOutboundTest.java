@@ -31,7 +31,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Response;
  * Test Accept option
  *
  */
-public class OptAcceptOutboundTest extends AbstractOutboundPropertiesTest
+public class OptAcceptOutboundTest extends AbstractOutboundPropertiesTestCase
 {
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()

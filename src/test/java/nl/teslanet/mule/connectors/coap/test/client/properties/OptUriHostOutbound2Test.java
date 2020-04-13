@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound uri host property, as String
  *
  */
-public class OptUriHostOutbound2Test extends AbstractOutboundPropertiesTest
+public class OptUriHostOutbound2Test extends AbstractOutboundPropertiesTestCase
 {
     private String value= "some.server.org";
 

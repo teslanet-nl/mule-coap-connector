@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * Test outbound uri path property, multiple values
  *
  */
-public class OptUriPathOutbound1mTest extends AbstractOutboundPropertiesTest
+public class OptUriPathOutbound1mTest extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

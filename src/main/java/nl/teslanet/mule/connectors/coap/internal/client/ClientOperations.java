@@ -55,6 +55,7 @@ import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.ExchangeException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
@@ -103,13 +104,14 @@ public class ClientOperations
      * @param requestOptions The request options.
      * @return the result of the request which contains the received server response
      *         - if any.
+     * @throws InvalidETagException when an etag value given is invalid.
      */
     @MediaType(value= "*/*", strict= false)
     @Throws({ RequestErrorProvider.class })
     public Result< InputStream, ReceivedResponseAttributes > request(
         @Config Client client,
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Alias( "request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
+        @Alias( "request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions ) 
     {
         try
         {
@@ -152,6 +154,10 @@ public class ClientOperations
             throw new InvalidOptionValueException( e.getMessage(), e );
         }
         catch ( InternalInvalidByteArrayValueException e )
+        {
+            throw new InvalidOptionValueException( e.getMessage(), e );
+        }
+        catch ( InvalidETagException e )
         {
             throw new InvalidOptionValueException( e.getMessage(), e );
         }
@@ -214,6 +220,10 @@ public class ClientOperations
             throw new InvalidOptionValueException( e.getMessage(), e );
         }
         catch ( InternalInvalidByteArrayValueException e )
+        {
+            throw new InvalidOptionValueException( e.getMessage(), e );
+        }
+        catch ( InvalidETagException e )
         {
             throw new InvalidOptionValueException( e.getMessage(), e );
         }

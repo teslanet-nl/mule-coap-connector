@@ -30,7 +30,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test outbound other property, stringable value
  *
  */
-public class OptOtherOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptOtherOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test other option

@@ -31,7 +31,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  * Test outbound If Match list property, single bytes value
  *
  */
-public class OptIfMatchListOutbound2Test extends AbstractOutboundPropertiesTest
+public class OptIfMatchListOutbound2Test extends AbstractOutboundPropertiesTestCase
 {
     private ETag getValue() throws InvalidETagException
     {

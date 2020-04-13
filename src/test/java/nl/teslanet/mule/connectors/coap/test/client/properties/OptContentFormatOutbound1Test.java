@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound Content Format property
  *
  */
-public class OptContentFormatOutbound1Test extends AbstractOutboundPropertiesTest
+public class OptContentFormatOutbound1Test extends AbstractOutboundPropertiesTestCase
 {
     private final int value= 41;
 

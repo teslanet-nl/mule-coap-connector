@@ -75,6 +75,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
@@ -423,6 +424,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidRequestCodeException
      * @throws InternalInvalidOptionValueException
      * @throws InternalInvalidByteArrayValueException 
+     * @throws InvalidETagException 
      */
     Result< InputStream, ReceivedResponseAttributes > doRequest(
         boolean confirmable,
@@ -436,7 +438,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalMalformedUriException,
         InternalInvalidRequestCodeException,
         InternalInvalidOptionValueException,
-        InternalInvalidByteArrayValueException
+        InternalInvalidByteArrayValueException, InvalidETagException
     {
         Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;

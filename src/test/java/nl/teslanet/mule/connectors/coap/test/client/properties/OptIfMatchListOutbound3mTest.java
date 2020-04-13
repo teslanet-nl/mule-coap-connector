@@ -33,7 +33,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  * Test outbound If Match list property, multiple String value
  *
  */
-public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
+public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value
@@ -68,7 +68,7 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
         LinkedList< String > propertyValue= new LinkedList< String >();
         for ( ETag value : getValue() )
         {
-            propertyValue.add( new String( value.getBytes() ) );
+            propertyValue.add( value.getHexString() );
         }
         return propertyValue;
     }

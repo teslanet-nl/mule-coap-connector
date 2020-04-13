@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound uri port property, as String
  *
  */
-public class OptUriPortOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptUriPortOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     private int value= 5899;
 

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -35,7 +36,6 @@ import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
-import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.slf4j.Logger;
 
@@ -444,8 +444,10 @@ public class CoAPOptions
      * @param optionSet to copy to
      * @param clear when {@code true } the optionSet will be cleared before copying. 
      * @throws InternalInvalidByteArrayValueException 
+     * @throws InvalidETagException 
+     * @throws IOException 
      */
-    public static void copyOptions( RequestOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException
+    public static void copyOptions( RequestOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
     {
         //make sure Optionset is empty, if needed
         if ( clear ) optionSet.clear();
@@ -453,7 +455,8 @@ public class CoAPOptions
         /* if_match_list       = null; // new LinkedList<byte[]>();*/
         if ( options.getIfMatchList() != null )
         {
-            for ( Object etag : options.getIfMatchList() )
+            List<ETag> etags= MessageUtils.toEtagList( options.getIfMatchList());
+            for ( ETag etag : etags )
             {
                 optionSet.addIfMatch( toBytes( etag ) );
             }
@@ -461,9 +464,10 @@ public class CoAPOptions
         /* etag_list           = null; // new LinkedList<byte[]>();*/
         if ( options.getEtagList() != null )
         {
-            for ( Object etag : options.getEtagList() )
+            List<ETag> etags= MessageUtils.toEtagList( options.getEtagList());
+            for ( ETag etag : etags )
             {
-                optionSet.addETag( toBytes( etag ) );
+                optionSet.addETag( etag.getBytes() );
             }
         }
         /* content_format      = null;*/

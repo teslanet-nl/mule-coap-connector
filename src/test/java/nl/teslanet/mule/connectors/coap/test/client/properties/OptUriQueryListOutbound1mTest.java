@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * Test outbound uri query list property, multiple values
  *
  */
-public class OptUriQueryListOutbound1mTest extends AbstractOutboundPropertiesTest
+public class OptUriQueryListOutbound1mTest extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

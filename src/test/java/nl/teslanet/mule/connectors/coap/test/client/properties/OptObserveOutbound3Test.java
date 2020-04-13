@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound observe property, String value
  *
  */
-public class OptObserveOutbound3Test extends AbstractOutboundPropertiesTest
+public class OptObserveOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value

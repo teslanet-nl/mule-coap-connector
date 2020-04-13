@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
  * Test outbound proxy scheme property, stringable value
  *
  */
-public class OptProxyUriOutbound2Test extends AbstractOutboundPropertiesTest
+public class OptProxyUriOutbound2Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test other option
