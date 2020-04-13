@@ -67,6 +67,6 @@ public class OptEtagOutbound1Test extends AbstractOutboundPropertyTestcase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-etag-inbound.xml";
+        return "mule-server-config/properties/testserver-options-etag-outbound.xml";
     };
 }
