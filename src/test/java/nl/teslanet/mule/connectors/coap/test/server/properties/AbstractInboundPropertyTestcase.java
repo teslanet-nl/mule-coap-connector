@@ -173,7 +173,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test
+    @Test( timeout=2000000L)
     public void testInbound() throws Exception
     {
         MuleEventSpy spy= spyMessage( getPropertyName() );
@@ -181,6 +181,9 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         Request request= new Request( requestCode );
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
+        
+        client.setTimeout( 200000L );
+        
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );

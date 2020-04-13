@@ -36,7 +36,7 @@ public class OptIfMatchListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "0011FF" ).asBytes() );
+        options.addIfMatch( new ETag( "0011FF" ).getBytes() );
     }
 
     @Override
@@ -53,4 +53,13 @@ public class OptIfMatchListInbound1Test extends AbstractInboundPropertyTestcase
 
         return list;
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-ifMatch.xml";
+    };
 }

@@ -36,9 +36,9 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addETag( new ETag( "A0" ).asBytes() );
-        options.addETag( new ETag( "0011FF" ).asBytes() );
-        options.addETag( new ETag( "0011223344556677" ).asBytes() );
+        options.addETag( new ETag( "A0" ).getBytes() );
+        options.addETag( new ETag( "0011FF" ).getBytes() );
+        options.addETag( new ETag( "0011223344556677" ).getBytes() );
     }
 
     @Override
@@ -57,4 +57,13 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
 
         return list;
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-etag-inbound.xml";
+    };
 }

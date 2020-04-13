@@ -23,52 +23,50 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import java.util.LinkedList;
-
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
 
-public class OptEtagListOutbound2mTest extends AbstractOutboundPropertyTestcase
+public class OptEtagOutbound1Test extends AbstractOutboundPropertyTestcase
 {
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.etag.list";
+        return "coap.opt.etag";
     }
 
     @Override
     protected Object fetchOption( OptionSet options )
     {
-        return options.getETags();
+        try
+        {
+            return ETag.valueOf( options.getETags().get( 0 ));
+        }
+        catch ( InvalidETagException e )
+        {
+            return null;
+        }
     }
 
     @Override
     protected Object getPropertyValue() throws InvalidETagException
     {
-        LinkedList< byte[] > list= new LinkedList< byte[] >();
-        list.add( new ETag( "0011FF" ).asBytes() );
-        list.add( new ETag( "1111FF" ).asBytes() );
-        list.add( new ETag( "2211FF" ).asBytes() );
-
-        return list;
+        return new ETag( "0011FF" );
     }
 
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {
-        LinkedList< byte[] > list= new LinkedList< byte[] >();
-        list.add( new ETag( "0011FF" ).asBytes() );
-        list.add( new ETag( "1111FF" ).asBytes() );
-        list.add( new ETag( "2211FF" ).asBytes() );
-
-        return list;
+        return ETag.valueOf( "0011FF" );
     }
 
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
     @Override
-    protected boolean optionValueIsCollectionOfByteArray()
+    protected String getConfigResources()
     {
-        return true;
-    }
+        return "mule-server-config/properties/testserver-options-etag-inbound.xml";
+    };
 }

@@ -92,8 +92,8 @@ public class OptionSetToAttributesTest
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
         byte[] etagValue3= { (byte) 0x22, (byte) 0xFF };
 
-        set.addIfMatch( new ETag( etagValue1 ).asBytes() );
-        set.addIfMatch( new ETag( etagValue2 ).asBytes() );
+        set.addIfMatch( new ETag( etagValue1 ).getBytes() );
+        set.addIfMatch( new ETag( etagValue2 ).getBytes() );
 
         OptionAttributes attributes= new OptionAttributes();
 

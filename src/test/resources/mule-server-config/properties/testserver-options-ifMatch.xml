@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+	<description>Mule CoAP connector test application</description>
+			
+	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+		<coap:exchange-params exchangeLifetime="1000" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config" endpoint="udp">
+		<coap:resources>
+				<coap:resource resourceName="service">
+					<coap:sub-resources>
+						<coap:resource resourceName="get_me" get="true" />
+						<coap:resource resourceName="put_me" put="true" />
+						<coap:resource resourceName="post_me" post="true" />
+						<coap:resource resourceName="delete_me"
+							delete="true" />
+					</coap:sub-resources>
+				</coap:resource>
+			</coap:resources>
+
+	</coap:server-config>
+
+	<flow name="listen">
+		<coap:listener pathPattern="/service/*" config-ref="config"/>
+
+		<set-variable value="#[attributes]" doc:name="Set attr" doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>
+		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy( String )"
+		 	target="spy">
+			<java:args><![CDATA[#[{ arg0: 'coap.opt.if_match.list' }]]]></java:args>
+		</java:new>
+
+		<java:invoke doc:name="Invoke"
+			doc:id="53784292-e82f-49df-8bab-5aa0846717d2" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)" target="value">
+			<java:args><![CDATA[#[{ arg0: vars.attr.options.ifMatchList }]]]></java:args>
+		</java:invoke>
+		<set-payload value="nothing_important"/>
+	</flow>
+
+</mule>

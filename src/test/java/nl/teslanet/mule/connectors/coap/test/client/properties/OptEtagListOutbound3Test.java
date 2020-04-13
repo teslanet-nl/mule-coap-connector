@@ -63,7 +63,7 @@ public class OptEtagListOutbound3Test extends AbstractOutboundPropertiesTest
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return value.asBytes();
+        return value.getBytes();
     }
 
     /* (non-Javadoc)

@@ -69,7 +69,7 @@ public class OptEtagListOutbound4mTest extends AbstractOutboundPropertiesTest
         LinkedList< Object > propertyValues= new LinkedList< Object >();
         for ( ETag value : getValue() )
         {
-            propertyValues.add( new Stringable( new String( value.asBytes() ) ) );
+            propertyValues.add( new Stringable( new String( value.getBytes() ) ) );
         }
         return propertyValues;
     }

@@ -56,7 +56,7 @@ public class OptEtagListOutbound4Test extends AbstractOutboundPropertiesTest
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return new Stringable( new String( value.asBytes() ) );
+        return new Stringable( new String( value.getBytes() ) );
     }
 
     /* (non-Javadoc)

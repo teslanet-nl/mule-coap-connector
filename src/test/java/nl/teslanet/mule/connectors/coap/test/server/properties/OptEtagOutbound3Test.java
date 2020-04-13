@@ -23,45 +23,49 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import java.util.LinkedList;
-
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
 
-public class OptEtagListOutbound3Test extends AbstractOutboundPropertyTestcase
+public class OptEtagOutbound3Test extends AbstractOutboundPropertyTestcase
 {
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.etag.list";
+        return "coap.opt.etag";
     }
 
     @Override
     protected Object fetchOption( OptionSet options )
     {
-        return options.getETags();
+        return options.getETags().get( 0 );
     }
 
     @Override
     protected Object getPropertyValue() throws InvalidETagException
     {
-        return new String( "hello" );
+        return new String( "68656C6C6F" );
     }
 
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {
-        LinkedList< byte[] > list= new LinkedList< byte[] >();
-        list.add( new ETag( "68656C6C6F" ).asBytes() );
-
-        return list;
+        return new ETag( "68656C6C6F" ).getBytes();
     }
 
     @Override
-    protected boolean optionValueIsCollectionOfByteArray()
+    protected boolean optionValueIsByteArray()
     {
         return true;
     }
+    
+    /* (non-Javadoc)
+     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-etag-inbound.xml";
+    };
 }

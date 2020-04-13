@@ -67,7 +67,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
     {
         for ( ETag etag : values )
         {
-            response.getOptions().addIfMatch( etag.asBytes() );
+            response.getOptions().addIfMatch( etag.getBytes() );
         }
     }
 
@@ -81,7 +81,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
         if ( etags.size() != values.size() ) return false;
         for ( int i= 0; i < etags.size(); i++ )
         {
-            if ( !Arrays.equals( etags.get( i ), values.get( i ).asBytes() ) )
+            if ( !Arrays.equals( etags.get( i ), values.get( i ).getBytes() ) )
             {
                 return false;
             }

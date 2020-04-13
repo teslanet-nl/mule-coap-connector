@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal.options;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.slf4j.Logger;
 
@@ -46,6 +48,7 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -191,7 +194,7 @@ public class CoAPOptions
             }
             else if ( ETag.class.isInstance( object ) )
             {
-                return ( (ETag) object ).asBytes();
+                return ( (ETag) object ).getBytes();
             }
             else
             {
@@ -369,16 +372,19 @@ public class CoAPOptions
      * @param optionSet to copy to
      * @param clear when {@code true } the optionSet will be cleared before copying. 
      * @throws InternalInvalidByteArrayValueException 
+     * @throws InvalidETagException when an option containes invalid ETag value
+     * @throws IOException when an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException
+    public static void copyOptions( ResponseOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
     {
         //make sure Optionset is empty, if needed
         if ( clear ) optionSet.clear();
 
         /* etag_list           = null; // new LinkedList<byte[]>();*/
+        //TODO check for NothingType?
         if ( options.getEtag() != null )
         {
-            optionSet.addETag( toBytes( options.getEtag() ) );
+            optionSet.addETag( MessageUtils.toETag( options.getEtag() ).getBytes() );
         }
         /* content_format      = null;*/
         if ( options.getContentFormat() != null )

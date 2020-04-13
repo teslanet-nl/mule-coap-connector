@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
@@ -109,7 +111,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @MediaType(value= "*/*", strict= false)
     public void onSuccess(
         @Optional @NullSafe @Alias( "response" ) @Placement(tab= "Response", order= 1) ResponseBuilder response,
-        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException, InternalInvalidResponseCodeException
+        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException, InternalInvalidResponseCodeException, IOException, InvalidETagException
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();

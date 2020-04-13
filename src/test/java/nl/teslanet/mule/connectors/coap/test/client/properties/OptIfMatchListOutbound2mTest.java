@@ -68,7 +68,7 @@ public class OptIfMatchListOutbound2mTest extends AbstractOutboundPropertiesTest
         LinkedList< byte[] > propertyValue= new LinkedList< byte[] >();
         for ( ETag value : getValue() )
         {
-            propertyValue.add( value.asBytes() );
+            propertyValue.add( value.getBytes() );
         }
         return propertyValue;
     }

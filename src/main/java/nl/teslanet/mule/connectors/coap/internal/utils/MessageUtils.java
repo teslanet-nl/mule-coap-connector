@@ -38,6 +38,8 @@ import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.util.IOUtils;
 
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
 
 
@@ -104,6 +106,57 @@ public class MessageUtils
         else //do transform using Mule's transformers.
         {
             return (byte[]) transformationService.transform( Message.builder().payload( typedValueObject ).build(), BYTE_ARRAY ).getPayload().getValue();
+        }
+    }
+    
+    /**
+     * Convert a typed value to ETag.
+     * @param object is the value to convert.
+     * @return converted value as bytes
+     * @throws IOException when the value is an outputhandler that cannot write.
+     * @throws InvalidETagException when object has content that is invalid as etag value.
+     */
+    public static ETag toETag( TypedValue<Object> typedValue ) throws IOException, InvalidETagException
+    {
+        Object object = typedValue.getValue();
+        
+        if ( object == null )
+        {
+            return new ETag();
+        }
+        else if ( object instanceof ETag )
+        {
+            return (ETag) object;
+        }
+        else if ( object instanceof String )
+        {
+            return new ETag( (String) object );
+        }
+        if ( object instanceof CursorStreamProvider )
+        {
+            return new ETag( IOUtils.toByteArray( (CursorStreamProvider) object ));
+        }
+        else if ( object instanceof InputStream )
+        {
+            return new ETag( IOUtils.toByteArray( (InputStream) object ));
+        }
+        else if ( object instanceof byte[] )
+        {
+            return new ETag( (byte[]) object );
+        }
+        else if ( object instanceof Byte[] )
+        {
+            return new ETag( (byte[]) object );
+        }
+        else if ( object instanceof OutputHandler )
+        {
+            ByteArrayOutputStream output= new ByteArrayOutputStream();
+            ( (OutputHandler) object ).write( null, output );
+            return new ETag( output.toByteArray());
+        }
+        else //do transform using Mule's transformers.
+        {
+            return new ETag( (byte[]) transformationService.transform( Message.builder().payload( typedValue ).build(), BYTE_ARRAY ).getPayload().getValue());
         }
     }
 }
