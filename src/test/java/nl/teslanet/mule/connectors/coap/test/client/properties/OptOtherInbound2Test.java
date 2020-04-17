@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 
 
@@ -30,7 +31,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test inbound other option property
  *
  */
-public abstract class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTestCase
+public class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTestCase
 {
 
     /**
@@ -78,5 +79,14 @@ public abstract class OptOtherInbound2Test extends AbstractOtherOptionInboundPro
     protected OptionStrategy getStrategy()
     {
         return new OptOtherStrategy( getOption() );
+    }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.client.properties.AbstractOtherOptionInboundPropertyTestCase#fetchInboundProperty(nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes)
+     */
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getOtherOptions().get( "65013" );
     }
 }

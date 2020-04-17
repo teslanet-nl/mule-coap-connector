@@ -871,7 +871,17 @@
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.options.ETag">
             <description><![CDATA[]]></description>
-            <parameters/>
+            <parameters>
+                <parameter name="bytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="hexString">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="long">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
             <description><![CDATA[]]></description>
@@ -886,9 +896,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="accept">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="maxAge">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="etagList">

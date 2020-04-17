@@ -22,11 +22,14 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+import org.junit.Ignore;
 
 /**
  * Test outbound size1 property, as Integer
  *
  */
+//TODO manual size1 needed?
+@Ignore
 public class OptSize1Outbound1Test extends AbstractOutboundPropertiesTestCase
 {
     private final int value= 133;

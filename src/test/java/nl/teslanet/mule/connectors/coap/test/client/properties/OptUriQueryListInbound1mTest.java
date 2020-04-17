@@ -25,13 +25,16 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+
 
 /**
- * Test outbound location query property, single value
+ * Test inbound uri query property, multiple values
  *
  */
-public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertiesTestCase
+public class OptUriQueryListInbound1mTest extends AbstractInboundPropertyTestCase
 {
+
     /**
      * Test value
      * @return the value to use in test
@@ -40,6 +43,8 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertiesTes
     {
         LinkedList< String > list= new LinkedList< String >();
         list.add( "first=1" );
+        list.add( "second=2" );
+        list.add( "third=3" );
 
         return list;
     }
@@ -50,24 +55,39 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertiesTes
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.location_query";
+        return "coap.opt.uri_query";
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
      */
     @Override
-    protected Object getOutboundPropertyValue()
+    protected PropertyType getPropertyType()
     {
-        return new Stringable( "first=1" );
+        return PropertyType.Object;
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
+     */
+    @Override
+    protected Object getExpectedInboundPropertyValue()
+    {
+        return getValue();
+    }
+
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
      */
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptLocationQueryStrategy( getValue() );
+        return new OptUriQueryStrategy( getValue() );
+    }
+
+    @Override
+    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    {
+        return attributes.getOptions().getUriQueryList();
     }
 }

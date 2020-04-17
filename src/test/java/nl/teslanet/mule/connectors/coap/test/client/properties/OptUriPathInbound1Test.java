@@ -87,6 +87,6 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {
-        return attributes.getOptions().getUriPathList();
+        return attributes.getOptions().getUriPath();
     }
 }

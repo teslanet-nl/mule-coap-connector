@@ -89,6 +89,6 @@ public class OptLocationQueryInbound1mTest extends AbstractInboundPropertyTestCa
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {
-        return attributes.getOptions().getLocationQueryList();
+        return attributes.getOptions().getLocationQuery();
     }
 }

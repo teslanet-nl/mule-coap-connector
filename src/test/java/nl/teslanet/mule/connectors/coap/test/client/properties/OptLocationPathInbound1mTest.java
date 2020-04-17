@@ -89,6 +89,6 @@ public class OptLocationPathInbound1mTest extends AbstractInboundPropertyTestCas
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {
-        return attributes.getOptions().getLocationPathList();
+        return attributes.getOptions().getLocationPath();
     }
 }

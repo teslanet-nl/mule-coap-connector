@@ -452,6 +452,11 @@ public class CoAPOptions
         //make sure Optionset is empty, if needed
         if ( clear ) optionSet.clear();
 
+        /* if_none_match */
+        if ( options.isIfNoneMatch() )
+        {
+            optionSet.setIfNoneMatch( true );
+        }
         /* if_match_list       = null; // new LinkedList<byte[]>();*/
         if ( options.getIfMatchList() != null )
         {
@@ -474,11 +479,6 @@ public class CoAPOptions
         if ( options.getContentFormat() != null )
         {
             optionSet.setContentFormat( options.getContentFormat() );
-        }
-        /* max_age             = null;*/
-        if ( options.getMaxAge() != null )
-        {
-            optionSet.setMaxAge( options.getMaxAge() );
         }
         /* accept              = null;*/
         if ( options.getAccept() != null )
