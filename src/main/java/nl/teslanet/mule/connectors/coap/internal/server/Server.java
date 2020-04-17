@@ -207,7 +207,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         if ( endpoints.isEmpty() )
         {
             // user wants default endpoint
-            endpoints.add( new UDPEndpoint() );
+            endpoints.add( new UDPEndpoint( this.toString() ) );
         }
         int endpointNr= 0;
         for ( Endpoint endpoint : endpoints )
