@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import org.junit.Ignore;
+
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
 
 
@@ -30,6 +32,8 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
  * Test inbound other option no cache key property
  *
  */
+//TODO implement operation
+@Ignore
 public class OptOtherInbound3NoCacheKeyTest extends AbstractOtherOptionInboundPropertyTestCase
 {
 
