@@ -74,6 +74,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
     private final Logger LOGGER= LoggerFactory.getLogger( Server.class );
 
+    /**
+     * The name of the server.
+     */
     @RefName
     private String serverName;
 

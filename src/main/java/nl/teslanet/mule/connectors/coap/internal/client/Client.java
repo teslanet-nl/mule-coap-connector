@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import javax.inject.Inject;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
@@ -55,6 +57,8 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.scheduler.SchedulerConfig;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -79,6 +83,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
+import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
@@ -110,6 +115,18 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     @RefName
     private String clientName= null;
+
+    /**
+     * Injected Scheduler service.
+     */
+    @Inject
+    private SchedulerService schedulerService;
+
+    /**
+     * Injected scheduler configuration.
+     */
+    @Inject
+    private SchedulerConfig schedulerConfig;
 
     /**
      * Endpoint configuration to use for the client.
@@ -160,7 +177,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private OperationalEndpoint operationalEndpoint= null;
 
     /**
-     * The californium coap client 
+     * The Californium CoAP client instance.
      */
     private CoapClient coapClient= null;
 
@@ -218,6 +235,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void initialise() throws InitialisationException
     {
+        CoAPConnector.setSchedulerService( schedulerService, schedulerConfig );
         if ( endpoint == null )
         {
             //user wants default endpoint
