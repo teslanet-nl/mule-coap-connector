@@ -264,6 +264,7 @@ public final class OperationalEndpoint
                 }
             }
         }
+        freeEndpointResoures();
     }
 
     /**
@@ -289,6 +290,20 @@ public final class OperationalEndpoint
                     endpoint.coapEndpoint.destroy();
                 }
             }
+        }
+        freeEndpointResoures();
+    }
+
+    /**
+     * Frees resources that are used by endpoints when possible.
+     */
+    private static void freeEndpointResoures()
+    {
+        if ( registry.isEmpty())
+        {
+            //Schedulers are not needed any more, so stop them
+            CoAPConnector.stopIoScheduler();
+            CoAPConnector.stopLightScheduler();
         }
     }
 
@@ -323,6 +338,7 @@ public final class OperationalEndpoint
         builder.setInetSocketAddress( localAddress );
         builder.setNetworkConfig( visitor.getNetworkConfig() );
         this.coapEndpoint= builder.build();
+        this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
     /**
@@ -344,6 +360,7 @@ public final class OperationalEndpoint
         UdpMulticastConnector connector= new UdpMulticastConnector( multicastVisitor.getInterfaceAddress(), localAddress, multicastVisitor.getMulticastGroups() );
         builder.setConnector( connector );
         this.coapEndpoint= builder.build();
+        this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
     /**
@@ -387,6 +404,8 @@ public final class OperationalEndpoint
             endpointBuilder.setNetworkConfig( visitor.getNetworkConfig() );
             endpointBuilder.setConnector( dtlsConnector );
             this.coapEndpoint= endpointBuilder.build();
+            this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
+
         }
         catch ( Exception e )
         {

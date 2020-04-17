@@ -23,12 +23,19 @@
 package nl.teslanet.mule.connectors.coap.internal;
 
 
+import javax.inject.Inject;
+
+import org.mule.runtime.api.scheduler.SchedulerConfig;
+import org.mule.runtime.api.scheduler.SchedulerService;
+import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
@@ -78,5 +85,96 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @ErrorTypes(Errors.class)
 public class CoAPConnector
 {
-    //empty class
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER= LoggerFactory.getLogger( CoAPConnector.class );
+
+    /**
+     * The Scheduler service.
+     */
+    private static SchedulerService schedulerService= null;
+
+    /**
+     * The scheduler configuration.
+     */
+    private static SchedulerConfig schedulerConfig= null;
+
+    /**
+     * The IO Light scheduler.
+     */
+    private static Scheduler ioScheduler= null;
+
+    /**
+     * The CPU Light scheduler.
+     */
+    private static Scheduler lightScheduler= null;
+
+    /**
+     * Set the IO scheduler supplied by Mule.
+     * @return IO scheduler.
+     */
+    public static synchronized void setSchedulerService( SchedulerService schedulerServiceCandidate, SchedulerConfig schedulerConfigCandidate )
+    {
+        if ( schedulerService == null && schedulerServiceCandidate != null )
+        {
+            schedulerService= schedulerServiceCandidate;
+            schedulerConfig= schedulerConfigCandidate;
+            LOGGER.info( "CoAP schedulerService registered" );
+        }
+    }
+
+    /**
+     * Get the IO scheduler supplied by Mule.
+     * @return IO scheduler.
+     */
+    public static synchronized Scheduler getIoScheduler()
+    {
+        if ( ioScheduler == null )
+        {
+            ioScheduler= schedulerService.ioScheduler( schedulerConfig.withName( "CoAP IO scheduler" ) );
+            LOGGER.info( "CoAP IO scheduler is started" );
+        }
+        return ioScheduler;
+    }
+
+    /**
+     * Get the Light scheduler supplied by Mule.
+     * @return Light scheduler.
+     */
+    public static synchronized Scheduler getLightScheduler()
+    {
+        if ( lightScheduler == null )
+        {
+            lightScheduler= schedulerService.cpuLightScheduler( schedulerConfig.withName( "CoAP Light scheduler" ) );
+            LOGGER.info( "CoAP CPU Light scheduler is started" );
+        }
+        return lightScheduler;
+    }
+
+    /**
+     * Stop the IO scheduler.
+     */
+    public static synchronized void stopIoScheduler()
+    {
+        if ( ioScheduler != null )
+        {
+            ioScheduler.stop();
+            ioScheduler= null;
+            LOGGER.info( "CoAP IO scheduler is stopped" );
+        }
+    }
+
+    /**
+     * Stop the Light scheduler.
+     */
+    public static synchronized void stopLightScheduler()
+    {
+        if ( lightScheduler != null )
+        {
+            lightScheduler.stop();
+            lightScheduler= null;
+            LOGGER.info( "CoAP CPU Light scheduler is stopped" );
+        }
+    }
 }

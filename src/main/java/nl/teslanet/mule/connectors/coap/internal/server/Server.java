@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.runtime.api.exception.DefaultMuleException;
@@ -36,6 +38,8 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.scheduler.SchedulerConfig;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -54,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 
 
@@ -71,6 +76,18 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
     @RefName
     private String serverName;
+
+    /**
+     * Injected Scheduler service.
+     */
+    @Inject
+    private SchedulerService schedulerService;
+
+    /**
+     * Injected scheduler configuration.
+     */
+    @Inject
+    private SchedulerConfig schedulerConfig;
 
     // mule sdk does not seem to support a list of root level configurations
     // @Parameter
@@ -165,6 +182,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void initialise() throws InitialisationException
     {
+        CoAPConnector.setSchedulerService( schedulerService, schedulerConfig );
         NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
         if ( protocolStageThreadCount != null )
         {
@@ -203,7 +221,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") initalised {" + operationalEndpoint + " }" );
+                LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") initalised {" + operationalEndpoint + " } scheduler: " + schedulerService );
             }
             catch ( Exception e )
             {
