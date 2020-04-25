@@ -35,6 +35,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.annotation.values.OfValues;
 
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
@@ -45,13 +46,24 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
  */
 public class RequestBuilder
 {
+    // Mule seems to need this to be an inner enum.
+    /**
+     * Available request codes.
+     */
+    public enum CoAPRequestCode
+    {
+        GET, POST, PUT, DELETE
+    }
+
     /**
      * The CoAP request code specifying the requested action on the resource on the server.
      */
     @Parameter
     @Expression(ExpressionSupport.SUPPORTED)
+    //@OfValues(RequestCodeValueProvider.class)
     @Example(value= "GET")
     @Summary("The CoAP request code specifying the requested action on the resource on the server.")
+    //private String requestCode;
     private CoAPRequestCode requestCode;
 
     @Parameter

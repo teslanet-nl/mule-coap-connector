@@ -55,13 +55,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener pathPattern="/service/*" config-ref="config">
-			<coap:response>
 				<coap:response-options>
 					<coap:other-response-options>
 						<coap:other-response-option key="65012" value="#[ vars.value ]"/>
 					</coap:other-response-options>
 				</coap:response-options>
-			</coap:response>
 		</coap:listener>
 		<set-variable value="#[attributes]" doc:name="Set attr"
 			doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>

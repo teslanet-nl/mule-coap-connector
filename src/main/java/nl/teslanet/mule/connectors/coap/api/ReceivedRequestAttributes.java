@@ -23,6 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
 
 
@@ -202,18 +206,6 @@ public class ReceivedRequestAttributes
     @Override
     public String toString()
     {
-        StringBuilder builder= new StringBuilder();
-        builder.append( "CoAP Request Attributes:" );
-        builder.append( "\n  {" );
-        builder.append( "\n    requestCode: " ).append( requestCode );
-        builder.append( "\n    confirmable: " ).append( confirmable );
-        builder.append( "\n    requestUri: " ).append( requestUri );
-        builder.append( "\n    relation: " ).append( relation );
-        builder.append( "\n    localAddress: " ).append( localAddress );
-        builder.append( "\n    remoteAddress: " ).append( remoteAddress );
-        builder.append( "\n    remotePort: " ).append( remotePort );
-        builder.append( "\n    options: " ).append( options );
-        builder.append( "\n  }" );
-        return builder.toString();
+        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
     }
 }

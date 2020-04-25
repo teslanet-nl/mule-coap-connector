@@ -35,7 +35,7 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;

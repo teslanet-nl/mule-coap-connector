@@ -74,9 +74,10 @@ public class MediaTypeMediator
         }
         else
         {
+            //TODO does not parse because of mismatch in parameters (Mule has parameters , Cf does not)
             try
             {
-                result= MediaTypeRegistry.parse( mediaType.toString() );
+                result= MediaTypeRegistry.parse( mediaType.toRfcString() );
             }
             catch ( Exception e )
             {

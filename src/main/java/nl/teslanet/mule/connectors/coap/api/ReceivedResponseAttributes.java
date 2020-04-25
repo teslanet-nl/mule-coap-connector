@@ -268,6 +268,7 @@ public class ReceivedResponseAttributes
         this.options= options;
     }
 
+    //TODO add logger test
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

@@ -31,8 +31,10 @@ import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.execution.OnTerminate;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -41,6 +43,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -49,11 +52,12 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
+import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
@@ -110,8 +114,12 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @OnSuccess
     @MediaType(value= "*/*", strict= false)
     public void onSuccess(
-        @Optional @NullSafe @Alias( "response" ) @Placement(tab= "Response", order= 1) ResponseBuilder response,
-        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException, InternalInvalidResponseCodeException, IOException, InvalidETagException
+        @Optional @NullSafe @Alias("response") @Placement(tab= "Response", order= 1) ResponseBuilder response,
+        @Optional @NullSafe @Alias("response-options") @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the response.") @Placement(tab= "Response", order= 2) ResponseOptions responseOptions,
+        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException,
+        InternalInvalidResponseCodeException,
+        IOException,
+        InvalidETagException
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
@@ -119,20 +127,20 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
             //TODO give user control
             TypedValue< Object > responsePayload= response.getResponsePayload();
             coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
-            if ( response.getResponseOptions() != null )
+            if ( responseOptions != null )
             {
-                CoAPOptions.copyOptions( response.getResponseOptions(), coapResponse.getOptions(), false );
+                CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
             }
             //TODO add streaming & blockwise cooperation
             try
             {
-                coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ));
+                coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ) );
             }
             catch ( Exception e )
             {
                 throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
             }
-            ((CoapExchange) callbackContext.getVariable( "CoapExchange" ).get()).respond( coapResponse );
+            ( (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get() ).respond( coapResponse );
         }
     }
 

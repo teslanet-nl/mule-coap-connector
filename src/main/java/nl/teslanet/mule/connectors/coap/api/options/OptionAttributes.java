@@ -23,8 +23,11 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.mule.runtime.api.util.MultiMap;
 
 
@@ -487,5 +490,13 @@ public class OptionAttributes
     {
         this.otherOptions.put( optionNr, value );
     }
-
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
+    }
 }

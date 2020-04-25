@@ -32,8 +32,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
+import org.mule.runtime.extension.api.annotation.values.OfValues;
 
 
 /**
@@ -42,12 +41,49 @@ import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
  */
 public class ResponseBuilder
 {
+
+    // Mule seems to need this to be an inner enum.
+    /**
+     * Available response codes.
+     *
+     */
+    public enum CoAPResponseCode
+    {
+        CONTENT,
+        CREATED,
+        CHANGED,
+        DELETED,
+        VALID,
+        CONTINUE,
+        BAD_REQUEST,
+        UNAUTHORIZED,
+        BAD_OPTION,
+        FORBIDDEN,
+        NOT_FOUND,
+        METHOD_NOT_ALLOWED,
+        NOT_ACCEPTABLE,
+        REQUEST_ENTITY_INCOMPLETE,
+        CONFLICT,
+        PRECONDITION_FAILED,
+        REQUEST_ENTITY_TOO_LARGE,
+        UNSUPPORTED_CONTENT_FORMAT,
+        UNPROCESSABLE_ENTITY,
+        INTERNAL_SERVER_ERROR,
+        NOT_IMPLEMENTED,
+        BAD_GATEWAY,
+        SERVICE_UNAVAILABLE,
+        GATEWAY_TIMEOUT,
+        PROXY_NOT_SUPPORTED,
+        TOO_MANY_REQUESTS
+    }
+
     /**
      * The CoAP response code to be set in the CoAP response.
      */
     @Parameter
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
+    //@OfValues(ResponseCodeValueProvider.class)
     @Placement(tab= "Response", order= 1)
     @Summary("The CoAP response code of the response.")
     @Example("CONTENT")
@@ -62,15 +98,6 @@ public class ResponseBuilder
     @Summary("The payload of the CoAP response.")
     private TypedValue< Object > responsePayload;
 
-    /**
-     * The response options.
-     */
-    @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to add to the response.") 
-    private ResponseOptions responseOptions;
-    
     /**
      * @return the responseCode
      */
@@ -101,21 +128,5 @@ public class ResponseBuilder
     public void setResponsePayload( TypedValue< Object > responsePayload )
     {
         this.responsePayload= responsePayload;
-    }
-
-    /**
-     * @return the responseOptions
-     */
-    public ResponseOptions getResponseOptions()
-    {
-        return responseOptions;
-    }
-
-    /**
-     * @param responseOptions the responseOptions to set
-     */
-    public void setResponseOptions( ResponseOptions responseOptions )
-    {
-        this.responseOptions= responseOptions;
     }
 }

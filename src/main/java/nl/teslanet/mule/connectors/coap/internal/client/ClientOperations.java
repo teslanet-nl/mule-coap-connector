@@ -122,7 +122,7 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             return client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
+                AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestOptions,
@@ -189,7 +189,7 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttibuteUtils.toCode( requestBuilder.getRequestCode() ),
+                AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestOptions,
