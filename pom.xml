@@ -38,7 +38,11 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
 	<url>http://www.teslanet.nl</url>
-	
+    <organization>
+        <name>Teslanet.nl</name>
+    </organization>
+    <inceptionYear>2019</inceptionYear>
+    	
 	<licenses>
 		<license>
 			<name>Eclipse Public License - v 2.0</name>
@@ -231,7 +235,7 @@ Contributors:
 		<dependency>
 			<groupId>nl.teslanet.mule.connectors.coap</groupId>
 			<artifactId>mule-coap-connector-testutils</artifactId>
-			<version>1.0.0-M1</version>
+			<version>1.0.0-M2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
