@@ -179,6 +179,8 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         MuleEventSpy spy= spyMessage( getPropertyName() );
 
         Request request= new Request( requestCode );
+        //set URI explicitly otherwise uri-options could get overwritten
+        request.setURI( client.getURI() );
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
         
