@@ -39,7 +39,13 @@ public class IsItUsed implements VisitableConfig
 {
     // TODO: does Cf use this?
     /**
-     * does Cf use this?
+     * RFC 7252: MAX_TRANSMIT_WAIT is the maximum time from the first transmission
+     * of a Confirmable message to the time when the sender gives up on
+     * receiving an acknowledgement or reset.  Derived from:
+     * {@code ACK_TIMEOUT * ((2 ** (MAX_RETRANSMIT + 1)) - 1) * ACK_RANDOM_FACTOR }  
+     * @see <a target="_blank" href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-4.8.2">IETF RFC 7252 -
+     *      4.8.2 Time Values Derived from Transmission Parameters</a>
      */
     @Parameter
     @Optional(defaultValue= "93000")
@@ -52,6 +58,9 @@ public class IsItUsed implements VisitableConfig
     /**
      * Period of time (in milliseconds [ms]) of the spreading of responses to a
      * multicast request, for network congestion prevention.
+     * @see <a target="_blank" href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-8.2">IETF RFC 7252 -
+     *      8.2. Request/Response Layer</a>
      */
     @Parameter
     @Optional(defaultValue= "5000")

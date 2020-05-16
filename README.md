@@ -23,7 +23,7 @@ The CoAP protocol is supported as defined in:
 * [IETF rfc 7959](https://tools.ietf.org/html/rfc7959)
 
 ## Dependencies
-* [Californium](https://www.eclipse.org/californium/) 2.2.2
+* [Californium](https://www.eclipse.org/californium/) 2.2.3
 
 ## Installation
 

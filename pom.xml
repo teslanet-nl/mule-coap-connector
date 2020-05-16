@@ -62,7 +62,7 @@
 	<properties>
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
-		<californium.version>2.2.2</californium.version>
+		<californium.version>2.2.3</californium.version>
         <commonsLangVersion>3.7</commonsLangVersion>
 	</properties>
 
