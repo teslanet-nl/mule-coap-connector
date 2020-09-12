@@ -113,7 +113,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @Optional
-    @DisplayName( "Query paremeters")
+    @DisplayName( "Query parameters")
     @Summary("The query parameters to send with the observe request.")
     private List< QueryParamConfig > queryParamConfigs= null;
 

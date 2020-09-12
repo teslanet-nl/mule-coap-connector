@@ -368,10 +368,22 @@
             </parameters>
         </source>
         <source name="listener">
-            <description><![CDATA[The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern given, will be listened. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow.]]></description>
+            <description><![CDATA[The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern and the request-methods specified, will be listened to. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow. When patterns are equally specific, one of the listeners will be selected.]]></description>
             <parameters>
                 <parameter name="pathPattern">
                     <description><![CDATA[The pathPattern defines the resources the listener listens on. The listener will receive the requests to process for a resource when it has the most specific pattern that complies to the resources path.]]></description>
+                </parameter>
+                <parameter name="get">
+                    <description><![CDATA[The listener listens out for Get requests.]]></description>
+                </parameter>
+                <parameter name="post">
+                    <description><![CDATA[The listener listens out for Post requests.]]></description>
+                </parameter>
+                <parameter name="put">
+                    <description><![CDATA[The listener listens out for Put requests.]]></description>
+                </parameter>
+                <parameter name="delete">
+                    <description><![CDATA[The listener listens out for Delete requests.]]></description>
                 </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>

@@ -72,7 +72,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="249c6420-a649-4d60-8331-17c6eeca6ca8" persistent="false" />
 	
 	<flow name="listen_add_resource">
-		<coap:listener pathPattern="/service/add_resource/*"
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/add_resource/*"
 			config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<!-- TODO location path -->
@@ -140,7 +140,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</sub-flow>
 
 	<flow name="listen_exists">
-		<coap:listener pathPattern="/service/exists" config-ref="config">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/exists" config-ref="config">
 			<coap:response responsePayload="#[ payload as String ]"/>
 		</coap:listener>
 		<logger message="#[ attributes.options.locationPath! ]"/>
@@ -150,7 +150,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</flow>
 
 	<flow name="listen_service_resource">
-		<coap:listener pathPattern="/service/*" config-ref="config">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response responseCode="#[ vars.response_code]" />
 		</coap:listener>
 		

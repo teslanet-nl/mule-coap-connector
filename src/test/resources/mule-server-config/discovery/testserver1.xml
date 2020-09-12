@@ -57,7 +57,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
  
    <flow name="listen_add_resources">
-      <coap:listener pathPattern="/service/add_resources" config-ref="config"><coap:response/></coap:listener>
+      <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/add_resources" config-ref="config"><coap:response/></coap:listener>
 
       <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_ct" get="true" ><coap:info ct="0,41"/></coap:resource-add>
       <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_if" get="true" ><coap:info if="if1,if2"/></coap:resource-add>
@@ -69,7 +69,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    </flow>
 
    <flow name="listen_service_resource">
-      <coap:listener pathPattern="/service/*" config-ref="config"><coap:response/></coap:listener>
+      <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config"><coap:response/></coap:listener>
       <set-payload value="some content" doc:name="Set Payload"/>
    </flow>
 

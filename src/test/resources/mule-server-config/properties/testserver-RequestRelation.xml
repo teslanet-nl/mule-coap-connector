@@ -51,7 +51,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:server-config>
 	
 	<flow name="listen">
-		<coap:listener pathPattern="/service/*" config-ref="config">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.relation]" doc:name="Set value to test" doc:id="22ac78bd-2dd8-4f14-a822-d69a0cdeb96f" variableName="valueToTest"/>

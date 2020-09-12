@@ -75,7 +75,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="listen1">
-		<coap:listener pathPattern="/service/*" config-ref="config1">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config1">
 		</coap:listener>
 		<java:new doc:name="New spy" doc:id="5bb95d63-aab2-4453-95c7-fa180f548484"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -91,7 +91,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="listen2">
-		<coap:listener pathPattern="/service/*" config-ref="config2"/>
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config2"/>
 
 		<java:new doc:name="New spy" doc:id="014fd2f6-7f4d-4c39-9dc0-6f44cd2bee01"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

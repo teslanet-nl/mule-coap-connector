@@ -189,24 +189,76 @@ public class ResourceRegistry
      */
     private void setResourceCallBack( ServedResource resource )
     {
-        OperationalListener bestListener= null;
-        int maxMatchlevel= 0;
+        OperationalListener bestGetListener= null;
+        OperationalListener bestPostListener= null;
+        OperationalListener bestPutListener= null;
+        OperationalListener bestDeleteListener= null;
+        int maxGetMatchlevel= 0;
+        int maxPostMatchlevel= 0;
+        int maxPutMatchlevel= 0;
+        int maxDeleteMatchlevel= 0;
         for ( OperationalListener listener : listeners )
         {
             int matchLevel= matchUri( listener.getUriPattern(), resource.getURI() );
-            if ( matchLevel > maxMatchlevel )
+            if ( matchLevel > maxGetMatchlevel && listener.requestCodeFlags.isGet() )
             {
-                maxMatchlevel= matchLevel;
-                bestListener= listener;
+            	maxGetMatchlevel= matchLevel;
+            	bestGetListener= listener;
+            }
+            if ( matchLevel > maxPostMatchlevel && listener.requestCodeFlags.isPost() )
+            {
+                maxPostMatchlevel= matchLevel;
+                bestPostListener= listener;
+            }
+            if ( matchLevel > maxPutMatchlevel && listener.requestCodeFlags.isPut() )
+            {
+                maxPutMatchlevel= matchLevel;
+                bestPutListener= listener;
+            }
+            if ( matchLevel > maxDeleteMatchlevel && listener.requestCodeFlags.isDelete() )
+            {
+                maxDeleteMatchlevel= matchLevel;
+                bestDeleteListener= listener;
             }
         }
-        if ( bestListener != null )
+        // set the Get callback to the best found listener
+        if ( bestGetListener != null )
         {
-            resource.setCallback( bestListener.getCallback() );
+            resource.setGetCallback( bestGetListener.getCallback() );
         }
         else
         {
-            resource.setCallback( null );
+            resource.setGetCallback( null );
+            //TODO log warning
+        }
+        // set the Post callback to the best found listener
+        if ( bestPostListener != null )
+        {
+            resource.setPostCallback( bestPostListener.getCallback() );
+        }
+        else
+        {
+            resource.setPostCallback( null );
+            //TODO log warning
+        }
+        // set the Put callback to the best found listener
+        if ( bestPutListener != null )
+        {
+            resource.setPutCallback( bestPutListener.getCallback() );
+        }
+        else
+        {
+            resource.setPutCallback( null );
+            //TODO log warning
+        }
+        // set the Delete callback to the best found listener
+        if ( bestDeleteListener != null )
+        {
+            resource.setDeleteCallback( bestDeleteListener.getCallback() );
+        }
+        else
+        {
+            resource.setDeleteCallback( null );
             //TODO log warning
         }
     }

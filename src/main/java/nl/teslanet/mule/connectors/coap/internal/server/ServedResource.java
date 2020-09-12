@@ -55,11 +55,30 @@ public class ServedResource extends CoapResource
     protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
 
     /**
-     * The callback of the messagesource.
-     * It is used to handle messages over to the Mule flow that should process the request.
+     * The callback of the messagesource for Get requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< InputStream, ReceivedRequestAttributes > callback= null;
+    private SourceCallback< InputStream, ReceivedRequestAttributes > getCallback= null;
 
+    /**
+     * The callback of the messagesource for Post requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, ReceivedRequestAttributes > postCallback= null;
+
+    /**
+     * The callback of the messagesource for Put requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, ReceivedRequestAttributes > putCallback= null;
+
+    /**
+     * The callback of the messagesource for Delete requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, ReceivedRequestAttributes > deleteCallback= null;
+
+    //TODO use requestcodeflags class
     /**
      * Flag that indicates whether the resource accepts Get requests.
      */
@@ -232,7 +251,7 @@ public class ServedResource extends CoapResource
         }
         else
         {
-            handleRequest( exchange, CoAPResponseCode.CONTENT );
+            handleRequest( getCallback, exchange, CoAPResponseCode.CONTENT );
         }
     }
 
@@ -249,7 +268,7 @@ public class ServedResource extends CoapResource
         }
         else
         {
-            handleRequest( exchange, CoAPResponseCode.CHANGED );
+            handleRequest( putCallback, exchange, CoAPResponseCode.CHANGED );
         }
     }
 
@@ -266,7 +285,7 @@ public class ServedResource extends CoapResource
         }
         else
         {
-            handleRequest( exchange, CoAPResponseCode.CHANGED );
+            handleRequest( postCallback, exchange, CoAPResponseCode.CHANGED );
         }
     }
 
@@ -283,7 +302,7 @@ public class ServedResource extends CoapResource
         }
         else
         {
-            handleRequest( exchange, CoAPResponseCode.DELETED );
+            handleRequest( deleteCallback, exchange, CoAPResponseCode.DELETED );
         }
     }
 
@@ -292,9 +311,9 @@ public class ServedResource extends CoapResource
      * @param exchange the CoAP exchange context of the request.
      * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
      */
-    private void handleRequest( CoapExchange exchange, CoAPResponseCode defaultCoAPResponseCode )
+    private void handleRequest( SourceCallback< InputStream, ReceivedRequestAttributes > callback, CoapExchange exchange, CoAPResponseCode defaultCoAPResponseCode )
     {
-        if ( !hasCallback() )
+        if ( callback == null )
         {
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
             return;
@@ -395,29 +414,71 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * set the Mule callback for this resource.
+     * set the Mule callback for this resource for Get requests.
      */
-    public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    public void setGetCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
     {
-        this.callback= sourceCallback;
+        getCallback= sourceCallback;
     }
 
     /**
-     * Get the Mule MessageSource callback
+     * Get the Mule MessageSource callback for Get requests.
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getCallback()
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getGetCallback()
     {
-        return callback;
+        return getCallback;
     }
 
     /**
-     * Test whether the resource callback has been set.
-     * @return true when callback is set.
+     * set the Mule callback for this resource for Post requests.
      */
-    public boolean hasCallback()
+    public void setPostCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
     {
-        return( callback != null );
+        postCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Post requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getPostCallback()
+    {
+        return postCallback;
+    }
+
+    /**
+     * set the Mule callback for this resource for Put requests.
+     */
+    public void setPutCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    {
+        putCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Put requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getPutCallback()
+    {
+        return putCallback;
+    }
+
+    /**
+     * set the Mule callback for this resource for Delete requests.
+     */
+    public void setDeleteCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    {
+        deleteCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Delete requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getDeleteCallback()
+    {
+        return deleteCallback;
     }
 
 }

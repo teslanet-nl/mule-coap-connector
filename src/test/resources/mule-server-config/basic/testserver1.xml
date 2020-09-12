@@ -61,7 +61,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 
    <flow name="listen-all">
-      <coap:listener config-ref="config">
+      <coap:listener config-ref="config" get="true" post="true" put="true" delete="true">
 			<coap:response />
 		</coap:listener>
 

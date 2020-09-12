@@ -21,7 +21,6 @@
   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
   #L%
   -->
-
 <xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.teslanet.nl/schema/mule/coap" attributeFormDefault="unqualified" elementFormDefault="qualified">
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
   <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"></xs:import>
@@ -1327,7 +1326,7 @@
   </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ListenerType" substitutionGroup="mule:abstract-message-source" name="listener">
     <xs:annotation>
-      <xs:documentation>The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern given, will be listened. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow.</xs:documentation>
+      <xs:documentation>The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern and the request-methods specified, will be listened to. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow. When patterns are equally specific, one of the listeners will be selected.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="ListenerType">
@@ -1359,6 +1358,26 @@
         <xs:attribute type="xs:string" use="optional" default="/*" name="pathPattern">
           <xs:annotation>
             <xs:documentation>The pathPattern defines the resources the listener listens on. The listener will receive the requests to process for a resource when it has the most specific pattern that complies to the resources path.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="get">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Get requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="post">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Post requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="put">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Put requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="delete">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Delete requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">

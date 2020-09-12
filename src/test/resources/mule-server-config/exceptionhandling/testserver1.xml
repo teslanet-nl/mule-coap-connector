@@ -54,7 +54,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 
 	<flow name="listen_unhandled">
-		<coap:listener pathPattern="/service/unhandled_exception"
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/unhandled_exception"
 			config-ref="config">
 			<coap:response />
 		</coap:listener>
@@ -67,7 +67,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 
    <flow name="listen_handled">
-      <coap:listener pathPattern="/service/handled_exception" config-ref="config">
+      <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/handled_exception" config-ref="config">
 			<coap:response />
 		</coap:listener>
       <set-payload value="server response"/>

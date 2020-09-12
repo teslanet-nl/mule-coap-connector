@@ -54,7 +54,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:server-config>
 
 	<flow name="listen">
-		<coap:listener pathPattern="/service/*" config-ref="config" >
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config" >
 			<coap:response-options />
 		</coap:listener>
 		<set-variable value="#[attributes]" doc:name="Set attr" doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>

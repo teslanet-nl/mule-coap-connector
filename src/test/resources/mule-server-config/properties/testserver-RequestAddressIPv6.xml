@@ -71,7 +71,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:server-config>
 
    	<flow name="listen">
-		<coap:listener pathPattern="/service/*" config-ref="config">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="acfc94b6-5020-4904-b6c3-276f160ae64e" variableName="valueToTest"/>
@@ -87,7 +87,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		</scripting:execute>
    </flow>
    	<flow name="listen2">
-		<coap:listener pathPattern="/service/*" config-ref="configLocal">
+		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="configLocal">
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="4c0e2fb9-716c-42d5-84f7-9caab3e76bc7" variableName="valueToTest"/>

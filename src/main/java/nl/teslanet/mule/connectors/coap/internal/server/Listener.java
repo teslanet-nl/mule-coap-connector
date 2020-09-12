@@ -42,6 +42,7 @@ import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
@@ -59,6 +60,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
+import nl.teslanet.mule.connectors.coap.internal.attributes.RequestCodeFlags;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
@@ -68,9 +70,9 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 /**
  * The Listener message source receives requests on resources of the CoAP server.
- * The requests on the resources that apply to the resource uri-pattern given, will be listened.
+ * The requests on the resources that apply to the resource uri-pattern and the request-methods specified, will be listened to.
  * When multiple listeners apply the listener with the most specific uri-pattern 
- * will process the requests and deliver it to the flow.
+ * will process the requests and deliver it to the flow. When patterns are equally specific, one of the listeners will be selected.  
  */
 @Alias("listener")
 @EmitsResponse
@@ -85,11 +87,48 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     /**
      * The pathPattern defines the resources the listener listens on.
      * The listener will receive the requests to process for a resource when it 
-     * has the most specific pattern that complies to the resources path. 
+     * has the most specific pattern that complies to the resources path.
      */
     @Parameter
     @Optional(defaultValue= "/*")
+    @Summary("The pathPattern defines the resources the listener listens on.")
     private String pathPattern;
+
+    /**
+     * The listener listens out for Get requests.
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @DisplayName("Receive Get requests")
+    @Summary( "The listener will only receive GET requests." )
+    private boolean get;
+
+    /**
+     * The listener listens out for Post requests.
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @DisplayName("Receive Post requests")
+    @Summary( "The listener will only receive POST requests." )
+    private boolean post;
+
+    /**
+     * The listener listens out for Put requests.
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @DisplayName("Receive Put requests")
+    @Summary( "The listener will only receive PUT requests." )
+    private boolean put;
+
+    /**
+     * The listener listens out for Delete requests.
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @DisplayName("Receive Delete requests")
+    @Summary( "The listener will only receive DELETE requests." )
+    private boolean delete;
 
     /**
      * The operational listener that will handle requests.
@@ -101,7 +140,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         try
         {
-            operationalListener= new OperationalListener( pathPattern, sourceCallback );
+            operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete ), sourceCallback );
         }
         catch ( InvalidResourceUriException e )
         {
@@ -200,12 +239,34 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     }
 
     /**
-     * Sets the uriPattern describing the resources the listener listens on.
-     * @param uriPattern the uriPattern to set
+     * @return true if the listener listens on Delete requests, false otherwise.
      */
-    //    public void setUriPattern( String uriPattern )
-    //    {
-    //        this.uriPattern= uriPattern;
-    //    }
+    public boolean isDelete()
+    {
+        return delete;
+    }
 
+    /**
+     * @return true if the listener listens on Get requests, false otherwise.
+     */
+    public boolean isGet()
+    {
+        return get;
+    }
+
+    /**
+     * @return true if the listener listens on Post requests, false otherwise.
+     */
+    public boolean isPost()
+    {
+        return post;
+    }
+
+    /**
+     * @return true if the listener listens on Put requests, false otherwise.
+     */
+    public boolean isPut()
+    {
+        return put;
+    }
 }

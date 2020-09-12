@@ -101,7 +101,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 
 
    <flow name="listen-all">
-      <coap:listener config-ref="config">
+      <coap:listener get="true" post="true" put="true" delete="true" config-ref="config">
       	<coap:response responseCode="#[ vars.responseCode ]"/>
       </coap:listener>
       <logger/>

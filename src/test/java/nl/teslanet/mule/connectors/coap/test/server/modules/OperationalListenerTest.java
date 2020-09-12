@@ -37,6 +37,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.attributes.RequestCodeFlags;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 
 
@@ -62,72 +63,79 @@ public class OperationalListenerTest
     public void testConstructor() throws InvalidResourceUriException
     {
         String uri;
+        RequestCodeFlags flags= new RequestCodeFlags();
         OperationalListener listener;
         TestSourceCallBack callback;
 
         uri= "/some_resource";
+
         callback= new TestSourceCallBack();
-        listener= new OperationalListener( uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         //        Field serverField= listener.getClass().getField( "server" );
         //        serverField.set( listener, server );
         //        Field uriPatternField= listener.getClass().getField( "uriPattern" );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        flags= new RequestCodeFlags(true, false, false , false );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "some_resource";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        flags= new RequestCodeFlags(true, true, false , false );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child/child";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        flags= new RequestCodeFlags(true, true, true , false );
+        callback= new TestSourceCallBack();
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, "/" + uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/some_resource*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        flags= new RequestCodeFlags(true, true, true , true );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -136,14 +144,15 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "null is not allowed" );
 
         uri= null;
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, flags, callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -152,13 +161,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "uri cannot be empty" );
         uri= "";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -167,13 +177,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "uri cannot be empty" );
         uri= "/";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -182,13 +193,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "**";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -197,13 +209,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/**";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -212,13 +225,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -227,13 +241,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/child/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -242,13 +257,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/child";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -257,13 +273,14 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource*/child/*";
-        listener= new OperationalListener( uri, callback );
-        assertOperationalListener( listener, uri, callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -271,67 +288,68 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        OperationalListener listener= new OperationalListener( uri, callback );
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
 
         uri= "/some_resource";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "some_resource";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child/child";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child/*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, callback );
+        assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/some_resource*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child*";
         listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
@@ -339,22 +357,23 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        OperationalListener listener= new OperationalListener( uri, callback );
+        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        OperationalListener listener= new OperationalListener( uri, flags, callback );
 
         callback= new TestSourceCallBack();
         listener.setCallback( callback );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
 
         callback= new TestSourceCallBack();
         listener.setCallback( callback );
-        assertOperationalListener( listener, uri, callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
-    private void assertOperationalListener( OperationalListener listener, String uri, SourceCallback< InputStream, ReceivedRequestAttributes > callback )
+    private void assertOperationalListener( OperationalListener listener, String uri, RequestCodeFlags flags, SourceCallback< InputStream, ReceivedRequestAttributes > callback )
     {
         assertNotNull( "listener construction failed", listener );
         assertEquals( "listener uri has wrong value", uri, listener.getUriPattern() );
         assertEquals( "listener callback has wrong value", callback, listener.getCallback() );
-
+        assertEquals( "listener flags has wrong value", flags, listener.getRequestCodeFlags() );
     }
 }

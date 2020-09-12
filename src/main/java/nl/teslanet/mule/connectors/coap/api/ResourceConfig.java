@@ -60,7 +60,7 @@ public class ResourceConfig
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @Summary("When true, GET requests are allowed on the resource.")
-    private boolean get;
+    private boolean get= false;
 
     /**
      * When true, Post requests are allowed on the resource.
