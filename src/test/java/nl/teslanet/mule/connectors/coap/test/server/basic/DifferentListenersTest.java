@@ -238,4 +238,128 @@ public class DifferentListenersTest extends AbstractServerTestCase
         assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
     }
+    
+    @Test(timeout= 5000)
+    public void testNoListenersGetOnly() throws ConnectorException, IOException
+    {
+        String path= "/no_listeners/get_only";
+        setClientPath( path );
+
+        CoapResponse response= client.get();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be CONTENT", ResponseCode.CONTENT, response.getCode() );
+        assertEquals( "response payload has wrong value", path, response.getResponseText() );
+
+        response= client.post( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.put( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.delete();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+    }
+
+    @Test(timeout= 5000)
+    public void testNoListenersPostOnly() throws ConnectorException, IOException
+    {
+        String path= "/no_listeners/post_only";
+        setClientPath( path );
+
+        CoapResponse response= client.get();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.post( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be CHANGED", ResponseCode.CHANGED, response.getCode() );
+        assertEquals( "response payload has wrong value", path, response.getResponseText() );
+
+        response= client.put( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.delete();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+    }
+
+    @Test(timeout= 5000)
+    public void testNoListenersPutOnly() throws ConnectorException, IOException
+    {
+        String path= "/no_listeners/put_only";
+        setClientPath( path );
+
+        CoapResponse response= client.get();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.post( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.put( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be CHANGED", ResponseCode.CHANGED, response.getCode() );
+        assertEquals( "response payload has wrong value", path , response.getResponseText() );
+
+        response= client.delete();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+    }
+
+    @Test(timeout= 5000)
+    public void testNoListenersDeleteOnly() throws ConnectorException, IOException
+    {
+        String path= "/no_listeners/delete_only";
+        setClientPath( path );
+
+        CoapResponse response= client.get();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.post( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.put( path, 0 );
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
+
+        response= client.delete();
+
+        assertNotNull( "get gave no response", response );
+        assertEquals( "response code should be DELETED", ResponseCode.DELETED, response.getCode() );
+        assertEquals( "response payload has wrong value", path, response.getResponseText() );
+    }
 }

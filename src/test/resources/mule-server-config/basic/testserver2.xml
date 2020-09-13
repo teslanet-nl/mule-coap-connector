@@ -55,79 +55,104 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
                 </coap:sub-resources>
             </coap:resource>
             <coap:resource resourceName="no_listeners" get="true" post="true" put="true"
-                delete="true"/>
+                delete="true">
+                <coap:sub-resources>
+                    <coap:resource resourceName="get_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="post_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="put_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="delete_only" get="true" post="true" put="true"
+                        delete="true"/>
+                </coap:sub-resources>
+            </coap:resource>
         </coap:resources>
     </coap:server-config>
-     
+
     <flow name="different_listeners-all-get">
-        <coap:listener config-ref="config" get="true" 
-            pathPattern="/different_listeners/*">
+        <coap:listener config-ref="config" get="true" pathPattern="/different_listeners/*">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/all-get"/>
     </flow>
-    
+
     <flow name="different_listeners-all-post">
-        <coap:listener config-ref="config" post="true" 
-            pathPattern="/different_listeners/*">
+        <coap:listener config-ref="config" post="true" pathPattern="/different_listeners/*">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/all-post"/>
     </flow>
-    
+
     <flow name="different_listeners-all-put">
-        <coap:listener config-ref="config" put="true" 
-            pathPattern="/different_listeners/*">
+        <coap:listener config-ref="config" put="true" pathPattern="/different_listeners/*">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/all-put"/>
     </flow>
-    
+
     <flow name="different_listeners-all-delete">
-        <coap:listener config-ref="config" delete="true" 
-            pathPattern="/different_listeners/*">
+        <coap:listener config-ref="config" delete="true" pathPattern="/different_listeners/*">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/all-delete"/>
     </flow>
-    
+
     <flow name="different_listeners-get_only">
-        <coap:listener config-ref="config" get="true" 
-            pathPattern="/different_listeners/get_only">
+        <coap:listener config-ref="config" get="true" pathPattern="/different_listeners/get_only">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/get_only"/>
     </flow>
-    
+
     <flow name="different_listeners-post_only">
-        <coap:listener config-ref="config" post="true" 
-            pathPattern="/different_listeners/post_only">
+        <coap:listener config-ref="config" post="true" pathPattern="/different_listeners/post_only">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/post_only"/>
     </flow>
-    
+
     <flow name="different_listeners-put_only">
-        <coap:listener config-ref="config" put="true" 
-            pathPattern="/different_listeners/put_only">
+        <coap:listener config-ref="config" put="true" pathPattern="/different_listeners/put_only">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/put_only"/>
     </flow>
-    
+
     <flow name="different_listeners-delete_only">
-        <coap:listener config-ref="config" delete="true" 
+        <coap:listener config-ref="config" delete="true"
             pathPattern="/different_listeners/delete_only">
             <coap:response/>
         </coap:listener>
-        
         <set-payload value="/different_listeners/delete_only"/>
+    </flow>
+
+
+    <flow name="no_listeners-get_only">
+        <coap:listener config-ref="config" get="true" pathPattern="/no_listeners/get_only">
+            <coap:response/>
+        </coap:listener>
+        <set-payload value="/no_listeners/get_only"/>
+    </flow>
+
+    <flow name="no_listeners-post_only">
+        <coap:listener config-ref="config" post="true" pathPattern="/no_listeners/post_only">
+            <coap:response/>
+        </coap:listener>
+        <set-payload value="/no_listeners/post_only"/>
+    </flow>
+
+    <flow name="no_listeners-put_only">
+        <coap:listener config-ref="config" put="true" pathPattern="/no_listeners/put_only">
+            <coap:response/>
+        </coap:listener>
+        <set-payload value="/no_listeners/put_only"/>
+    </flow>
+
+    <flow name="no_listeners-delete_only">
+        <coap:listener config-ref="config" delete="true" pathPattern="/no_listeners/delete_only">
+            <coap:response/>
+        </coap:listener>
+        <set-payload value="/no_listeners/delete_only"/>
     </flow>
 </mule>
