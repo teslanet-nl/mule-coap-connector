@@ -64,7 +64,7 @@
 		<licensePath>LICENSE.md</licensePath>
 		<californium.version>2.4.1</californium.version>
         <commonsLangVersion>3.7</commonsLangVersion>
-        <testutils.version>1.0.0-M3-SNAPSHOT</testutils.version>
+        <testutils.version>1.0.0-M3</testutils.version>
 	</properties>
 
 	<scm>
