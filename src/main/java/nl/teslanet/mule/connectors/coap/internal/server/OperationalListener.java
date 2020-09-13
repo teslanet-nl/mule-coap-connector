@@ -29,7 +29,6 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
-import nl.teslanet.mule.connectors.coap.internal.attributes.RequestCodeFlags;
 
 /**
  * The Operationallistener holds the objects that are used in the listening

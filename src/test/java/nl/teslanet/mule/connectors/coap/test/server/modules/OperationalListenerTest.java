@@ -28,8 +28,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,27 +35,19 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
-import nl.teslanet.mule.connectors.coap.internal.attributes.RequestCodeFlags;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
+import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 
 
+/**
+ * Test operational listener
+ *
+ */
 public class OperationalListenerTest
 {
 
     @Rule
     public ExpectedException exception= ExpectedException.none();
-
-    @Before
-    public void setUp() throws Exception
-    {
-
-    }
-
-    @After
-    public void tearDown() throws Exception
-    {
-
-    }
 
     @Test
     public void testConstructor() throws InvalidResourceUriException
@@ -81,7 +71,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child";
-        flags= new RequestCodeFlags(true, false, false , false );
+        flags= new RequestCodeFlags( true, false, false, false );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
 
@@ -90,7 +80,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child";
-        flags= new RequestCodeFlags(true, true, false , false );
+        flags= new RequestCodeFlags( true, true, false, false );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
@@ -107,7 +97,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/*";
-        flags= new RequestCodeFlags(true, true, true , false );
+        flags= new RequestCodeFlags( true, true, true, false );
         callback= new TestSourceCallBack();
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
@@ -125,7 +115,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/some_resource*";
-        flags= new RequestCodeFlags(true, true, true , true );
+        flags= new RequestCodeFlags( true, true, true, true );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
 
@@ -144,7 +134,7 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
@@ -161,13 +151,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "uri cannot be empty" );
         uri= "";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -177,13 +167,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "uri cannot be empty" );
         uri= "/";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -193,13 +183,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "**";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -209,13 +199,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/**";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -225,13 +215,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -241,13 +231,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/child/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -257,13 +247,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource/*/child";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -273,13 +263,13 @@ public class OperationalListenerTest
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri;
         OperationalListener listener;
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
 
         exception.expect( InvalidResourceUriException.class );
         exception.expectMessage( "Invalid CoAP resource uri" );
         exception.expectMessage( "wildcard needs to be last character" );
         uri= "/some_resource*/child/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
     }
 
@@ -288,8 +278,8 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
-        OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags), callback );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
 
         uri= "/some_resource";
         listener.setUriPattern( uri );
@@ -357,7 +347,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags(true, true, true , false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
         OperationalListener listener= new OperationalListener( uri, flags, callback );
 
         callback= new TestSourceCallBack();

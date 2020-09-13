@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.attributes;
+package nl.teslanet.mule.connectors.coap.internal.server;
 
 //TODO unit test
 /**
@@ -204,6 +204,9 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
         return 0;
     }
 
+    /**
+     * Get hashCode
+     */
     @Override
     public int hashCode()
     {
