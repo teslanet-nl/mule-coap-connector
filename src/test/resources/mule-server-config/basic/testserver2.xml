@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+    xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+
+    <description>Mule CoAP connector test application</description>
+
+    <coap:server-config name="config">
+        <coap:endpoint>
+            <coap:udp-endpoint logCoapMessages="true">
+                <coap:exchange-params exchangeLifetime="1000"/>
+            </coap:udp-endpoint>
+        </coap:endpoint>
+        <coap:resources>
+            <coap:resource resourceName="different_listeners">
+                <coap:sub-resources>
+                    <coap:resource resourceName="all" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="get_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="post_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="put_only" get="true" post="true" put="true"
+                        delete="true"/>
+                    <coap:resource resourceName="delete_only" get="true" post="true" put="true"
+                        delete="true"/>
+                </coap:sub-resources>
+            </coap:resource>
+            <coap:resource resourceName="no_listeners" get="true" post="true" put="true"
+                delete="true"/>
+        </coap:resources>
+    </coap:server-config>
+     
+    <flow name="different_listeners-all-get">
+        <coap:listener config-ref="config" get="true" 
+            pathPattern="/different_listeners/*">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/all-get"/>
+    </flow>
+    
+    <flow name="different_listeners-all-post">
+        <coap:listener config-ref="config" post="true" 
+            pathPattern="/different_listeners/*">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/all-post"/>
+    </flow>
+    
+    <flow name="different_listeners-all-put">
+        <coap:listener config-ref="config" put="true" 
+            pathPattern="/different_listeners/*">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/all-put"/>
+    </flow>
+    
+    <flow name="different_listeners-all-delete">
+        <coap:listener config-ref="config" delete="true" 
+            pathPattern="/different_listeners/*">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/all-delete"/>
+    </flow>
+    
+    <flow name="different_listeners-get_only">
+        <coap:listener config-ref="config" get="true" 
+            pathPattern="/different_listeners/get_only">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/get_only"/>
+    </flow>
+    
+    <flow name="different_listeners-post_only">
+        <coap:listener config-ref="config" post="true" 
+            pathPattern="/different_listeners/post_only">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/post_only"/>
+    </flow>
+    
+    <flow name="different_listeners-put_only">
+        <coap:listener config-ref="config" put="true" 
+            pathPattern="/different_listeners/put_only">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/put_only"/>
+    </flow>
+    
+    <flow name="different_listeners-delete_only">
+        <coap:listener config-ref="config" delete="true" 
+            pathPattern="/different_listeners/delete_only">
+            <coap:response/>
+        </coap:listener>
+        
+        <set-payload value="/different_listeners/delete_only"/>
+    </flow>
+</mule>

@@ -23,52 +23,49 @@
   -->
 
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+    xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+    xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 
-   <description>Mule CoAP connector test application</description>
+    <description>Mule CoAP connector test application</description>
 
-	<coap:server-config name="config">
-		<coap:endpoint>
-			<coap:udp-endpoint logCoapMessages="true" >
-				<coap:exchange-params exchangeLifetime="1000" />
-			</coap:udp-endpoint>
-		</coap:endpoint>
-		<coap:resources>
-         <coap:resource resourceName="basic">
-            <coap:sub-resources>
-               <coap:resource resourceName="get_me" get="true"/>
-               <coap:resource resourceName="do_not_get_me" get="false"/>
-               <coap:resource resourceName="do_not_get_me2"/>
-               <coap:resource resourceName="put_me" put="true"/>
-               <coap:resource resourceName="do_not_put_me" put="false"/>
-               <coap:resource resourceName="do_not_put_me2"/>
-               <coap:resource resourceName="post_me" post="true"/>
-               <coap:resource resourceName="do_not_post_me" post="false"/>
-               <coap:resource resourceName="do_not_post_me2"/>
-               <coap:resource resourceName="delete_me" delete="true"/>
-               <coap:resource resourceName="do_not_delete_me" delete="false"/>
-               <coap:resource resourceName="do_not_delete_me2"/>
-            </coap:sub-resources>
-				</coap:resource>
-		</coap:resources>
-   </coap:server-config>
+    <coap:server-config name="config">
+        <coap:endpoint>
+            <coap:udp-endpoint logCoapMessages="true">
+                <coap:exchange-params exchangeLifetime="1000"/>
+            </coap:udp-endpoint>
+        </coap:endpoint>
+        <coap:resources>
+            <coap:resource resourceName="basic">
+                <coap:sub-resources>
+                    <coap:resource resourceName="get_me" get="true"/>
+                    <coap:resource resourceName="do_not_get_me" get="false"/>
+                    <coap:resource resourceName="do_not_get_me2"/>
+                    <coap:resource resourceName="put_me" put="true"/>
+                    <coap:resource resourceName="do_not_put_me" put="false"/>
+                    <coap:resource resourceName="do_not_put_me2"/>
+                    <coap:resource resourceName="post_me" post="true"/>
+                    <coap:resource resourceName="do_not_post_me" post="false"/>
+                    <coap:resource resourceName="do_not_post_me2"/>
+                    <coap:resource resourceName="delete_me" delete="true"/>
+                    <coap:resource resourceName="do_not_delete_me" delete="false"/>
+                    <coap:resource resourceName="do_not_delete_me2"/>
+                </coap:sub-resources>
+            </coap:resource>
+        </coap:resources>
+    </coap:server-config>
 
+    <flow name="listen-all">
+        <coap:listener config-ref="config" get="true" post="true" put="true" delete="true">
+            <coap:response/>
+        </coap:listener>
 
-   <flow name="listen-all">
-      <coap:listener config-ref="config" get="true" post="true" put="true" delete="true">
-			<coap:response />
-		</coap:listener>
+        <set-payload
+            value="#[ output text/plain --- attributes.requestUri ++ ( payload default '' ) ]"/>
+    </flow>
 
-		<set-payload
-			value="#[ output text/plain --- attributes.requestUri ++ ( payload default '' ) ]"
-			doc:id="f8a91183-323d-4bf9-a5bf-b32a9d9c11db" />
-   </flow>
-
-	
 </mule>
