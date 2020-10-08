@@ -555,8 +555,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             attributes.setConfirmable( response.advanced().isConfirmable() );
             //attributes.setRelation( ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
             attributes.setNotification( response.advanced().isNotification() );
-            //attributes.setRemoteAddress( response.advanced().getDestinationContext().getPeerAddress().getHostString() );
-            //attributes.setRemotePort( response.advanced().getDestinationContext().getPeerAddress().getPort() );
+            attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().getHostString() );
+            attributes.setRemotePort( response.advanced().getSourceContext().getPeerAddress().getPort() );
             CoAPOptions.copyOptions( response.getOptions(), attributes.getOptions() );
         }
         return attributes;
