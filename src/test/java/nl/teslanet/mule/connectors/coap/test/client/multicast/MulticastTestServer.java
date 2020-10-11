@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.test.client.multicast;
 
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
