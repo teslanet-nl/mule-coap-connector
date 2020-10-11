@@ -44,7 +44,7 @@
 
   <coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint"/>
   <coap:client-config name="configNOK" host="127.0.0.1" port="6767" endpoint="Udp_Endpoint"/>
-  <coap:client-config name="configNOR" host="ditbestaatniet" port="6767" endpoint="Udp_Endpoint"/>
+  <coap:client-config name="configNOR" host="192.168.0.99" port="6767" endpoint="Udp_Endpoint"/>
 
 
 

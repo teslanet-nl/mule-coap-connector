@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
    
     <coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true" >
         <coap:socket-params bindToPort="0" />
-        <coap:exchange-params exchangeLifetime="1000" />
+        <coap:exchange-params maxRetransmit="1" />
     </coap:udp-endpoint>
               
    <coap:client-config name="config" endpoint="Udp_Endpoint" />
@@ -56,7 +56,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
         <java:new 
             class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
             constructor="MuleEventSpy(String)" target="spy">
-            <java:args><![CDATA[#[{ arg0: "async-handler2" }]]]></java:args>
+            <java:args><![CDATA[#[{ arg0: "handler_spy" }]]]></java:args>
         </java:new>
         <java:invoke
             instance="#[vars.spy]"

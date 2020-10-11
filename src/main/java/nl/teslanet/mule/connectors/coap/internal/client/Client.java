@@ -402,24 +402,30 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     void processMuleFlow( String requestUri, Code requestCode, CoapResponse response, SourceCallback< InputStream, ReceivedResponseAttributes > callback )
         throws InternalInvalidOptionValueException
     {
-        ReceivedResponseAttributes responseAttributes;
-        responseAttributes= createReceivedResponseAttributes( requestUri, requestCode, response );
+        ReceivedResponseAttributes responseAttributes= createReceivedResponseAttributes( requestUri, requestCode, response );
         SourceCallbackContext requestcontext= callback.createContext();
-        //requestcontext.addVariable( "CoapExchange", exchange );
-        byte[] responsePayload= response.getPayload();
-        if ( responsePayload != null )
+        //not needed yet: requestcontext.addVariable( "CoapExchange", exchange );
+        if ( response != null )
         {
-            callback.handle(
-                Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
-                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                requestcontext );
+            byte[] responsePayload= response.getPayload();
+            if ( responsePayload != null )
+            {
+                callback.handle(
+                    Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
+                    requestcontext );
+            }
+            else
+            {
+                callback.handle(
+                    Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType(
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
+                    requestcontext );
+            }
         }
         else
         {
-            callback.handle(
-                Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType(
-                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                requestcontext );
+            callback.handle( Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
         }
     }
 
@@ -456,7 +462,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalMalformedUriException,
         InternalInvalidRequestCodeException,
         InternalInvalidOptionValueException,
-        InternalInvalidByteArrayValueException, InvalidETagException
+        InternalInvalidByteArrayValueException,
+        InvalidETagException
     {
         Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;
@@ -504,18 +511,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 byte[] payload= response.getPayload();
                 if ( payload != null )
                 {
-                    result= Result.< InputStream, ReceivedResponseAttributes > builder()
-                            .output( new ByteArrayInputStream( response.getPayload() ) )
-                            .length( payload.length )
-                            .attributes(
-                        responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                    result= Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length(
+                        payload.length ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
                 }
                 else
                 {
-                    result= Result.< InputStream, ReceivedResponseAttributes > builder()
-                            .output( null )
-                            .attributes( responseAttributes )
-                            .mediaType(
+                    result= Result.< InputStream, ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
                         MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
                 }
             }
@@ -830,5 +831,4 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         request.setObserve();
         return coapClient.observe( request, handler );
     }
-
 }

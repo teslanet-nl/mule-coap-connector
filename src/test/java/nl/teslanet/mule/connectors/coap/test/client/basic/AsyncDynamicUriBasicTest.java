@@ -147,10 +147,10 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 10000L)
+    @Test(timeout= 15000L)
     public void testAsyncRequest() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( "async-handler2" );
+        MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
         spy.clear();
 
         Thread.sleep( 2000 );
@@ -164,7 +164,7 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         assertEquals( "wrong response payload", "nothing_important", (String) response.getPayload().getValue() );
 
         //let handler do its asynchronous work
-        Thread.sleep( 1500L );
+        Thread.sleep( 10000L );
 
         assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
         response= (Message) spy.getEvents().get( 0 ).getContent();
