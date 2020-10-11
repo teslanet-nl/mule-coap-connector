@@ -185,7 +185,7 @@ public class MulticastTest extends AbstractServerTestCase
         request.setPayload( Data.getContent( contentSize ) );
 
         client.advanced( handler, request );
-        while ( handler.waitOn( 5000 ) );
+        while ( handler.waitOn( 15000 ) );
         validateInboundResponse( handler.getResponse(), spy );
     }
 

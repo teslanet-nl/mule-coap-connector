@@ -341,6 +341,7 @@ public final class OperationalEndpoint
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
+    //TODO use connector builder, rename interfaceAddress param
     /**
      * Constructor for an operational UDP endpoint.
      * @param config the UDP endpoint configuration
