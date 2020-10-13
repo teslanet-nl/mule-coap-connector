@@ -282,7 +282,7 @@ Contributors:
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- parent 1.1.6: jakarta.mail is inherited from parent, re-scope jakarta.mail to remove 
