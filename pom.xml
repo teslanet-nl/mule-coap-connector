@@ -33,7 +33,7 @@
 	
 	<groupId>nl.teslanet.mule.connectors.coap</groupId>
 	<artifactId>mule-coap-connector</artifactId>
-	<version>2.0.0-M5-SNAPSHOT</version>
+	<version>2.0.0-M5</version>
 	<packaging>mule-extension</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
@@ -71,7 +71,7 @@
 		<connection>scm:git:https://github.com/teslanet-nl/mule-coap-connector.git</connection>
 		<developerConnection>scm:git:https://github.com/teslanet-nl/mule-coap-connector.git</developerConnection>
 		<url>http://github.com/teslanet-nl/mule-coap-connector/tree/master</url>
-		<tag>HEAD</tag>
+		<tag>mule-coap-connector-2.0.0-M5</tag>
 	</scm>
 
 	<distributionManagement>
