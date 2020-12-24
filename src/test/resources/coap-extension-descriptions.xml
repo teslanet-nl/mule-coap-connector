@@ -206,7 +206,7 @@
             <description><![CDATA[The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.]]></description>
             <parameters>
                 <parameter name="requestOptions">
-                    <description><![CDATA[]]></description>
+                    <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
@@ -970,3 +970,4 @@
         </type>
     </types>
 </extension-documentation>
+

@@ -1155,6 +1155,9 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="request-options">
+            <xs:annotation>
+              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequestOptions"></xs:extension>
@@ -1178,7 +1181,11 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="requestOptions"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="requestOptions">
+          <xs:annotation>
+            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionString" use="required" name="responseHandler"></xs:attribute>
         <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCodeEnumType" use="required" name="requestCode">
           <xs:annotation>
@@ -1681,4 +1688,3 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
