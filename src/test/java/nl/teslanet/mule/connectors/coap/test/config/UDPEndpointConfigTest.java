@@ -26,9 +26,7 @@ package nl.teslanet.mule.connectors.coap.test.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -54,12 +52,6 @@ public class UDPEndpointConfigTest
      */
     @Parameter
     public ConfigParamName attributeName;
-
-    /**
-     * Default no exception should be thrown.
-     */
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
 
     /**
      * Test getter and setter.

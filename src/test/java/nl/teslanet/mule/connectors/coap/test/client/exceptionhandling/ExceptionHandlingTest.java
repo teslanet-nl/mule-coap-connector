@@ -23,18 +23,15 @@
 package nl.teslanet.mule.connectors.coap.test.client.exceptionhandling;
 
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
@@ -44,6 +41,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
@@ -123,12 +121,6 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
      */
     @Parameter(7)
     public byte[] expectedPayload;
-
-    /**
-     * Exception rule
-     */
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -246,18 +238,15 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     @Test
     public void testNonExistingHandler() throws Exception
     {
-        exception.expect( isA( Exception.class ) );
-        exception.expect( hasMessage( containsString( "referenced handler { nonexisting_handler } not found" ) ) );
+        //exception.expect( hasMessage( containsString( "referenced handler { nonexisting_handler } not found" ) ) );
 
-        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
+        Exception e= assertThrows( Exception.class, () -> { flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
-            port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
-        Message response= result.getMessage();
-
-        //let handler do its asynchronous work
-        Thread.sleep( 100L );
-
-        assertEquals( "wrong response payload", "nothing_important", (String) response.getPayload().getValue() );
+            port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run(); });
+        assertTrue(
+            "wrong exception message",
+            e.getMessage().contains( "referenced handler { nonexisting_handler } not found" ) );
+        assertEquals( "wrong exception cause", InvalidHandlerNameException.class, e.getCause().getClass() );
     }
 
 }

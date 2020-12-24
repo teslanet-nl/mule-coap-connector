@@ -37,10 +37,10 @@ public class ConfigAttributes
 {
     /**
      * Get actual value of the attribute
-     * 
-     * @param config
-     * @return
-     * @throws Exception
+     * @param paramName Name of the parameter.
+     * @param config The configuration containe the parameter.
+     * @return The parameter value.
+     * @throws Exception When an error occurs.
      */
     static public String getValue( ConfigParamName paramName, VisitableConfig config ) throws Exception
     {
@@ -123,13 +123,18 @@ public class ConfigAttributes
     }
 
     /**
-     * Establish whether the attribute is a NetworkConfig attribute
      * @param config 
      * 
      * @param ConfigParamName
      *            the attribute name
      * @throws Exception
      *             when invalid name
+     */
+    /**
+     * Establish whether the attribute is a NetworkConfig attribute
+     * @param paramName The name of the parameter.
+     * @return True when parameter is network configuration.
+     * @throws Exception
      */
     static public boolean isNetworkConfig( ConfigParamName paramName ) throws Exception
     {

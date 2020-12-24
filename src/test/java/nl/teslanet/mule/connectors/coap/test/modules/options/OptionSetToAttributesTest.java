@@ -33,9 +33,7 @@ import java.util.List;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
@@ -51,9 +49,6 @@ import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
  */
 public class OptionSetToAttributesTest
 {
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Test
     public void testConstructorDefault()
     {

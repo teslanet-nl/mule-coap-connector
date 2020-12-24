@@ -28,14 +28,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
@@ -43,6 +42,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
@@ -50,9 +50,6 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
 
 public class DiscoveryTest extends AbstractClientTestCase
 {
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */
@@ -179,15 +176,15 @@ public class DiscoveryTest extends AbstractClientTestCase
         String flowName= "ping_dynamic";
         String host= "dit_bestaat_niet.org";
         String port= Integer.toString( CoAP.DEFAULT_COAP_PORT );
-        Boolean expectedPayload= Boolean.FALSE;
-        exception.expect( Exception.class );
-        exception.expectMessage( "cannot form valid uri using: { scheme= coap, host= dit_bestaat_niet.org, port= 5683, path= null, query= null }" );
-        //exception.expect( hasCause( isA( MalformedUriException.class ) ) );
 
-        Event result= flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run();
-        Message response= result.getMessage();
-        assertTrue( "wrong response class", DataType.BOOLEAN.isCompatibleWith( response.getPayload().getDataType() ) );
-        assertEquals( "wrong response payload", expectedPayload, (Boolean) response.getPayload().getValue() );
+        Exception e= assertThrows(
+            Exception.class,
+            () -> flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run() );
+        assertTrue(
+            "wrong exception message",
+            e.getMessage().contains( "cannot form valid uri using: { scheme= coap, host= dit_bestaat_niet.org, port= 5683, path= null, query= null }" ) );
+        //assert( "COAP:MALFORMED_URI" );
+        assertEquals( "wrong exception cause", e.getCause().getClass(), MalformedUriException.class );
     }
 
     @Test

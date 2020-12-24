@@ -43,7 +43,7 @@ public class IsItUsed implements VisitableConfig
      * of a Confirmable message to the time when the sender gives up on
      * receiving an acknowledgement or reset.  Derived from:
      * {@code ACK_TIMEOUT * ((2 ** (MAX_RETRANSMIT + 1)) - 1) * ACK_RANDOM_FACTOR }  
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-4.8.2">IETF RFC 7252 -
      *      4.8.2 Time Values Derived from Transmission Parameters</a>
      */
@@ -58,7 +58,7 @@ public class IsItUsed implements VisitableConfig
     /**
      * Period of time (in milliseconds [ms]) of the spreading of responses to a
      * multicast request, for network congestion prevention.
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-8.2">IETF RFC 7252 -
      *      8.2. Request/Response Layer</a>
      */

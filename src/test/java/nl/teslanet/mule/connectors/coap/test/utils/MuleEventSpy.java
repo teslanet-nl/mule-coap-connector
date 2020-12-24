@@ -39,8 +39,6 @@ import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-
 
 /**
  * Utility to collect Mule events en optionally replace the message.
@@ -108,11 +106,16 @@ public class MuleEventSpy
     }
 
     /**
-     * Handle occurred event
      * @param payload the payload to collect
      * @return the replacement payload
      * @throws IOException 
      * @throws InvalidETagException 
+     */
+    /**
+     * Handle event.
+     * @param msg the message that occured.
+     * @return the replacement message or (consumed in case of a stream )  message.
+     * @throws IOException When message is a stream that cannot be consumed.
      */
     public Object event( Object msg ) throws IOException
     {

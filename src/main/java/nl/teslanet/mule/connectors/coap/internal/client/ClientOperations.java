@@ -99,19 +99,17 @@ public class ClientOperations
      * The Request Processor issues a request on a CoAP server. The processor blocks
      * until a response is received or a timeout occurs.
      * 
-     * @param client
-     * @param requestBuilder The request attributes.
-     * @param requestOptions The request options.
-     * @return the result of the request which contains the received server response
-     *         - if any.
-     * @throws InvalidETagException when an etag value given is invalid.
+     * @param client         The client used for issuing the request.
+     * @param requestBuilder Builder that delivers the request parameters.
+     * @param requestOptions The CoAP options to send with the request.
+     * @return The result of the request which contains the received server response, if any.
      */
     @MediaType(value= "*/*", strict= false)
     @Throws({ RequestErrorProvider.class })
     public Result< InputStream, ReceivedResponseAttributes > request(
         @Config Client client,
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Alias( "request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions ) 
+        @Alias("request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
         try
         {
@@ -168,10 +166,10 @@ public class ClientOperations
      * The processor doea not wait for the response and will not block. The handling
      * of a response (if any) is delegated to the response handler.
      * 
-     * @param client          The client to use for the request.
-     * @param responseHandler Name of the handler that will receive the response.
-     * @param requestBuilder  The request attributes.
-     * @param requestPayload  The payload of the request.
+     * @param client          The client used for issuing the request.
+     * @param responseHandlerBuilder Builder that delivers the response handler parameters.
+     * @param requestBuilder Builder that delivers the request parameters.
+     * @param requestOptions The CoAP options to send with the request.
      */
     @Throws({ RequestAsyncErrorProvider.class })
     public void requestAsync(
@@ -353,7 +351,8 @@ public class ClientOperations
      * @param observerBuilder The observe request parameters.
      */
     @Throws({ ObserverStartErrorProvider.class })
-    public void observerStart( @Config Client client, 
+    public void observerStart(
+        @Config Client client,
         @ParameterGroup(name= "Notification handling") ResponseHandlerBuilder responseHandlerBuilder,
         @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {

@@ -115,10 +115,10 @@ public class MessageUtils
 
     /**
      * Convert a typed value to ETag.
-     * @param object is the value to convert.
-     * @return converted value as bytes
-     * @throws IOException when the value is an outputhandler that cannot write.
-     * @throws InvalidETagException when object has content that is invalid as etag value.
+     * @param typedValue The value to construct an ETag from.
+     * @return The ETag object that has been constructed.
+     * @throws IOException When the value is a stream that could not be read.
+     * @throws InvalidETagException When value cannot be converted to a valid ETag.
      */
     public static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {

@@ -226,7 +226,7 @@ public class ResourceBuilder
     }
     
     /**
-     * @param addInfo The discovery info to add to the resource
+     * @param info The discovery info to add to the resource
      */
     public void setAddInfo( ResourceInfoBuilder info )
     {

@@ -40,6 +40,10 @@ import nl.teslanet.shaded.org.eclipse.californium.core.server.resources.Resource
  * Server used to test observing client 
  *
  */
+/**
+ * @author rogier
+ *
+ */
 class ObserveTestServer extends CoapServer
 {
     /**
@@ -105,6 +109,10 @@ class ObserveTestServer extends CoapServer
         /**
          * @param responseCode the response to return
          */
+        /**
+         * Constructor
+         * @param name The name of the resource.
+         */
         public ObservableResource( String name )
         {
             this( name, 0, 0 );
@@ -112,6 +120,12 @@ class ObserveTestServer extends CoapServer
 
         /**
          * @param responseCode the response to return
+         */
+        /**
+         * Constructor
+         * @param name The name of the resource.
+         * @param maxAge The max age option value to use in responses.
+         * @param notify The actual notification period.
          */
         public ObservableResource( String name, long maxAge, long notify )
         {

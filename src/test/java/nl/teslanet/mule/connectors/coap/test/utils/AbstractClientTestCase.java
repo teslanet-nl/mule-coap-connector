@@ -89,8 +89,7 @@ public abstract class AbstractClientTestCase extends MuleArtifactFunctionalTestC
     };
 
     /**
-     * Destroy test-client and default endpoints.
-     * @throws Exception
+     * Destroy test-server and default endpoints.
      */
     @After
     public void tearDownServers()

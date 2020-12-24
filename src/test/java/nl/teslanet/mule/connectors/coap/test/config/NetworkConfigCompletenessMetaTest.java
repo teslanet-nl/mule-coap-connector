@@ -27,9 +27,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -224,12 +222,6 @@ public class NetworkConfigCompletenessMetaTest
      */
     @Parameter
     public String attributeKey;
-
-    /**
-     * Default no exception should be thrown.
-     */
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
 
     /**
      * Test whether the attribute key is covered in tests.

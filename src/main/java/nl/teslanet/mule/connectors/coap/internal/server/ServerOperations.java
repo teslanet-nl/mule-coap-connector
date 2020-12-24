@@ -78,15 +78,8 @@ public class ServerOperations
      * The resource is available to clients immediately, provided there is a listener configured which 
      * has an uri pattern that applies to it.
      * @param config The configuration name of the CoAP server to add the resource to.
-     * @param uri The uri of the resource to add. 
-     * @param get When true the resource accepts get-requests.
-     * @param put When true the resource accepts put-requests.
-     * @param post When true the resource accepts post-requests.
-     * @param delete When true the resource accepts delete-requests.
-     * @param observable When true the resource accepts observe-requests.
-     * @param earlyAck When true an immediate acknowledgement is sent to the client before processing the request and returning response.
-     * @param info Meta-information of the resource.
-     * @throws InvalidResourceUriException When given resource uri is not valid
+     * @param resourceBuilder The builder that delivers the resource parameters.
+     * @throws InvalidResourceUriException When the uri has invalid value.
      */
     @Throws({ ServerOperationErrorProvider.class })
     public void resourceAdd( @Config Server config, @ParameterGroup(name= "Resource to add") ResourceBuilder resourceBuilder ) throws InvalidResourceUriException

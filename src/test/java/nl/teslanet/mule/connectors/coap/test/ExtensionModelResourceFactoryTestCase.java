@@ -30,9 +30,8 @@ package nl.teslanet.mule.connectors.coap.test;
 
 
 import static java.lang.Thread.currentThread;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.mule.runtime.module.extension.api.util.MuleExtensionUtils.loadExtension;
 
 import javax.xml.transform.Source;
@@ -84,7 +83,7 @@ public class ExtensionModelResourceFactoryTestCase extends AbstractGeneratedReso
     public void generate() throws Exception
     {
         GeneratedResource resource= resourceFactory.generateResource( extensionModel ).get();
-        assertThat( resource.getPath(), equalTo( RESOURCE_NAME ) );
+        assertEquals( resource.getPath(), RESOURCE_NAME );
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( RESOURCE_NAME ).openStream() );
         String content= new String( resource.getContent() );
         LOGGER.info( "\n---\n" + content + "\n---" );

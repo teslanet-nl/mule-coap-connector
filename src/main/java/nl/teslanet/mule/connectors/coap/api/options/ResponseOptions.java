@@ -47,7 +47,7 @@ public class ResponseOptions
      * Content-Format identifier that is defined in the "CoAP Content-Formats"
      * registry (Section 12.3).
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC 7252 -
      *      5.10.3. Content-Format</a>
      */
@@ -65,7 +65,7 @@ public class ResponseOptions
      * {@code 2**32-1 } inclusive (about 136.1 years). A default value of 60 seconds
      * is assumed in the absence of the option in a response.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.5">IETF RFC 7252 -
      *      5.10.5. Max-Age</a>
      */
@@ -94,7 +94,7 @@ public class ResponseOptions
      * entity-tag for the current representation, i.e., is valid; the 2.03 Valid
      * response then echoes this specific ETag in a response option.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC 7252 -
      *      5.10.6. ETag</a>
      */
@@ -115,7 +115,7 @@ public class ResponseOptions
      * 
      * Location-Path Options specify the absolute path to the resource.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 -
      *      5.10.7. Location-Path and Location-Query</a>
      */
@@ -138,7 +138,7 @@ public class ResponseOptions
      * Each each Location-Query Option specifies one argument parameterizing the
      * resource.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 -
      *      5.10.7. Location-Path and Location-Query</a>
      */
@@ -156,7 +156,7 @@ public class ResponseOptions
      * 
      * The OSCORE option includes the OSCORE flag bits.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The
      *      OSCORE Option</a>
      */

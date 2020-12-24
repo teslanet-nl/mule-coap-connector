@@ -28,9 +28,7 @@ import static org.junit.Assert.*;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
@@ -42,10 +40,6 @@ import nl.teslanet.mule.connectors.coap.api.options.ETag;
  */
 public class ETagTest
 {
-
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Test
     public void testConstructor() throws InvalidETagException
     {
@@ -128,10 +122,11 @@ public class ETagTest
         {
             etagValue1[i]= (byte) i;
         }
-        exception.expect( InvalidETagException.class );
-        exception.expectMessage( "Given length is: 9" );
-        ETag etag1= new ETag( etagValue1 );;
-        assertNotNull( etag1 );
+        InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
+            @SuppressWarnings("unused")
+            ETag etag1= new ETag( etagValue1 );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given length is: 9" ) );
     }
 
     @Test
@@ -147,30 +142,33 @@ public class ETagTest
     public void testConstructorUnevenString1() throws InvalidETagException
     {
         String etagValue1= "1";
-        exception.expect( InvalidETagException.class );
-        exception.expectMessage( "number found: 1" );
-        ETag etag1= new ETag( etagValue1 );;
-        assertNotNull( etag1 );
+        InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
+            @SuppressWarnings("unused")
+            ETag etag1= new ETag( etagValue1 );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "number found: 1" ) );
     }
 
     @Test
     public void testConstructorInvalidETagUnevenString2() throws Exception
     {
         String etagValue1= "1122334455667";
-        exception.expect( InvalidETagException.class );
-        exception.expectMessage( "number found: 13" );
-        ETag etag1= new ETag( etagValue1 );;
-        assertNotNull( etag1 );
+        InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
+            @SuppressWarnings("unused")
+            ETag etag1= new ETag( etagValue1 );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "number found: 13" ) );
     }
 
     @Test
     public void testConstructorETagLargeString() throws InvalidETagException
     {
         String etagValue1= "112233445566778899";
-        exception.expect( InvalidETagException.class );
-        exception.expectMessage( "Given length is: 9" );
-        ETag etag1= new ETag( etagValue1 );;
-        assertNotNull( etag1 );
+        InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
+            @SuppressWarnings("unused")
+            ETag etag1= new ETag( etagValue1 );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given length is: 9" ) );
     }
 
     @Test

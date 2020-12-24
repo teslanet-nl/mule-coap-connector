@@ -303,7 +303,7 @@ public final class ETag implements Comparable< ETag >
     /**
      * Converts an etag value to a Long containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
-     * @param bytes The etag value.
+     * @param longValue The etag value.
      * @return The string containing the hexadecimal representation.
      */
     public static byte[] toBytes( Long longValue )

@@ -23,11 +23,9 @@
 package nl.teslanet.mule.connectors.coap.internal;
 
 
-import javax.inject.Inject;
-
+import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
-import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
@@ -112,7 +110,6 @@ public class CoAPConnector
 
     /**
      * Set the IO scheduler supplied by Mule.
-     * @return IO scheduler.
      */
     public static synchronized void setSchedulerService( SchedulerService schedulerServiceCandidate, SchedulerConfig schedulerConfigCandidate )
     {

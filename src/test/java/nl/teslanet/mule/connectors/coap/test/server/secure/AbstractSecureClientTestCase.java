@@ -41,9 +41,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
@@ -101,9 +99,6 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
     private static HashMap< Code, String > paths;
 
     private static CoapEndpoint endpoint;
-
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
 
     @Override
     protected String getConfigResources()

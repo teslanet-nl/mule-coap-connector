@@ -29,9 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;
@@ -42,9 +40,6 @@ import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;
  */
 public class ResourceRegistryStaticMethodsTest
 {
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Before
     public void setUp() throws Exception
     {

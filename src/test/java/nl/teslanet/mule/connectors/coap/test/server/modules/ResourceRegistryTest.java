@@ -24,16 +24,14 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.eclipse.californium.core.CoapResource;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
@@ -47,9 +45,6 @@ import nl.teslanet.mule.connectors.coap.internal.server.ServedResource;
  */
 public class ResourceRegistryTest
 {
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Test
     public void testConstructor() throws InvalidResourceUriException
     {
@@ -64,13 +59,10 @@ public class ResourceRegistryTest
     @Test
     public void testConstructorWithoutRootResource() throws InvalidResourceUriException
     {
-        ResourceRegistry registry;
-
-        exception.expect( NullPointerException.class );
-        exception.expectMessage( "Cannot construct a ResourceRegistry without root resource" );
-
-        registry= new ResourceRegistry( null );
-        assertNotNull( registry );
+        NullPointerException e= assertThrows( NullPointerException.class, () -> {
+            new ResourceRegistry( null );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct a ResourceRegistry without root resource" ) );
     }
 
     @Test
@@ -78,15 +70,12 @@ public class ResourceRegistryTest
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
-        ResourceConfig resourceConfig;
+        ResourceConfig resourceConfig= new ResourceConfig();
 
-        resourceConfig= new ResourceConfig();
-        //resourceConfig.setResourceName( "resource" );
-
-        exception.expect( NullPointerException.class );
-        exception.expectMessage( "Child must have a name" );
-
-        registry.add( null, resourceConfig );
+        NullPointerException e= assertThrows( NullPointerException.class, () -> {
+            registry.add( null, resourceConfig );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Child must have a name" ) );
     }
 
     @Test
@@ -673,12 +662,11 @@ public class ResourceRegistryTest
         resourceConfig.setResourceName( name3 );
         registry.add( uri2, resourceConfig );
 
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( uri4 );
-        exception.expectMessage( "resource does not exist" );
-
-        assertFalse( "registry must not contain resource4", uri4.equals( registry.getResource( uri4 ).getURI() ) );
-
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            registry.getResource( uri4 ).getURI();
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( uri4 ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "resource does not exist" ) );
     }
 
     /**

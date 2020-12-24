@@ -44,7 +44,7 @@ public class RequestOptions
     /**
      * RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 -
      *      5.10.2. Proxy-Uri and Proxy-Scheme</a>
      */
@@ -61,7 +61,7 @@ public class RequestOptions
      * not including, the following colon is then replaced by the content of the
      * Proxy-Scheme Option.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 -
      *      5.10.2. Proxy-Uri and Proxy-Scheme</a>
      */
@@ -77,7 +77,7 @@ public class RequestOptions
      * Content-Format identifier that is defined in the "CoAP Content-Formats"
      * registry (Section 12.3).
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC 7252 -
      *      5.10.3. Content-Format</a>
      */
@@ -93,7 +93,7 @@ public class RequestOptions
      * Content-Format identifier that is defined in the "CoAP Content-Formats"
      * registry (Section 12.3).
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.4">IETF RFC 7252 -
      *      5.10.4. Accept</a>
      */
@@ -122,7 +122,7 @@ public class RequestOptions
      * entity-tag for the current representation, i.e., is valid; the 2.03 Valid
      * response then echoes this specific ETag in a response option.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC 7252 -
      *      5.10.6. ETag</a>
      */
@@ -140,7 +140,7 @@ public class RequestOptions
      * overwrites when multiple clients are acting in parallel on the same resource
      * (i.e., the "lost update" problem).
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 -
      *      5.10.8.1. If-Match</a>
      */
@@ -159,7 +159,7 @@ public class RequestOptions
      * the same resource. The If-None-Match Option carries no value. If the target
      * resource does exist, then the condition is not fulfilled.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.2">IETF RFC 7252 -
      *      5.10.8.2. If-None-Match</a>
      */
@@ -175,7 +175,7 @@ public class RequestOptions
      * 
      * The OSCORE option includes the OSCORE flag bits.
      * 
-     * @see <a target="_blank" href=
+     * @see <a href=
      *      "https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The
      *      OSCORE Option</a>
      */

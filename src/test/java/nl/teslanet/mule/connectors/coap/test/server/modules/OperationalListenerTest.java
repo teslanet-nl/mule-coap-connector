@@ -25,12 +25,12 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
@@ -45,19 +45,13 @@ import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
  */
 public class OperationalListenerTest
 {
-
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Test
     public void testConstructor() throws InvalidResourceUriException
     {
-        String uri;
+        String uri= "/some_resource";
         RequestCodeFlags flags= new RequestCodeFlags();
         OperationalListener listener;
         TestSourceCallBack callback;
-
-        uri= "/some_resource";
 
         callback= new TestSourceCallBack();
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -132,145 +126,129 @@ public class OperationalListenerTest
     public void testConstructorWithInvalidUriNull() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= null;
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "null is not allowed" );
-
-        uri= null;
-        listener= new OperationalListener( uri, flags, callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            @SuppressWarnings("unused")
+            OperationalListener listener= new OperationalListener( uri, flags, callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "null is not allowed" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriEmpty1() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "uri cannot be empty" );
-        uri= "";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            @SuppressWarnings("unused")
+            OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "uri cannot be empty" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriEmpty2() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "uri cannot be empty" );
-        uri= "/";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            @SuppressWarnings("unused")
+            OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "uri cannot be empty" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard1() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "**";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "**";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard2() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/some_resource/**";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "/some_resource/**";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard3() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/some_resource/*/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "/some_resource/*/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard4() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/some_resource/*/child/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "/some_resource/*/child/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard5() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/some_resource/*/child";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "/some_resource/*/child";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+       
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test
     public void testConstructorWithInvalidUriMultipleWildcard6() throws InvalidResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri;
-        OperationalListener listener;
+        String uri= "/some_resource*/child/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-
-        exception.expect( InvalidResourceUriException.class );
-        exception.expectMessage( "Invalid CoAP resource uri" );
-        exception.expectMessage( "wildcard needs to be last character" );
-        uri= "/some_resource*/child/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        
+        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
     }
 
     @Test

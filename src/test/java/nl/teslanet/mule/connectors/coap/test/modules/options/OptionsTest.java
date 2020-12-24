@@ -28,9 +28,7 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
@@ -49,9 +47,6 @@ import org.eclipse.californium.core.coap.OptionSet;
  */
 public class OptionsTest
 {
-    @Rule
-    public ExpectedException exception= ExpectedException.none();
-
     @Test
     public void testConstructorDefault()
     {
@@ -222,19 +217,12 @@ public class OptionsTest
 
         HashMap< String, Object > props= new HashMap< String, Object >();
         props.put( "coap.opt.if_match.list", ( etagValue1 ) );
-
-        exception.expect( IllegalArgumentException.class );
-        exception.expectMessage( "If-Match" );
-
         OptionSet set= new OptionSet();
-        CoAPOptions.fillOptionSet( set, props, true );
 
-        assertEquals( "if_match option has wrong count", 1, set.getIfMatchCount() );
-
-        List< ETag > list= ETag.getList( set.getIfMatch() );
-        assertEquals( "coap.opt.if_match.list: wrong number of etags", 1, list.size() );
-        assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue1 ) ) );
-
+        IllegalArgumentException e= assertThrows( IllegalArgumentException.class, () -> {
+            CoAPOptions.fillOptionSet( set, props, true );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "If-Match" ) );
     }
 
     @Test

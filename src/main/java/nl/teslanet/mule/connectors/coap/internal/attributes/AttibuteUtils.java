@@ -59,11 +59,10 @@ public class AttibuteUtils
     }
 
     /**
-     * Translate attribute to Californium request Code.
-     * @param requestCodeAttribute the attribute to transform
+     * Translate string to Californium request Code.
+     * @param requestCodeString is the string to convert
      * @return the Californium request code
-     * @throws InternalInvalidRequestCodeException 
-     * @throws Exception when invalid attribute is given
+     * @throws InternalInvalidRequestCodeException the string cannot be converted
      */
     public static Code toRequestCode( String requestCodeString ) throws InternalInvalidRequestCodeException
     {
@@ -84,11 +83,10 @@ public class AttibuteUtils
     }
 
     /**
-     * Translate attribute to Californium request Code.
-     * @param requestCodeAttribute the attribute to transform
-     * @return the Californium request code
-     * @throws InternalInvalidRequestCodeException 
-     * @throws Exception when invalid attribute is given
+     * Translate connector requestCode to Californium request Code.
+     * @param requestCode to convert
+     * @return the converted requestCode
+     * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
     public static Code toRequestCode( CoAPRequestCode requestCode ) throws InternalInvalidRequestCodeException
     {
@@ -109,13 +107,12 @@ public class AttibuteUtils
     }
 
     /**
-    * Translate attribute to Californium ResponseCode.
-    * @param reponseCodeAttribute the attribute to transform
-    * @param defaultreponseCodeAttribute the responscode to use when reponseCodeAttribute is null
-    * @return the Californium response code
-    * @throws InternalInvalidResponseCodeException 
-    * @throws Exception when invalid responsecode is given
-    */
+     * Translate attribute to Californium ResponseCode.
+     * @param reponseCodeAttribute is the attribute to convert
+     * @param defaultreponseCodeAttribute default value when attribute is empty
+     * @return the Californium responseCode
+     * @throws InternalInvalidResponseCodeException when attribute cannot be converted
+     */
     public static ResponseCode toResponseCode( String reponseCodeAttribute, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
         if ( reponseCodeAttribute != null )
@@ -129,33 +126,33 @@ public class AttibuteUtils
     }
 
     /**
-    * Translate attribute to Californium ResponseCode.
-    * @param reponseCodeAttribute the attribute to transform
-    * @param defaultreponseCodeAttribute the responscode to use when reponseCodeAttribute is null
-    * @return the Californium response code
-    * @throws InternalInvalidResponseCodeException 
-    * @throws Exception when invalid responsecode is given
-    */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
+     * Translate connector responseCode  to Californium ResponseCode.
+     * @param reponseCode to be converted
+     * @param defaultreponseCodeAttribute is the responseCode to use when input is empty
+     * @return the converted Californium responseCode
+     * @throws InternalInvalidResponseCodeException
+     */
+    public static ResponseCode toResponseCode( CoAPResponseCode reponseCode, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
-        if ( reponseCodeAttribute != null )
+        if ( reponseCode != null )
         {
-            return toResponseCode( reponseCodeAttribute );
+            return toResponseCode( reponseCode );
         }
         else
         {
             return toResponseCode( defaultreponseCodeAttribute );
         }
-    }    /**
-     * Translate attribute to Californium ResponseCode.
-     * @param reponseCodeAttribute the attribute to transform
-     * @return the Californium response code
-     * @throws InternalInvalidResponseCodeException 
-     * @throws Exception when invalid responsecode is given
+    }
+
+    /**
+     * Translate connector responseCode to Californium ResponseCode.
+     * @param reponseCode the code to convert
+     * @return the converted Californium responseCode
+     * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoAPResponseCode reponseCode ) throws InternalInvalidResponseCodeException
     {
-        switch ( reponseCodeAttribute )
+        switch ( reponseCode )
         {
             //success
             case CREATED:
@@ -215,16 +212,15 @@ public class AttibuteUtils
             case PROXY_NOT_SUPPORTED:
                 return ResponseCode.PROXY_NOT_SUPPORTED;
             default:
-                throw new InternalInvalidResponseCodeException( "invalid response code { " + reponseCodeAttribute + " }" );
+                throw new InternalInvalidResponseCodeException( "invalid response code { " + reponseCode + " }" );
         }
     }
 
     /**
      * Translate attribute to Californium ResponseCode.
-     * @param reponseCodeAttribute the attribute to transform
-     * @return the Californium response code
-     * @throws InternalInvalidResponseCodeException 
-     * @throws Exception when invalid responsecode is given
+     * @param reponseCodeAttribute the attribute to convert.
+     * @return the converted Californium responseCode
+     * @throws InternalInvalidResponseCodeException when the attribute cannot be converted.
      */
     public static ResponseCode toResponseCode( String reponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {

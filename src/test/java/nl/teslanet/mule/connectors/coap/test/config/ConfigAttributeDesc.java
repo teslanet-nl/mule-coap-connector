@@ -61,10 +61,18 @@ public class ConfigAttributeDesc
     private String expectedCustomNetworkValue;
 
     /**
-     * Constructor
      * @param paramName
      * @param defaultValue
      * @param customValue
+     */
+    /**
+     * Constructor
+     * @param paramName Name of the parameter to test.
+     * @param networkConfigName Name of the network configuration.
+     * @param expectedDefaultValue The default value to expect.
+     * @param expectedDefaultNetworkValue The default network value to expect.
+     * @param customValue The custom value to use in the test.
+     * @param expectedCustomNetworkValue The custom network value to expect.
      */
     public ConfigAttributeDesc(
         ConfigParamName paramName,
@@ -107,7 +115,7 @@ public class ConfigAttributeDesc
     }
 
     /**
-     * @param networkConfigKey the networkConfig key to set
+     * @param propertyNetworkKey The networkConfig key to set
      */
     public void setNetworkConfigKey( String propertyNetworkKey )
     {
@@ -123,7 +131,7 @@ public class ConfigAttributeDesc
     }
 
     /**
-     * @param expectedDefaultValue the expectedDefaultValue to set
+     * @param expectedDefaultValue The expectedDefaultValue to set.
      */
     public void setExpectedDefaultValue( String expectedDefaultValue )
     {

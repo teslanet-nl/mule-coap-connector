@@ -23,19 +23,20 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
-import java.util.List;
+//import java.util.List;
+//
+//import org.mule.runtime.api.meta.ExpressionSupport;
+//import org.mule.runtime.api.util.MultiMap;
+//import org.mule.runtime.extension.api.annotation.Expression;
+//import org.mule.runtime.extension.api.annotation.param.NullSafe;
+//import org.mule.runtime.extension.api.annotation.param.Optional;
+//import org.mule.runtime.extension.api.annotation.param.Parameter;
+//import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+//import org.mule.runtime.extension.api.annotation.param.display.Placement;
+//import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-
+//TODO remove
 /**
  * The option parameters of a CoAP request or response.
  *
@@ -45,7 +46,7 @@ public class OptionsParam
 //    /**
 //     * RFC 7252: The Uri-Host Option specifies the Internet host of the resource
 //      being requested.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -56,7 +57,7 @@ public class OptionsParam
 //    /**
 //     * RFC 7252: The Uri-Port Option specifies the transport-layer port number of
 //     * the resource.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -67,7 +68,7 @@ public class OptionsParam
 //    /**
 //     * RFC 7252: Each Uri-Path Option specifies one segment of the absolute path to
 //     * the resource.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -80,7 +81,7 @@ public class OptionsParam
 //    /**
 //     * RFC 7252: Each each Uri-Query Option specifies one argument parameterizing the
 //     * resource.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.1">IETF RFC 7252 - 5.10.1. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -92,7 +93,7 @@ public class OptionsParam
 //
 //    /**
 //     * RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy. 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -105,7 +106,7 @@ public class OptionsParam
 //     * as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5.
 //     * In the resulting URI, the initial scheme up to, but not including, the following colon 
 //     * is then replaced by the content of the Proxy-Scheme Option. 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -117,7 +118,7 @@ public class OptionsParam
 //     * RFC 7252: The Content-Format Option indicates the representation format of the
 //     * message payload. The representation format is given as a numeric Content-Format 
 //     * identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC 7252 - 5.10.3. Content-Format</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC 7252 - 5.10.3. Content-Format</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -130,7 +131,7 @@ public class OptionsParam
 //     * is acceptable to the client. The representation format is given as a
 //     * numeric Content-Format identifier that is defined in the "CoAP Content-Formats" 
 //     * registry (Section 12.3). 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.4">IETF RFC 7252 - 5.10.4. Accept</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.4">IETF RFC 7252 - 5.10.4. Accept</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -145,7 +146,7 @@ public class OptionsParam
 //     * The option value is an integer number of seconds between 0 and
 //     * {@code 2**32-1 } inclusive (about 136.1 years). A default value of 60 seconds
 //     * is assumed in the absence of the option in a response.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.5">IETF RFC 7252 - 5.10.5. Max-Age</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.5">IETF RFC 7252 - 5.10.5. Max-Age</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -172,7 +173,7 @@ public class OptionsParam
 //     * of a 2.05 Content response if one of the ETags given is the entity-tag 
 //     * for the current representation, i.e., is valid; the 2.03 Valid
 //     * response then echoes this specific ETag in a response option.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC 7252 - 5.10.6. ETag</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC 7252 - 5.10.6. ETag</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -190,7 +191,7 @@ public class OptionsParam
 //     * 
 //     * Each Location-Path Option specifies one segment of the absolute path
 //     * to the resource. 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 - 5.10.7. Location-Path and Location-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 - 5.10.7. Location-Path and Location-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -208,7 +209,7 @@ public class OptionsParam
 //     * of a POST request (see Section 5.8.2).  The location is resolved relative to the request URI.
 //     * 
 //     * Each each Location-Query Option specifies one argument parameterizing the resource.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 - 5.10.7. Location-Path and Location-Query</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.7">IETF RFC 7252 - 5.10.7. Location-Path and Location-Query</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -225,7 +226,7 @@ public class OptionsParam
 //     * resource update requests, such as PUT requests, as a means for protecting
 //     * against accidental overwrites when multiple clients are acting in
 //     * parallel on the same resource (i.e., the "lost update" problem).
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 - 5.10.8.1. If-Match</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 - 5.10.8.1. If-Match</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -242,7 +243,7 @@ public class OptionsParam
 //     * acting in parallel on the same resource. The If-None-Match Option
 //     * carries no value. If the target resource does exist, then the condition is 
 //     * not fulfilled.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7252#section-5.10.8.2">IETF RFC 7252 - 5.10.8.2. If-None-Match</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7252#section-5.10.8.2">IETF RFC 7252 - 5.10.8.2. If-None-Match</a>
 //     */
 //    @Parameter
 //    @Optional(defaultValue= "false")
@@ -257,7 +258,7 @@ public class OptionsParam
 //     * In response to a request with a payload (e.g., a PUT or POST
 //     * transfer), the block size given in the Block1 Option indicates the
 //     * block size preference of the server for this resource (control usage). 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7959#section-2.5">IETF RFC 7959 - 2.5. Using the Block1 Option</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7959#section-2.5">IETF RFC 7959 - 2.5. Using the Block1 Option</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -277,7 +278,7 @@ public class OptionsParam
 //     * To influence the block size used in a response, the requester MAY
 //     * also use the Block2 Option on the initial request, giving the desired
 //     * size, a block number of zero and an M bit of zero. 
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7959#section-2.4">IETF RFC 7959 - 2.4. Using the Block2 Option</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7959#section-2.4">IETF RFC 7959 - 2.4. Using the Block2 Option</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -294,7 +295,7 @@ public class OptionsParam
 //     * 
 //     * o  In a 4.13 response, to indicate the maximum size that would have
 //     * been acceptable [RFC7252], measured in bytes.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -312,7 +313,7 @@ public class OptionsParam
 //     * o  In a response carrying a Block2 Option, to indicate the current
 //     * estimate the server has of the total size of the resource
 //     * representation, measured in bytes ("size indication").
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -337,7 +338,7 @@ public class OptionsParam
 //     * in the list of observers and that the server will notify the client
 //     * of changes to the resource state.  The option value is a sequence
 //     * number for reordering detection (see Sections 3.4 and 4.4).
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc7641#section-2">IETF RFC 7641 - 2. The Observe Option</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc7641#section-2">IETF RFC 7641 - 2. The Observe Option</a>
 //     */
 //    @Parameter
 //    @Optional
@@ -350,7 +351,7 @@ public class OptionsParam
 //     * is an OSCORE message and that it contains a compressed COSE object. 
 //     * 
 //     * The OSCORE option includes the OSCORE flag bits.
-//     * @see <a target="_blank" href="https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The OSCORE Option</a>
+//     * @see <a href="https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The OSCORE Option</a>
 //     */
 //    //TODO
 ////    @Parameter
