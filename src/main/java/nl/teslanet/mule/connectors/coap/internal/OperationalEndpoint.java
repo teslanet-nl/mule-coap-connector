@@ -23,7 +23,9 @@
 package nl.teslanet.mule.connectors.coap.internal;
 
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +43,9 @@ import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
-import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier.Builder;
 
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
@@ -352,14 +356,20 @@ public final class OperationalEndpoint
         config.accept( visitor );
         this.configName= config.configName;
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        //TODO move to visitor
-        InetSocketAddress localAddress= getInetSocketAddress( config.socketParams, false );
-        //builder.setInetSocketAddress( localAddress );
         builder.setNetworkConfig( visitor.getNetworkConfig() );
         MulticastVisitor multicastVisitor= new MulticastVisitor();
         config.accept( multicastVisitor );
-        UdpMulticastConnector connector= new UdpMulticastConnector( multicastVisitor.getInterfaceAddress(), localAddress, multicastVisitor.getMulticastGroups() );
-        builder.setConnector( connector );
+        UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
+        //TODO add feature to add interface per multicast-group
+        NetworkInterface networkInterface= multicastVisitor.getInterfaceAddress();
+        for ( InetAddress group : multicastVisitor.getMulticastGroups())
+        {
+            connectorBuilder.addMulticastGroup( group, networkInterface );
+        }
+        //TODO move to visitor
+        connectorBuilder.setLocalAddress( getInetSocketAddress( config.socketParams, false ) );
+        //TODO add outgoing params
+        builder.setConnector( connectorBuilder.build() );
         this.coapEndpoint= builder.build();
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
@@ -375,9 +385,9 @@ public final class OperationalEndpoint
         SslContextUtil.configure( streamFactory.getScheme(), streamFactory );
         // Pre-shared secrets
         //TODO improve security (-> not in memory ) 
-        InMemoryPskStore pskStore= new InMemoryPskStore();
-        // put in the PSK store the default identity/psk for tinydtls tests
-        //pskStore.setKey( "Client_identity", "secretPSK".getBytes() );
+        AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
+        Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
+        verifierBuilder.setTrustAllRPKs();
         try
         {
             // load the key store
@@ -392,12 +402,12 @@ public final class OperationalEndpoint
                 config.encryptionParams.trustedRootCertificateAlias,
                 ( config.encryptionParams.trustStorePassword != null ? config.encryptionParams.trustStorePassword.toCharArray() : null ) );
 
+            verifierBuilder.setTrustedCertificates( trustedCertificates );
             DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
             builder.setAddress( getInetSocketAddress( config.socketParams, true ) );
-            builder.setPskStore( pskStore );
+            builder.setAdvancedPskStore( pskStore );
             builder.setIdentity( serverCredentials.getPrivateKey(), serverCredentials.getCertificateChain(), CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509 );
-            builder.setTrustStore( trustedCertificates );
-            builder.setRpkTrustAll();
+            builder.setAdvancedCertificateVerifier( verifierBuilder.build() );
             DTLSConnector dtlsConnector= new DTLSConnector( builder.build() );
             CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
             CfNetworkConfigVisitor visitor= new CfNetworkConfigVisitor();

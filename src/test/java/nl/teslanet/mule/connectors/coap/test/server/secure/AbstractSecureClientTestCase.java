@@ -56,7 +56,8 @@ import nl.teslanet.shaded.org.eclipse.californium.scandium.DTLSConnector;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.CertificateType;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
+import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 
 //TODO review
@@ -155,14 +156,18 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
         trustedCertificates[0]= trustStore.getCertificate( "root" );
 
         //pskStore
-        InMemoryPskStore pskStore= new InMemoryPskStore();
+        AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
+
+        //verifier builder
+        StaticNewAdvancedCertificateVerifier.Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
+        verifierBuilder.setTrustAllRPKs();
+        verifierBuilder.setTrustedCertificates( trustedCertificates );
 
         //dtls builder
         Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
-
-        dtlsBuilder.setPskStore( pskStore );
+        dtlsBuilder.setAdvancedPskStore( pskStore );
         dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), CertificateType.X_509 );
-        dtlsBuilder.setTrustStore( trustedCertificates );
+        dtlsBuilder.setAdvancedCertificateVerifier( verifierBuilder.build() );
         dtlsBuilder.setEnableAddressReuse( false );
         dtlsBuilder.setConnectionThreadCount( 1 );
 

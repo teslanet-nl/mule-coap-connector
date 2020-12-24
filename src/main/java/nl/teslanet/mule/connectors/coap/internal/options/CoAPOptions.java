@@ -59,7 +59,9 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
  * set in stead of making a deep copy, for performance reasons.
  * Notice that Californium OptionSet is not entirely thread-safe: hasObserve =&gt; (int) getObserve()
  * @see Option
+ * 
  */
+//TODO @Deprecated
 public class CoAPOptions
 {
     private OptionSet optionSet= null;
@@ -830,6 +832,7 @@ public class CoAPOptions
         }
     }
 
+    //TODO move to AttibuteUtils
     //TODO rename
     /**
      * Copy options to option attributes from given optionSet.
@@ -844,6 +847,7 @@ public class CoAPOptions
         copyOptionsLoggingOrThrowingErrors( optionSet, options, null, errorMsg );
     }
 
+    //TODO move to AttibuteUtils
     /**
      * Copy options to option attributes from given optionSet.
      * Processing options continues when an exception occurs, after logging an error message.
@@ -880,6 +884,7 @@ public class CoAPOptions
 
     }
 
+    //TODO move to AttibuteUtils
     /**
      * Copy options to option attributes from given optionSet.
      * Processing options continues when an exception occurs and logger is given.
@@ -1048,6 +1053,7 @@ public class CoAPOptions
         fillPropertyMapLoggingOrThrowingErrors( options, props, logger, errorMsg );
     }
 
+    //TODO move to test package?
     private static void fillPropertyMapLoggingOrThrowingErrors( OptionSet options, Map< String, Object > props, final Logger logger, String errorMsg )
         throws InternalInvalidOptionValueException
     {

@@ -39,7 +39,9 @@ import nl.teslanet.shaded.org.eclipse.californium.elements.util.SslContextUtil;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.DTLSConnector;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.CertificateType;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
+import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier.Builder;
 
 
 /**
@@ -105,10 +107,12 @@ public class SecureTestServer extends CoapServer
         super( NetworkConfig.createStandardWithoutFile() );
 
         // Pre-shared secrets
-        InMemoryPskStore pskStore= new InMemoryPskStore();
+        AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
         pskStore.setKey( "password", "sesame".getBytes() ); // from ETSI Plugtportest test spec
 
-        // load the key store
+        // load the credentials
+        Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
+        verifierBuilder.setTrustAllRPKs();
         SslContextUtil.Credentials serverCredentials= SslContextUtil.loadCredentials(
             SslContextUtil.CLASSPATH_SCHEME + KEY_STORE_LOCATION,
             "server",
@@ -120,12 +124,11 @@ public class SecureTestServer extends CoapServer
             "root",
             TRUST_STORE_PASSWORD.toCharArray() );
 
+        verifierBuilder.setTrustedCertificates( trustedCertificates );
         DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
         builder.setAddress( new InetSocketAddress( "localhost", port ) );
-        builder.setPskStore( pskStore );
+        builder.setAdvancedPskStore( pskStore );
         builder.setIdentity( serverCredentials.getPrivateKey(), serverCredentials.getCertificateChain(), CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509 );
-        builder.setTrustStore( trustedCertificates );
-        builder.setRpkTrustAll();
         DTLSConnector dtlsConnector= new DTLSConnector( builder.build() );
         CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
         //endpointBuilder.setNetworkConfig( visitor.getNetworkConfig() );

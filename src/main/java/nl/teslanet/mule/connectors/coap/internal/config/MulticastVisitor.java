@@ -24,6 +24,8 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Set;
 
@@ -401,11 +403,13 @@ public class MulticastVisitor implements ConfigVisitor
         return result;
     }
 
+    //TODO rename parameter
+    //TODO add feature to specify interface per multicast-group
     /**
      * Get the interface address that the visitor collected from the configuration.
      * @return the interface address.
      */
-    public InetAddress getInterfaceAddress()
+    public NetworkInterface getInterfaceAddress()
     {
         if ( interfaceAddress == null )
         {
@@ -413,9 +417,9 @@ public class MulticastVisitor implements ConfigVisitor
         }
         try
         {
-            return InetAddress.getByName( interfaceAddress );
+            return NetworkInterface.getByName( interfaceAddress );
         }
-        catch ( UnknownHostException e )
+        catch ( SocketException e )
         {
             // TODO improve exception handling
             e.printStackTrace();
