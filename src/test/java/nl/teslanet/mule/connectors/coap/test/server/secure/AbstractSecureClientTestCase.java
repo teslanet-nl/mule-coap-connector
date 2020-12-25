@@ -40,7 +40,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
@@ -59,34 +58,10 @@ import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.CertificateType;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
 import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
-
-//TODO review
-/*
-@ArtifactClassLoaderRunnerConfig(
-    providedExclusions = {
-        "org.mule.tests:*:*:*:*",
-        "com.mulesoft.compatibility.tests:*:*:*:*"
-    },
-    testExclusions = {
-        "org.mule.runtime:*:*:*:*",
-        "org.mule.modules*:*:*:*:*",
-        "org.mule.transports:*:*:*:*",
-        "org.mule.mvel:*:*:*:*",
-        "org.mule.extensions:*:*:*:*",
-        "org.mule.connectors:*:*:*:*",
-        "org.mule.tests.plugin:*:*:*:*",
-        "com.mulesoft.mule.runtime*:*:*:*:*",
-        "com.mulesoft.licm:*:*:*:*"
-    },
-    testInclusions = {
-        "*:*:jar:tests:*",
-        "*:*:test-jar:*:*"
-    },
-    testRunnerExportedRuntimeLibs = {"org.mule.tests:mule-tests-functional"},
-    applicationSharedRuntimeLibs= {
-        "org.eclipse.californium:demo-certs"
-    })
-*/
+/**
+ * Template class for testing using a secure client
+ *
+ */
 public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCase
 {
     private static URI uri= null;
@@ -232,7 +207,6 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
     }
 
     @Test(timeout= 20000L)
-    @Ignore
     public void testInbound() throws Exception
     {
         expectException();
@@ -269,7 +243,6 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
     }
 
     @Test
-    @Ignore
     public void testOutbound() throws Exception
     {
         expectException();

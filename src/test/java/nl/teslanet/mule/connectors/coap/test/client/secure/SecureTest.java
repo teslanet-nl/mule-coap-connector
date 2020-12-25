@@ -23,13 +23,11 @@
 package nl.teslanet.mule.connectors.coap.test.client.secure;
 
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -39,11 +37,11 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 
 //TODO bug Code should be string
+
 
 @RunnerDelegateTo(Parameterized.class)
 public class SecureTest extends AbstractSecureServerTestCase
@@ -57,13 +55,13 @@ public class SecureTest extends AbstractSecureServerTestCase
     {
         return Arrays.asList(
             new Object [] []{
-                { "get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me".getBytes() },
+                { "get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
                 { "do_not_get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me".getBytes() },
+                { "post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
                 { "do_not_post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me".getBytes() },
+                { "put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
                 { "do_not_put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me".getBytes() },
+                { "delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
                 { "do_not_delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
     }
 
@@ -95,7 +93,7 @@ public class SecureTest extends AbstractSecureServerTestCase
      * The payload code that is expected.
      */
     @Parameter(4)
-    public byte[] expectedPayload;
+    public String expectedPayload;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -111,11 +109,12 @@ public class SecureTest extends AbstractSecureServerTestCase
      * @throws Exception should not happen in this test
      */
     @Test
-    @Ignore
+    //@Ignore
     public void testRequest() throws Exception
     {
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
+        result.getVariables().get( "saved_payload" );
 
         assertEquals(
             "wrong attributes class",
@@ -126,8 +125,8 @@ public class SecureTest extends AbstractSecureServerTestCase
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        byte[] payload= (byte[]) response.getPayload().getValue();
-        assertArrayEquals( "wrong response payload", expectedPayload, payload );
-    }
 
+        String payload= (String) result.getVariables().get( "saved_payload" ).getValue();
+        assertEquals( "wrong response payload", expectedPayload, payload );
+    }
 }

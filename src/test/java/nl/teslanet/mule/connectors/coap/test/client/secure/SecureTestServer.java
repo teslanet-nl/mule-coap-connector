@@ -126,7 +126,9 @@ public class SecureTestServer extends CoapServer
 
         verifierBuilder.setTrustedCertificates( trustedCertificates );
         DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
+        builder.setAdvancedCertificateVerifier( verifierBuilder.build() );
         builder.setAddress( new InetSocketAddress( "localhost", port ) );
+        builder.setRecommendedCipherSuitesOnly( false );
         builder.setAdvancedPskStore( pskStore );
         builder.setIdentity( serverCredentials.getPrivateKey(), serverCredentials.getCertificateChain(), CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509 );
         DTLSConnector dtlsConnector= new DTLSConnector( builder.build() );
