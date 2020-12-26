@@ -150,7 +150,7 @@ public interface Options
     /**
      * @return the oscore
      */
-    //TODO
+    //TODO add oscore feature
     //public String getOscore();
 
     /**

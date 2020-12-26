@@ -42,7 +42,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     /**
      * The CoRE attribute information of the resource.
      */
-    //TODO change to ResourceInfo or CoreInfo
+    //TODO change to ResourceInfo or CoreInfo?
     private final ResourceInfoConfig info;
 
     /**

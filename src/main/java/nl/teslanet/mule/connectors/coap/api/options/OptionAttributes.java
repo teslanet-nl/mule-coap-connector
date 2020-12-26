@@ -86,7 +86,7 @@ public class OptionAttributes
 
     private Integer observe= null;
 
-    //TODO
+    //TODO add oscore feature
     //private byte[] oscore= null;
 
     /**

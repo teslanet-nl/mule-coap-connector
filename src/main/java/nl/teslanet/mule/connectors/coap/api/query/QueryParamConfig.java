@@ -30,7 +30,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-//TODO make separate config possible
+//TODO make separate config possible?
 /**
  * CoAP URI Query Parameter without expression support. 
  */

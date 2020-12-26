@@ -179,7 +179,7 @@ public class RequestOptions
      *      "https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The
      *      OSCORE Option</a>
      */
-    // TODO
+    //TODO add oscore feature
     // @Parameter
     // @Optional
     // @Expression(ExpressionSupport.SUPPORTED)

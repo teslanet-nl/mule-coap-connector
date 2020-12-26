@@ -49,7 +49,7 @@ public class IsItUsed implements VisitableConfig
      */
     @Parameter
     @Optional(defaultValue= "93000")
-    @Summary(value= "does Cf use this?")
+    @Summary(value= "the maximum time (in milliseconds [ms]) from the first transmission of a Confirmable message to the time when the sender gives up on receiving an acknowledgement or reset.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     public Long maxTransmitWait= null;
@@ -70,13 +70,15 @@ public class IsItUsed implements VisitableConfig
     public Integer leisure= null;
 
     // TODO: used by Cf?
-    // TODO: improve description
     /**
-     * The probing rate.
+     * The probing rate indicates the maximum average data rate of sending to another endpoint that does not respond.
+     * @see <a href=
+     * "https://tools.ietf.org/html/rfc7252#section-4.7">IETF RFC 7252 - 4.7.  Congestion Control</a>
+     * 1 byte/second
      */
     @Parameter
-    @Optional
-    @Summary(value= "does Cf use this?")
+    @Optional(defaultValue= "1.0")
+    @Summary(value= "Maximum average data rate (in [bytes/second]) of sending to another endpoint that does not respond. ")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     public Float probingRate= null;
