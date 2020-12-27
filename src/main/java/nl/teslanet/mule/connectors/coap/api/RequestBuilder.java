@@ -34,6 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
@@ -66,10 +67,10 @@ public class RequestBuilder
 
     @Parameter
     @Content(primary= true)
-    @Summary("The CoAP request payload.")
+    @Summary("The CoAP request payload. Note: when not appropriate for the CoAP message-type (i.e. GET, DELETE) the payload is ignored, unless 'Force Payload' is set.")
     private TypedValue< Object > requestPayload;
 
-    /**private
+    /**
      * When true the server is expected to acknowledge reception of the request.
      */
     @Parameter
@@ -117,6 +118,16 @@ public class RequestBuilder
     @Summary("The query parameters to send with the request.")
     @DisplayName("Query Parameters")
     private List< QueryParam > queryParams= null;
+
+    /**
+     * When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Placement(tab=Placement.ADVANCED_TAB)
+    @Summary("When true the payload will also be added to the request, when not appropriate for the CoAP message-type (i.e. GET, DELETE).")
+    private boolean forcePayload= false;
 
     /**
      * @return the requestCode
@@ -228,6 +239,22 @@ public class RequestBuilder
     public void setConfirmable( boolean confirmable )
     {
         this.confirmable= confirmable;
+    }
+
+    /**
+     * @return the forcePayload
+     */
+    public boolean isForcePayload()
+    {
+        return forcePayload;
+    }
+
+    /**
+     * @param forcePayload the forcePayload to set
+     */
+    public void setForcePayload( boolean forcePayload )
+    {
+        this.forcePayload= forcePayload;
     }
 
 }

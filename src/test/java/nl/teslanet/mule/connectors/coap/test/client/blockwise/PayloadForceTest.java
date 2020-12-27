@@ -46,7 +46,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 
 
 @RunnerDelegateTo(Parameterized.class)
-public class PayloadTest extends AbstractClientTestCase
+public class PayloadForceTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
@@ -67,55 +67,55 @@ public class PayloadTest extends AbstractClientTestCase
                 { "do_put", "/blockwise/rq0", 0, "CHANGED", 2, false },
                 { "do_delete", "/blockwise/rq0", 0, "DELETED", 2, false },
 
-                { "do_get", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
+                { "do_get", "/blockwise/rsp0", 2, "CONTENT", -1, false },
                 { "do_post", "/blockwise/rsp0", 2, "CREATED", -1, false },
                 { "do_put", "/blockwise/rsp0", 2, "CHANGED", -1, false },
-                { "do_delete", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
+                { "do_delete", "/blockwise/rsp0", 2, "DELETED", -1, false },
 
-                { "do_get", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
-                { "do_get", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
+                { "do_get", "/blockwise/rq10", 10, "CONTENT", 2, false },
+                { "do_get", "/blockwise/rsp10", 2, "CONTENT", 10, false },
                 { "do_post", "/blockwise/rq10", 10, "CREATED", 2, false },
                 { "do_post", "/blockwise/rsp10", 2, "CREATED", 10, false },
                 { "do_put", "/blockwise/rq10", 10, "CHANGED", 2, false },
                 { "do_put", "/blockwise/rsp10", 2, "CHANGED", 10, false },
-                { "do_delete", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
-                { "do_delete", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
+                { "do_delete", "/blockwise/rq10", 10, "DELETED", 2, false },
+                { "do_delete", "/blockwise/rsp10", 2, "DELETED", 10, false },
 
-                { "do_get", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
-                { "do_get", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
+                { "do_get", "/blockwise/rq8192", 8192, "CONTENT", 2, false },
+                { "do_get", "/blockwise/rsp8192", 2, "CONTENT", 8192, false },
                 { "do_post", "/blockwise/rq8192", 8192, "CREATED", 2, false },
                 { "do_post", "/blockwise/rsp8192", 2, "CREATED", 8192, false },
                 { "do_put", "/blockwise/rq8192", 8192, "CHANGED", 2, false },
                 { "do_put", "/blockwise/rsp8192", 2, "CHANGED", 8192, false },
-                { "do_delete", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
-                { "do_delete", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
+                { "do_delete", "/blockwise/rq8192", 8192, "DELETED", 2, false },
+                { "do_delete", "/blockwise/rsp8192", 2, "DELETED", 8192, false },
 
-                { "do_get", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
-                { "do_get", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
+                { "do_get", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_get", "/blockwise/rsp16000", 2, null, -1, true },
                 { "do_post", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
                 { "do_post", "/blockwise/rsp16000", 2, null, -1, true },
                 { "do_put", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
                 { "do_put", "/blockwise/rsp16000", 2, null, -1, true },
-                { "do_delete", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
-                { "do_delete", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
+                { "do_delete", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_delete", "/blockwise/rsp16000", 2, null, -1, true },
 
-                { "do_get2", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
-                { "do_get2", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
+                { "do_get2", "/blockwise/rq16000", 16000, "CONTENT", 2, false },
+                { "do_get2", "/blockwise/rsp16000", 2, "CONTENT", 16000, false },
                 { "do_post2", "/blockwise/rq16000", 16000, "CREATED", 2, false },
                 { "do_post2", "/blockwise/rsp16000", 2, "CREATED", 16000, false },
                 { "do_put2", "/blockwise/rq16000", 16000, "CHANGED", 2, false },
                 { "do_put2", "/blockwise/rsp16000", 2, "CHANGED", 16000, false },
-                { "do_delete2", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
-                { "do_delete2", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
+                { "do_delete2", "/blockwise/rq16000", 16000, "DELETED", 2, false },
+                { "do_delete2", "/blockwise/rsp16000", 2, "DELETED", 16000, false },
 
-                { "do_get2", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
-                { "do_get2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true },
+                { "do_get2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_get2", "/blockwise/rsp16001", 2, null, -1, true },
                 { "do_post2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
                 { "do_post2", "/blockwise/rsp16001", 2, null, -1, true },
                 { "do_put2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
                 { "do_put2", "/blockwise/rsp16001", 2, null, -1, true },
-                { "do_delete2", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
-                { "do_delete2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true } } );
+                { "do_delete2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_delete2", "/blockwise/rsp16001", 2, null, -1, true } } );
     }
 
     /**
@@ -152,7 +152,7 @@ public class PayloadTest extends AbstractClientTestCase
      * True when response is Too Large to process
      */
     @Parameter(5)
-    public boolean expectFailure;
+    public boolean expectTooLarge;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -160,7 +160,7 @@ public class PayloadTest extends AbstractClientTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-client-config/blockwise/testclient1.xml";
+        return "mule-client-config/blockwise/testclient2.xml";
     };
 
     /**
@@ -198,7 +198,7 @@ public class PayloadTest extends AbstractClientTestCase
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        if ( expectFailure )
+        if ( expectTooLarge )
         {
             assertFalse( "request should fail", attributes.isSuccess() );
             assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

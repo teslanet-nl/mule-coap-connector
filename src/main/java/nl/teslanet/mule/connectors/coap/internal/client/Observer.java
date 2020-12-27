@@ -187,8 +187,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
 
             };
         coapRelation= client.doObserveRequest( confirmable, uri, handler );
-        //TODO coapRelation.setNotificationListener( listener );
-        LOGGER.info( "permanent observer started on resource { " + uri + " }" );
+       LOGGER.info( "permanent observer started on resource { " + uri + " }" );
     }
 
     //    @OnSuccess

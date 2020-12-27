@@ -123,6 +123,7 @@ public class ClientOperations
                 AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
+                requestBuilder.isForcePayload(),
                 requestOptions,
                 null );
         }
@@ -190,6 +191,7 @@ public class ClientOperations
                 AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
+                requestBuilder.isForcePayload(),
                 requestOptions,
                 responseHandlerBuilder.responseHandler );
         }

@@ -99,9 +99,10 @@ public final class OperationalEndpoint
      * Create an endpoint not attached to a server or return existing when already created
      * @param config the configuration for the endpoint
      * @return the endpoint created from the configuration
+     * @throws EndpointConstructionException 
      * @throws Exception
      */
-    private static OperationalEndpoint create( Endpoint config ) throws Exception
+    private static OperationalEndpoint create( Endpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint;
         //check sub-class before superclass
@@ -135,8 +136,7 @@ public final class OperationalEndpoint
         }
         else
         {
-            //TODO make specific exception
-            throw new Exception( "endpoint has unknown type: " + config );
+            throw new EndpointConstructionException( "endpoint has unknown type: " + config.getClass() );
         }
         if ( config.logCoapMessages )
         {
@@ -185,15 +185,14 @@ public final class OperationalEndpoint
      * @param client The client using this endpoint.
      * @param config The endpoint configuration.
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
-     * @throws Exception When an error occurs.
+     * @throws EndpointConstructionException When client parameter is empty
      */
-    public synchronized static OperationalEndpoint getOrCreate( Client client, Endpoint config ) throws Exception
+    public synchronized static OperationalEndpoint getOrCreate( Client client, Endpoint config ) throws EndpointConstructionException 
     {
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
         {
-            //TODO make exception specific
-            throw new Exception( "Using endpoint '" + config.configName + "': client missing" );
+            throw new EndpointConstructionException( "Cannot construct endpoint { " + config.configName + " }: no client configured." );
         }
         if ( registry.containsKey( config.configName ) )
         {

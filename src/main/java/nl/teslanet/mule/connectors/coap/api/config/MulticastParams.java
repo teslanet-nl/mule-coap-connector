@@ -41,7 +41,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class MulticastParams implements VisitableConfig
 {
 
-    //TODO add interface address
+    //TODO interface address per group
     //TODO change to list of groups
     /**
      * The list of multi-cast groups to receive messages from.

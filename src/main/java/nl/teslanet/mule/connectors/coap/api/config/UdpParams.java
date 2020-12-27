@@ -59,7 +59,6 @@ public class UdpParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Integer networkStageSenderThreadCount= null;
 
-    //TODO does Cf use this?
     /**
      * UDP datagram size [bytes].
      */

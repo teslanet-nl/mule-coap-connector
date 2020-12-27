@@ -85,6 +85,7 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
@@ -250,9 +251,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
         }
-        catch ( Exception e )
+        catch ( EndpointConstructionException e )
         {
-            // TODO Auto-generated catch block
             throw new InitialisationException( e, this );
         }
         scheme= operationalEndpoint.getCoapEndpoint().getUri().getScheme();
@@ -430,7 +430,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     // TODO add custom timeout
-    // TODO destination context?
     /**
      * Issue a request on a CoAP resource residing on a server.
      * @param confirmable indicating the requst must be confirmed
@@ -455,6 +454,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Code requestCode,
         String uri,
         TypedValue< Object > requestPayload,
+        boolean forcePayload,
         RequestOptions options,
         String handlerName ) throws InternalInvalidHandlerNameException,
         ConnectorException,
@@ -471,21 +471,38 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         request.setURI( uri );
         if ( requestPayload.getValue() != null )
         {
-            //TODO review unintended payloads
-            if ( request.getCode() == Code.GET || request.getCode() == Code.DELETE )
+            boolean sendPayload;
+            switch ( request.getCode() )
             {
-                request.setUnintendedPayload();
+                case GET:
+                case DELETE:
+                    if ( forcePayload )
+                    {
+                        request.setUnintendedPayload();
+                        sendPayload= true;
+                    }
+                    else
+                    {
+                        sendPayload= false;
+                    }
+                    break;
+                default:
+                    sendPayload= true;
+                    break;
             }
-            //TODO add streaming & blockwise cooperation
-            try
+            if ( sendPayload )
             {
-                request.setPayload( MessageUtils.toByteArray( requestPayload ) );
+                //TODO add streaming & blockwise cooperation
+                try
+                {
+                    request.setPayload( MessageUtils.toByteArray( requestPayload ) );
+                }
+                catch ( RuntimeException e )
+                {
+                    throw new InternalInvalidByteArrayValueException( "cannot proces payload", e );
+                }
+                request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
             }
-            catch ( RuntimeException e )
-            {
-                throw new InternalInvalidByteArrayValueException( "cannot convert payload to byte[]", e );
-            }
-            request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
         }
         CoAPOptions.copyOptions( options, request.getOptions(), false );
         if ( handlerName != null )
@@ -625,7 +642,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         if ( actualPort == null )
         {
-            actualPort= ( scheme.equals( CoAP.COAP_SECURE_URI_SCHEME ) ? CoAP.DEFAULT_COAP_SECURE_PORT : CoAP.DEFAULT_COAP_PORT );
+            switch ( scheme )
+            {
+                //TODO add coap+ws, coaps+ws
+                case CoAP.COAP_TCP_URI_SCHEME:
+                case CoAP.COAP_SECURE_URI_SCHEME:
+                    actualPort= CoAP.DEFAULT_COAP_SECURE_PORT;
+                    break;
+                default:
+                    actualPort= CoAP.DEFAULT_COAP_PORT;
+            }
         }
         URI uri;
         try
