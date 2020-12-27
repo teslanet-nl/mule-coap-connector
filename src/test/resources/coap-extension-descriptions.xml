@@ -180,7 +180,7 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="confirmable">
-                    <description><![CDATA[private When true the server is expected to acknowledge reception of the request.]]></description>
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
                 </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
@@ -193,6 +193,9 @@
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="forcePayload">
+                    <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -218,7 +221,7 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="confirmable">
-                    <description><![CDATA[private When true the server is expected to acknowledge reception of the request.]]></description>
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
                 </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
@@ -231,6 +234,9 @@
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters to send with the request.]]></description>
+                </parameter>
+                <parameter name="forcePayload">
+                    <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
                 </parameter>
             </parameters>
         </operation>

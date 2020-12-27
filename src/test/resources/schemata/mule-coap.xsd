@@ -1081,7 +1081,7 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
           <xs:annotation>
-            <xs:documentation>private When true the server is expected to acknowledge reception of the request.</xs:documentation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
@@ -1102,6 +1102,11 @@
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="forcePayload">
+          <xs:annotation>
+            <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
@@ -1194,7 +1199,7 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
           <xs:annotation>
-            <xs:documentation>private When true the server is expected to acknowledge reception of the request.</xs:documentation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
@@ -1215,6 +1220,11 @@
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="forcePayload">
+          <xs:annotation>
+            <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1688,4 +1698,3 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
