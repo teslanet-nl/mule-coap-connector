@@ -22,32 +22,42 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
-
-import java.util.HashSet;
-import java.util.Set;
-
-import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
-import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
-
-import nl.teslanet.mule.connectors.coap.api.error.Errors;
-
-
 /**
- * Provider of errors that can be thrown by ping operations.
- *
+ *  Exception that is thrown when an invalid request payload is used.
  */
-public class PingErrorProvider implements ErrorTypeProvider
+public class InternalResponseException extends Exception
 {
-    /* (non-Javadoc)
-     * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
+
+    /**
+     * serial version id
      */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Set< ErrorTypeDefinition > getErrorTypes()
+    private static final long serialVersionUID= 1L;
+
+    /**
+     * Construct exception with given 
+     * @param message
+     */
+    public InternalResponseException( String message )
     {
-        Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
-        errors.add( Errors.ENDPOINT_ERROR );
-        errors.add( Errors.MALFORMED_URI );
-        return errors;
+        super( message );
+    }
+    
+    /**
+     * Construct exception with given 
+     * @param message
+     * @param e The cause of the exception
+     */
+    public InternalResponseException( String message, Throwable e )
+    {
+        super( message, e );
+    }
+    
+    /**
+     * Construct exception with given 
+     * @param e The cause of the exception
+     */
+    public InternalResponseException( Throwable e )
+    {
+        super( e );
     }
 }

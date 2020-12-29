@@ -54,23 +54,23 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
-import nl.teslanet.mule.connectors.coap.api.error.ExchangeException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
+import nl.teslanet.mule.connectors.coap.api.error.RequestException;
+import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
@@ -120,45 +120,28 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             return client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
+                AttributeUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestBuilder.isForcePayload(),
                 requestOptions,
                 null );
         }
-        catch ( InternalInvalidHandlerNameException e )
+        catch ( InternalEndpointException e )
         {
-            // TODO should not occur, restructure doRequest to solve
-            throw new InvalidHandlerNameException( e.getMessage(), e );
+            throw new EndpointException( e );
         }
-        catch ( ConnectorException e )
+        catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new EndpointException( e.getMessage(), e );
+            throw new RequestException( e );
         }
-        catch ( IOException e )
+        catch ( InternalResponseException e )
         {
-            throw new ExchangeException( e.getMessage(), e );
+            throw new ResponseException( e );
         }
         catch ( InternalMalformedUriException e )
         {
-            throw new MalformedUriException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidRequestCodeException e )
-        {
-            throw new InvalidRequestCodeException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidOptionValueException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidByteArrayValueException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
-        }
-        catch ( InvalidETagException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
+            throw new MalformedUriException( e );
         }
     }
 
@@ -188,44 +171,28 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttibuteUtils.toRequestCode( requestBuilder.getRequestCode() ),
+                AttributeUtils.toRequestCode( requestBuilder.getRequestCode() ),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestBuilder.isForcePayload(),
                 requestOptions,
                 responseHandlerBuilder.responseHandler );
         }
+        catch ( InternalEndpointException e )
+        {
+            throw new EndpointException( e );
+        }
+        catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
+        {
+            throw new RequestException( e );
+        }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( e.getMessage(), e );
-        }
-        catch ( ConnectorException e )
-        {
-            throw new EndpointException( e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new ExchangeException( e.getMessage(), e );
+            throw new InvalidHandlerNameException( e );
         }
         catch ( InternalMalformedUriException e )
         {
-            throw new MalformedUriException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidRequestCodeException e )
-        {
-            throw new InvalidRequestCodeException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidOptionValueException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
-        }
-        catch ( InternalInvalidByteArrayValueException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
-        }
-        catch ( InvalidETagException e )
-        {
-            throw new InvalidOptionValueException( e.getMessage(), e );
+            throw new MalformedUriException( e );
         }
     }
 
@@ -244,23 +211,14 @@ public class ClientOperations
         {
             return client.ping( pingBuilder.getHost(), pingBuilder.getPort() );
         }
+        catch ( ConnectorException | IOException e )
+        {
+            throw new EndpointException( e );
+        }
         catch ( InternalMalformedUriException e )
         {
-            throw new MalformedUriException( e.getMessage() );
+            throw new MalformedUriException( e );
         }
-        catch ( RuntimeException e )
-        {
-            // could be interrupted which is no problem
-        }
-        catch ( ConnectorException e )
-        {
-            // not reachable
-        }
-        catch ( IOException e )
-        {
-            // not reachable
-        }
-        return false;
     }
 
     /**
@@ -279,25 +237,21 @@ public class ClientOperations
         {
             links= client.discover( discoverBuilder.isConfirmable(), discoverBuilder.getHost(), discoverBuilder.getPort(), discoverBuilder.getQueryParams() );
         }
-        catch ( InternalMalformedUriException e )
-        {
-            throw new MalformedUriException( e.getMessage() );
-        }
-        catch ( InternalNoResponseException e )
-        {
-            throw new ExchangeException( e.getMessage() );
-        }
-        catch ( InternalUnexpectedResponseException e )
-        {
-            throw new ExchangeException( e.getMessage() );
-        }
-        catch ( ConnectorException e )
+        catch ( IOException | ConnectorException e )
         {
             throw new EndpointException( e );
         }
-        catch ( IOException e )
+        catch ( InternalMalformedUriException e )
         {
-            throw new ExchangeException( e );
+            throw new MalformedUriException( e );
+        }
+        catch ( InternalUnexpectedResponseException e )
+        {
+            throw new ResponseException( e );
+        }
+        catch ( InternalNoResponseException e )
+        {
+            throw new NoResponseException( e.getMessage() );
         }
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )

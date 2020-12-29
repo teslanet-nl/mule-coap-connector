@@ -22,6 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+
+import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 
 /**
  *  Exception that is thrown when an invalid response code is used.
@@ -36,10 +39,28 @@ public class InternalInvalidResponseCodeException extends Exception
 
     /**
      * Construct exception with given 
-     * @param message
+     * @param responseCodeString 
      */
-    public InternalInvalidResponseCodeException( String message )
+    public InternalInvalidResponseCodeException( String responseCodeString )
     {
-        super( message );
+        super( "Invalid response code { " + responseCodeString + "}" );
+    }
+    
+    /**
+     * Construct exception with given 
+     * @param responseCode
+     */
+    public InternalInvalidResponseCodeException( ResponseCode responseCode )
+    {
+        super( "Invalid response code { " + responseCode.name() + " / " + responseCode.text + "}" );
+    }
+
+    /**
+     * Construct exception with given 
+     * @param reponseCodeAttribute
+     */
+    public InternalInvalidResponseCodeException( CoAPResponseCode reponseCodeAttribute )
+    {
+        super( "Invalid response code { " + reponseCodeAttribute.name() + "}" );
     }
 }

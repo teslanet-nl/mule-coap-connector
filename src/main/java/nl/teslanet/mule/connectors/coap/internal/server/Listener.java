@@ -59,7 +59,7 @@ import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttibuteUtils;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
@@ -161,7 +161,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         {
             CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
-            Response coapResponse= new Response( AttibuteUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
+            Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
             //TODO give user control
             TypedValue< Object > responsePayload= response.getResponsePayload();
             coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );

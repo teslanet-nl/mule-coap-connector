@@ -47,10 +47,11 @@ public class RequestErrorProvider implements ErrorTypeProvider
     {
         Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
         errors.add( Errors.ENDPOINT_ERROR );
-        errors.add( Errors.EXCHANGE_ERROR );
         errors.add( Errors.MALFORMED_URI );
-        errors.add( Errors.INVALID_REQUEST_CODE );
-        errors.add( Errors.INVALID_OPTION_VALUE );
+        errors.add( Errors.INVALID_REQUEST );
+        errors.add( Errors.INVALID_RESPONSE );
+        errors.add( Errors.NO_RESPONSE );
+        errors.add( Errors.ERROR_RESPONSE );
         return errors;
     }
 }

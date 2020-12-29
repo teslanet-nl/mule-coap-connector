@@ -56,12 +56,6 @@ public class ReceivedResponseAttributes
      */
     private String requestUri= null;
 
-    //TODO drop?
-    /**
-     * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
-     */
-    private String relation= null;
-
     /**
      * The address of the server that issued the response.
      */
@@ -154,22 +148,6 @@ public class ReceivedResponseAttributes
     public void setRequestUri( String requestUri )
     {
         this.requestUri= requestUri;
-    }
-
-    /**
-     * @return the relation
-     */
-    public String getRelation()
-    {
-        return relation;
-    }
-
-    /**
-     * @param relation the relation to set
-     */
-    public void setRelation( String relation )
-    {
-        this.relation= relation;
     }
 
     /**

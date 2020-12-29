@@ -48,8 +48,8 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
 
@@ -113,7 +113,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @Optional
-    @DisplayName( "Query parameters")
+    @DisplayName("Query parameters")
     @Summary("The query parameters to send with the observe request.")
     private List< QueryParamConfig > queryParamConfigs= null;
 
@@ -139,33 +139,34 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
             throw new StartException( e );
         }
 
+        //TODO add client/observer/handler name for logging
         CoapHandler handler= new CoapHandler()
             {
                 @Override
                 public void onError()
                 {
-                    LOGGER.warn( "permanent observer failed on resource { " + uri + " }" );
+                    LOGGER.warn( "permanent observer failed on resource {} ", uri );
                     if ( coapRelation != null )
                     {
                         //TODO wait time?
                         if ( coapRelation.isCanceled() )
                         {
                             coapRelation= client.doObserveRequest( confirmable, uri, this );
-                            LOGGER.info( "permanent observer recreated { " + uri + " }" );
+                            LOGGER.info( "permanent observer recreated on {}", uri );
                         }
                         else
                         {
                             coapRelation.reregister();
-                            LOGGER.info( "permanent observer reregistrered { " + uri + " }" );
+                            LOGGER.info( "permanent observer reregistrered on {}", uri );
                         } ;
                     }
                     try
                     {
                         client.processMuleFlow( uri, Code.GET, null, sourceCallback );
                     }
-                    catch ( InternalInvalidOptionValueException e )
+                    catch ( InternalResponseException e )
                     {
-                        LOGGER.error( "permanent observer could not process onError-notification { " + uri + " }", e );
+                        LOGGER.error( "Could not proces an error on notification", e );
                     }
                 }
 
@@ -178,57 +179,17 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
                         {
                             client.processMuleFlow( uri, Code.GET, response, sourceCallback );
                         }
-                        catch ( InternalInvalidOptionValueException e )
+                        catch ( InternalResponseException e )
                         {
-                            LOGGER.error( "permanent observer could not process notification { " + uri + " }", e );
+                            LOGGER.error( "Could not proces a notification", e );
                         }
                     }
                 }
 
             };
         coapRelation= client.doObserveRequest( confirmable, uri, handler );
-       LOGGER.info( "permanent observer started on resource { " + uri + " }" );
+        LOGGER.info( "permanent observer started on resource {}", uri );
     }
-
-    //    @OnSuccess
-    //    @MediaType(value= "*/*", strict= false)
-    //    public void onSuccess( @Content TypedValue< byte[] > responseBody, ResponseAttributes attributes, SourceCallbackContext callbackContext ) throws Exception
-    //    {
-    //        {
-    //            CoAPResponseCode defaultCoAPResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
-    //            CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
-    //            Response response= new Response( AttibuteUtils.toResponseCode( attributes.getResponseCode(), defaultCoAPResponseCode ) );
-    //            //TODO give user control
-    //            response.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responseBody.getDataType().getMediaType() ) );
-    //            if ( attributes.getOptions() != null )
-    //            {
-    //                Options.fillOptionSet( response.getOptions(), attributes.getOptions(), false );
-    //            }
-    //            response.setPayload( responseBody.getValue() );
-    //            exchange.respond( response );
-    //        }
-    //    }
-    //
-    //    @OnTerminate
-    //    public void onTerminate( SourceResult sourceResult )
-    //    {
-    //        if ( !sourceResult.isSuccess() )
-    //        {
-    //            CoapExchange exchange= (CoapExchange) sourceResult.getSourceCallbackContext().getVariable( "CoapExchange" ).get();
-    //            if ( sourceResult.getInvocationError().isPresent() )
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );
-    //            }
-    //            else if ( sourceResult.getResponseError().isPresent() )
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING FLOW" );
-    //            }
-    //            else
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR" );
-    //            }
-    //        }
-    //    }
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStop()

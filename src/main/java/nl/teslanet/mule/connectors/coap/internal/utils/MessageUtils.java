@@ -73,7 +73,7 @@ public class MessageUtils
      * @return converted value as bytes
      * @throws IOException when the value is an outputhandler that cannot write.
      */
-    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException
+    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException 
     {
         Object object= typedValueObject.getValue();
 

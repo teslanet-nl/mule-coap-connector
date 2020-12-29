@@ -27,28 +27,27 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 
 
 /**
- * Exception indicating that an error occurred during the exchange of CoAP message(s).
- *
+ * Exception thrown when a CoAP request could not be sent.
  */
-public class ExchangeException extends ModuleException
+public class RequestException extends ModuleException
 {
     /**
-     * 
+     * Serial version id.
      */
     private static final long serialVersionUID= 1L;
 
-    public ExchangeException( String message )
+    public RequestException( String message )
     {
-        super( message, Errors.EXCHANGE_ERROR );
+        super( message, Errors.INVALID_REQUEST );
     }
 
-    public ExchangeException( Throwable cause )
+    public RequestException( Throwable cause )
     {
-        super( Errors.EXCHANGE_ERROR, cause );
+        super( Errors.INVALID_REQUEST, cause );
     }
 
-    public ExchangeException( String message, Throwable cause )
+    public RequestException( String message, Throwable cause )
     {
-        super( message, Errors.EXCHANGE_ERROR, cause );
+        super( message, Errors.INVALID_REQUEST, cause );
     }
 }

@@ -37,15 +37,16 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRespo
  * Utilities for handling attributes
  *
  */
-public class AttibuteUtils
+public class AttributeUtils
 {
     /**
-     * Translate attribute to Californium request Code.
+     * Translate attribute to Cf request Code.
      * @param requestCodeAttribute the attribute to transform
      * @param defaultrequestCodeAttribute the request code to use when requestCodeAttribute is null
-     * @return the Californium request code
+     * @return the Cf request code
      * @throws InternalInvalidRequestCodeException when invalid request code is given
      */
+    @Deprecated
     public static Code RequestCode( String requestCodeAttribute, CoAPRequestCode defaultrequestCodeAttribute ) throws InternalInvalidRequestCodeException
     {
         if ( requestCodeAttribute != null )
@@ -59,11 +60,12 @@ public class AttibuteUtils
     }
 
     /**
-     * Translate string to Californium request Code.
+     * Translate string to Cf request Code.
      * @param requestCodeString is the string to convert
-     * @return the Californium request code
+     * @return the Cf request code
      * @throws InternalInvalidRequestCodeException the string cannot be converted
      */
+    @Deprecated
     public static Code toRequestCode( String requestCodeString ) throws InternalInvalidRequestCodeException
     {
         switch ( requestCodeString )
@@ -83,14 +85,14 @@ public class AttibuteUtils
     }
 
     /**
-     * Translate connector requestCode to Californium request Code.
-     * @param requestCode to convert
+     * Translate requestCode attribute to Cf request Code.
+     * @param requestCodeAttribute to convert
      * @return the converted requestCode
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static Code toRequestCode( CoAPRequestCode requestCode ) throws InternalInvalidRequestCodeException
+    public static Code toRequestCode( CoAPRequestCode requestCodeAttribute ) throws InternalInvalidRequestCodeException
     {
-        switch ( requestCode )
+        switch ( requestCodeAttribute )
         {
             //success
             case GET:
@@ -102,17 +104,18 @@ public class AttibuteUtils
             case DELETE:
                 return Code.DELETE;
             default:
-                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCode + " }" );
+                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCodeAttribute + " }" );
         }
     }
 
     /**
-     * Translate attribute to Californium ResponseCode.
+     * Translate attribute to Cf ResponseCode.
      * @param reponseCodeAttribute is the attribute to convert
      * @param defaultreponseCodeAttribute default value when attribute is empty
-     * @return the Californium responseCode
+     * @return the Cf responseCode
      * @throws InternalInvalidResponseCodeException when attribute cannot be converted
      */
+    @Deprecated
     public static ResponseCode toResponseCode( String reponseCodeAttribute, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
         if ( reponseCodeAttribute != null )
@@ -126,33 +129,33 @@ public class AttibuteUtils
     }
 
     /**
-     * Translate connector responseCode  to Californium ResponseCode.
-     * @param reponseCode to be converted
-     * @param defaultreponseCodeAttribute is the responseCode to use when input is empty
-     * @return the converted Californium responseCode
+     * Translate responseCode attribute to Cf ResponseCode.
+     * @param reponseCodeAttribute to be converted
+     * @param defaultResponseCodeAttribute is the responseCode to use when input is empty
+     * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCode, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute, CoAPResponseCode defaultResponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
-        if ( reponseCode != null )
+        if ( reponseCodeAttribute != null )
         {
-            return toResponseCode( reponseCode );
+            return toResponseCode( reponseCodeAttribute );
         }
         else
         {
-            return toResponseCode( defaultreponseCodeAttribute );
+            return toResponseCode( defaultResponseCodeAttribute );
         }
     }
 
     /**
-     * Translate connector responseCode to Californium ResponseCode.
-     * @param reponseCode the code to convert
-     * @return the converted Californium responseCode
+     * Translate responseCode attribute to Cf ResponseCode.
+     * @param reponseCodeAttribute the code to convert
+     * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCode ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
-        switch ( reponseCode )
+        switch ( reponseCodeAttribute )
         {
             //success
             case CREATED:
@@ -212,16 +215,89 @@ public class AttibuteUtils
             case PROXY_NOT_SUPPORTED:
                 return ResponseCode.PROXY_NOT_SUPPORTED;
             default:
-                throw new InternalInvalidResponseCodeException( "invalid response code { " + reponseCode + " }" );
+                throw new InternalInvalidResponseCodeException( reponseCodeAttribute );
         }
     }
 
     /**
-     * Translate attribute to Californium ResponseCode.
+     * Translate responseCode attribute to Cf ResponseCode.
+     * @param reponseCode the code to convert
+     * @return the converted Cf responseCode
+     * @throws InternalInvalidResponseCodeException
+     */
+    public static CoAPResponseCode toResponseCodeAttribute( ResponseCode reponseCode ) throws InternalInvalidResponseCodeException
+    {
+        switch ( reponseCode )
+        {
+            //success
+            case CREATED:
+                return CoAPResponseCode.CREATED;
+            case DELETED:
+                return CoAPResponseCode.DELETED;
+            case VALID:
+                return CoAPResponseCode.VALID;
+            case CHANGED:
+                return CoAPResponseCode.CHANGED;
+            case CONTENT:
+                return CoAPResponseCode.CONTENT;
+            case CONTINUE:
+                return CoAPResponseCode.CONTINUE;
+
+            //client error
+            case BAD_REQUEST:
+                return CoAPResponseCode.BAD_REQUEST;
+            case UNAUTHORIZED:
+                return CoAPResponseCode.UNAUTHORIZED;
+            case BAD_OPTION:
+                return CoAPResponseCode.BAD_OPTION;
+            case FORBIDDEN:
+                return CoAPResponseCode.FORBIDDEN;
+            case NOT_FOUND:
+                return CoAPResponseCode.NOT_FOUND;
+            case METHOD_NOT_ALLOWED:
+                return CoAPResponseCode.METHOD_NOT_ALLOWED;
+            case NOT_ACCEPTABLE:
+                return CoAPResponseCode.NOT_ACCEPTABLE;
+            case REQUEST_ENTITY_INCOMPLETE:
+                return CoAPResponseCode.REQUEST_ENTITY_INCOMPLETE;
+            case CONFLICT:
+                return CoAPResponseCode.CONFLICT;
+            case PRECONDITION_FAILED:
+                return CoAPResponseCode.PRECONDITION_FAILED;
+            case REQUEST_ENTITY_TOO_LARGE:
+                return CoAPResponseCode.REQUEST_ENTITY_TOO_LARGE;
+            case UNSUPPORTED_CONTENT_FORMAT:
+                return CoAPResponseCode.UNSUPPORTED_CONTENT_FORMAT;
+            case UNPROCESSABLE_ENTITY:
+                return CoAPResponseCode.UNPROCESSABLE_ENTITY;
+            case TOO_MANY_REQUESTS:
+                return CoAPResponseCode.TOO_MANY_REQUESTS;
+
+            //sever error
+            case INTERNAL_SERVER_ERROR:
+                return CoAPResponseCode.INTERNAL_SERVER_ERROR;
+            case NOT_IMPLEMENTED:
+                return CoAPResponseCode.NOT_IMPLEMENTED;
+            case BAD_GATEWAY:
+                return CoAPResponseCode.BAD_GATEWAY;
+            case SERVICE_UNAVAILABLE:
+                return CoAPResponseCode.SERVICE_UNAVAILABLE;
+            case GATEWAY_TIMEOUT:
+                return CoAPResponseCode.GATEWAY_TIMEOUT;
+            case PROXY_NOT_SUPPORTED:
+                return CoAPResponseCode.PROXY_NOT_SUPPORTED;
+            default:
+                throw new InternalInvalidResponseCodeException( reponseCode );
+        }
+    }
+    
+    /**
+     * Translate attribute to Cf ResponseCode.
      * @param reponseCodeAttribute the attribute to convert.
-     * @return the converted Californium responseCode
+     * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException when the attribute cannot be converted.
      */
+    @Deprecated
     public static ResponseCode toResponseCode( String reponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
         switch ( reponseCodeAttribute )
@@ -284,7 +360,7 @@ public class AttibuteUtils
             case "PROXY_NOT_SUPPORTED":
                 return ResponseCode.PROXY_NOT_SUPPORTED;
             default:
-                throw new InternalInvalidResponseCodeException( "invalid response code { " + reponseCodeAttribute + " }" );
+                throw new InternalInvalidResponseCodeException( reponseCodeAttribute );
         }
     }
 }

@@ -103,12 +103,12 @@ public class CoAPOptions
      * Constructs @{code CoAPOptions}  based on {@Code Options}.
      * @param options The options. 
      */
-//    public CoAPOptions( Options options )
-//    {
-//        super();
-//        this.optionSet= new OptionSet();
-//        copyOptions( options, this.optionSet, false );
-//    }
+    //    public CoAPOptions( Options options )
+    //    {
+    //        super();
+    //        this.optionSet= new OptionSet();
+    //        copyOptions( options, this.optionSet, false );
+    //    }
 
     /**
      * Get the OptionSet.
@@ -167,23 +167,25 @@ public class CoAPOptions
         return null;
     }
 
-    private static byte[] toBytes( Object object ) throws InternalInvalidByteArrayValueException     {
+    private static byte[] toBytes( Object object ) throws InternalInvalidByteArrayValueException
+    {
         if ( Object.class.isInstance( object ) )
         {
             if ( InputStream.class.isInstance( object ) )
             {
-            	byte[] bytes= null;
-            	try {
-            		bytes= IOUtils.toByteArray((InputStream) object);
-            	}
-            	catch ( RuntimeException e )
-            	{
-            		throw new InternalInvalidByteArrayValueException( "Cannot convert object to byte[]", e);
-            	}
-            	finally
-            	{
-            		IOUtils.closeQuietly((InputStream) object);
-            	}
+                byte[] bytes= null;
+                try
+                {
+                    bytes= IOUtils.toByteArray( (InputStream) object );
+                }
+                catch ( RuntimeException e )
+                {
+                    throw new InternalInvalidByteArrayValueException( "Cannot convert object to byte[]", e );
+                }
+                finally
+                {
+                    IOUtils.closeQuietly( (InputStream) object );
+                }
                 return bytes;
             }
             else if ( Byte[].class.isInstance( object ) )
@@ -212,161 +214,161 @@ public class CoAPOptions
      * @param optionSet to copy to
      * @param clear when {@code true } the optionSet will be cleared before copying. 
      */
-//    public static void copyOptions( Options options, OptionSet optionSet, boolean clear )
-//    {
-//        //make sure Optionset is empty, if needed
-//        if ( clear ) optionSet.clear();
-//
-//        /* if_match_list       = null; // new LinkedList<byte[]>();*/
-//        if ( options.getIfMatchList() != null )
-//        {
-//            for ( Object etag : options.getIfMatchList() )
-//            {
-//                optionSet.addIfMatch( toBytes( etag ) );
-//            }
-//        }
-//        /*uri_host            = null; // from sender */
-//        if ( options.getUriHost() != null )
-//        {
-//            optionSet.setUriHost( options.getUriHost() );
-//        }
-//        /* etag_list           = null; // new LinkedList<byte[]>();*/
-//        if ( options.getEtagList() != null )
-//        {
-//            for ( Object etag : options.getEtagList() )
-//            {
-//                optionSet.addETag( toBytes( etag ) );
-//            }
-//        }
-//        /* if_none_match       = false; */
-//        if ( options.getIfNoneMatch() != null )
-//        {
-//            optionSet.setIfNoneMatch( options.getIfNoneMatch() );
-//        }
-//        /* uri_port            = null; // from sender*/
-//        if ( options.getUriPort() != null )
-//        {
-//            optionSet.setUriPort( options.getUriPort() );
-//        }
-//        /* location_path_list  = null; // new LinkedList<String>();*/
-//        if ( options.getLocationPathList() != null )
-//        {
-//            for ( String path : options.getLocationPathList() )
-//            {
-//                optionSet.addLocationPath( path );
-//            }
-//        }
-//        //            case PropertyNames.COAP_OPT_LOCATIONPATH:
-//        //                //TODO prefix with "/" ?
-//        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-//        //                {
-//        //                    optionSet.setLocationPath( otherOption.getValue().toString() );
-//        //                }
-//        //                break;
-//        /* uri_path_list       = null; // new LinkedList<String>();*/
-//        if ( options.getUriPathList() != null )
-//        {
-//            for ( String path : options.getUriPathList() )
-//            {
-//                optionSet.addUriPath( path );
-//            }
-//        }
-//        //            case PropertyNames.COAP_OPT_URIPATH:
-//        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-//        //                {
-//        //                    optionSet.setUriPath( otherOption.getValue().toString() );
-//        //                }
-//        //                break;
-//        /* content_format      = null;*/
-//        if ( options.getContentFormat() != null )
-//        {
-//            optionSet.setContentFormat( options.getContentFormat() );
-//        }
-//        /* max_age             = null;*/
-//        if ( options.getMaxAge() != null )
-//        {
-//            optionSet.setMaxAge( options.getMaxAge() );
-//        }
-//        /* uri_query_list      = null; // new LinkedList<String>();*/
-//        //TODO queryparam object
-//        if ( options.getUriQueryList() != null )
-//        {
-//            for ( String query : options.getUriQueryList() )
-//            {
-//                optionSet.addUriQuery( query );
-//            }
-//        }
-//        //            case PropertyNames.COAP_OPT_URIQUERY:
-//        //
-//        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-//        //                {
-//        //                    optionSet.setUriQuery( otherOption.getValue().toString() );
-//        //                }
-//        //                break;
-//        /* accept              = null;*/
-//        if ( options.getAccept() != null )
-//        {
-//            optionSet.setAccept( options.getAccept() );
-//        }
-//        /* location_query_list = null; // new LinkedList<String>();*/
-//        if ( options.getLocationQueryList() != null )
-//        {
-//            for ( String path : options.getLocationQueryList() )
-//            {
-//                optionSet.addLocationQuery( path );
-//            }
-//        }
-//        //            case PropertyNames.COAP_OPT_LOCATIONQUERY:
-//        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-//        //                {
-//        //                    optionSet.setLocationQuery( otherOption.getValue().toString() );
-//        //                }
-//        //                break;
-//        /* proxy_uri           = null;*/
-//        if ( options.getProxyUri() != null )
-//        {
-//            optionSet.setProxyUri( options.getProxyUri() );
-//        }
-//        /* proxy_scheme        = null;*/
-//        if ( options.getProxyScheme() != null )
-//        {
-//            optionSet.setProxyScheme( options.getProxyScheme() );
-//        }
-//        /* block1              = null;*/
-//        if ( options.getBlock1() != null )
-//        {
-//            optionSet.setBlock1( options.getBlock1().getSzx(), options.getBlock1().isM(), options.getBlock1().getNum() );
-//        }
-//        /* block2              = null;*/
-//        if ( options.getBlock2() != null )
-//        {
-//            optionSet.setBlock2( options.getBlock2().getSzx(), options.getBlock2().isM(), options.getBlock2().getNum() );
-//        }
-//        /* size1               = null;*/
-//        if ( options.getSize1() != null )
-//        {
-//            optionSet.setSize1( options.getSize1() );
-//        }
-//        /* size2               = null;*/
-//        if ( options.getSize2() != null )
-//        {
-//            optionSet.setSize2( options.getSize2() );
-//        }
-//        /* observe             = null;*/
-//        if ( options.getObserve() != null )
-//        {
-//            optionSet.setObserve( options.getObserve() );
-//        }
-//        // process other options
-//        for ( Entry< String, Object > otherOption : options.getOtherOptions().entryList() )
-//        {
-//            if ( !otherOption.getKey().isEmpty() )
-//            {
-//                int optionNr= Integer.parseInt( otherOption.getKey() );
-//                optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
-//            }
-//        }
-//    }
+    //    public static void copyOptions( Options options, OptionSet optionSet, boolean clear )
+    //    {
+    //        //make sure Optionset is empty, if needed
+    //        if ( clear ) optionSet.clear();
+    //
+    //        /* if_match_list       = null; // new LinkedList<byte[]>();*/
+    //        if ( options.getIfMatchList() != null )
+    //        {
+    //            for ( Object etag : options.getIfMatchList() )
+    //            {
+    //                optionSet.addIfMatch( toBytes( etag ) );
+    //            }
+    //        }
+    //        /*uri_host            = null; // from sender */
+    //        if ( options.getUriHost() != null )
+    //        {
+    //            optionSet.setUriHost( options.getUriHost() );
+    //        }
+    //        /* etag_list           = null; // new LinkedList<byte[]>();*/
+    //        if ( options.getEtagList() != null )
+    //        {
+    //            for ( Object etag : options.getEtagList() )
+    //            {
+    //                optionSet.addETag( toBytes( etag ) );
+    //            }
+    //        }
+    //        /* if_none_match       = false; */
+    //        if ( options.getIfNoneMatch() != null )
+    //        {
+    //            optionSet.setIfNoneMatch( options.getIfNoneMatch() );
+    //        }
+    //        /* uri_port            = null; // from sender*/
+    //        if ( options.getUriPort() != null )
+    //        {
+    //            optionSet.setUriPort( options.getUriPort() );
+    //        }
+    //        /* location_path_list  = null; // new LinkedList<String>();*/
+    //        if ( options.getLocationPathList() != null )
+    //        {
+    //            for ( String path : options.getLocationPathList() )
+    //            {
+    //                optionSet.addLocationPath( path );
+    //            }
+    //        }
+    //        //            case PropertyNames.COAP_OPT_LOCATIONPATH:
+    //        //                //TODO prefix with "/" ?
+    //        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+    //        //                {
+    //        //                    optionSet.setLocationPath( otherOption.getValue().toString() );
+    //        //                }
+    //        //                break;
+    //        /* uri_path_list       = null; // new LinkedList<String>();*/
+    //        if ( options.getUriPathList() != null )
+    //        {
+    //            for ( String path : options.getUriPathList() )
+    //            {
+    //                optionSet.addUriPath( path );
+    //            }
+    //        }
+    //        //            case PropertyNames.COAP_OPT_URIPATH:
+    //        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+    //        //                {
+    //        //                    optionSet.setUriPath( otherOption.getValue().toString() );
+    //        //                }
+    //        //                break;
+    //        /* content_format      = null;*/
+    //        if ( options.getContentFormat() != null )
+    //        {
+    //            optionSet.setContentFormat( options.getContentFormat() );
+    //        }
+    //        /* max_age             = null;*/
+    //        if ( options.getMaxAge() != null )
+    //        {
+    //            optionSet.setMaxAge( options.getMaxAge() );
+    //        }
+    //        /* uri_query_list      = null; // new LinkedList<String>();*/
+    //        //TODO queryparam object
+    //        if ( options.getUriQueryList() != null )
+    //        {
+    //            for ( String query : options.getUriQueryList() )
+    //            {
+    //                optionSet.addUriQuery( query );
+    //            }
+    //        }
+    //        //            case PropertyNames.COAP_OPT_URIQUERY:
+    //        //
+    //        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+    //        //                {
+    //        //                    optionSet.setUriQuery( otherOption.getValue().toString() );
+    //        //                }
+    //        //                break;
+    //        /* accept              = null;*/
+    //        if ( options.getAccept() != null )
+    //        {
+    //            optionSet.setAccept( options.getAccept() );
+    //        }
+    //        /* location_query_list = null; // new LinkedList<String>();*/
+    //        if ( options.getLocationQueryList() != null )
+    //        {
+    //            for ( String path : options.getLocationQueryList() )
+    //            {
+    //                optionSet.addLocationQuery( path );
+    //            }
+    //        }
+    //        //            case PropertyNames.COAP_OPT_LOCATIONQUERY:
+    //        //                if ( Object.class.isInstance( otherOption.getValue() ) )
+    //        //                {
+    //        //                    optionSet.setLocationQuery( otherOption.getValue().toString() );
+    //        //                }
+    //        //                break;
+    //        /* proxy_uri           = null;*/
+    //        if ( options.getProxyUri() != null )
+    //        {
+    //            optionSet.setProxyUri( options.getProxyUri() );
+    //        }
+    //        /* proxy_scheme        = null;*/
+    //        if ( options.getProxyScheme() != null )
+    //        {
+    //            optionSet.setProxyScheme( options.getProxyScheme() );
+    //        }
+    //        /* block1              = null;*/
+    //        if ( options.getBlock1() != null )
+    //        {
+    //            optionSet.setBlock1( options.getBlock1().getSzx(), options.getBlock1().isM(), options.getBlock1().getNum() );
+    //        }
+    //        /* block2              = null;*/
+    //        if ( options.getBlock2() != null )
+    //        {
+    //            optionSet.setBlock2( options.getBlock2().getSzx(), options.getBlock2().isM(), options.getBlock2().getNum() );
+    //        }
+    //        /* size1               = null;*/
+    //        if ( options.getSize1() != null )
+    //        {
+    //            optionSet.setSize1( options.getSize1() );
+    //        }
+    //        /* size2               = null;*/
+    //        if ( options.getSize2() != null )
+    //        {
+    //            optionSet.setSize2( options.getSize2() );
+    //        }
+    //        /* observe             = null;*/
+    //        if ( options.getObserve() != null )
+    //        {
+    //            optionSet.setObserve( options.getObserve() );
+    //        }
+    //        // process other options
+    //        for ( Entry< String, Object > otherOption : options.getOtherOptions().entryList() )
+    //        {
+    //            if ( !otherOption.getKey().isEmpty() )
+    //            {
+    //                int optionNr= Integer.parseInt( otherOption.getKey() );
+    //                optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+    //            }
+    //        }
+    //    }
 
     /**
      * Copy options from {@link ResponseOptions} to {@link OptionSet}.
@@ -445,11 +447,10 @@ public class CoAPOptions
      * @param options to copy from
      * @param optionSet to copy to
      * @param clear when {@code true } the optionSet will be cleared before copying. 
-     * @throws InternalInvalidByteArrayValueException 
-     * @throws InvalidETagException 
-     * @throws IOException 
+     * @throws InternalInvalidOptionValueException 
+
      */
-    public static void copyOptions( RequestOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
+    public static void copyOptions( RequestOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidOptionValueException
     {
         //make sure Optionset is empty, if needed
         if ( clear ) optionSet.clear();
@@ -462,19 +463,35 @@ public class CoAPOptions
         /* if_match_list       = null; // new LinkedList<byte[]>();*/
         if ( options.getIfMatchList() != null )
         {
-            List<ETag> etags= MessageUtils.toEtagList( options.getIfMatchList());
-            for ( ETag etag : etags )
+            List< ETag > etags;
+            try
             {
-                optionSet.addIfMatch( toBytes( etag ) );
+                etags= MessageUtils.toEtagList( options.getIfMatchList() );
+                for ( ETag etag : etags )
+                {
+                    optionSet.addIfMatch( toBytes( etag ) );
+                }
+            }
+            catch ( IOException | InvalidETagException | InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException("If-Match", "", e);
             }
         }
         /* etag_list           = null; // new LinkedList<byte[]>();*/
         if ( options.getEtagList() != null )
         {
-            List<ETag> etags= MessageUtils.toEtagList( options.getEtagList());
-            for ( ETag etag : etags )
+            List< ETag > etags;
+            try
             {
-                optionSet.addETag( etag.getBytes() );
+                etags= MessageUtils.toEtagList( options.getEtagList() );
+                for ( ETag etag : etags )
+                {
+                    optionSet.addETag( etag.getBytes() );
+                }
+            }
+            catch ( IOException | InvalidETagException e )
+            {
+                throw new InternalInvalidOptionValueException("ETag", "", e);
             }
         }
         /* content_format      = null;*/
@@ -503,7 +520,14 @@ public class CoAPOptions
             if ( !otherOption.getKey().isEmpty() )
             {
                 int optionNr= Integer.parseInt( otherOption.getKey() );
-                optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+                try
+                {
+                    optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+                }
+                catch ( InternalInvalidByteArrayValueException e )
+                {
+                    throw new InternalInvalidOptionValueException("Other-Option", "Number { "+ Integer.toString( optionNr ) + " }", e);
+                }
             }
         }
     }

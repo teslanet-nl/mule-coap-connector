@@ -23,31 +23,35 @@
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
-import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
-
-import nl.teslanet.mule.connectors.coap.api.error.Errors;
-
-
 /**
- * Provider of errors that can be thrown by ping operations.
- *
+ * The EndpointException is thrown when CoAP communication has failed.
+ * 
  */
-public class PingErrorProvider implements ErrorTypeProvider
+public class InternalEndpointException extends Exception
 {
-    /* (non-Javadoc)
-     * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
+
+    /**
+     * Serial version id.
      */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Set< ErrorTypeDefinition > getErrorTypes()
+    private static final long serialVersionUID= 1L;
+
+    public InternalEndpointException()
     {
-        Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
-        errors.add( Errors.ENDPOINT_ERROR );
-        errors.add( Errors.MALFORMED_URI );
-        return errors;
+        super();
+    }
+
+    public InternalEndpointException( String message )
+    {
+        super( message );
+    }
+
+    public InternalEndpointException( Throwable cause )
+    {
+        super( cause );
+    }
+
+    public InternalEndpointException( String message, Throwable cause )
+    {
+        super( message, cause );
     }
 }

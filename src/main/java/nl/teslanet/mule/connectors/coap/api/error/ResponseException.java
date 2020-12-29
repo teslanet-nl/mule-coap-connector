@@ -27,30 +27,27 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 
 
 /**
- *  Exception that is thrown when an invalid response code is used.
+ * Exception thrown when a CoAP response could not be processed.
  */
-public class InvalidResponseCodeException extends ModuleException
+public class ResponseException extends ModuleException
 {
-
     /**
-     * serial version id
+     * Serial version id.
      */
     private static final long serialVersionUID= 1L;
 
-    /**
-     * Construct exception with given 
-     * @param message
-     */
-    public InvalidResponseCodeException( String message )
+    public ResponseException( String message )
     {
-        super( message, Errors.INVALID_RESPONSE_CODE );
+        super( message, Errors.INVALID_RESPONSE );
     }
-    
-    /**
-     * @param message
-     * @param cause the cause of the exception
-     */
-    public InvalidResponseCodeException( String message, Throwable cause )
+
+    public ResponseException( Throwable cause )
     {
-        super( message, Errors.INVALID_RESPONSE_CODE, cause );
-    }}
+        super( Errors.INVALID_RESPONSE, cause );
+    }
+
+    public ResponseException( String message, Throwable cause )
+    {
+        super( message, Errors.INVALID_RESPONSE, cause );
+    }
+}
