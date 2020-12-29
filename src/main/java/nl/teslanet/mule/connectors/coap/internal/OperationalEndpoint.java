@@ -60,6 +60,7 @@ import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.config.CfNetworkConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.config.MulticastVisitor;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
 
@@ -150,9 +151,9 @@ public final class OperationalEndpoint
      * @param server the server attached to the endpint
      * @param config the endpoint configuration
      * @return the operational endpoint
-     * @throws Exception when endpoint is of an unknown type
+     * @throws EndpointConstructionException when endpoint cannot be created or used
      */
-    public synchronized static OperationalEndpoint getOrCreate( Server server, Endpoint config ) throws Exception
+    public synchronized static OperationalEndpoint getOrCreate( Server server, Endpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
 
@@ -165,8 +166,7 @@ public final class OperationalEndpoint
                 //multiple server usage of the endpoint is not allowed
                 if ( server != operationalEndpoint.server )
                 {
-                    //TODO make exception specific
-                    throw new Exception( "Using endpoint '" + config.configName + "' in multiple servers not allowed" );
+                    throw new EndpointConstructionException( "Using endpoint '" + config.configName + "' in multiple servers not allowed" );
                 }
             }
             operationalEndpoint.server= server;
@@ -179,7 +179,6 @@ public final class OperationalEndpoint
         return operationalEndpoint;
     }
 
-    //TODO make exception specific
     /**
      * Create an endpoint or return existing when already created
      * @param client The client using this endpoint.
@@ -255,14 +254,12 @@ public final class OperationalEndpoint
         for ( String endpointName : names )
         {
             OperationalEndpoint endpoint= registry.get( endpointName );
-            //TODO check for client usage
             if ( endpoint != null )
             {
                 endpoint.server= null;
                 if ( endpoint.clients.isEmpty() && endpoint.server == null )
                 {
                     registry.remove( endpointName );
-                    //TODO review
                     endpoint.coapEndpoint.destroy();
                 }
             }
@@ -282,14 +279,12 @@ public final class OperationalEndpoint
         {
             OperationalEndpoint endpoint= registry.get( endpointName );
 
-            //TODO check for client usage
             if ( endpoint != null )
             {
                 endpoint.clients.remove( client );
                 if ( endpoint.clients.isEmpty() && endpoint.server == null )
                 {
                     registry.remove( endpointName );
-                    //TODO review
                     endpoint.coapEndpoint.destroy();
                 }
             }
@@ -359,7 +354,7 @@ public final class OperationalEndpoint
         MulticastVisitor multicastVisitor= new MulticastVisitor();
         config.accept( multicastVisitor );
         UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
-        //TODO add feature to add interface per multicast-group
+        //TODO add feature to set interface per multicast-group
         NetworkInterface networkInterface= multicastVisitor.getInterfaceAddress();
         for ( InetAddress group : multicastVisitor.getMulticastGroups())
         {
