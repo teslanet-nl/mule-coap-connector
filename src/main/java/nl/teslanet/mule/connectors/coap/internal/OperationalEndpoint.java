@@ -60,7 +60,6 @@ import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.config.CfNetworkConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.config.MulticastVisitor;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
 

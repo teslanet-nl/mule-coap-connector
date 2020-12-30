@@ -486,9 +486,6 @@
                 <parameter name="options">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="relation">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="remoteAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -976,4 +973,3 @@
         </type>
     </types>
 </extension-documentation>
-

@@ -46,7 +46,7 @@ public class ObserverStopErrorProvider implements ErrorTypeProvider
     public Set< ErrorTypeDefinition > getErrorTypes()
     {
         Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
-        errors.add( Errors.MALFORMED_URI );
+        errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_OBSERVER );
         return errors;
     }

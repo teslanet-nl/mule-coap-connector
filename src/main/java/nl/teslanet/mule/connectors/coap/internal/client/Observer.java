@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -134,7 +134,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
         {
             uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
             throw new StartException( e );
         }
@@ -202,7 +202,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
         {
             uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
             // throw nothing, set something for logging
             uri= coapRelation.toString();

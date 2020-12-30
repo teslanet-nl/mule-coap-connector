@@ -42,7 +42,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
@@ -119,12 +119,14 @@ public class DiscoveryTest extends AbstractClientTestCase
     public void testPingNoResolvableHost() throws Exception
     {
         String flowName= "ping_notresolvable";
-        Boolean expectedPayload= Boolean.FALSE;
 
-        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
-        Message response= result.getMessage();
-        assertTrue( "wrong response class", DataType.BOOLEAN.isCompatibleWith( response.getPayload().getDataType() ) );
-        assertEquals( "wrong response payload", expectedPayload, (Boolean) response.getPayload().getValue() );
+        Exception e= assertThrows(
+            Exception.class,
+            () -> flowRunner( flowName ).withPayload( "nothing_important" ).run() );
+        assertTrue(
+            "wrong exception message",
+            e.getMessage().contains( "cannot resolve host" ) );
+        assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
 
     /**
@@ -184,7 +186,7 @@ public class DiscoveryTest extends AbstractClientTestCase
             "wrong exception message",
             e.getMessage().contains( "cannot form valid uri using: { scheme= coap, host= dit_bestaat_niet.org, port= 5683, path= null, query= null }" ) );
         //assert( "COAP:MALFORMED_URI" );
-        assertEquals( "wrong exception cause", e.getCause().getClass(), MalformedUriException.class );
+        assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
 
     @Test

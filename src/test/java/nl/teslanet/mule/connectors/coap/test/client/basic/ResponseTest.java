@@ -24,6 +24,8 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
@@ -117,23 +120,36 @@ public class ResponseTest extends AbstractClientTestCase
     {
         MuleEventSpy spy= new MuleEventSpy( "do_request" );
         spy.clear();
-        
-        flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            "5683" ).withVariable( "path", resourcePath ).run();
-        
-        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
-        Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) (response.getPayload().getValue());
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-        assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
-        assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
-        //TODO test for property clienterror, servererror
+
+        if ( expectedResponseCode.name().startsWith( "_" ) )
+        {
+            Exception e= assertThrows(
+                Exception.class,
+                () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
+                    "port",
+                    "5683" ).withVariable( "path", resourcePath ).run() );
+            assertTrue( "wrong exception message", e.getMessage().contains( "CoAP response cannot be processed" ) );
+            assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
+        }
+        else
+        {
+            flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
+                "port",
+                "5683" ).withVariable( "path", resourcePath ).run();
+
+            assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
+            Message response= (Message) spy.getEvents().get( 0 ).getContent();
+            assertEquals(
+                "wrong attributes class",
+                new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+                response.getAttributes().getClass() );
+            ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+            byte[] payload= (byte[]) ( response.getPayload().getValue() );
+            assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+            assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
+            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            //TODO test for property clienterror, servererror
+        }
     }
 
 }

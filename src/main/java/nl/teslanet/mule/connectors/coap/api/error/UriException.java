@@ -27,29 +27,28 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 
 
 /**
- * MalformedUriException is thrown when a CoAP uri is invalid or cannot be constructed
- * from schema, host, port. parth and query parameters to form a valid uri.
- *
+ * UriException is thrown when a CoAP uri is invalid, 
+ * cannot be constructed or does not resolve.
  */
-public class MalformedUriException extends ModuleException
+public class UriException extends ModuleException
 {
     /**
-     * 
+     * Serial version ID.
      */
     private static final long serialVersionUID= 1L;
 
-    public MalformedUriException( String message )
+    public UriException( String message )
     {
-        super( message, Errors.MALFORMED_URI );
+        super( message, Errors.INVALID_URI );
     }
 
-    public MalformedUriException( Throwable cause )
+    public UriException( Throwable cause )
     {
-        super( Errors.MALFORMED_URI, cause );
+        super( Errors.INVALID_URI, cause );
     }
 
-    public MalformedUriException( String message, Throwable cause )
+    public UriException( String message, Throwable cause )
     {
-        super( message, Errors.MALFORMED_URI, cause );
+        super( message, Errors.INVALID_URI, cause );
     }
 }

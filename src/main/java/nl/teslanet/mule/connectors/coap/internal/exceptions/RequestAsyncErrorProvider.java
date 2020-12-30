@@ -47,7 +47,7 @@ public class RequestAsyncErrorProvider implements ErrorTypeProvider
     {
         Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
         errors.add( Errors.ENDPOINT_ERROR );
-        errors.add( Errors.MALFORMED_URI );
+        errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_HANDLER_NAME );
         errors.add( Errors.INVALID_REQUEST );
         return errors;

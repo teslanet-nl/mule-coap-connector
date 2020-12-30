@@ -24,20 +24,42 @@ package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 
 /**
- * Internal MalformedUriException is thrown when a CoAP uri is invalid or cannot be constructed
- * from schema, host, port. parth and query parameters to form a valid uri.
- *
+ * Internal UriException is thrown when a CoAP uri is invalid, 
+ * cannot be constructed or does not resolve.
  */
-public class InternalMalformedUriException extends Exception
+public class InternalUriException extends Exception
 {
     /**
      * Serial version ID
      */
     private static final long serialVersionUID= 1L;
 
-    public InternalMalformedUriException( String message )
+    /**
+     * Construct exception with given 
+     * @param message
+     */
+    public InternalUriException( String message )
     {
         super( message );
+    }
+
+    /**
+     * Construct exception with given 
+     * @param message
+     * @param e The cause of the exception
+     */
+    public InternalUriException( String message, Throwable e )
+    {
+        super( message, e );
+    }
+
+    /**
+     * Construct exception with given 
+     * @param e The cause of the exception
+     */
+    public InternalUriException( Throwable e )
+    {
+        super( e );
     }
 
 }

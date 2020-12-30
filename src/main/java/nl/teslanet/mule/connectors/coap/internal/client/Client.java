@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
@@ -91,7 +91,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandl
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
@@ -314,13 +314,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param uri The observed uri.
      * @param relation The observe relation.
      * @throws InternalInvalidObserverException when uri is already observed
-     * @throws InternalMalformedUriException when uri is not valid
+     * @throws InternalUriException when uri is not valid
      */
-    void addRelation( String uri, CoapObserveRelation relation ) throws InternalInvalidObserverException, InternalMalformedUriException
+    void addRelation( String uri, CoapObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
     {
         if ( uri == null || uri.isEmpty() )
         {
-            throw new InternalMalformedUriException( "empty uri is invalid: { " + uri + " }" );
+            throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
         if ( dynamicRelations.get( uri ) != null )
         {
@@ -333,13 +333,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Get an observer entry defined by the uri that is observed.
      * @param uri The observed uri.
      * @return The relation of the observer, null when no observer is found.
-     * @throws InternalMalformedUriException when uri is not valid
+     * @throws InternalUriException when uri is not valid
      */
-    CoapObserveRelation getRelation( String uri ) throws InternalMalformedUriException
+    CoapObserveRelation getRelation( String uri ) throws InternalUriException
     {
         if ( uri == null || uri.isEmpty() )
         {
-            throw new InternalMalformedUriException( "empty uri is invalid: { " + uri + " }" );
+            throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
         return dynamicRelations.get( uri );
     }
@@ -492,7 +492,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         RequestOptions options,
         String handlerName ) throws InternalInvalidHandlerNameException,
         InternalRequestException,
-        InternalResponseException, InternalEndpointException
+        InternalResponseException,
+        InternalEndpointException
     {
         Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;
@@ -674,6 +675,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     catch ( InternalResponseException e )
                     {
                         LOGGER.error( "Could not proces an asynchronous response", e );
+                        try
+                        {
+                            thisClient.processMuleFlow( requestUri, requestCode, null, callback );
+                        }
+                        catch ( InternalResponseException e1 )
+                        {
+                            //this should never happen
+                            LOGGER.error( "Could not proces an error on asynchronous response", e );
+                        }
                     }
                 }
             };
@@ -686,16 +696,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param path The path of the resource.
      * @param query String containing query parameters.
      * @return The URI object. 
-     * @throws MalformedUriException cannot form valid uri with given parameters
-     * @throws InternalMalformedUriException 
+     * @throws UriException cannot form valid uri with given parameters
+     * @throws InternalUriException 
      */
-    URI getURI( String host, Integer port, String path, String query ) throws InternalMalformedUriException
+    URI getURI( String host, Integer port, String path, String query ) throws InternalUriException
     {
         String actualHost= ( host != null ? host : this.host );
         Integer actualPort= ( port != null ? port : this.port );
         if ( actualHost == null )
         {
-            throw new InternalMalformedUriException( "cannot form valid uri using: { host= " + actualHost + " }" );
+            throw new InternalUriException( "cannot form valid uri using: { host= " + actualHost + " }" );
         }
         if ( actualPort == null )
         {
@@ -717,7 +727,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         catch ( Exception e )
         {
-            throw new InternalMalformedUriException(
+            throw new InternalUriException(
                 "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }" );
         }
         return uri;
@@ -730,15 +740,23 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return true 
      * @throws ConnectorException
      * @throws IOException
-     * @throws InternalMalformedUriException
+     * @throws InternalUriException
      */
-    Boolean ping( String host, Integer port ) throws ConnectorException, IOException, InternalMalformedUriException
+    Boolean ping( String host, Integer port ) throws ConnectorException, IOException, InternalUriException
     {
         Request request= new Request( null, Type.CON );
         request.setToken( Token.EMPTY );
-        request.setURI( getURI( host, port, null, null ) );
+        try
+        {
+            request.setURI( getURI( host, port, null, null ) );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalUriException( e );
+        }
         coapClient.advanced( request );
         return request.isRejected();
+
     }
 
     /**
@@ -748,13 +766,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param port portnumber of server to ping, when null client configuration is used
      * @param queryString
      * @return
-     * @throws InternalMalformedUriException 
+     * @throws InternalUriException 
      * @throws InternalNoResponseException 
      * @throws InternalUnexpectedResponseException 
      * @throws IOException 
      * @throws ConnectorException 
      */
-    Set< WebLink > discover( boolean confirmable, String host, Integer port, List< ? extends AbstractQueryParam > query ) throws InternalMalformedUriException,
+    Set< WebLink > discover( boolean confirmable, String host, Integer port, List< ? extends AbstractQueryParam > query ) throws InternalUriException,
         InternalNoResponseException,
         InternalUnexpectedResponseException,
         ConnectorException,
@@ -788,12 +806,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param path path of the resource on the server
      * @param queryParameters uri-query parameters 
      * @throws InternalInvalidObserverException
-     * @throws InternalMalformedUriException
+     * @throws InternalUriException
      * @throws InternalInvalidHandlerNameException
      */
     void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters )
         throws InternalInvalidObserverException,
-        InternalMalformedUriException,
+        InternalUriException,
         InternalInvalidHandlerNameException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
@@ -826,7 +844,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                             } ;
                         }
                     }
-                    catch ( InternalMalformedUriException e )
+                    catch ( InternalUriException e )
                     {
                         LOGGER.error( "observer { " + uri + " } failed, malformed uri.", e );
                     }
@@ -881,10 +899,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param port portnumber of the server, when null client configuration is used
      * @param path path of the resource on the server
      * @param queryParameters uri-query parameters 
-     * @throws InternalMalformedUriException
+     * @throws InternalUriException
      * @throws InternalInvalidObserverException
      */
-    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalMalformedUriException,
+    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalUriException,
         InternalInvalidObserverException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();

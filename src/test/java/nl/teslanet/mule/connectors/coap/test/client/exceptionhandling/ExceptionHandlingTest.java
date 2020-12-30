@@ -245,7 +245,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run(); });
         assertTrue(
             "wrong exception message",
-            e.getMessage().contains( "referenced handler { nonexisting_handler } not found" ) );
+            e.getMessage().contains( "response handler { nonexisting_handler } does not exist" ) );
         assertEquals( "wrong exception cause", InvalidHandlerNameException.class, e.getCause().getClass() );
     }
 

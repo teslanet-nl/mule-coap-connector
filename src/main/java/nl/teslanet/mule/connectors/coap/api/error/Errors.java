@@ -44,5 +44,5 @@ public enum Errors implements ErrorTypeDefinition< Errors >
     INVALID_OBSERVER,
     INVALID_REQUEST_CODE,
     INVALID_RESPONSE_CODE,
-    MALFORMED_URI
+    INVALID_URI
 }

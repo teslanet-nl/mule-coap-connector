@@ -43,7 +43,7 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( String responseCodeString )
     {
-        super( "Invalid response code { " + responseCodeString + "}" );
+        super( "Invalid response code { " + responseCodeString + " }" );
     }
     
     /**
@@ -52,7 +52,7 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( ResponseCode responseCode )
     {
-        super( "Invalid response code { " + responseCode.name() + " / " + responseCode.text + "}" );
+        super( "Invalid response code { " + responseCode.name() + " / " + responseCode.text + " }" );
     }
 
     /**
@@ -61,6 +61,6 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( CoAPResponseCode reponseCodeAttribute )
     {
-        super( "Invalid response code { " + reponseCodeAttribute.name() + "}" );
+        super( "Invalid response code { " + reponseCodeAttribute.name() + " }" );
     }
 }

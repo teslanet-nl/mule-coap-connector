@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class AsyncResponseTest extends AbstractClientTestCase
     {
         MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
         spy.clear();
-        
+
         flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
             "5683" ).withVariable( "path", resourcePath ).run();
@@ -129,11 +130,19 @@ public class AsyncResponseTest extends AbstractClientTestCase
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) (response.getPayload().getValue());
+        byte[] payload= (byte[]) ( response.getPayload().getValue() );
+        if ( expectedResponseCode.name().startsWith( "_" ) )
+        {
+            assertNull( "wrong response code", attributes.getResponseCode() );
+            assertNull( "wrong response payload", payload );
+            assertEquals( "wrong success flag", false, attributes.isSuccess() );
+            
+        }
+        else
+        {
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
         assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
-        //TODO test for property clienterror, servererror
+        }
     }
-
 }

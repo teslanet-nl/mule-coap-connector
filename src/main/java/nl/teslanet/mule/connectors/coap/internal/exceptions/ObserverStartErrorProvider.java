@@ -47,7 +47,7 @@ public class ObserverStartErrorProvider implements ErrorTypeProvider
     {
         Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
         errors.add( Errors.INVALID_HANDLER_NAME );
-        errors.add( Errors.MALFORMED_URI );
+        errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_OBSERVER );
         return errors;
     }

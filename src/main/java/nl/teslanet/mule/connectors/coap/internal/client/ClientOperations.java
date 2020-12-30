@@ -56,7 +56,7 @@ import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
-import nl.teslanet.mule.connectors.coap.api.error.MalformedUriException;
+import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
@@ -67,7 +67,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMalformedUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
@@ -139,9 +139,9 @@ public class ClientOperations
         {
             throw new ResponseException( e );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e );
+            throw new UriException( e );
         }
     }
 
@@ -190,9 +190,9 @@ public class ClientOperations
         {
             throw new InvalidHandlerNameException( e );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e );
+            throw new UriException( e );
         }
     }
 
@@ -215,9 +215,9 @@ public class ClientOperations
         {
             throw new EndpointException( e );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e );
+            throw new UriException( e );
         }
     }
 
@@ -241,9 +241,9 @@ public class ClientOperations
         {
             throw new EndpointException( e );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e );
+            throw new UriException( e );
         }
         catch ( InternalUnexpectedResponseException e )
         {
@@ -322,9 +322,9 @@ public class ClientOperations
                 observerBuilder.getPath(),
                 observerBuilder.getQueryParams() );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e.getMessage() );
+            throw new UriException( e.getMessage() );
         }
         catch ( InternalInvalidObserverException e )
         {
@@ -350,9 +350,9 @@ public class ClientOperations
         {
             client.stopObserver( observerBuilder.getHost(), observerBuilder.getPort(), observerBuilder.getPath(), observerBuilder.getQueryParams() );
         }
-        catch ( InternalMalformedUriException e )
+        catch ( InternalUriException e )
         {
-            throw new MalformedUriException( e.getMessage(), e );
+            throw new UriException( e.getMessage(), e );
         }
         catch ( InternalInvalidObserverException e )
         {
