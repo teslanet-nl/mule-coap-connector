@@ -26,7 +26,6 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
