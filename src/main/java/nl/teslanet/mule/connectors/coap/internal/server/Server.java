@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -40,6 +39,8 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
+import org.mule.runtime.core.api.lifecycle.StopException;
+import org.mule.runtime.core.api.lifecycle.StartException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -60,6 +61,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 
 
 /**
@@ -72,7 +74,7 @@ import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 @Operations(ServerOperations.class)
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
-    private final Logger LOGGER= LoggerFactory.getLogger( Server.class );
+    private final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
 
     /**
      * The name of the server.
@@ -192,7 +194,15 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             networkConfig.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
         }
         server= new CoapServer( networkConfig );
-        registry= new ResourceRegistry( server.getRoot() );
+        try
+        {
+            registry= new ResourceRegistry( server.getRoot() );
+        }
+        catch ( InternalResourceRegistryException e1 )
+        {
+            throw new InitialisationException( e1, this );
+
+        }
         //workaround, Mule sdk does not support list of root-configurations
         ArrayList< Endpoint > endpoints= new ArrayList< Endpoint >();
         if ( endpoint != null )
@@ -224,14 +234,14 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") initalised {" + operationalEndpoint + " } scheduler: " + schedulerService );
+                LOGGER.info( this + " connected to " + operationalEndpoint );
             }
             catch ( Exception e )
             {
-                // TODO Auto-generated catch block
                 throw new InitialisationException( e, this );
             }
         }
+        LOGGER.info( this + " initalised." );
     }
 
     @Override
@@ -239,7 +249,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         server.destroy();
         OperationalEndpoint.disposeAll( this );
-        LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") disposed" );
+        LOGGER.info( this + " disposed." );
     }
 
     /* (non-Javadoc)
@@ -248,21 +258,23 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void start() throws MuleException
     {
-        //TODO add testcase when null
-        if ( resources != null ) try
+        try
         {
-            for ( ResourceConfig resourceConfig : resources )
+            //TODO add testcase when null
+            if ( resources != null )
             {
-                registry.add( null, resourceConfig );
+                for ( ResourceConfig resourceConfig : resources )
+                {
+                    registry.add( null, resourceConfig );
+                }
+                server.start();
             }
         }
         catch ( Exception e )
         {
-            //make exception specific
-            throw new DefaultMuleException( "CoAP configuration error", e );
+            throw new StartException( e, this );
         }
-        server.start();
-        LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") started -> " + resources );
+        LOGGER.info( this + " started." );
 
     }
 
@@ -272,11 +284,18 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void stop() throws MuleException
     {
-        //stop server
-        server.stop();
-        //remove all resources from registry
-        registry.remove( "/*" );
-        LOGGER.info( "CoAP server '" + serverName + "' (" + this + ") stopped" );
+        try
+        {
+            //stop server
+            server.stop();
+            //remove all resources from registry
+            registry.remove( "/*" );
+        }
+        catch ( Exception e )
+        {
+            throw new StopException( e, this );
+        }
+        LOGGER.info( this + " stopped" );
     }
 
     /**
@@ -330,4 +349,12 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         this.resources= resources;
     }
 
+    /**
+     * Get String repesentation.
+     */
+    @Override
+    public String toString()
+    {
+        return "CoAP Server { " + getServerName() + " }";
+    }
 }

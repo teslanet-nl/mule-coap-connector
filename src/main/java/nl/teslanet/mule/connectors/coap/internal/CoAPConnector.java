@@ -86,7 +86,7 @@ public class CoAPConnector
     /**
      * The logger.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( CoAPConnector.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( CoAPConnector.class.getCanonicalName() );
 
     /**
      * The Scheduler service.

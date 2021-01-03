@@ -57,11 +57,11 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -78,7 +78,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
 public class Listener extends Source< InputStream, ReceivedRequestAttributes >
 {
-    private final Logger LOGGER= LoggerFactory.getLogger( Listener.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( Listener.class.getCanonicalName() );
 
     @Config
     private Server server;
@@ -141,12 +141,12 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         {
             operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete ), sourceCallback );
         }
-        catch ( InvalidResourceUriException e )
+        catch ( InternalResourceUriException e )
         {
-            new DefaultMuleException( "listener on resource(s) { " + pathPattern + " }  could not start.", e );
+            new DefaultMuleException( this + " start failed.", e );
         }
         server.addListener( operationalListener );
-        LOGGER.info( "listener on resource(s) { " + pathPattern + " } has started." );
+        LOGGER.info( this + " started." );
     }
 
     @OnSuccess
@@ -208,7 +208,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         server.removeListener( operationalListener );
         operationalListener= null;
-        LOGGER.info( "listener on resource(s) { " + pathPattern + " } has stopped" );
+        LOGGER.info( this + " stopped." );
     }
 
     /**
@@ -267,5 +267,14 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     public boolean isPut()
     {
         return put;
+    }
+    
+    /**
+     * Get String repesentation.
+     */
+    @Override
+    public String toString()
+    {
+        return "CoAP Listener { " + server.getServerName() + "::" + pathPattern + " }";
     }
 }

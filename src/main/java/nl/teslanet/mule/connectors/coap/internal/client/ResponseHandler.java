@@ -52,7 +52,7 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
     /**
      * The logger of this class.
      */
-    private final Logger LOGGER= LoggerFactory.getLogger( ResponseHandler.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ResponseHandler.class.getCanonicalName() );
 
     /**
      * The client that owns the handler.

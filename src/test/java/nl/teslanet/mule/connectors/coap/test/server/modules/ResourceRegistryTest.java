@@ -34,7 +34,8 @@ import org.eclipse.californium.core.CoapResource;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;
@@ -46,7 +47,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.ServedResource;
 public class ResourceRegistryTest
 {
     @Test
-    public void testConstructor() throws InvalidResourceUriException
+    public void testConstructor() throws InternalResourceRegistryException, InternalResourceUriException 
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry;
@@ -57,16 +58,16 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testConstructorWithoutRootResource() throws InvalidResourceUriException
+    public void testConstructorWithoutRootResource()
     {
-        NullPointerException e= assertThrows( NullPointerException.class, () -> {
+        InternalResourceRegistryException e= assertThrows( InternalResourceRegistryException.class, () -> {
             new ResourceRegistry( null );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct a ResourceRegistry without root resource" ) );
     }
 
     @Test
-    public void testAddResourceWithoutName() throws InvalidResourceUriException
+    public void testAddResourceWithoutName() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -79,7 +80,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testAddResource() throws InvalidResourceUriException
+    public void testAddResource() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -119,7 +120,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testRemoveResource1() throws InvalidResourceUriException
+    public void testRemoveResource1() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -163,7 +164,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testRemoveResource2() throws InvalidResourceUriException
+    public void testRemoveResource2() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -207,7 +208,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testAddOperationalListener() throws InvalidResourceUriException
+    public void testAddOperationalListener() throws InternalResourceUriException, InternalResourceRegistryException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         CoapResource root= new CoapResource( "" );
@@ -237,7 +238,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBack() throws InvalidResourceUriException
+    public void testCallBack() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -310,7 +311,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithRequestCodeFlags() throws InvalidResourceUriException
+    public void testCallBackWithRequestCodeFlags() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -350,7 +351,7 @@ public class ResourceRegistryTest
     }
     
     @Test
-    public void testCallBackWithWildcard1() throws InvalidResourceUriException
+    public void testCallBackWithWildcard1() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -413,7 +414,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithWildcardAndRequestCodeFlags1() throws InvalidResourceUriException
+    public void testCallBackWithWildcardAndRequestCodeFlags1() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -491,7 +492,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithWildcard2() throws InvalidResourceUriException
+    public void testCallBackWithWildcard2() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -564,7 +565,7 @@ public class ResourceRegistryTest
 }
 
     @Test
-    public void testCallBackWithWildcard3() throws InvalidResourceUriException
+    public void testCallBackWithWildcard3() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -638,7 +639,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testGetResourceNonexistent() throws InvalidResourceUriException
+    public void testGetResourceNonexistent() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -662,19 +663,20 @@ public class ResourceRegistryTest
         resourceConfig.setResourceName( name3 );
         registry.add( uri2, resourceConfig );
 
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             registry.getResource( uri4 ).getURI();
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( uri4 ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "resource does not exist" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "does not exist" ) );
     }
 
     /**
      * Test the getResource method
-     * @throws InvalidResourceUriException when uri is invalid
+     * @throws InternalResourceUriException when uri is invalid
+     * @throws InternalResourceRegistryException 
      */
     @Test
-    public void testGetResource() throws InvalidResourceUriException
+    public void testGetResource() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -715,10 +717,11 @@ public class ResourceRegistryTest
 
     /**
      * Test the findResource method
-     * @throws InvalidResourceUriException when uri is invalid
+     * @throws InternalResourceUriException when uri is invalid
+     * @throws InternalResourceRegistryException 
      */
     @Test
-    public void testFindResources() throws InvalidResourceUriException
+    public void testFindResources() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );

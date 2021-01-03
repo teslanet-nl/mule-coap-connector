@@ -113,7 +113,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * Logger of the class
      */
-    private final Logger LOGGER= LoggerFactory.getLogger( Client.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( Client.class.getCanonicalName() );
 
     @RefName
     private String clientName= null;
@@ -201,6 +201,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         coapClient= new CoapClient();
         coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
+        LOGGER.info( this + " connected to " + operationalEndpoint );
         LOGGER.info( this + " started." );
     }
 
@@ -305,7 +306,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name is not allowed" );
         SourceCallback< InputStream, ReceivedResponseAttributes > handler= handlers.get( handlerName );
-        if ( handler == null ) throw new InternalInvalidHandlerNameException( "response handler { " + handlerName + " } does not exist." );
+        if ( handler == null ) throw new InternalInvalidHandlerNameException( "response handler { " + handlerName + " } not found." );
         return handler;
     }
 

@@ -88,7 +88,7 @@
             </parameters>
         </operation>
         <operation name="observerList">
-            <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
+            <description><![CDATA[This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
             <parameters>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -973,3 +973,4 @@
         </type>
     </types>
 </extension-documentation>
+

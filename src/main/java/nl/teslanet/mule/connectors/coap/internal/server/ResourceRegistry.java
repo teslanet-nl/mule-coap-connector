@@ -33,8 +33,9 @@ import org.eclipse.californium.core.server.resources.Resource;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 
 
 /**
@@ -55,10 +56,11 @@ public class ResourceRegistry
      * Construct a registry. The constructor initializes served resources 
      * and listener repositories. 
      * @param root mandatory root resource
+     * @throws InternalResourceRegistryException 
      */
-    public ResourceRegistry( Resource root )
+    public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
     {
-        if ( root == null ) throw new NullPointerException( "Cannot construct a ResourceRegistry without root resource." );
+        if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
 
         servedResources= new ConcurrentHashMap< String, ServedResource >();
@@ -71,9 +73,9 @@ public class ResourceRegistry
      * When parentUri is null the resource will be added to the root. 
      * @param parentUri the uri of the parent of the new resource. 
      * @param resourceDesciption the definition of the resource to create
-     * @throws InvalidResourceUriException the parent uri does not resolve to an existing resource
+     * @throws InternalResourceUriException the parent uri does not resolve to an existing resource.
      */
-    public void add( String parentUri, ResourceConfig resourceDesciption ) throws InvalidResourceUriException
+    public void add( String parentUri, ResourceConfig resourceDesciption ) throws InternalResourceUriException
     {
         ServedResource parent= getResource( parentUri );
         ServedResource resource= new ServedResource( resourceDesciption );
@@ -92,11 +94,11 @@ public class ResourceRegistry
      * Add a new resource to the registry based on given resource configuration. 
      * The resource will be added as a child of resource with given parentUri. 
      * When parentUri is null the resource will be added to the root. 
-     * @param parentUri the uri of the parent of the new resource. 
-     * @param resourceDesciption the definition of the resource to create
-     * @throws InvalidResourceUriException the parent uri does not resolve to an existing resource
+     * @param parentUri The uri of the parent of the new resource. 
+     * @param resourceDesciption The definition of the resource to create.
+     * @throws InternalResourceUriException when the 
      */
-    public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InvalidResourceUriException
+    public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InternalResourceUriException
     {
         ServedResource parent= getResource( parentUri );
         ServedResource resource= new ServedResource( resourceDesciption );
@@ -109,7 +111,9 @@ public class ResourceRegistry
             parent.add( resource );
         }
         register( resource );
-    }    /**
+    }
+
+    /**
      * Register resource and its children.
      * @param resource to be registered
      */
@@ -202,8 +206,8 @@ public class ResourceRegistry
             int matchLevel= matchUri( listener.getUriPattern(), resource.getURI() );
             if ( matchLevel > maxGetMatchlevel && listener.requestCodeFlags.isGet() )
             {
-            	maxGetMatchlevel= matchLevel;
-            	bestGetListener= listener;
+                maxGetMatchlevel= matchLevel;
+                bestGetListener= listener;
             }
             if ( matchLevel > maxPostMatchlevel && listener.requestCodeFlags.isPost() )
             {
@@ -268,9 +272,9 @@ public class ResourceRegistry
      * A null uri, an empty string or "/" is interpreted as the root uri. 
      * @param uri The uri of the resource to get.
      * @return The served resource that has given uri, or null when the root uri is given.
-     * @throws InvalidResourceUriException The resource does not exist.
+     * @throws InternalResourceUriException The resource does not exist.
      */
-    public ServedResource getResource( String uri ) throws InvalidResourceUriException
+    public ServedResource getResource( String uri ) throws InternalResourceUriException
     {
         if ( uri == null || uri.length() == 0 || uri.equals( "/" ) )
         {
@@ -287,7 +291,8 @@ public class ResourceRegistry
                 }
             }
         }
-        throw new InvalidResourceUriException( uri, ", resource does not exist." );
+        throw new InternalResourceUriException( "resource { " + uri + " } does not exist." );
+        
     }
 
     /**

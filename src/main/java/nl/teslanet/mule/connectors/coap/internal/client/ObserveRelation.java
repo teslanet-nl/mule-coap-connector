@@ -44,7 +44,7 @@ public class ObserveRelation implements CoapHandler
     /**
      * The logger.
      */
-    private final Logger LOGGER= LoggerFactory.getLogger( ObserveRelation.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ObserveRelation.class.getCanonicalName() );
 
     /**
      * 

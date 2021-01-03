@@ -20,36 +20,45 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.error;
-
-
-import org.mule.runtime.extension.api.exception.ModuleException;
+package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 
 /**
- * The ResourceUriException is thrown when a resource URI is invalid.
- * 
+ * InternalResourceRegistryException is thrown when an error on a servers resource registry occurred.
  */
-public class InvalidResourceUriException extends ModuleException
+public class InternalResourceRegistryException extends Exception
 {
-
     /**
-     * 
+     * Serial version ID
      */
     private static final long serialVersionUID= 1L;
 
-    public InvalidResourceUriException( String Uri )
+    /**
+     * Construct exception with given 
+     * @param message
+     */
+    public InternalResourceRegistryException( String message )
     {
-        super( "CoAP resource uri { " + Uri + " } is invalid.", Errors.INVALID_RESOURCE_URI );
+        super( message );
     }
 
-    public InvalidResourceUriException( String message, String uri )
+    /**
+     * Construct exception with given 
+     * @param message
+     * @param e The cause of the exception
+     */
+    public InternalResourceRegistryException( String message, Throwable e )
     {
-        super( message + ", invalid resource uri { " + uri + " }.", Errors.INVALID_RESOURCE_URI );
+        super( message, e );
     }
 
-    public InvalidResourceUriException( String message, String uri, Throwable cause )
+    /**
+     * Construct exception with given 
+     * @param e The cause of the exception
+     */
+    public InternalResourceRegistryException( Throwable e )
     {
-        super( message + ", invalid resource uri { " + uri + " }." + message, Errors.INVALID_RESOURCE_URI, cause );
+        super( e );
     }
+
 }

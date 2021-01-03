@@ -88,16 +88,6 @@ public class ClientOperations
      * The Request Processor issues a request on a CoAP server. The processor blocks
      * until a response is received or a timeout occurs.
      * 
-     * @param client         The client to use to issue the request.
-     * @param requestBuilder The request attributes
-     * @param requestPayload The payload of the request
-     * @return The result containing the response received (if any) and the context
-     *         of the request.
-     */
-    /**
-     * The Request Processor issues a request on a CoAP server. The processor blocks
-     * until a response is received or a timeout occurs.
-     * 
      * @param client         The client used for issuing the request.
      * @param requestBuilder Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
@@ -128,19 +118,19 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( e );
+            throw new EndpointException( client + ": request failed.", e );
         }
         catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new RequestException( e );
+            throw new RequestException( client + ": request failed.", e );
         }
         catch ( InternalResponseException e )
         {
-            throw new ResponseException( e );
+            throw new ResponseException( client + ": request failed.", e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e );
+            throw new UriException( client + ": request failed.", e );
         }
     }
 
@@ -179,19 +169,19 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( e );
+            throw new EndpointException( client + ": async request failed.", e );
         }
         catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
-            throw new RequestException( e );
+            throw new RequestException( client + ": async request failed.", e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( e );
+            throw new InvalidHandlerNameException( client + ": async request failed.", e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e );
+            throw new UriException( client + ": async request failed.", e );
         }
     }
 
@@ -212,11 +202,11 @@ public class ClientOperations
         }
         catch ( ConnectorException | IOException e )
         {
-            throw new EndpointException( e );
+            throw new EndpointException( client + ": ping failed.", e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e );
+            throw new UriException( client + ": ping failed.", e );
         }
     }
 
@@ -238,19 +228,19 @@ public class ClientOperations
         }
         catch ( IOException | ConnectorException e )
         {
-            throw new EndpointException( e );
+            throw new EndpointException( client + ": discover failed.", e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e );
+            throw new UriException( client + ": discover failed.", e );
         }
         catch ( InternalUnexpectedResponseException e )
         {
-            throw new ResponseException( e );
+            throw new ResponseException( client + ": discover failed.", e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( e.getMessage() );
+            throw new NoResponseException( client + ": discover failed.", e );
         }
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
@@ -323,15 +313,15 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e.getMessage() );
+            throw new UriException( client + ": observer start failed.", e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( e.getMessage() );
+            throw new InvalidObserverException( client + ": observer start failed.", e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( e.getMessage() );
+            throw new InvalidHandlerNameException( client + ": observer start failed.", e );
         }
     }
 
@@ -351,11 +341,11 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( e.getMessage(), e );
+            throw new UriException( client + ": observer stop failed.", e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( e.getMessage() );
+            throw new InvalidObserverException( client + ": observer stop failed.", e );
         }
     }
 

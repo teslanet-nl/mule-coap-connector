@@ -1050,6 +1050,7 @@ public class CoAPOptions
         return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
     }
 
+    //TODO move to test package?
     /**
      * Fill property map with properties contained in given optionSet.
      * Processing options stops when an exception occurs.
@@ -1063,19 +1064,6 @@ public class CoAPOptions
         fillPropertyMapLoggingOrThrowingErrors( options, props, null, errorMsg );
     }
 
-    /**
-     * Fill property map with properties contained in given optionSet.
-     * Processing options continues when an exception occurs, after logging an error message.
-     * @param options source of the properties
-     * @param props map to put properties in
-     * @param logger uses for logging errors
-     * @param errorMsg message to log on errors
-     * @throws InternalInvalidOptionValueException 
-     */
-    public static void fillPropertyMap( OptionSet options, Map< String, Object > props, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
-    {
-        fillPropertyMapLoggingOrThrowingErrors( options, props, logger, errorMsg );
-    }
 
     //TODO move to test package?
     private static void fillPropertyMapLoggingOrThrowingErrors( OptionSet options, Map< String, Object > props, final Logger logger, String errorMsg )

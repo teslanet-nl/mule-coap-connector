@@ -103,7 +103,7 @@ import org.slf4j.Logger;
 @SuppressWarnings("deprecation")
 public abstract class AbstractMuleStartTestCase
 {
-    private static final Logger LOGGER= getLogger( AbstractMuleStartTestCase.class );
+    private static final Logger LOGGER= getLogger( AbstractMuleStartTestCase.class.getCanonicalName() );
 
     /**
      * As part of providing support for handling different artifacts without unzipping them, the factory for URL must be registered

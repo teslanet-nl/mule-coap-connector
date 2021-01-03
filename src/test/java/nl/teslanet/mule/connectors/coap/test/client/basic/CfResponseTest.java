@@ -50,10 +50,11 @@ import nl.teslanet.shaded.org.eclipse.californium.core.network.interceptors.Mess
  */
 public class CfResponseTest
 {
-    /**
+    private static final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class.getCanonicalName() );
+   /**
      * Server to get test responses.
      */
-    static BasicTestServer server;
+    private static BasicTestServer server;
 
     /**
      * Do setup for test. Create server and start.
@@ -151,7 +152,6 @@ public class CfResponseTest
     @Test
     public void testAsyncResponse() throws Exception
     {
-        final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class );
 
         AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         AtomicBoolean onErrorCalled= new AtomicBoolean( false );
@@ -197,8 +197,6 @@ public class CfResponseTest
     @Test
     public void testAsyncErrorResponse() throws Exception
     {
-        final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class );
-
         AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         AtomicBoolean onErrorCalled= new AtomicBoolean( false );
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
@@ -243,8 +241,6 @@ public class CfResponseTest
     @Test
     public void testAsyncNoResponse() throws Exception
     {
-        final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class );
-
         final AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         final AtomicBoolean onErrorCalled= new AtomicBoolean( false );
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();

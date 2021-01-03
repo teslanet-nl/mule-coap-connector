@@ -136,7 +136,7 @@ public final class OperationalEndpoint
         }
         else
         {
-            throw new EndpointConstructionException( "endpoint has unknown type: " + config.getClass() );
+            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }");
         }
         if ( config.logCoapMessages )
         {
@@ -165,7 +165,7 @@ public final class OperationalEndpoint
                 //multiple server usage of the endpoint is not allowed
                 if ( server != operationalEndpoint.server )
                 {
-                    throw new EndpointConstructionException( "Using endpoint '" + config.configName + "' in multiple servers not allowed" );
+                    throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: usage by multiple servers not allowed." );
                 }
             }
             operationalEndpoint.server= server;
@@ -190,7 +190,7 @@ public final class OperationalEndpoint
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
         {
-            throw new EndpointConstructionException( "Cannot construct endpoint { " + config.configName + " }: no client configured." );
+            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: no client configured." );
         }
         if ( registry.containsKey( config.configName ) )
         {
@@ -374,6 +374,7 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( DTLSEndpoint config ) throws EndpointConstructionException
     {
+        this.configName= config.configName;
         MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
         SslContextUtil.configure( streamFactory.getScheme(), streamFactory );
         // Pre-shared secrets
@@ -413,7 +414,7 @@ public final class OperationalEndpoint
         }
         catch ( Exception e )
         {
-            throw new EndpointConstructionException( "cannot construct secure endpoint", e );
+            throw new EndpointConstructionException( this + ": construction of DTLSEndpoint failed", e );
         }
     }
 
@@ -464,7 +465,7 @@ public final class OperationalEndpoint
     public String toString()
     {
 
-        return configName + " ( " + coapEndpoint + " )";
+        return "CoAP Endpoint { " + configName + " }";
     }
 
 }

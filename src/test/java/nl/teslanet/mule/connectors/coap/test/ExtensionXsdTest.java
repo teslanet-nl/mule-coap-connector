@@ -51,7 +51,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 
 public class ExtensionXsdTest
 {
-    private final Logger LOGGER= LoggerFactory.getLogger( ExtensionXsdTest.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionXsdTest.class.getCanonicalName());
 
     private static final String SCHEMA_PATH= "schemata/mule-coap.xsd";
 

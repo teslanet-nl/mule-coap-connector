@@ -22,107 +22,112 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.server;
 
+
 import java.io.InputStream;
 
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+
 
 /**
  * The Operationallistener holds the objects that are used in the listening
  * proces.
  */
-public class OperationalListener {
+public class OperationalListener
+{
 
-	/**
-	 * The uri pattern describing the resources of which requests will be processed.
-	 */
-	String uriPattern;
+    /**
+     * The uri pattern describing the resources of which requests will be processed.
+     */
+    String uriPattern;
 
-	/**
-	 * The set of request codes the listener is listening out for.
-	 */
-	RequestCodeFlags requestCodeFlags= null;
+    /**
+     * The set of request codes the listener is listening out for.
+     */
+    RequestCodeFlags requestCodeFlags= null;
 
-	/**
-	 * The callback of the Mule flow that will process requests.
-	 */
-	SourceCallback<InputStream, ReceivedRequestAttributes> callback = null;
+    /**
+     * The callback of the Mule flow that will process requests.
+     */
+    SourceCallback< InputStream, ReceivedRequestAttributes > callback= null;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param uriPattern
-	 * @param callback
-	 * @throws InvalidResourceUriException
-	 */
-	public OperationalListener(String uriPattern, RequestCodeFlags flags, SourceCallback<InputStream, ReceivedRequestAttributes> callback)
-			throws InvalidResourceUriException {
-		super();
-        setUriPattern(uriPattern);
-        setRequestCodeFlags(flags);
-		setCallback(callback);
-	}
-
-	/**
-	 * Set the requestcode flags of the listener.
-	 * @param flags the flags to set
-	 */
-	private void setRequestCodeFlags( RequestCodeFlags flags )
+    /**
+     * Constructor
+     * 
+     * @param uriPattern
+     * @param callback
+     * @throws InternalResourceUriException 
+     */
+    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, ReceivedRequestAttributes > callback ) throws InternalResourceUriException
     {
-	    requestCodeFlags= flags;     
+        super();
+        setUriPattern( uriPattern );
+        setRequestCodeFlags( flags );
+        setCallback( callback );
     }
 
     /**
-	 * Get the uri pattern of the listener
-	 * 
-	 * @return the uri pattern
-	 */
-	public String getUriPattern() {
-		return uriPattern;
-	}
+     * Set the requestcode flags of the listener.
+     * @param flags the flags to set
+     */
+    private void setRequestCodeFlags( RequestCodeFlags flags )
+    {
+        requestCodeFlags= flags;
+    }
 
-	/**
-	 * Set the uri pattern of the resources the listener should process requests
-	 * for.
-	 * 
-	 * @param uriPattern the uri pattern to set
-	 * @throws InvalidResourceUriException when the uri pattern is not valid
-	 */
-	// TODO: make URIpattern class
-	public void setUriPattern(String uriPattern) throws InvalidResourceUriException {
-		// TODO assure no bad chars
-		if (uriPattern == null)
-			throw new InvalidResourceUriException("null", ", null is not allowed.");
-		this.uriPattern = uriPattern.trim();
-		if (!this.uriPattern.startsWith(Defs.COAP_URI_PATHSEP)) {
-			this.uriPattern = Defs.COAP_URI_PATHSEP + this.uriPattern;
-		}
-		;
-		int wildcardIndex = this.uriPattern.indexOf(Defs.COAP_URI_WILDCARD);
-		if (wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1)
-			throw new InvalidResourceUriException(uriPattern, ", wildcard needs to be last character.");
-		if (this.uriPattern.length() < 2)
-			throw new InvalidResourceUriException(uriPattern, ", uri cannot be empty.");
+    /**
+     * Get the uri pattern of the listener
+     * 
+     * @return the uri pattern
+     */
+    public String getUriPattern()
+    {
+        return uriPattern;
+    }
 
-	}
+    /**
+     * Set the uri pattern of the resources the listener should process requests
+     * for.
+     * 
+     * @param uriPattern the uri pattern to set
+     * @throws InternalResourceUriException when the uri pattern is not valid
+     */
+    // TODO: make URIpattern class
+    public void setUriPattern( String uriPattern ) throws InternalResourceUriException
+    {
+        // TODO assure no bad chars
+        if ( uriPattern == null ) throw new InternalResourceUriException( "null value is not allowed." );
+        this.uriPattern= uriPattern.trim();
+        if ( !this.uriPattern.startsWith( Defs.COAP_URI_PATHSEP ) )
+        {
+            this.uriPattern= Defs.COAP_URI_PATHSEP + this.uriPattern;
+        } ;
+        int wildcardIndex= this.uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
+        if ( wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1 )
+            throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + "}, wildcard needs to be last character." );
+        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + "}, uri cannot be empty." );
 
-	/**
-	 * @return the callback
-	 */
-	public SourceCallback<InputStream, ReceivedRequestAttributes> getCallback() {
-		return callback;
-	}
+    }
 
-	/**
-	 * @param callback the callback to set
-	 */
-	public void setCallback(SourceCallback<InputStream, ReceivedRequestAttributes> callback) {
-		// TODO assure not null
-		this.callback = callback;
-	}
+    /**
+     * @return the callback
+     */
+    public SourceCallback< InputStream, ReceivedRequestAttributes > getCallback()
+    {
+        return callback;
+    }
+
+    /**
+     * @param callback the callback to set
+     */
+    public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > callback )
+    {
+        // TODO assure not null
+        this.callback= callback;
+    }
 
     /**
      * @return the requestcode flags that indicate the kind of request the listener is receiving.

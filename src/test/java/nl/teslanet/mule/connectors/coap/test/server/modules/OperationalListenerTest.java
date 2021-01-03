@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 
@@ -46,7 +46,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 public class OperationalListenerTest
 {
     @Test
-    public void testConstructor() throws InvalidResourceUriException
+    public void testConstructor() throws InternalResourceUriException
     {
         String uri= "/some_resource";
         RequestCodeFlags flags= new RequestCodeFlags();
@@ -123,13 +123,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriNull() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriNull() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= null;
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, flags, callback );
         } );
@@ -138,13 +138,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriEmpty1() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriEmpty1() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
@@ -153,13 +153,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriEmpty2() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriEmpty2() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
@@ -168,13 +168,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard1() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard1() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "**";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -182,13 +182,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard2() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard2() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/**";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -196,13 +196,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard3() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard3() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -210,13 +210,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard4() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard4() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/child/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -224,13 +224,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard5() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard5() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/child";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-       
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -238,13 +238,13 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testConstructorWithInvalidUriMultipleWildcard6() throws InvalidResourceUriException
+    public void testConstructorWithInvalidUriMultipleWildcard6() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource*/child/*";
         RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
-        
-        InvalidResourceUriException e= assertThrows( InvalidResourceUriException.class, () -> {
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
@@ -252,7 +252,7 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testSetUri() throws InvalidResourceUriException
+    public void testSetUri() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
@@ -321,7 +321,7 @@ public class OperationalListenerTest
     }
 
     @Test
-    public void testSetCallback() throws InvalidResourceUriException
+    public void testSetCallback() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";

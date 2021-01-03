@@ -25,7 +25,6 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
@@ -35,10 +34,10 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
@@ -50,10 +49,6 @@ import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
  */
 public class ServedResource extends CoapResource
 {
-    //TODO review logging
-    /** The logger. */
-    protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
-
     /**
      * The callback of the messagesource for Get requests.
      * It is used to hand messages over to the Mule flow that should process the request.
@@ -480,5 +475,4 @@ public class ServedResource extends CoapResource
     {
         return deleteCallback;
     }
-
 }
