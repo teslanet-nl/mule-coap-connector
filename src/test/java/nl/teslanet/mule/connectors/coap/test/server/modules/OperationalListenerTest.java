@@ -133,8 +133,7 @@ public class OperationalListenerTest
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, flags, callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "null is not allowed" ) );
+        assertEquals( "exception has wrong message", "null value is not allowed.", e.getMessage());
     }
 
     @Test
@@ -148,8 +147,7 @@ public class OperationalListenerTest
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "uri cannot be empty" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern {  }, uri cannot be empty." , e.getMessage());
     }
 
     @Test
@@ -163,8 +161,7 @@ public class OperationalListenerTest
             @SuppressWarnings("unused")
             OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "uri cannot be empty" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { / }, uri cannot be empty." , e.getMessage());
     }
 
     @Test
@@ -177,8 +174,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { ** }, wildcard needs to be last character." , e.getMessage());
     }
 
     @Test
@@ -191,8 +187,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/** }, wildcard needs to be last character." , e.getMessage());
     }
 
     @Test
@@ -205,8 +200,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/* }, wildcard needs to be last character.", e.getMessage());
     }
 
     @Test
@@ -219,8 +213,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/child/* }, wildcard needs to be last character.", e.getMessage());
     }
 
     @Test
@@ -233,8 +226,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/child }, wildcard needs to be last character.", e.getMessage());
     }
 
     @Test
@@ -247,8 +239,7 @@ public class OperationalListenerTest
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Invalid CoAP resource uri" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "wildcard needs to be last character" ) );
+        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource*/child/* }, wildcard needs to be last character.", e.getMessage());
     }
 
     @Test

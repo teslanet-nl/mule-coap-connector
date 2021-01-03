@@ -107,8 +107,8 @@ public class OperationalListener
         } ;
         int wildcardIndex= this.uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
         if ( wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1 )
-            throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + "}, wildcard needs to be last character." );
-        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + "}, uri cannot be empty." );
+            throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character." );
+        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, uri cannot be empty." );
 
     }
 

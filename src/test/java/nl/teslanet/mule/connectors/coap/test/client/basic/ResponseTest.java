@@ -128,7 +128,7 @@ public class ResponseTest extends AbstractClientTestCase
                 () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
                     "port",
                     "5683" ).withVariable( "path", resourcePath ).run() );
-            assertTrue( "wrong exception message", e.getMessage().contains( "CoAP response cannot be processed" ) );
+            assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
             assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
         }
         else

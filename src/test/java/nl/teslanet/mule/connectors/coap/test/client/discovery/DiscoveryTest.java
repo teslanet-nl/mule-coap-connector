@@ -125,7 +125,7 @@ public class DiscoveryTest extends AbstractClientTestCase
             () -> flowRunner( flowName ).withPayload( "nothing_important" ).run() );
         assertTrue(
             "wrong exception message",
-            e.getMessage().contains( "cannot resolve host" ) );
+            e.getMessage().contains( "ping failed" ) );
         assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
 
@@ -184,7 +184,7 @@ public class DiscoveryTest extends AbstractClientTestCase
             () -> flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run() );
         assertTrue(
             "wrong exception message",
-            e.getMessage().contains( "cannot form valid uri using: { scheme= coap, host= dit_bestaat_niet.org, port= 5683, path= null, query= null }" ) );
+            e.getMessage().contains( "ping failed" ) );
         //assert( "COAP:MALFORMED_URI" );
         assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
