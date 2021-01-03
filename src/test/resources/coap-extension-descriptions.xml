@@ -316,10 +316,10 @@
     </operations>
     <sources>
         <source name="ResponseHandler">
-            <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The CoAP messages received are delivered to the flow.]]></description>
+            <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.]]></description>
             <parameters>
                 <parameter name="handlerName">
-                    <description><![CDATA[]]></description>
+                    <description><![CDATA[The name of the handler by which it is referenced by observers and async requestst.]]></description>
                 </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>

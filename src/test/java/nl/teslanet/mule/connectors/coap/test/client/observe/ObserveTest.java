@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -261,10 +261,12 @@ public class ObserveTest extends AbstractClientTestCase
 
         result= flowRunner( "start_maxage1" ).withPayload( "nothing_important" ).run();
         Thread.sleep( 5500 );
-        // GET observe=0 response + notifications= 1+5
-        assertEquals( "wrong number of notifications received", 1 + 5, spy.getEvents().size() );
-
         result= flowRunner( "stop_maxage1" ).withPayload( "nothing_important" ).run();
+
+        Thread.sleep( PAUZE );
+        // GET observe=0 response + notifications= 1+5+1
+        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
+
         Thread.sleep( 5500 );
         // GET observe=0 response + notifications= 1+5
         //stop result is also handled -> 1+5+1 times
@@ -294,10 +296,12 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "start_maxage1_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
         Thread.sleep( 5000 + 500 + 100 );
-        // GET observe=0 response + notification= 1 + 5
-        assertEquals( "wrong number of notifications received", 1 + 5, spy.getEvents().size() );
-
         result= flowRunner( "stop_maxage1_nonotify" ).withPayload( "nothing_important" ).run();
+
+        Thread.sleep( PAUZE );
+        // GET observe=0 response + notification= 1 + 5
+        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
+
         //wait some more
         Thread.sleep( 5000 + 500 + 100 );
         //stop result is also handled -> 1+5+1 times
@@ -326,10 +330,11 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "start_maxage4_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
         Thread.sleep( 5 * ( 4 * 1000 + 100 ) + 500 );
-        // GET observe=0 response + notification= 1 + 5
-        assertEquals( "wrong number of notifications received", 1 + 5, spy.getEvents().size() );
-
         result= flowRunner( "stop_maxage4_nonotify" ).withPayload( "nothing_important" ).run();
+        // GET observe=0 response + notification= 1 + 5
+        Thread.sleep( 500 );
+        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
+
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
         Thread.sleep( 5 * ( 4 * 1000 + 100 ) + 500 );
         // GET observe=0 response + notification= 1 + 5
@@ -352,7 +357,7 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 0, ( (List< String >) response.getPayload().getValue() ).size() );
+        assertEquals( "wrong number of observers", 0, ( (Set< String >) response.getPayload().getValue() ).size() );
 
         //first observe
         result= flowRunner( "start_temporary1" ).withPayload( "nothing_important" ).run();
@@ -361,8 +366,8 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 1, ( (List< String >) response.getPayload().getValue() ).size() );
-        assertEquals( "wrong observer uri", "coap://127.0.0.1:5683/observe/temporary1", ( (List< String >) response.getPayload().getValue() ).get( 0 ) );
+        assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
         Thread.sleep( PAUZE );
 
         //second observe
@@ -372,9 +377,9 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 2, ( (List< String >) response.getPayload().getValue() ).size() );
-        assertEquals( "wrong observer uri", "coap://127.0.0.1:5683/observe/temporary1", ( (List< String >) response.getPayload().getValue() ).get( 0 ) );
-        assertEquals( "wrong observer uri", "coap://127.0.0.1:5683/observe/temporary2", ( (List< String >) response.getPayload().getValue() ).get( 1 ) );
+        assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary2") );
         Thread.sleep( PAUZE );
 
         //remove second observe
@@ -384,8 +389,8 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 1, ( (List< String >) response.getPayload().getValue() ).size() );
-        assertEquals( "wrong observer uri", "coap://127.0.0.1:5683/observe/temporary1", ( (List< String >) response.getPayload().getValue() ).get( 0 ) );
+        assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
         Thread.sleep( PAUZE );
 
         //remove first observe
@@ -395,7 +400,7 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observer", 0, ( (List< String >) response.getPayload().getValue() ).size() );
+        assertEquals( "wrong number of observer", 0, ( (Set< String >) response.getPayload().getValue() ).size() );
 
     }
 }

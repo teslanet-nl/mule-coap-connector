@@ -26,10 +26,6 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.californium.core.CoapHandler;
-import org.eclipse.californium.core.CoapObserveRelation;
-import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.CoAP.Code;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -49,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
 
@@ -64,8 +59,14 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
 public class Observer extends Source< InputStream, ReceivedResponseAttributes >
 {
+    /**
+     * The logger.
+     */
     private final Logger LOGGER= LoggerFactory.getLogger( Observer.class );
 
+    /**
+     * The client owning the observer.
+     */
     @Config
     private Client client;
 
@@ -117,11 +118,12 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     @Summary("The query parameters to send with the observe request.")
     private List< QueryParamConfig > queryParamConfigs= null;
 
-    //TODO add options confi
+    //TODO add options config?
+    //TODO one relation namespace for dynamic and static observe, does coap allow for multiple uri observe from the same endooint?
     /**
-     * The CoAP relation that has been established
+     * The relation that has been established
      */
-    private CoapObserveRelation coapRelation= null;;
+    private ObserveRelation relation= null;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
@@ -129,90 +131,63 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     @Override
     public void onStart( SourceCallback< InputStream, ReceivedResponseAttributes > sourceCallback ) throws MuleException
     {
-        String uri;
+        final String uri;
         try
         {
-            uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
+            uri= getUri();
         }
         catch ( InternalUriException e )
         {
-            throw new StartException( e );
+            throw new StartException( this + " failed to start, invalid uri. ", e );
         }
-
-        //TODO add client/observer/handler name for logging
-        CoapHandler handler= new CoapHandler()
-            {
-                @Override
-                public void onError()
-                {
-                    LOGGER.warn( "permanent observer failed on resource {} ", uri );
-                    if ( coapRelation != null )
-                    {
-                        //TODO wait time?
-                        if ( coapRelation.isCanceled() )
-                        {
-                            coapRelation= client.doObserveRequest( confirmable, uri, this );
-                            LOGGER.info( "permanent observer recreated on {}", uri );
-                        }
-                        else
-                        {
-                            coapRelation.reregister();
-                            LOGGER.info( "permanent observer reregistrered on {}", uri );
-                        } ;
-                    }
-                    try
-                    {
-                        client.processMuleFlow( uri, Code.GET, null, sourceCallback );
-                    }
-                    catch ( InternalResponseException e )
-                    {
-                        LOGGER.error( "Could not proces an error on notification", e );
-                    }
-                }
-
-                @Override
-                public void onLoad( CoapResponse response )
-                {
-                    if ( !coapRelation.isCanceled() )
-                    {
-                        try
-                        {
-                            client.processMuleFlow( uri, Code.GET, response, sourceCallback );
-                        }
-                        catch ( InternalResponseException e )
-                        {
-                            LOGGER.error( "Could not proces a notification", e );
-                        }
-                    }
-                }
-
-            };
-        coapRelation= client.doObserveRequest( confirmable, uri, handler );
-        LOGGER.info( "permanent observer started on resource {}", uri );
+        //TODO replace static with configurable name?
+        relation= new ObserveRelation( this.toString(), client.getCoapClient(), confirmable, uri, ( requestUri, requestCode, response ) -> {
+            client.processMuleFlow( requestUri, requestCode, response, sourceCallback );
+        });
+        relation.start();
     }
 
+
+    /**
+     * @return The URI as String.
+     * @throws InternalUriException
+     */
+    private String getUri() throws InternalUriException
+    {
+        return client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
+    }
+    
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStop()
      */
     @Override
     public void onStop()
     {
+        if ( relation != null )
+        {
+            //TODO make type of canceling configurable
+            relation.stop();
+            relation= null;
+        }
+        LOGGER.info( this + " stopped." );
+    }
+    
+    /**
+     * Get String representation.
+     */
+    @Override
+    public String toString()
+    {
         String uri;
         try
         {
-            uri= client.getURI( host, port, path, client.toQueryString( queryParamConfigs ) ).toString();
+            uri= getUri();
         }
         catch ( InternalUriException e )
         {
             // throw nothing, set something for logging
-            uri= coapRelation.toString();
+            uri= this.toString();
         }
-        if ( coapRelation != null )
-        {
-            //TODO make type of canceling configurable
-            coapRelation.proactiveCancel();
-            coapRelation= null;
-        }
-        LOGGER.info( "permanent observer started on resource { " + uri + " }" );
+        return "CoAP Observer { " + client.getClientName() + "::" + uri + "(static) }"; 
     }
 }

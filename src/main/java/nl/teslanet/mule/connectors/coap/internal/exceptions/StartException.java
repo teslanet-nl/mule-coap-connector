@@ -38,9 +38,9 @@ public class StartException extends DefaultMuleException
      */
     private static final long serialVersionUID= 1L;
 
-    public StartException( Throwable cause )
+    public StartException( String message, Throwable cause )
     {
-        super( cause );
+        super( message, cause );
     }
 
 }

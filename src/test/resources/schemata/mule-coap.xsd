@@ -668,7 +668,7 @@
   </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResponseHandlerType" substitutionGroup="mule:abstract-message-source" name="response-handler">
     <xs:annotation>
-      <xs:documentation>The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The CoAP messages received are delivered to the flow.</xs:documentation>
+      <xs:documentation>The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="ResponseHandlerType">
@@ -683,7 +683,11 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="handlerName"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="handlerName">
+          <xs:annotation>
+            <xs:documentation>The name of the handler by which it is referenced by observers and async requestst.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
           <xs:annotation>
             <xs:documentation>The mime type of the payload that this operation outputs.</xs:documentation>

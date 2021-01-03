@@ -26,9 +26,8 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.californium.core.WebLink;
@@ -56,10 +55,10 @@ import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
-import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
+import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
@@ -67,11 +66,11 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
@@ -81,7 +80,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider
 
 //TODO add error tests
 /**
- * This class is a container for CoAP server operations.
+ * This class is a container for CoAP client operations.
  */
 public class ClientOperations
 {
@@ -361,15 +360,15 @@ public class ClientOperations
     }
 
     /**
-     * This processor returns a list of observers. The list contains the uri's of
+     * This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of
      * the active observers of the CoAP client.
      * 
      * @param client The client instance of which the observers are listed.
      * @return the list of observed uri's
      */
-    public List< String > observerList( @Config Client client )
+    public ConcurrentSkipListSet< String > observerList( @Config Client client )
     {
-        CopyOnWriteArrayList< String > list= new CopyOnWriteArrayList< String >();
+        ConcurrentSkipListSet< String > list= new ConcurrentSkipListSet< String >();
         list.addAll( client.getRelations().keySet() );
         return list;
     }

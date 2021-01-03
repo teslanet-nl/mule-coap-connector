@@ -31,13 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
-import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.CoAP;
@@ -91,11 +90,11 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandl
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -184,20 +183,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private CoapClient coapClient= null;
 
-    //    /**
-    //     * observe relations that are permanent and initialized on startup
-    //     */
-    //    private ConcurrentSkipListMap< String, CoapObserveRelation > staticRelations= new ConcurrentSkipListMap< String, CoapObserveRelation >();
-
     /**
-     * observe relations that are dynamically created and removed in runtime
+     * observe relations contains the active observers.
      */
-    private ConcurrentSkipListMap< String, CoapObserveRelation > dynamicRelations= new ConcurrentSkipListMap< String, CoapObserveRelation >();
+    private ConcurrentHashMap< String, ObserveRelation > observeRelations= new ConcurrentHashMap< String, ObserveRelation >();
 
     /**
      * The list of response handlers
      */
-    private ConcurrentSkipListMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentSkipListMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > >();;
+    private ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > >();;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.api.lifecycle.Startable#start()
@@ -207,7 +201,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         coapClient= new CoapClient();
         coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
-        LOGGER.info( "CoAP client '" + clientName + "' started { " + operationalEndpoint.getCoapEndpoint().getUri() + " }" );
+        LOGGER.info( this + " started." );
     }
 
     /* (non-Javadoc)
@@ -221,15 +215,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         //            relation.proactiveCancel();
         //        }
         //        staticRelations.clear();
-        for ( CoapObserveRelation relation : dynamicRelations.values() )
+        for ( ObserveRelation relation : observeRelations.values() )
         {
-            relation.proactiveCancel();
+            relation.stop();
         }
-        dynamicRelations.clear();
+        observeRelations.clear();
         handlers.clear();
         coapClient.shutdown();
         coapClient= null;
-        LOGGER.info( "CoAP client '" + clientName + "' stopped { " + operationalEndpoint.getCoapEndpoint().getUri() + " }" );
+        LOGGER.info( this + " stopped." );
     }
 
     /* (non-Javadoc)
@@ -258,7 +252,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             throw new InitialisationException( e, this );
         }
         scheme= operationalEndpoint.getCoapEndpoint().getUri().getScheme();
-        LOGGER.info( "CoAP client '" + clientName + "' initialised { " + operationalEndpoint.getCoapEndpoint().getUri() + " }" );
+        LOGGER.info( this + " initialised." );
     }
 
     /* (non-Javadoc)
@@ -267,10 +261,25 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void dispose()
     {
-        URI uri= operationalEndpoint.getCoapEndpoint().getUri();
         OperationalEndpoint.disposeAll( this );
         operationalEndpoint= null;
-        LOGGER.info( "CoAP client '" + clientName + "' disposed { " + uri + " }" );
+        LOGGER.info( this + " disposed." );
+    }
+
+    /**
+     * @return the clientName
+     */
+    public String getClientName()
+    {
+        return clientName;
+    }
+
+    /**
+     * @return the coapClient
+     */
+    CoapClient getCoapClient()
+    {
+        return coapClient;
     }
 
     /**
@@ -279,7 +288,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param callback the source callback that will process the responses
      * @throws InternalInvalidHandlerNameException 
      */
-    void addHandler( String handlerName, SourceCallback< InputStream, ReceivedResponseAttributes > callback ) throws InternalInvalidHandlerNameException
+    synchronized void addHandler( String handlerName, SourceCallback< InputStream, ReceivedResponseAttributes > callback ) throws InternalInvalidHandlerNameException
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name not allowed" );
         if ( handlers.get( handlerName ) != null ) throw new InternalInvalidHandlerNameException( "responsehandler name { " + handlerName + " } not unique" );
@@ -316,17 +325,17 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidObserverException when uri is already observed
      * @throws InternalUriException when uri is not valid
      */
-    void addRelation( String uri, CoapObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
+    synchronized void addRelation( String uri, ObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
     {
         if ( uri == null || uri.isEmpty() )
         {
             throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
-        if ( dynamicRelations.get( uri ) != null )
+        if ( observeRelations.get( uri ) != null )
         {
             throw new InternalInvalidObserverException( "observer already exists: { " + uri + " }" );
         }
-        dynamicRelations.put( uri, relation );
+        observeRelations.put( uri, relation );
     }
 
     /**
@@ -335,22 +344,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return The relation of the observer, null when no observer is found.
      * @throws InternalUriException when uri is not valid
      */
-    CoapObserveRelation getRelation( String uri ) throws InternalUriException
+    ObserveRelation getRelation( String uri ) throws InternalUriException
     {
         if ( uri == null || uri.isEmpty() )
         {
             throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
-        return dynamicRelations.get( uri );
+        return observeRelations.get( uri );
     }
 
     /**
      * Remove an observe entry.
      * @param uri The observed uri.
      */
-    void removeRelation( String uri )
+    synchronized void removeRelation( String uri )
     {
-        dynamicRelations.remove( uri );
+        observeRelations.remove( uri );
     }
 
     /**
@@ -358,9 +367,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param uri The observed uri.
      * @return 
      */
-    Map< String, CoapObserveRelation > getRelations()
+    Map< String, ObserveRelation > getRelations()
     {
-        return dynamicRelations;
+        return observeRelations;
     }
 
     /**
@@ -443,7 +452,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     // TODO add custom timeout
-    //TODO review exceptions
     /**
      * Issue a request on a CoAP resource residing on a server.
      * @param confirmable indicating the requst must be confirmed
@@ -546,7 +554,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             SourceCallback< InputStream, ReceivedResponseAttributes > callback;
             callback= getHandler( handlerName );
-            handler= createCoapHandler( uri, request.getCode(), callback );
+            handler= createCoapHandler( handlerName, uri, request.getCode(), callback );
         }
         if ( handler == null )
         {
@@ -630,17 +638,25 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         return attributes;
     }
 
-    //TODO add client/handler name for logging
     /**
      * Create a Handler of CoAP responses.
+     * @param uri 
      * @param client  The Coap client that produced the response
      * @param callback The Listening Messageprocessor that needs to be called
      * @param requestCode The coap request code from the request context
      * @return
      */
-    private CoapHandler createCoapHandler( final String requestUri, final Code requestCode, final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
+    private CoapHandler createCoapHandler(
+        final String handlerName,
+        final String requestUri,
+        final Code requestCode,
+        final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
     {
         final Client thisClient= this;
+        final String logMessageRequestOrResponseError= "Handler { " + thisClient.getClientName() + "::" + handlerName
+            + " } cannot proces an error on asynchronous request or response";
+        final String logMessageResonseError= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } cannot proces an asynchronous response";
+        final String logMessageResponseErrorError= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } cannot proces an error on asynchronous response";
 
         return new CoapHandler()
             {
@@ -657,7 +673,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     catch ( InternalResponseException e )
                     {
                         //this should never happen
-                        LOGGER.error( "Could not proces an error on asynchronous request or response", e );
+                        LOGGER.error( logMessageRequestOrResponseError, e );
                     }
                 }
 
@@ -674,7 +690,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     }
                     catch ( InternalResponseException e )
                     {
-                        LOGGER.error( "Could not proces an asynchronous response", e );
+                        LOGGER.error( logMessageResonseError, e );
                         try
                         {
                             thisClient.processMuleFlow( requestUri, requestCode, null, callback );
@@ -682,7 +698,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                         catch ( InternalResponseException e1 )
                         {
                             //this should never happen
-                            LOGGER.error( "Could not proces an error on asynchronous response", e );
+                            LOGGER.error( logMessageResponseErrorError, e );
                         }
                     }
                 }
@@ -705,7 +721,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Integer actualPort= ( port != null ? port : this.port );
         if ( actualHost == null )
         {
-            throw new InternalUriException( "cannot form valid uri using: { host= " + actualHost + " }" );
+            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using host { " + actualHost + " }" );
         }
         if ( actualPort == null )
         {
@@ -809,88 +825,27 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException
      * @throws InternalInvalidHandlerNameException
      */
-    void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters )
+    synchronized void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters )
         throws InternalInvalidObserverException,
         InternalUriException,
         InternalInvalidHandlerNameException
     {
+        SourceCallback< InputStream, ReceivedResponseAttributes > handler= getHandler( handlerName );
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
-        SourceCallback< InputStream, ReceivedResponseAttributes > callback= getHandler( handlerName );
 
-        CoapHandler handler= new CoapHandler()
-            {
-                /**
-                 * Callback for errors on notifications.
-                 */
-                @Override
-                public void onError()
-                {
-                    LOGGER.warn( "observer { " + uri + " } failed, restoring relation." );
-                    CoapObserveRelation coapRelation;
-                    try
-                    {
-                        coapRelation= getRelation( uri );
-                        if ( coapRelation != null )
-                        {
-                            if ( coapRelation.isCanceled() )
-                            {
-                                removeRelation( uri );
-                                coapRelation= doObserveRequest( confirmable, uri, this );
-                                addRelation( uri, coapRelation );
-                            }
-                            else
-                            {
-                                coapRelation.reregister();
-                            } ;
-                        }
-                    }
-                    catch ( InternalUriException e )
-                    {
-                        LOGGER.error( "observer { " + uri + " } failed, malformed uri.", e );
-                    }
-                    catch ( InternalInvalidObserverException e )
-                    {
-                        LOGGER.error( "observer { " + uri + " } failed, invalid observer.", e );
-                    }
-                    try
-                    {
-                        processMuleFlow( uri, Code.GET, null, callback );
-                    }
-                    catch ( InternalResponseException e )
-                    {
-                        //this should never happen
-                        LOGGER.error( "Could not proces an error on notification", e );
-                    }
-                }
-
-                /**
-                 * Callback for notifications.
-                 */
-                @Override
-                public void onLoad( CoapResponse response )
-                {
-                    try
-                    {
-                        processMuleFlow( uri, Code.GET, response, callback );
-                    }
-                    catch ( InternalResponseException e )
-                    {
-                        LOGGER.error( "Could not proces a notification", e );
-                    }
-                }
-            };
-
-        CoapObserveRelation relation= getRelation( uri );
+        ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
             // only one observe relation allowed per uri
             // TODO proactive or not, configurable?
-            relation.proactiveCancel();
+            relation.stop();
             removeRelation( uri );
         }
-        relation= doObserveRequest( confirmable, uri, handler );
+        relation= new ObserveRelation( "CoAP Observer { " + getClientName() + "::" + uri + " }", coapClient, confirmable, uri, ( requestUri, requestCode, response ) -> {
+            this.processMuleFlow( requestUri, requestCode, response, handler );
+        } );
         addRelation( uri, relation );
-        LOGGER.info( "observer started on resource { " + uri + " }" );
+        relation.start();
     }
 
     /**
@@ -902,36 +857,28 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException
      * @throws InternalInvalidObserverException
      */
-    void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalUriException,
+    synchronized void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalUriException,
         InternalInvalidObserverException
     {
         String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
-        CoapObserveRelation relation= getRelation( uri );
+        ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
-            relation.proactiveCancel();
+            relation.stop();
             removeRelation( uri );
-            LOGGER.info( "observer stopped { " + uri + " }" );
         }
         else
         {
-            throw new InternalInvalidObserverException( "cannot stop observer, observer nonexistent on resource { " + uri + " }" );
+            throw new InternalInvalidObserverException( this + " cannot stop observer, observer nonexistent on resource { " + uri + " }" );
         }
     }
 
     /**
-     * Send an observe request for a resource with given uri
-     * @param confirmable when true the request will be sent confirmable
-     * @param uri the uri of the resource to observe
-     * @param handler the handler that will receive notifications from the observed resource
-     * @return the established relation with the resource when the request succeeded, otherwise null 
+     * Get String repesentation.
      */
-    CoapObserveRelation doObserveRequest( boolean confirmable, String uri, CoapHandler handler )
+    @Override
+    public String toString()
     {
-        Request request= new Request( Code.GET, ( confirmable ? Type.CON : Type.NON ) );
-        request.setURI( uri );
-        //TODO add (other) options
-        request.setObserve();
-        return coapClient.observe( request, handler );
+        return "CoAP Client { " + getClientName() + " }";
     }
 }

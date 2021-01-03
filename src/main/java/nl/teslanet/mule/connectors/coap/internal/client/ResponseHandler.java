@@ -43,17 +43,26 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
 /**
  * The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications.
- * The CoAP messages received are delivered to the flow.
+ * The received CoAP messages are delivered to the handlers mule-flow.
  */
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
 public class ResponseHandler extends Source< InputStream, ReceivedResponseAttributes >
 {
 
+    /**
+     * The logger of this class.
+     */
     private final Logger LOGGER= LoggerFactory.getLogger( ResponseHandler.class );
 
+    /**
+     * The client that owns the handler.
+     */
     @Config
     private Client client;
 
+    /**
+     * The name of the handler by which it is referenced by observers and async requestst.
+     */
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     private String handlerName;
@@ -70,9 +79,9 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new StartException( e );
+            throw new StartException( this + " failed to start, invalid handler name.", e );
         }
-        LOGGER.info( "Start response handler '" + handlerName + "' for " + client.toString() );
+        LOGGER.info( this + " started." );
     }
 
     /* (non-Javadoc)
@@ -82,46 +91,16 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
     public void onStop()
     {
         client.removeHandler( handlerName );
-        LOGGER.info( "Stop response handler '" + handlerName + "' for " + client.toString() );
+        LOGGER.info( this + " stopped." );
 
     }
-    //    @OnSuccess
-    //    @MediaType(value= "*/*", strict= false)
-    //    public void onSuccess( @Content TypedValue< byte[] > responseBody, ResponseAttributes attributes, SourceCallbackContext callbackContext ) throws Exception
-    //    {
-    //        {
-    //            CoapExchange exchange= (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get();
-    //            Response response= new Response( AttibuteUtils.toResponseCode( attributes.getResponseCode() ) );
-    //            //TODO give user control
-    //            response.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responseBody.getDataType().getMediaType() ) );
-    //            if ( attributes.getOptions() != null )
-    //            {
-    //                Options.fillOptionSet( response.getOptions(), attributes.getOptions(), false );
-    //            }
-    //            response.setPayload( responseBody.getValue() );
-    //            exchange.respond( response );
-    //        }
-    //    }
-    //
-    //    @OnTerminate
-    //    public void onTerminate( SourceResult sourceResult )
-    //    {
-    //        if ( !sourceResult.isSuccess() )
-    //        {
-    //            CoapExchange exchange= (CoapExchange) sourceResult.getSourceCallbackContext().getVariable( "CoapExchange" ).get();
-    //            if ( sourceResult.getInvocationError().isPresent() )
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );
-    //            }
-    //            else if ( sourceResult.getResponseError().isPresent() )
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING FLOW" );
-    //            }
-    //            else
-    //            {
-    //                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR" );
-    //            }
-    //        }
-    //    }
 
+    /**
+     * Get String representation.
+     */
+    @Override
+    public String toString()
+    {
+        return "CoAP ResponseHandler { " + client.getClientName() + "::" + handlerName + " }";
+    }
 }
