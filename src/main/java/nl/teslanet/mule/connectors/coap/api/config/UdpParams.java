@@ -89,17 +89,6 @@ public class UdpParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Integer udpConnectorSendBuffer= null;
 
-    // TODO: used by Cf?
-    /**
-     * 
-     */
-    @Parameter
-    @Optional
-    @Summary(value= "does Cf use this?")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Integer udpConnectorOutCapacity= null;
-
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
      */

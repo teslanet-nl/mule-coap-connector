@@ -25,16 +25,11 @@ package nl.teslanet.mule.connectors.coap.test.config;
 
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.DtlsParams;
-import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
-import nl.teslanet.mule.connectors.coap.api.config.IsItUsed;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
-import nl.teslanet.mule.connectors.coap.api.config.TcpParams;
-import nl.teslanet.mule.connectors.coap.api.config.TlsParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
@@ -43,16 +38,7 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -98,84 +84,6 @@ public class GetValueVisitor implements ConfigVisitor
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
-     */
-    @Override
-    public void visit( UDPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    @Override
-    public void visit( MulticastUDPEndpoint multicastUDPEndpoint )
-    {
-        //noop        
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint)
-     */
-    @Override
-    public void visit( DTLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPServerEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSServerEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams)
      */
     @Override
@@ -198,44 +106,6 @@ public class GetValueVisitor implements ConfigVisitor
             default:
                 break;
         }
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.EncryptionParams)
-     */
-    @Override
-    public void visit( EncryptionParams toVisit )
-    {
-        //            case keyStoreLocation:
-        //                result= config.getKeyStoreLocation();
-        //                break;
-        //            case keyStorePassword:
-        //                result= config.getKeyStorePassword();
-        //                break;
-        //            case trustStoreLocation:
-        //                result= config.getTrustStoreLocation();
-        //                break;
-        //            case trustStorePassword:
-        //                result= config.getTrustStorePassword;
-        //                break;
-        //            case privateKeyAlias:
-        //                result= config.getPrivateKeyAlias;
-        //                break;
-        //            case privateKeyPassword:
-        //                result= config.getPrivateKeyPassword;
-        //                break;
-        //            case trustedRootCertificateAlias:
-        //                result= config.getTrustedRootCertificateAlias;
-        //                break;
-        //            case secureSessionTimeout:
-        //                result= ( config.getSecureSessionTimeout != null ? config.getSecureSessionTimeout.toString() : null );
-        //                break;
-        //            case dtlsAutoResumeTimeout:
-        //                result= ( config.dtlsAutoResumeTimeout() != null ? config.dtlsAutoResumeTimeout.toString() : null );
-        //                break;
-        //            case responseMatching:
-        //                result= ( config.getResponseMatching != null ? config.getResponseMatching().name() : null );
-        //                break;
     }
 
     /* (non-Javadoc)
@@ -374,28 +244,6 @@ public class GetValueVisitor implements ConfigVisitor
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.IsItUsed)
-     */
-    @Override
-    public void visit( IsItUsed toVisit )
-    {
-        switch ( configParamName )
-        {
-            case maxTransmitWait:
-                result= ( toVisit.maxTransmitWait != null ? toVisit.maxTransmitWait.toString() : null );
-                break;
-            case leisure:
-                result= ( toVisit.leisure != null ? toVisit.leisure.toString() : null );
-                break;
-            case probingRate:
-                result= ( toVisit.probingRate != null ? toVisit.probingRate.toString() : null );
-                break;
-            default:
-                break;
-        }
-    }
-
-    /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus)
      */
     @Override
@@ -514,61 +362,9 @@ public class GetValueVisitor implements ConfigVisitor
             case udpConnectorSendBuffer:
                 result= ( toVisit.udpConnectorSendBuffer != null ? toVisit.udpConnectorSendBuffer.toString() : null );
                 break;
-            case udpConnectorOutCapacity:
-                result= ( toVisit.udpConnectorOutCapacity != null ? toVisit.udpConnectorOutCapacity.toString() : null );
-                break;
             default:
                 break;
         }
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.UdpParams)
-     */
-    @Override
-    public void visit( TcpParams toVisit )
-    {
-        //        if ( toVisit.tcpConnectTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout ); // 10000 ms
-        //        if ( toVisit.tcpWorkerThreads != null ) config.setInt( NetworkConfig.Keys.TCP_WORKER_THREADS, toVisit.tcpWorkerThreads );
-        //        if ( toVisit.tcpConnectionIdleTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout ); // 10 s
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.UdpParams)
-     */
-    @Override
-    public void visit( TlsParams toVisit )
-    {
-        //        if ( toVisit.tlsHandshakeTimeout != null ) config.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
-        //        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.DtlsParams)
-     */
-    @Override
-    public void visit( DtlsParams toVisit )
-    {
-        //TODO verify Long or Integer in Cf
-        //        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout );
-        //        if ( toVisit.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, toVisit.dtlsAutoResumeTimeout );
-        //        if ( toVisit.responseMatching != null )
-        //        {
-        //            switch ( toVisit.responseMatching )
-        //            {
-        //                case STRICT:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "STRICT" );
-        //                    break;
-        //                case PRINCIPAL:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "PRINCIPAL" );
-        //                    break;
-        //                case RELAXED:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "RELAXED" );
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
     }
 
     /* (non-Javadoc)
@@ -611,24 +407,6 @@ public class GetValueVisitor implements ConfigVisitor
                 break;
         }
     }
-
-    //not at endpoint level 
-    //if ( toVisit.protocolStageThreadCount != null ) config.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, toVisit.protocolStageThreadCount ); // CORES);
-
-    /* HTTP config:
-     * if ( toVisit.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT,
-     * toVisit.httpPort ); // 8080); if ( toVisit.httpServerSocketTimeout != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_TIMEOUT,
-     * toVisit.httpServerSocketTimeout ); // 100000); if (
-     * toVisit.httpServerSocketBufferSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_BUFFER_SIZE,
-     * toVisit.httpServerSocketBufferSize ); // 8192); if (
-     * toVisit.httpCacheResponseMaxAge != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE,
-     * toVisit.httpCacheResponseMaxAge ); // 86400); if ( toVisit.httpCacheSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, toVisit.httpCacheSize ); //
-     * 32); 
-     */
 
     @Override
     public void visit( MulticastParams toVisit )

@@ -29,7 +29,6 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
@@ -195,10 +194,6 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Deduplicator deduplicator= null;
 
-    //TODO remove
-    @ParameterGroup(name= "todo")
-    public IsItUsed isItUsed= null;
-
     /**
      * Default exchange params used by Mule. 
      * Containing mandatory and Nullsafe params are set by Mule.
@@ -215,7 +210,6 @@ public class ExchangeParams implements VisitableConfig
     public ExchangeParams( MidTracker midTracker )
     {
         this.midTracker= midTracker;
-        isItUsed= new IsItUsed();
     }
 
     /* (non-Javadoc)
@@ -227,6 +221,5 @@ public class ExchangeParams implements VisitableConfig
         visitor.visit( this );
         midTracker.accept( visitor );
         if ( deduplicator != null ) deduplicator.accept( visitor );
-        if ( isItUsed != null ) isItUsed.accept( visitor );
     }
 }

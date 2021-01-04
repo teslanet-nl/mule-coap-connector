@@ -165,6 +165,10 @@ public class MulticastUDPEndpointConfigTest
             case trustStoreLocation:
             case trustStorePassword:
             case trustedRootCertificateAlias:
+            case udpConnectorOutCapacity:
+            case leisure:
+            case maxTransmitWait:
+            case probingRate:
                 return true;
             default:
                 return false;

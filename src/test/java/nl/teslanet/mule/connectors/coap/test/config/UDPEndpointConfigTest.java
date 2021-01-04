@@ -166,6 +166,11 @@ public class UDPEndpointConfigTest
             case trustStorePassword:
             case trustedRootCertificateAlias:
 
+            case udpConnectorOutCapacity:
+            case leisure:
+            case maxTransmitWait:
+            case probingRate:
+
             case interfaceAddress:
             case multicastGroups:
                 return true;

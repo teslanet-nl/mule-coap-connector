@@ -27,16 +27,12 @@ import java.util.LinkedHashSet;
 
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.DtlsParams;
 import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
-import nl.teslanet.mule.connectors.coap.api.config.IsItUsed;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
-import nl.teslanet.mule.connectors.coap.api.config.TcpParams;
-import nl.teslanet.mule.connectors.coap.api.config.TlsParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
@@ -45,16 +41,7 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -133,87 +120,6 @@ public class SetValueVisitor implements ConfigVisitor
             default:
                 break;
         }
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
-     */
-    @Override
-    public void visit( UDPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint)
-     */
-    @Override
-    public void visit( MulticastUDPEndpoint multicastUDPEndpoint )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint)
-     */
-    @Override
-    public void visit( DTLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPServerEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSServerEndpoint toVisit )
-    {
-        //noop
     }
 
     /* (non-Javadoc)
@@ -472,28 +378,6 @@ public class SetValueVisitor implements ConfigVisitor
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.IsItUsed)
-     */
-    @Override
-    public void visit( IsItUsed toVisit )
-    {
-        switch ( configParamName )
-        {
-            case maxTransmitWait:
-                toVisit.maxTransmitWait= new Long( value );
-                break;
-            case leisure:
-                toVisit.leisure= new Integer( value );
-                break;
-            case probingRate:
-                toVisit.probingRate= new Float( value );
-                break;
-            default:
-                break;
-        }
-    }
-
-    /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus)
      */
     @Override
@@ -612,61 +496,9 @@ public class SetValueVisitor implements ConfigVisitor
             case udpConnectorSendBuffer:
                 toVisit.udpConnectorSendBuffer= new Integer( value );
                 break;
-            case udpConnectorOutCapacity:
-                toVisit.udpConnectorOutCapacity= new Integer( value );
-                break;
             default:
                 break;
         }
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.UdpParams)
-     */
-    @Override
-    public void visit( TcpParams toVisit )
-    {
-        //        if ( toVisit.tcpConnectTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout ); // 10000 ms
-        //        if ( toVisit.tcpWorkerThreads != null ) config.setInt( NetworkConfig.Keys.TCP_WORKER_THREADS, toVisit.tcpWorkerThreads );
-        //        if ( toVisit.tcpConnectionIdleTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout ); // 10 s
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.UdpParams)
-     */
-    @Override
-    public void visit( TlsParams toVisit )
-    {
-        //        if ( toVisit.tlsHandshakeTimeout != null ) config.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
-        //        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.DtlsParams)
-     */
-    @Override
-    public void visit( DtlsParams toVisit )
-    {
-        //TODO verify Long or Integer in Cf
-        //        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout );
-        //        if ( toVisit.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, toVisit.dtlsAutoResumeTimeout );
-        //        if ( toVisit.responseMatching != null )
-        //        {
-        //            switch ( toVisit.responseMatching )
-        //            {
-        //                case STRICT:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "STRICT" );
-        //                    break;
-        //                case PRINCIPAL:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "PRINCIPAL" );
-        //                    break;
-        //                case RELAXED:
-        //                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "RELAXED" );
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
     }
 
     /* (non-Javadoc)
@@ -733,22 +565,4 @@ public class SetValueVisitor implements ConfigVisitor
                 break;
         }
     }
-
-    //not at endpoint level 
-    //if ( toVisit.protocolStageThreadCount != null ) config.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, toVisit.protocolStageThreadCount ); // CORES);
-
-    /* HTTP config:
-     * if ( toVisit.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT,
-     * toVisit.httpPort ); // 8080); if ( toVisit.httpServerSocketTimeout != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_TIMEOUT,
-     * toVisit.httpServerSocketTimeout ); // 100000); if (
-     * toVisit.httpServerSocketBufferSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_BUFFER_SIZE,
-     * toVisit.httpServerSocketBufferSize ); // 8192); if (
-     * toVisit.httpCacheResponseMaxAge != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE,
-     * toVisit.httpCacheResponseMaxAge ); // 86400); if ( toVisit.httpCacheSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, toVisit.httpCacheSize ); //
-     * 32); 
-     */
 }

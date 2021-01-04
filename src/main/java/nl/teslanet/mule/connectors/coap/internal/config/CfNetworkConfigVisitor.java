@@ -28,11 +28,8 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.DtlsParams;
-import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
-import nl.teslanet.mule.connectors.coap.api.config.IsItUsed;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
-import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.TcpParams;
@@ -45,16 +42,6 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -70,97 +57,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     private NetworkConfig config= NetworkConfig.createStandardWithoutFile();
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
-     */
-    @Override
-    public void visit( Endpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
-     */
-    @Override
-    public void visit( UDPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint)
-     */
-    @Override
-    public void visit( MulticastUDPEndpoint multicastUDPEndpoint )
-    {
-        //noop
-
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint)
-     */
-    @Override
-    public void visit( DTLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TCPServerEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSClientEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint)
-     */
-    @Override
-    public void visit( TLSServerEndpoint toVisit )
-    {
-        //noop
-    }
-
-    /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams)
      */
     @Override
@@ -171,15 +67,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
         // TODO: only transparent blockwise is supported: maxResourceBodySize > 0
         if ( toVisit.maxResourceBodySize != null && toVisit.maxResourceBodySize > 0 ) config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, toVisit.maxResourceBodySize ); // 8192 bytes);
         if ( toVisit.blockwiseStatusLifetime != null ) config.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, toVisit.blockwiseStatusLifetime );
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.EncryptionParams)
-     */
-    @Override
-    public void visit( EncryptionParams toVisit )
-    {
-        //noop
     }
 
     /* (non-Javadoc)
@@ -247,17 +134,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     {
         config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP );
         if ( toVisit.markAndSweepInterval != null ) config.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, toVisit.markAndSweepInterval ); // 10 * 1000);
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.IsItUsed)
-     */
-    @Override
-    public void visit( IsItUsed toVisit )
-    {
-        if ( toVisit.maxTransmitWait != null ) config.setLong( NetworkConfig.Keys.MAX_TRANSMIT_WAIT, toVisit.maxTransmitWait ); // 93 * 1000);
-        if ( toVisit.leisure != null ) config.setInt( NetworkConfig.Keys.LEISURE, toVisit.leisure ); // 5000);
-        if ( toVisit.probingRate != null ) config.setFloat( NetworkConfig.Keys.PROBING_RATE, toVisit.probingRate ); // 1f);
     }
 
     /* (non-Javadoc)
@@ -337,7 +213,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
         if ( toVisit.udpConnectorDatagramSize != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, toVisit.udpConnectorDatagramSize ); // 2048);
         if ( toVisit.udpConnectorReceiveBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, toVisit.udpConnectorReceiveBuffer ); // UDPConnector.UNDEFINED);
         if ( toVisit.udpConnectorSendBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, toVisit.udpConnectorSendBuffer ); // UDPConnector.UNDEFINED);
-        if ( toVisit.udpConnectorOutCapacity != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY, toVisit.udpConnectorOutCapacity ); // Integer.MAX_VALUE);
     }
 
     /* (non-Javadoc)
@@ -432,15 +307,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
      * config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, toVisit.httpCacheSize ); //
      * 32); 
      */
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
-     */
-    @Override
-    public void visit( MulticastParams toVisit )
-    {
-        //noop
-    }
 
     /**
      * Get the Californium Network configuration that has been collected.
