@@ -112,7 +112,6 @@ public class ObserveRelation implements CoapHandler
      */
     private CoapObserveRelation coapRelation= null;
 
-    //TODO remove dependency on Client ( ->CoapClient )
     /**
      * Constructor
      * @param sourceCallback

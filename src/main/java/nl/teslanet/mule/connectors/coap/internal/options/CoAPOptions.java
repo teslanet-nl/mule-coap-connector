@@ -86,6 +86,7 @@ public class CoAPOptions
         this.optionSet= optionSet;
     }
 
+    //TODO move to test package
     /**
      * Constructs CoAPOptions based on a property map.
      * @param props The map of properties. 
@@ -533,6 +534,7 @@ public class CoAPOptions
     }
 
     //TODO drop
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static void fillOptionSet( OptionSet optionSet, Map< String, Object > props, boolean clear ) throws InternalInvalidByteArrayValueException
     {
