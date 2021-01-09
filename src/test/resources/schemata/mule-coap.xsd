@@ -152,9 +152,6 @@
         <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="8" name="tokenSizeLimit"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="deduplicator"></xs:attribute>
-        <xs:attribute type="mule:substitutableLong" use="optional" default="93000" name="maxTransmitWait"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="5000" name="leisure"></xs:attribute>
-        <xs:attribute type="mule:substitutableDecimal" use="optional" default="1.0" name="probingRate"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -324,7 +321,6 @@
         <xs:attribute type="mule:substitutableInt" use="optional" default="2048" name="udpConnectorDatagramSize"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="udpConnectorReceiveBuffer"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="udpConnectorSendBuffer"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="udpConnectorOutCapacity"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1702,3 +1698,4 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+
