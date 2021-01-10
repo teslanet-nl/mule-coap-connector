@@ -55,7 +55,7 @@ public class TlsParams implements VisitableConfig
     @Summary(value= "TLS session timeout in seconds [s]. Default value is 24 hours.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
-    public Long secureSessionTimeout= null;
+    public Integer secureSessionTimeout= null;
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)

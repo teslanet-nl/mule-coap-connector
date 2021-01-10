@@ -60,16 +60,6 @@ public class DtlsParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Integer dtlsAutoResumeTimeout= null;
 
-    /**
-     * DTLS session timeout in seconds [s]. Default value is 60 * 60 * 24 = 86400 s (24 hours).
-     */
-    @Parameter
-    @Optional(defaultValue= "86400")
-    @Summary(value= "TLS session timeout in seconds [s]. Default value is 24 hours.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Long secureSessionTimeout= null;
-
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
      */

@@ -233,7 +233,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     public void visit( TlsParams toVisit )
     {
         if ( toVisit.tlsHandshakeTimeout != null ) config.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
-        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
+        //TODO report Cf bug where long is also used
+        if ( toVisit.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
     }
 
     /* (non-Javadoc)
@@ -242,8 +243,6 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( DtlsParams toVisit )
     {
-        //TODO verify Long or Integer in Cf
-        if ( toVisit.secureSessionTimeout != null ) config.setLong( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout );
         if ( toVisit.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, toVisit.dtlsAutoResumeTimeout );
         if ( toVisit.responseMatching != null )
         {
