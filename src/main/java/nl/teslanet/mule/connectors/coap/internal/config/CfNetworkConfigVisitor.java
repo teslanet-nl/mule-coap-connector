@@ -233,7 +233,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     public void visit( TlsParams toVisit )
     {
         if ( toVisit.tlsHandshakeTimeout != null ) config.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
-        //TODO report Cf bug where long is also used
+        //TODO report Cf bug where long is used
         if ( toVisit.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
     }
 
