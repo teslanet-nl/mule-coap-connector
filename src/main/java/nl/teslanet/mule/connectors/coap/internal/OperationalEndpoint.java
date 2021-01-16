@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -60,6 +60,8 @@ import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.config.CfNetworkConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.config.MulticastVisitor;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMulticastGroupException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNetworkInterfaceException;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
 
@@ -112,7 +114,14 @@ public final class OperationalEndpoint
         }
         else if ( MulticastUDPEndpoint.class.isInstance( config ) )
         {
-            operationalEndpoint= new OperationalEndpoint( (MulticastUDPEndpoint) config );
+            try
+            {
+                operationalEndpoint= new OperationalEndpoint( (MulticastUDPEndpoint) config );
+            }
+            catch ( InternalNetworkInterfaceException | InternalMulticastGroupException e )
+            {
+                throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } construction failed." );
+            }
         }
         else if ( UDPEndpoint.class.isInstance( config ) )
         {
@@ -136,7 +145,7 @@ public final class OperationalEndpoint
         }
         else
         {
-            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }");
+            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
         }
         if ( config.logCoapMessages )
         {
@@ -185,7 +194,7 @@ public final class OperationalEndpoint
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
      * @throws EndpointConstructionException When client parameter is empty
      */
-    public synchronized static OperationalEndpoint getOrCreate( Client client, Endpoint config ) throws EndpointConstructionException 
+    public synchronized static OperationalEndpoint getOrCreate( Client client, Endpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
@@ -296,7 +305,7 @@ public final class OperationalEndpoint
      */
     private static void freeEndpointResoures()
     {
-        if ( registry.isEmpty())
+        if ( registry.isEmpty() )
         {
             //Schedulers are not needed any more, so stop them
             CoAPConnector.stopIoScheduler();
@@ -338,12 +347,14 @@ public final class OperationalEndpoint
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
-    //TODO use connector builder, rename interfaceAddress param
+    //TODO rename interfaceAddress param
     /**
      * Constructor for an operational UDP endpoint.
      * @param config the UDP endpoint configuration
+     * @throws InternalNetworkInterfaceException 
+     * @throws InternalMulticastGroupException 
      */
-    private OperationalEndpoint( MulticastUDPEndpoint config )
+    private OperationalEndpoint( MulticastUDPEndpoint config ) throws InternalNetworkInterfaceException, InternalMulticastGroupException
     {
         CfNetworkConfigVisitor visitor= new CfNetworkConfigVisitor();
         config.accept( visitor );
@@ -355,7 +366,7 @@ public final class OperationalEndpoint
         UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
         //TODO add feature to set interface per multicast-group
         NetworkInterface networkInterface= multicastVisitor.getInterfaceAddress();
-        for ( InetAddress group : multicastVisitor.getMulticastGroups())
+        for ( InetAddress group : multicastVisitor.getMulticastGroups() )
         {
             connectorBuilder.addMulticastGroup( group, networkInterface );
         }
@@ -414,28 +425,28 @@ public final class OperationalEndpoint
         }
         catch ( Exception e )
         {
-            throw new EndpointConstructionException( this + ": construction of DTLSEndpoint failed", e );
+            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } construction DTLS Endpoint failed.", e );
         }
     }
 
-    private OperationalEndpoint( TCPServerEndpoint config )
+    private OperationalEndpoint( TCPServerEndpoint config ) throws EndpointConstructionException
     {
-        // TODO Auto-generated constructor stub
+        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TCP Server Endpoint NIY." );
     }
 
-    private OperationalEndpoint( TCPClientEndpoint config )
+    private OperationalEndpoint( TCPClientEndpoint config ) throws EndpointConstructionException
     {
-        // TODO Auto-generated constructor stub
+        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TCP Client Endpoint NIY." );
     }
 
-    private OperationalEndpoint( TLSServerEndpoint config )
+    private OperationalEndpoint( TLSServerEndpoint config ) throws EndpointConstructionException
     {
-        // TODO Auto-generated constructor stub
+        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TLS Server Endpoint NIY." );
     }
 
-    private OperationalEndpoint( TLSClientEndpoint config )
+    private OperationalEndpoint( TLSClientEndpoint config ) throws EndpointConstructionException
     {
-        // TODO Auto-generated constructor stub
+        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TLS Client Endpoint NIY." );
     }
 
     /**
@@ -464,8 +475,6 @@ public final class OperationalEndpoint
      */
     public String toString()
     {
-
         return "CoAP Endpoint { " + configName + " }";
     }
-
 }

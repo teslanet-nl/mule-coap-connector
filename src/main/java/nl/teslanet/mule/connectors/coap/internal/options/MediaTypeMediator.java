@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -74,13 +74,13 @@ public class MediaTypeMediator
         }
         else
         {
-            //TODO does not parse when mediatype contains parameters (Mule uses parameters , Cf does not)
             try
             {
                 result= MediaTypeRegistry.parse( mediaType.toRfcString() );
             }
             catch ( Exception e )
             {
+                //does not parse when mediatype contains parameters (Mule uses parameters , Cf does not), UNDEFINED will be used 
                 result= MediaTypeRegistry.UNDEFINED;
             }
         }

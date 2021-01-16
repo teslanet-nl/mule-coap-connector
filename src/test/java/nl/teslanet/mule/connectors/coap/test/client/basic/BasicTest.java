@@ -114,7 +114,6 @@ public class BasicTest extends AbstractClientTestCase
     @Override
     protected CoapServer getTestServer() throws SocketException
     {
-        // TODO Auto-generated method stub
         return new BasicTestServer();
     }
 

@@ -147,8 +147,7 @@ public class ServerOperations
         return !found.isEmpty();
     }
 
-    //TODO add user manual item, schema update, unit test
-    //TODO check efficiency
+    //TODO unit test, test performance
     /**
      * Returns a list of uri's of the resources, that match given uri pattern. 
      * @param server The server instance to list resources of.

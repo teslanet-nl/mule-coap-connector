@@ -31,6 +31,8 @@ import java.util.Set;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMulticastGroupException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNetworkInterfaceException;
 
 
 /**
@@ -71,8 +73,9 @@ public class MulticastVisitor implements ConfigVisitor
     /**
      * Get the multi-cast groups that the visitor collected from the configuration.
      * @return array containing the multi-cast addresses to subscribe to.
+     * @throws InternalMulticastGroupException 
      */
-    public InetAddress[] getMulticastGroups()
+    public InetAddress[] getMulticastGroups() throws InternalMulticastGroupException
     {
         if ( multicastGroups == null ) return new InetAddress [0];
         InetAddress[] result= new InetAddress [multicastGroups.size()];
@@ -85,8 +88,7 @@ public class MulticastVisitor implements ConfigVisitor
             }
             catch ( UnknownHostException e )
             {
-                // TODO improve exception handling
-                e.printStackTrace();
+                throw new InternalMulticastGroupException( "Multicast group { " + group + " } is invalid.", e );
             }
         }
         return result;
@@ -97,8 +99,9 @@ public class MulticastVisitor implements ConfigVisitor
     /**
      * Get the interface address that the visitor collected from the configuration.
      * @return the interface address.
+     * @throws InternalNetworkInterfaceException 
      */
-    public NetworkInterface getInterfaceAddress()
+    public NetworkInterface getInterfaceAddress() throws InternalNetworkInterfaceException
     {
         if ( interfaceAddress == null )
         {
@@ -110,9 +113,7 @@ public class MulticastVisitor implements ConfigVisitor
         }
         catch ( SocketException e )
         {
-            // TODO improve exception handling
-            e.printStackTrace();
-            return null;
+            throw new InternalNetworkInterfaceException( "Network interface address { " + interfaceAddress + " } is invalid.", e );
         }
     }
 }

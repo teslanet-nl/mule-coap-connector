@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -39,8 +39,6 @@ import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
-
-//TODO bug Code should be string
 
 
 @RunnerDelegateTo(Parameterized.class)

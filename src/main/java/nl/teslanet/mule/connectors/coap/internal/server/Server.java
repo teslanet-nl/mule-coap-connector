@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -260,7 +260,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         try
         {
-            //TODO add testcase when null
             if ( resources != null )
             {
                 for ( ResourceConfig resourceConfig : resources )
@@ -313,7 +312,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     void removeListener( OperationalListener listener )
     {
-        // TODO Auto-generated method stub
         registry.remove( listener );
     }
 

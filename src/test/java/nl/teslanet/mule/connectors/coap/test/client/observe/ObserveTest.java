@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -277,7 +277,6 @@ public class ObserveTest extends AbstractClientTestCase
      * Test observe re-registration after max_age 
      * @throws Exception should not happen in this test
      */
-    //TODO cf issue #917, notificationReregistrationBackoff not implemented
     @Test
     public void testObserveReregistration1() throws Exception
     {
@@ -367,7 +366,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
         Thread.sleep( PAUZE );
 
         //second observe
@@ -378,8 +377,8 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary2") );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary2" ) );
         Thread.sleep( PAUZE );
 
         //remove second observe
@@ -390,7 +389,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains("coap://127.0.0.1:5683/observe/temporary1") );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
         Thread.sleep( PAUZE );
 
         //remove first observe
