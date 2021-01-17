@@ -76,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
@@ -89,6 +90,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
@@ -413,7 +415,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param requestAttributes The attributes of the originating request.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
-    void processMuleFlow( String requestUri, Code requestCode, CoapResponse response, SourceCallback< InputStream, ReceivedResponseAttributes > callback )
+    void processMuleFlow( String requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, ReceivedResponseAttributes > callback )
         throws InternalResponseException
 
     {
@@ -491,10 +493,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalRequestException When the Request could not be issued.
      * @throws InternalResponseException When the received response appears to be invalid and cannot be processed.
      * @throws InternalEndpointException When CoAP communication failed.
+     * @throws InternalInvalidRequestCodeException When the request code has invalid value.
      */
     Result< InputStream, ReceivedResponseAttributes > doRequest(
         boolean confirmable,
-        Code requestCode,
+        CoAPRequestCode requestCode,
         String uri,
         TypedValue< Object > requestPayload,
         boolean forcePayload,
@@ -502,11 +505,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         String handlerName ) throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
-        InternalEndpointException
+        InternalEndpointException,
+        InternalInvalidRequestCodeException
     {
         Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;
-        Request request= new Request( requestCode, ( confirmable ? Type.CON : Type.NON ) );
+        Request request= new Request( AttributeUtils.toRequestCode( requestCode ), ( confirmable ? Type.CON : Type.NON ) );
         request.setURI( uri );
         if ( requestPayload.getValue() != null )
         {
@@ -555,7 +559,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             SourceCallback< InputStream, ReceivedResponseAttributes > callback;
             callback= getHandler( handlerName );
-            handler= createCoapHandler( handlerName, uri, request.getCode(), callback );
+            handler= createCoapHandler( handlerName, uri, requestCode, callback );
         }
         if ( handler == null )
         {
@@ -572,7 +576,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             ReceivedResponseAttributes responseAttributes;
             try
             {
-                responseAttributes= createReceivedResponseAttributes( request.getURI(), request.getCode(), response );
+                responseAttributes= createReceivedResponseAttributes( request.getURI(), requestCode, response );
             }
             catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException e )
             {
@@ -615,10 +619,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidOptionValueException 
      * @throws InternalInvalidResponseCodeException When responseCode is unknown.
      */
-    private ReceivedResponseAttributes createReceivedResponseAttributes( String requestUri, Code requestCode, CoapResponse response ) throws InternalInvalidOptionValueException,
+    private ReceivedResponseAttributes createReceivedResponseAttributes( String requestUri, CoAPRequestCode requestCode, CoapResponse response )
+        throws InternalInvalidOptionValueException,
         InternalInvalidResponseCodeException
     {
         ReceivedResponseAttributes attributes= new ReceivedResponseAttributes();
+        //TODO maybe enum value in attributes.
         attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( operationalEndpoint.getCoapEndpoint().getAddress().toString() );
         attributes.setRequestUri( requestUri );
@@ -650,7 +656,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private CoapHandler createCoapHandler(
         final String handlerName,
         final String requestUri,
-        final Code requestCode,
+        final CoAPRequestCode requestCode,
         final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
     {
         final Client thisClient= this;

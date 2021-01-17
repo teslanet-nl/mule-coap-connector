@@ -60,7 +60,6 @@ import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
@@ -109,7 +108,7 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             return client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttributeUtils.toRequestCode( requestBuilder.getRequestCode() ),
+                requestBuilder.getRequestCode(),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestBuilder.isForcePayload(),
@@ -160,7 +159,7 @@ public class ClientOperations
                 client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
             client.doRequest(
                 requestBuilder.isConfirmable(),
-                AttributeUtils.toRequestCode( requestBuilder.getRequestCode() ),
+                requestBuilder.getRequestCode(),
                 uri,
                 requestBuilder.getRequestPayload(),
                 requestBuilder.isForcePayload(),

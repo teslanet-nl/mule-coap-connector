@@ -42,8 +42,6 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
 
-//TODO bug Code should be string
-
 
 @RunnerDelegateTo(Parameterized.class)
 public class InSecureTest extends AbstractClientTestCase
@@ -57,14 +55,14 @@ public class InSecureTest extends AbstractClientTestCase
     {
         return Arrays.asList(
             new Object [] []{
-                { "get_me", CoAPRequestCode.GET, "coap://127.0.0.1:5684/secure/get_me", null, null },
-                { "do_not_get_me", CoAPRequestCode.GET, "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
-                { "post_me", CoAPRequestCode.POST, "coap://127.0.0.1:5684/secure/post_me", null, null },
-                { "do_not_post_me", CoAPRequestCode.POST, "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
-                { "put_me", CoAPRequestCode.PUT, "coap://127.0.0.1:5684/secure/put_me", null, null },
-                { "do_not_put_me", CoAPRequestCode.PUT, "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
-                { "delete_me", CoAPRequestCode.DELETE, "coap://127.0.0.1:5684/secure/delete_me", null, null },
-                { "do_not_delete_me", CoAPRequestCode.DELETE, "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } } );
+                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null },
+                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
+                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/post_me", null, null },
+                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
+                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/put_me", null, null },
+                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
+                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/delete_me", null, null },
+                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } } );
     }
 
     /**
@@ -77,7 +75,7 @@ public class InSecureTest extends AbstractClientTestCase
      * The request code that is expected.
      */
     @Parameter(1)
-    public CoAPRequestCode expectedRequestCode;
+    public String expectedRequestCode;
 
     /**
      * The request uri that is expected.
@@ -131,7 +129,7 @@ public class InSecureTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
 
-        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+        assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         byte[] payload= (byte[]) response.getPayload().getValue();

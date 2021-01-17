@@ -39,13 +39,11 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
 
-
-//TODO bug Code should be string
 
 @RunnerDelegateTo(Parameterized.class)
 public class BasicTest extends AbstractClientTestCase
@@ -59,14 +57,14 @@ public class BasicTest extends AbstractClientTestCase
     {
         return Arrays.asList(
             new Object [] []{
-                { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
+                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
+                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
+                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
+                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
     }
 
     /**
@@ -79,7 +77,7 @@ public class BasicTest extends AbstractClientTestCase
      * The request code that is expected.
      */
     @Parameter(1)
-    public Code expectedRequestCode;
+    public String expectedRequestCode;
 
     /**
      * The request uri that is expected.
@@ -137,7 +135,7 @@ public class BasicTest extends AbstractClientTestCase
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+        assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, payload );

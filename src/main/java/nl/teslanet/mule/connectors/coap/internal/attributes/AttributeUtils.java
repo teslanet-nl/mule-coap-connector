@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -32,58 +32,12 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidReque
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
 
-//TODO add unit test
 /**
  * Utilities for handling attributes
  *
  */
 public class AttributeUtils
 {
-    /**
-     * Translate attribute to Cf request Code.
-     * @param requestCodeAttribute the attribute to transform
-     * @param defaultrequestCodeAttribute the request code to use when requestCodeAttribute is null
-     * @return the Cf request code
-     * @throws InternalInvalidRequestCodeException when invalid request code is given
-     */
-    @Deprecated
-    public static Code RequestCode( String requestCodeAttribute, CoAPRequestCode defaultrequestCodeAttribute ) throws InternalInvalidRequestCodeException
-    {
-        if ( requestCodeAttribute != null )
-        {
-            return toRequestCode( requestCodeAttribute );
-        }
-        else
-        {
-            return toRequestCode( defaultrequestCodeAttribute );
-        }
-    }
-
-    /**
-     * Translate string to Cf request Code.
-     * @param requestCodeString is the string to convert
-     * @return the Cf request code
-     * @throws InternalInvalidRequestCodeException the string cannot be converted
-     */
-    @Deprecated
-    public static Code toRequestCode( String requestCodeString ) throws InternalInvalidRequestCodeException
-    {
-        switch ( requestCodeString )
-        {
-            //success
-            case "GET":
-                return Code.GET;
-            case "POST":
-                return Code.POST;
-            case "PUT":
-                return Code.PUT;
-            case "DELETE":
-                return Code.DELETE;
-            default:
-                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCodeString + " }" );
-        }
-    }
-
     /**
      * Translate requestCode attribute to Cf request Code.
      * @param requestCodeAttribute to convert
@@ -94,7 +48,6 @@ public class AttributeUtils
     {
         switch ( requestCodeAttribute )
         {
-            //success
             case GET:
                 return Code.GET;
             case POST:
@@ -109,27 +62,30 @@ public class AttributeUtils
     }
 
     /**
-     * Translate attribute to Cf ResponseCode.
-     * @param reponseCodeAttribute is the attribute to convert
-     * @param defaultreponseCodeAttribute default value when attribute is empty
-     * @return the Cf responseCode
-     * @throws InternalInvalidResponseCodeException when attribute cannot be converted
+     * Translate Cf request Code to requestCode attribute.
+     * @param requestCode to convert
+     * @return the converted requestCode attribute
+     * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    @Deprecated
-    public static ResponseCode toResponseCode( String reponseCodeAttribute, CoAPResponseCode defaultreponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static CoAPRequestCode toRequestCodeAttribute( Code requestCode ) throws InternalInvalidRequestCodeException
     {
-        if ( reponseCodeAttribute != null )
+        switch ( requestCode )
         {
-            return toResponseCode( reponseCodeAttribute );
-        }
-        else
-        {
-            return toResponseCode( defaultreponseCodeAttribute );
+            case GET:
+                return CoAPRequestCode.GET;
+            case POST:
+                return CoAPRequestCode.POST;
+            case PUT:
+                return CoAPRequestCode.PUT;
+            case DELETE:
+                return CoAPRequestCode.DELETE;
+            default:
+                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCode + " }" );
         }
     }
 
     /**
-     * Translate responseCode attribute to Cf ResponseCode.
+     * Translate responseCode attribute to Cf ResponseCode with default value.
      * @param reponseCodeAttribute to be converted
      * @param defaultResponseCodeAttribute is the responseCode to use when input is empty
      * @return the converted Cf responseCode
@@ -220,7 +176,7 @@ public class AttributeUtils
     }
 
     /**
-     * Translate responseCode attribute to Cf ResponseCode.
+     * Translate Cf Response to CoderesponseCode attribute.
      * @param reponseCode the code to convert
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
@@ -288,79 +244,6 @@ public class AttributeUtils
                 return CoAPResponseCode.PROXY_NOT_SUPPORTED;
             default:
                 throw new InternalInvalidResponseCodeException( reponseCode );
-        }
-    }
-    
-    /**
-     * Translate attribute to Cf ResponseCode.
-     * @param reponseCodeAttribute the attribute to convert.
-     * @return the converted Cf responseCode
-     * @throws InternalInvalidResponseCodeException when the attribute cannot be converted.
-     */
-    @Deprecated
-    public static ResponseCode toResponseCode( String reponseCodeAttribute ) throws InternalInvalidResponseCodeException
-    {
-        switch ( reponseCodeAttribute )
-        {
-            //success
-            case "CREATED":
-                return ResponseCode.CREATED;
-            case "DELETED":
-                return ResponseCode.DELETED;
-            case "VALID":
-                return ResponseCode.VALID;
-            case "CHANGED":
-                return ResponseCode.CHANGED;
-            case "CONTENT":
-                return ResponseCode.CONTENT;
-            case "CONTINUE":
-                return ResponseCode.CONTINUE;
-
-            //client error
-            case "BAD_REQUEST":
-                return ResponseCode.BAD_REQUEST;
-            case "UNAUTHORIZED":
-                return ResponseCode.UNAUTHORIZED;
-            case "BAD_OPTION":
-                return ResponseCode.BAD_OPTION;
-            case "FORBIDDEN":
-                return ResponseCode.FORBIDDEN;
-            case "NOT_FOUND":
-                return ResponseCode.NOT_FOUND;
-            case "METHOD_NOT_ALLOWED":
-                return ResponseCode.METHOD_NOT_ALLOWED;
-            case "NOT_ACCEPTABLE":
-                return ResponseCode.NOT_ACCEPTABLE;
-            case "REQUEST_ENTITY_INCOMPLETE":
-                return ResponseCode.REQUEST_ENTITY_INCOMPLETE;
-            case "CONFLICT":
-                return ResponseCode.CONFLICT;
-            case "PRECONDITION_FAILED":
-                return ResponseCode.PRECONDITION_FAILED;
-            case "REQUEST_ENTITY_TOO_LARGE":
-                return ResponseCode.REQUEST_ENTITY_TOO_LARGE;
-            case "UNSUPPORTED_CONTENT_FORMAT":
-                return ResponseCode.UNSUPPORTED_CONTENT_FORMAT;
-            case "UNPROCESSABLE_ENTITY":
-                return ResponseCode.UNPROCESSABLE_ENTITY;
-            case "TOO_MANY_REQUESTS":
-                return ResponseCode.TOO_MANY_REQUESTS;
-
-            //sever error
-            case "INTERNAL_SERVER_ERROR":
-                return ResponseCode.INTERNAL_SERVER_ERROR;
-            case "NOT_IMPLEMENTED":
-                return ResponseCode.NOT_IMPLEMENTED;
-            case "BAD_GATEWAY":
-                return ResponseCode.BAD_GATEWAY;
-            case "SERVICE_UNAVAILABLE":
-                return ResponseCode.SERVICE_UNAVAILABLE;
-            case "GATEWAY_TIMEOUT":
-                return ResponseCode.GATEWAY_TIMEOUT;
-            case "PROXY_NOT_SUPPORTED":
-                return ResponseCode.PROXY_NOT_SUPPORTED;
-            default:
-                throw new InternalInvalidResponseCodeException( reponseCodeAttribute );
         }
     }
 }

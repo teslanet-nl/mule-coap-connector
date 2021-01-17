@@ -33,6 +33,7 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 
 
@@ -189,7 +190,7 @@ public class ObserveRelation implements CoapHandler
         }
         try
         {
-            processor.process( uri, Code.GET, null );
+            processor.process( uri, CoAPRequestCode.GET, null );
         }
         catch ( InternalResponseException e )
         {
@@ -205,7 +206,7 @@ public class ObserveRelation implements CoapHandler
     {
         try
         {
-            processor.process( uri, Code.GET, response );
+            processor.process( uri, CoAPRequestCode.GET, response );
         }
         catch ( InternalResponseException e )
         {
