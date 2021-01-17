@@ -125,7 +125,6 @@ public class OperationalListener
      */
     public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > callback )
     {
-        // TODO assure not null
         this.callback= callback;
     }
 
