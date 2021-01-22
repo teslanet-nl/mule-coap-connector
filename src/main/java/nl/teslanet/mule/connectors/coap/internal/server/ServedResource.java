@@ -132,7 +132,7 @@ public class ServedResource extends CoapResource
             if ( resource.getInfoConfig().getTitle() != null )
             {
                 getAttributes().setTitle( resource.getInfoConfig().getTitle() );
-            } ;
+            };
             if ( resource.getInfoConfig().getRt() != null )
             {
                 for ( String rt : resource.getInfoConfig().getRt().split( "\\s*,\\s*" ) )

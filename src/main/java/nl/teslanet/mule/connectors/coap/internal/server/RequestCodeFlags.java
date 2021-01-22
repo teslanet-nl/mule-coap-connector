@@ -22,7 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.server;
 
-//TODO unit test
+
 /**
  * The RequestCodeFlags mantains a set of flags representing the CoAP request
  * codes.
@@ -56,10 +56,13 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     public RequestCodeFlags( RequestCodeFlags original )
     {
         super();
-        setGet( original.isGet() );
-        setPost( original.isPost() );
-        setPut( original.isPut() );
-        setDelete( original.isDelete() );
+        if ( original != null )
+        {
+            setGet( original.isGet() );
+            setPost( original.isPost() );
+            setPut( original.isPut() );
+            setDelete( original.isDelete() );
+        }
     }
 
     /**
@@ -211,5 +214,25 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     public int hashCode()
     {
         return flags;
+    }
+
+    /**
+     * Get String representation of the requestCodeFlags.
+     * When a flag is set the requestCode is shown in uppercase, otherwise lowercase.
+     */
+    @Override
+    public String toString()
+    {
+        StringBuffer bfr= new StringBuffer();
+        bfr.append( "RequestCodeFlags[ " );
+        bfr.append( isGet() ? "GET" : "get" );
+        bfr.append( " " );
+        bfr.append( isPost() ? "POST" : "post" );
+        bfr.append( " " );
+        bfr.append( isPut() ? "PUT" : "put" );
+        bfr.append( " " );
+        bfr.append( isDelete() ? "DELETE" : "delete" );
+        bfr.append( " ]" );
+        return bfr.toString();
     }
 }
