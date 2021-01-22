@@ -312,17 +312,17 @@ public class ETagTest
         assertEquals( "ETag.compareTo failed to compare to equal etag", 0, etag4.compareTo( etag4 ) );
         assertEquals( "ETag.compareTo failed to compare to equal etag", 0, etag5.compareTo( etag5 ) );
 
-        assertEquals( "ETag.compareTo failed to compare to equal etag", etag1.compareTo( etag5 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", -1, etag2.compareTo( etag1 ), 1 );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", 0, etag3.compareTo( etag2 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", 1, etag4.compareTo( etag3 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", 1, etag5.compareTo( etag4 ) );
+        assertEquals( "ETag.compareTo failed to compare", -1, etag1.compareTo( etag5 ) );
+        assertEquals( "ETag.compareTo failed to compare", 1, etag2.compareTo( etag1 ) );
+        assertEquals( "ETag.compareTo failed to compare", 0, etag3.compareTo( etag2 ) );
+        assertEquals( "ETag.compareTo failed to compare", 1, etag4.compareTo( etag3 ) );
+        assertEquals( "ETag.compareTo failed to compare", 1, etag5.compareTo( etag4 ) );
 
-        assertEquals( "ETag.compareTo failed to compare to equal etag", -1, etag1.compareTo( etag2 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", 0, etag2.compareTo( etag3 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", -1, etag3.compareTo( etag4 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", -1, etag4.compareTo( etag5 ) );
-        assertEquals( "ETag.compareTo failed to compare to equal etag", 1, etag5.compareTo( etag1 ) );
+        assertEquals( "ETag.compareTo failed to compare", -1, etag1.compareTo( etag2 ) );
+        assertEquals( "ETag.compareTo failed to compare", 0, etag2.compareTo( etag3 ) );
+        assertEquals( "ETag.compareTo failed to compare", -1, etag3.compareTo( etag4 ) );
+        assertEquals( "ETag.compareTo failed to compare", -1, etag4.compareTo( etag5 ) );
+        assertEquals( "ETag.compareTo failed to compare", 1, etag5.compareTo( etag1 ) );
 
         assertEquals( "ETag.compareTo failed to compare to null", 1, etag5.compareTo( null ) );
     }
