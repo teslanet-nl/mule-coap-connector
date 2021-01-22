@@ -102,7 +102,15 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isGet()
     {
-        return ( flags & GETFLAG ) > 0;
+        return ( flags & GETFLAG ) != 0;
+    }
+
+    /**
+     * @return the inverse state of the get flag
+     */
+    public boolean isNotGet()
+    {
+        return ( flags & GETFLAG ) == 0;
     }
 
     /**
@@ -130,6 +138,14 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     }
 
     /**
+     * @return the inverse state of the post flag
+     */
+    public boolean isNotPost()
+    {
+        return ( flags & POSTFLAG ) == 0;
+    }
+
+    /**
      * Set the put flag.
      * @param flag the state of the flag
      */
@@ -154,6 +170,14 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     }
 
     /**
+     * @return the inverse state of the put flag
+     */
+    public boolean isNotPut()
+    {
+        return ( flags & PUTFLAG ) == 0;
+    }
+    
+    /**
      * Set the delete flag.
      * @param flag the state of the flag
      */
@@ -177,6 +201,14 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
         return ( flags & DELETEFLAG ) != 0;
     }
 
+    /**
+     * @return the inverse state of the delete flag
+     */
+    public boolean isNotDelete()
+    {
+        return ( flags & DELETEFLAG ) == 0;
+    }
+    
     /**
      * Check on equality to another object. 
      * These are equal when the flags have equal values.  

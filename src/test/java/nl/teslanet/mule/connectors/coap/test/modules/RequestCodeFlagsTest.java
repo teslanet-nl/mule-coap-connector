@@ -99,7 +99,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testConstructor() throws InvalidETagException
+    public void testConstructorAndGetters() throws InvalidETagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         assertNotNull( "no object constructed", flags );
@@ -108,7 +108,12 @@ public class RequestCodeFlagsTest
         assertEquals( "wrong post flag", post, flags.isPost() );
         assertEquals( "wrong put flag", put, flags.isPut() );
         assertEquals( "wrong delete flag", delete, flags.isDelete() );
-    }
+
+        assertEquals( "wrong not get flag", !get, flags.isNotGet() );
+        assertEquals( "wrong not post flag", !post, flags.isNotPost() );
+        assertEquals( "wrong not put flag", !put, flags.isNotPut() );
+        assertEquals( "wrong not delete flag", !delete, flags.isNotDelete() );
+}
 
     @Test
     public void testCopyConstructor() throws InvalidETagException
