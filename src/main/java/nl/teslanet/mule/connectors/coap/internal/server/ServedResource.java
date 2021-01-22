@@ -73,26 +73,10 @@ public class ServedResource extends CoapResource
      */
     private SourceCallback< InputStream, ReceivedRequestAttributes > deleteCallback= null;
 
-    //TODO use requestcodeflags class
     /**
-     * Flag that indicates whether the resource accepts Get requests.
+     * RequestCode flags indicating which requests the resource accepts.
      */
-    private Boolean get= false;
-
-    /**
-     * Flag that indicates whether the resource accepts Put requests.
-     */
-    private Boolean put= false;
-
-    /**
-     * Flag that indicates whether the resource accepts Post requests.
-     */
-    private Boolean post= false;
-
-    /**
-     * Flag that indicates whether the resource accepts Delete requests.
-     */
-    private Boolean delete= false;
+    private RequestCodeFlags requestCodeFlags= new RequestCodeFlags();
 
     /**
      * Flag that indicates whether the resource should acknowledge before processing the request.
@@ -110,10 +94,10 @@ public class ServedResource extends CoapResource
 
         //TODO make use of visible/invisible?
 
-        get= resource.isGet();
-        put= resource.isPut();
-        post= resource.isPost();
-        delete= resource.isDelete();
+        requestCodeFlags.setGet( resource.isGet() );
+        requestCodeFlags.setPost( resource.isPost() );
+        requestCodeFlags.setPut( resource.isPut() );
+        requestCodeFlags.setDelete( resource.isDelete() );
         earlyAck= resource.isEarlyAck();
 
         if ( resource.isObservable() )
@@ -132,7 +116,7 @@ public class ServedResource extends CoapResource
             if ( resource.getInfoConfig().getTitle() != null )
             {
                 getAttributes().setTitle( resource.getInfoConfig().getTitle() );
-            };
+            } ;
             if ( resource.getInfoConfig().getRt() != null )
             {
                 for ( String rt : resource.getInfoConfig().getRt().split( "\\s*,\\s*" ) )
@@ -182,10 +166,10 @@ public class ServedResource extends CoapResource
 
         //TODO make use of visible/invisible?
 
-        get= resource.isGet();
-        put= resource.isPut();
-        post= resource.isPost();
-        delete= resource.isDelete();
+        requestCodeFlags.setGet( resource.isGet() );
+        requestCodeFlags.setPost( resource.isPost() );
+        requestCodeFlags.setPut( resource.isPut() );
+        requestCodeFlags.setDelete( resource.isDelete() );
         earlyAck= resource.isEarlyAck();
 
         if ( resource.isObservable() )
@@ -239,7 +223,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handleGET( CoapExchange exchange )
     {
-        if ( !isGet() )
+        if ( requestCodeFlags.isNotGet() )
         {
             // default implementation is to respond METHOD_NOT_ALLOWED
             super.handleGET( exchange );
@@ -256,7 +240,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePUT( CoapExchange exchange )
     {
-        if ( !isPut() )
+        if ( requestCodeFlags.isNotPut() )
         {
             // default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePUT( exchange );
@@ -273,7 +257,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePOST( CoapExchange exchange )
     {
-        if ( !isPost() )
+        if ( requestCodeFlags.isNotPost() )
         {
             // default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePOST( exchange );
@@ -290,7 +274,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handleDELETE( CoapExchange exchange )
     {
-        if ( !isDelete() )
+        if ( requestCodeFlags.isNotDelete() )
         {
             // default implementation is to respond METHOD_NOT_ALLOWED
             super.handleDELETE( exchange );
@@ -313,7 +297,7 @@ public class ServedResource extends CoapResource
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
             return;
         }
-        if ( isEarlyAck() )
+        if ( earlyAck )
         {
             exchange.accept();
         }
@@ -366,46 +350,6 @@ public class ServedResource extends CoapResource
 
         CoAPOptions.copyOptions( exchange.getRequestOptions(), attributes.getOptions() );
         return attributes;
-    }
-
-    /**
-     * @return the get flag
-     */
-    public Boolean isGet()
-    {
-        return get;
-    }
-
-    /**
-     * @return the put flag
-     */
-    public Boolean isPut()
-    {
-        return put;
-    }
-
-    /**
-     * @return the post flag
-     */
-    public Boolean isPost()
-    {
-        return post;
-    }
-
-    /**
-     * @return the delete flag
-     */
-    public Boolean isDelete()
-    {
-        return delete;
-    }
-
-    /**
-     * @return the earlyAck flag
-     */
-    public Boolean isEarlyAck()
-    {
-        return earlyAck;
     }
 
     /**
