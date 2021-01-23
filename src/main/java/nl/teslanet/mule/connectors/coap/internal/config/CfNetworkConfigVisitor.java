@@ -54,7 +54,7 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
  */
 public class CfNetworkConfigVisitor implements ConfigVisitor
 {
-    private NetworkConfig config= NetworkConfig.createStandardWithoutFile();
+    private NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams)
@@ -62,11 +62,11 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( BlockwiseParams toVisit )
     {
-        if ( toVisit.preferredBlockSize != null ) config.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, toVisit.preferredBlockSize ); // 512);
-        if ( toVisit.maxMessageSize != null ) config.setInt( NetworkConfig.Keys.MAX_MESSAGE_SIZE, toVisit.maxMessageSize ); // 1024);
+        if ( toVisit.preferredBlockSize != null ) networkConfig.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, toVisit.preferredBlockSize ); // 512);
+        if ( toVisit.maxMessageSize != null ) networkConfig.setInt( NetworkConfig.Keys.MAX_MESSAGE_SIZE, toVisit.maxMessageSize ); // 1024);
         // TODO: only transparent blockwise is supported: maxResourceBodySize > 0
-        if ( toVisit.maxResourceBodySize != null && toVisit.maxResourceBodySize > 0 ) config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, toVisit.maxResourceBodySize ); // 8192 bytes);
-        if ( toVisit.blockwiseStatusLifetime != null ) config.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, toVisit.blockwiseStatusLifetime );
+        if ( toVisit.maxResourceBodySize != null && toVisit.maxResourceBodySize > 0 ) networkConfig.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, toVisit.maxResourceBodySize ); // 8192 bytes);
+        if ( toVisit.blockwiseStatusLifetime != null ) networkConfig.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, toVisit.blockwiseStatusLifetime );
     }
 
     /* (non-Javadoc)
@@ -75,17 +75,17 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( ExchangeParams toVisit )
     {
-        if ( toVisit.maxActivePeers != null ) config.setInt( NetworkConfig.Keys.MAX_ACTIVE_PEERS, toVisit.maxActivePeers );
-        if ( toVisit.maxPeerInactivityPeriod != null ) config.setInt( NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD, toVisit.maxPeerInactivityPeriod );
-        if ( toVisit.ackTimeout != null ) config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, toVisit.ackTimeout ); // 2000);
-        if ( toVisit.ackRandomFactor != null ) config.setFloat( NetworkConfig.Keys.ACK_RANDOM_FACTOR, toVisit.ackRandomFactor ); // 1.5f); Float.va
-        if ( toVisit.ackTimeoutScale != null ) config.setFloat( NetworkConfig.Keys.ACK_TIMEOUT_SCALE, toVisit.ackTimeoutScale ); // 2f);
-        if ( toVisit.maxRetransmit != null ) config.setInt( NetworkConfig.Keys.MAX_RETRANSMIT, toVisit.maxRetransmit ); // 4);
-        if ( toVisit.exchangeLifetime != null ) config.setLong( NetworkConfig.Keys.EXCHANGE_LIFETIME, toVisit.exchangeLifetime ); // 247 * 1000); // ms
-        if ( toVisit.nonLifetime != null ) config.setLong( NetworkConfig.Keys.NON_LIFETIME, toVisit.nonLifetime ); // 145 * 1000); // ms
-        if ( toVisit.nstart != null ) config.setInt( NetworkConfig.Keys.NSTART, toVisit.nstart ); // 1);
-        if ( toVisit.useRandomMidStart != null ) config.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, toVisit.useRandomMidStart ); // true);
-        if ( toVisit.tokenSizeLimit != null ) config.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, toVisit.tokenSizeLimit ); // 8);
+        if ( toVisit.maxActivePeers != null ) networkConfig.setInt( NetworkConfig.Keys.MAX_ACTIVE_PEERS, toVisit.maxActivePeers );
+        if ( toVisit.maxPeerInactivityPeriod != null ) networkConfig.setInt( NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD, toVisit.maxPeerInactivityPeriod );
+        if ( toVisit.ackTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.ACK_TIMEOUT, toVisit.ackTimeout ); // 2000);
+        if ( toVisit.ackRandomFactor != null ) networkConfig.setFloat( NetworkConfig.Keys.ACK_RANDOM_FACTOR, toVisit.ackRandomFactor ); // 1.5f); Float.va
+        if ( toVisit.ackTimeoutScale != null ) networkConfig.setFloat( NetworkConfig.Keys.ACK_TIMEOUT_SCALE, toVisit.ackTimeoutScale ); // 2f);
+        if ( toVisit.maxRetransmit != null ) networkConfig.setInt( NetworkConfig.Keys.MAX_RETRANSMIT, toVisit.maxRetransmit ); // 4);
+        if ( toVisit.exchangeLifetime != null ) networkConfig.setLong( NetworkConfig.Keys.EXCHANGE_LIFETIME, toVisit.exchangeLifetime ); // 247 * 1000); // ms
+        if ( toVisit.nonLifetime != null ) networkConfig.setLong( NetworkConfig.Keys.NON_LIFETIME, toVisit.nonLifetime ); // 145 * 1000); // ms
+        if ( toVisit.nstart != null ) networkConfig.setInt( NetworkConfig.Keys.NSTART, toVisit.nstart ); // 1);
+        if ( toVisit.useRandomMidStart != null ) networkConfig.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, toVisit.useRandomMidStart ); // true);
+        if ( toVisit.tokenSizeLimit != null ) networkConfig.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, toVisit.tokenSizeLimit ); // 8);
     }
 
     /* (non-Javadoc)
@@ -94,8 +94,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( GroupedMidTracker toVisit )
     {
-        config.setString( NetworkConfig.Keys.MID_TRACKER, "GROUPED" );
-        if ( toVisit.midTrackerGroups != null ) config.setInt( NetworkConfig.Keys.MID_TRACKER_GROUPS, toVisit.midTrackerGroups );
+        networkConfig.setString( NetworkConfig.Keys.MID_TRACKER, "GROUPED" );
+        if ( toVisit.midTrackerGroups != null ) networkConfig.setInt( NetworkConfig.Keys.MID_TRACKER_GROUPS, toVisit.midTrackerGroups );
     }
 
     /* (non-Javadoc)
@@ -104,7 +104,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( MapBasedMidTracker toVisit )
     {
-        config.setString( NetworkConfig.Keys.MID_TRACKER, "MAPBASED" );
+        networkConfig.setString( NetworkConfig.Keys.MID_TRACKER, "MAPBASED" );
     }
 
     /* (non-Javadoc)
@@ -113,7 +113,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( NullMidTracker toVisit )
     {
-        config.setString( NetworkConfig.Keys.MID_TRACKER, "NULL" );
+        networkConfig.setString( NetworkConfig.Keys.MID_TRACKER, "NULL" );
     }
 
     /* (non-Javadoc)
@@ -122,8 +122,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( CropRotation toVisit )
     {
-        config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION );
-        if ( toVisit.cropRotationPeriod != null ) config.setLong( NetworkConfig.Keys.CROP_ROTATION_PERIOD, toVisit.cropRotationPeriod ); // 2000);
+        networkConfig.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION );
+        if ( toVisit.cropRotationPeriod != null ) networkConfig.setLong( NetworkConfig.Keys.CROP_ROTATION_PERIOD, toVisit.cropRotationPeriod ); // 2000);
     }
 
     /* (non-Javadoc)
@@ -132,8 +132,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( MarkAndSweep toVisit )
     {
-        config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP );
-        if ( toVisit.markAndSweepInterval != null ) config.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, toVisit.markAndSweepInterval ); // 10 * 1000);
+        networkConfig.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP );
+        if ( toVisit.markAndSweepInterval != null ) networkConfig.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, toVisit.markAndSweepInterval ); // 10 * 1000);
     }
 
     /* (non-Javadoc)
@@ -144,11 +144,11 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     {
         if ( toVisit.healthStatusInterval != null )
         {
-            config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, toVisit.healthStatusInterval );
+            networkConfig.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, toVisit.healthStatusInterval );
         }
         else
         {
-            config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, 600 );
+            networkConfig.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, 600 );
         }
     }
 
@@ -158,8 +158,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( BasicRto basicRto )
     {
-        config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
-        config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "BasicRto" );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
+        networkConfig.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "BasicRto" );
     }
 
     /* (non-Javadoc)
@@ -168,8 +168,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( Cocoa cocoa )
     {
-        config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
-        config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "Cocoa" );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
+        networkConfig.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "Cocoa" );
     }
 
     /* (non-Javadoc)
@@ -178,8 +178,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( CocoaStrong cocoaStrong )
     {
-        config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
-        config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "CocoaStrong" );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
+        networkConfig.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "CocoaStrong" );
     }
 
     /* (non-Javadoc)
@@ -188,8 +188,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( LinuxRto linuxRto )
     {
-        config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
-        config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "LinuxRto" );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
+        networkConfig.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "LinuxRto" );
     }
 
     /* (non-Javadoc)
@@ -198,8 +198,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( PeakhopperRto peakhopperRto )
     {
-        config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
-        config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "PeakhopperRto" );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, true );
+        networkConfig.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "PeakhopperRto" );
     }
 
     /* (non-Javadoc)
@@ -208,11 +208,11 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( UdpParams toVisit )
     {
-        if ( toVisit.networkStageReceiverThreadCount != null ) config.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, toVisit.networkStageReceiverThreadCount ); // WINDOWS ? CORES :  1);
-        if ( toVisit.networkStageSenderThreadCount != null ) config.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, toVisit.networkStageSenderThreadCount ); // WINDOWS ? CORES : 1);
-        if ( toVisit.udpConnectorDatagramSize != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, toVisit.udpConnectorDatagramSize ); // 2048);
-        if ( toVisit.udpConnectorReceiveBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, toVisit.udpConnectorReceiveBuffer ); // UDPConnector.UNDEFINED);
-        if ( toVisit.udpConnectorSendBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, toVisit.udpConnectorSendBuffer ); // UDPConnector.UNDEFINED);
+        if ( toVisit.networkStageReceiverThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, toVisit.networkStageReceiverThreadCount ); // WINDOWS ? CORES :  1);
+        if ( toVisit.networkStageSenderThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, toVisit.networkStageSenderThreadCount ); // WINDOWS ? CORES : 1);
+        if ( toVisit.udpConnectorDatagramSize != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, toVisit.udpConnectorDatagramSize ); // 2048);
+        if ( toVisit.udpConnectorReceiveBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, toVisit.udpConnectorReceiveBuffer ); // UDPConnector.UNDEFINED);
+        if ( toVisit.udpConnectorSendBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, toVisit.udpConnectorSendBuffer ); // UDPConnector.UNDEFINED);
     }
 
     /* (non-Javadoc)
@@ -221,9 +221,9 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( TcpParams toVisit )
     {
-        if ( toVisit.tcpConnectTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout ); // 10000 ms
-        if ( toVisit.tcpWorkerThreads != null ) config.setInt( NetworkConfig.Keys.TCP_WORKER_THREADS, toVisit.tcpWorkerThreads );
-        if ( toVisit.tcpConnectionIdleTimeout != null ) config.setInt( NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout ); // 10 s
+        if ( toVisit.tcpConnectTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout ); // 10000 ms
+        if ( toVisit.tcpWorkerThreads != null ) networkConfig.setInt( NetworkConfig.Keys.TCP_WORKER_THREADS, toVisit.tcpWorkerThreads );
+        if ( toVisit.tcpConnectionIdleTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout ); // 10 s
     }
 
     /* (non-Javadoc)
@@ -232,9 +232,9 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( TlsParams toVisit )
     {
-        if ( toVisit.tlsHandshakeTimeout != null ) config.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
+        if ( toVisit.tlsHandshakeTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout ); // 10000 ms
         //TODO report Cf bug where long is used
-        if ( toVisit.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
+        if ( toVisit.secureSessionTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, toVisit.secureSessionTimeout ); //  60 * 60 * 24; // 24h [s]
     }
 
     /* (non-Javadoc)
@@ -243,19 +243,19 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( DtlsParams toVisit )
     {
-        if ( toVisit.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, toVisit.dtlsAutoResumeTimeout );
+        if ( toVisit.dtlsAutoResumeTimeout != null ) networkConfig.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, toVisit.dtlsAutoResumeTimeout );
         if ( toVisit.responseMatching != null )
         {
             switch ( toVisit.responseMatching )
             {
                 case STRICT:
-                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "STRICT" );
+                    networkConfig.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "STRICT" );
                     break;
                 case PRINCIPAL:
-                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "PRINCIPAL" );
+                    networkConfig.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "PRINCIPAL" );
                     break;
                 case RELAXED:
-                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "RELAXED" );
+                    networkConfig.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "RELAXED" );
                     break;
                 default:
                     break;
@@ -269,11 +269,12 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( SocketParams toVisit )
     {
+        //TODO does Cf use networkconfig port when explicit endpoint is configured?
         //host is configured on endpoint itself
         if ( toVisit.bindToPort != null )
         {
-            config.setInt( NetworkConfig.Keys.COAP_PORT, toVisit.bindToPort );
-            config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, toVisit.bindToPort );
+            networkConfig.setInt( NetworkConfig.Keys.COAP_PORT, toVisit.bindToPort );
+            networkConfig.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, toVisit.bindToPort );
         }
     }
 
@@ -283,27 +284,27 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( NotificationParams toVisit )
     {
-        if ( toVisit.notificationCheckIntervalTime != null ) config.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, toVisit.notificationCheckIntervalTime );
-        if ( toVisit.notificationCheckIntervalCount != null ) config.setInt( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT, toVisit.notificationCheckIntervalCount );
+        if ( toVisit.notificationCheckIntervalTime != null ) networkConfig.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, toVisit.notificationCheckIntervalTime );
+        if ( toVisit.notificationCheckIntervalCount != null ) networkConfig.setInt( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT, toVisit.notificationCheckIntervalCount );
         if ( toVisit.notificationReregistrationBackoff != null )
-            config.setLong( NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF, toVisit.notificationReregistrationBackoff );
+            networkConfig.setLong( NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF, toVisit.notificationReregistrationBackoff );
     }
 
     //not at endpoint level 
-    //if ( toVisit.protocolStageThreadCount != null ) config.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, toVisit.protocolStageThreadCount ); // CORES);
+    //if ( toVisit.protocolStageThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, toVisit.protocolStageThreadCount ); // CORES);
 
-    /* HTTP config:
-     * if ( toVisit.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT,
+    /* HTTP networkConfig:
+     * if ( toVisit.httpPort != null ) networkConfig.setInt(NetworkConfig.Keys.HTTP_PORT,
      * toVisit.httpPort ); // 8080); if ( toVisit.httpServerSocketTimeout != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_TIMEOUT,
+     * networkConfig.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_TIMEOUT,
      * toVisit.httpServerSocketTimeout ); // 100000); if (
      * toVisit.httpServerSocketBufferSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_BUFFER_SIZE,
+     * networkConfig.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_BUFFER_SIZE,
      * toVisit.httpServerSocketBufferSize ); // 8192); if (
      * toVisit.httpCacheResponseMaxAge != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE,
+     * networkConfig.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE,
      * toVisit.httpCacheResponseMaxAge ); // 86400); if ( toVisit.httpCacheSize != null )
-     * config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, toVisit.httpCacheSize ); //
+     * networkConfig.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, toVisit.httpCacheSize ); //
      * 32); 
      */
 
@@ -312,7 +313,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
      */
     public NetworkConfig getNetworkConfig()
     {
-        return config;
+        return networkConfig;
 
     }
 }

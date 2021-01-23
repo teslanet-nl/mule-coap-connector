@@ -55,186 +55,186 @@ public interface ConfigVisitor
      * Visit BlockwiseParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( BlockwiseParams toVisit ) {};
+    default public void visit( BlockwiseParams toVisit ) {};
 
     /**
      * Visit UdpParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( UdpParams toVisit ) {};
+    default public void visit( UdpParams toVisit ) {};
 
     /**
      * Visit SocketParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( SocketParams toVisit ) {};
+    default public void visit( SocketParams toVisit ) {};
 
     /**
      * Visit EncryptionParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( EncryptionParams toVisit ) {};
+    default public void visit( EncryptionParams toVisit ) {};
 
     /**
      * Visit ExchangeParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( ExchangeParams toVisit ) {};
+    default public void visit( ExchangeParams toVisit ) {};
 
     /**
      * Visit GroupedMidTracker configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( GroupedMidTracker toVisit ) {};
+    default public void visit( GroupedMidTracker toVisit ) {};
 
     /**
      * Visit MapBasedMidTracker configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( MapBasedMidTracker toVisit ) {};
+    default public void visit( MapBasedMidTracker toVisit ) {};
 
     /**
      * Visit NullMidTracker configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( NullMidTracker toVisit ) {};
+    default public void visit( NullMidTracker toVisit ) {};
 
     /**
      * Visit CropRotation configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( CropRotation toVisit ) {};
+    default public void visit( CropRotation toVisit ) {};
 
     /**
      * Visit MarkAndSweep configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( MarkAndSweep toVisit ) {};
+    default public void visit( MarkAndSweep toVisit ) {};
 
     /**
      * Visit LogHealthStatus configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( LogHealthStatus toVisit ) {};
+    default public void visit( LogHealthStatus toVisit ) {};
 
     /**
      * Visit NotificationParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( NotificationParams toVisit ) {};
+    default public void visit( NotificationParams toVisit ) {};
 
     /**
      * Visit BasicRto configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( BasicRto toVisit ) {};
+    default public void visit( BasicRto toVisit ) {};
 
     /**
      * Visit Cocoa configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( Cocoa toVisit ) {};
+    default public void visit( Cocoa toVisit ) {};
 
     /**
      * Visit CocoaStrong configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( CocoaStrong toVisit ) {};
+    default public void visit( CocoaStrong toVisit ) {};
 
     /**
      * Visit LinuxRto configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( LinuxRto toVisit ) {};
+    default public void visit( LinuxRto toVisit ) {};
 
     /**
      * Visit PeakhopperRto configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( PeakhopperRto toVisit ) {};
+    default public void visit( PeakhopperRto toVisit ) {};
 
     /**
      * Visit Endpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( Endpoint toVisit ) {};
+    default public void visit( Endpoint toVisit ) {};
 
     /**
      * Visit UDPEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( UDPEndpoint toVisit ) {};
+    default public void visit( UDPEndpoint toVisit ) {};
 
     /**
      * Visit MulticastUDPEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( MulticastUDPEndpoint toVisit ) {};
+    default public void visit( MulticastUDPEndpoint toVisit ) {};
 
     /**
      * Visit DTLSEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( DTLSEndpoint toVisit ) {};
+    default public void visit( DTLSEndpoint toVisit ) {};
 
     /**
      * Visit TCPEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TCPEndpoint toVisit ) {};
+    default public void visit( TCPEndpoint toVisit ) {};
 
     /**
      * Visit TcpParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TcpParams toVisit ) {};
+    default public void visit( TcpParams toVisit ) {};
 
     /**
      * Visit TlsParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TlsParams toVisit ) {};
+    default public void visit( TlsParams toVisit ) {};
 
     /**
      * Visit TCPClientEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TCPClientEndpoint toVisit ) {};
+    default public void visit( TCPClientEndpoint toVisit ) {};
 
     /**
      * Visit TCPServerEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TCPServerEndpoint toVisit ) {};
+    default public void visit( TCPServerEndpoint toVisit ) {};
 
     /**
      * Visit TLSEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TLSEndpoint toVisit ) {};
+    default public void visit( TLSEndpoint toVisit ) {};
 
     /**
      * Visit TLSClientEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TLSClientEndpoint toVisit ) {};
+    default public void visit( TLSClientEndpoint toVisit ) {};
 
     /**
      * Visit TLSServerEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TLSServerEndpoint toVisit ) {};
+    default public void visit( TLSServerEndpoint toVisit ) {};
 
     /**
      * Visit DtlsParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( DtlsParams toVisit ) {};
+    default public void visit( DtlsParams toVisit ) {};
 
     /**
      * Visit MulticastParams configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( MulticastParams toVisit ) {};
+    default public void visit( MulticastParams toVisit ) {};
 
 }

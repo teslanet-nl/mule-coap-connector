@@ -23,9 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal;
 
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +36,6 @@ import java.util.Map.Entry;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
-import org.eclipse.californium.elements.UdpMulticastConnector;
 import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
@@ -58,10 +55,9 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.config.CfNetworkConfigVisitor;
-import nl.teslanet.mule.connectors.coap.internal.config.MulticastVisitor;
+import nl.teslanet.mule.connectors.coap.internal.config.EndpointConfigVisitor;
+import nl.teslanet.mule.connectors.coap.internal.config.MulticastUdpEndpointConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalMulticastGroupException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNetworkInterfaceException;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
 
@@ -114,14 +110,7 @@ public final class OperationalEndpoint
         }
         else if ( MulticastUDPEndpoint.class.isInstance( config ) )
         {
-            try
-            {
-                operationalEndpoint= new OperationalEndpoint( (MulticastUDPEndpoint) config );
-            }
-            catch ( InternalNetworkInterfaceException | InternalMulticastGroupException e )
-            {
-                throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } construction failed." );
-            }
+            operationalEndpoint= new OperationalEndpoint( (MulticastUDPEndpoint) config );
         }
         else if ( UDPEndpoint.class.isInstance( config ) )
         {
@@ -333,48 +322,30 @@ public final class OperationalEndpoint
     /**
      * Constructor for an operational UDP endpoint.
      * @param config the UDP endpoint configuration
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
      */
-    private OperationalEndpoint( UDPEndpoint config )
+    private OperationalEndpoint( UDPEndpoint config ) throws EndpointConstructionException
     {
-        CfNetworkConfigVisitor visitor= new CfNetworkConfigVisitor();
+        EndpointConfigVisitor visitor= new EndpointConfigVisitor();
         config.accept( visitor );
-        this.configName= config.configName;
-        CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        InetSocketAddress localAddress= getInetSocketAddress( config.socketParams, false );
-        builder.setInetSocketAddress( localAddress );
-        builder.setNetworkConfig( visitor.getNetworkConfig() );
-        this.coapEndpoint= builder.build();
+        this.configName= visitor.getEndpointName();
+        this.coapEndpoint= visitor.getEndpointBuilder().build();
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
     //TODO rename interfaceAddress param
     /**
-     * Constructor for an operational UDP endpoint.
-     * @param config the UDP endpoint configuration
-     * @throws InternalNetworkInterfaceException 
-     * @throws InternalMulticastGroupException 
+     * Constructor for an operational Multicast UDP endpoint.
+     * @param config the Multicast UDP endpoint configuration
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
+
      */
-    private OperationalEndpoint( MulticastUDPEndpoint config ) throws InternalNetworkInterfaceException, InternalMulticastGroupException
+    private OperationalEndpoint( MulticastUDPEndpoint config ) throws EndpointConstructionException 
     {
-        CfNetworkConfigVisitor visitor= new CfNetworkConfigVisitor();
+        MulticastUdpEndpointConfigVisitor visitor= new MulticastUdpEndpointConfigVisitor();
         config.accept( visitor );
-        this.configName= config.configName;
-        CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        builder.setNetworkConfig( visitor.getNetworkConfig() );
-        MulticastVisitor multicastVisitor= new MulticastVisitor();
-        config.accept( multicastVisitor );
-        UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
-        //TODO add feature to set interface per multicast-group
-        NetworkInterface networkInterface= multicastVisitor.getInterfaceAddress();
-        for ( InetAddress group : multicastVisitor.getMulticastGroups() )
-        {
-            connectorBuilder.addMulticastGroup( group, networkInterface );
-        }
-        //TODO move to visitor
-        connectorBuilder.setLocalAddress( getInetSocketAddress( config.socketParams, false ) );
-        //TODO add outgoing params
-        builder.setConnector( connectorBuilder.build() );
-        this.coapEndpoint= builder.build();
+        this.configName= visitor.getEndpointName();
+        this.coapEndpoint= visitor.getEndpointBuilder().build();
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
@@ -455,7 +426,7 @@ public final class OperationalEndpoint
      * @param isSsecure Indication whether coap ({@code False}) or coaps ({@code True}) is used. 
      * @return The InetSocketAddress that conforms to the configuration.
      */
-    public InetSocketAddress getInetSocketAddress( SocketParams socketParams, boolean isSsecure )
+    private InetSocketAddress getInetSocketAddress( SocketParams socketParams, boolean isSsecure )
     {
         int defaultPort= ( isSsecure ? CoAP.DEFAULT_COAP_SECURE_PORT : CoAP.DEFAULT_COAP_PORT );
         int port= ( socketParams != null && socketParams.bindToPort != null ? socketParams.bindToPort : defaultPort );

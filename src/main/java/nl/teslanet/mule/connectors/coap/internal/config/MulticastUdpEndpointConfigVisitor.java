@@ -1,0 +1,139 @@
+/*-
+ * #%L
+ * Mule CoAP Connector
+ * %%
+ * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * 
+ * Contributors:
+ *     (teslanet.nl) Rogier Cobben - initial creation
+ * %%
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the Eclipse
+ * Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+ * with the GNU Classpath Exception which is
+ * available at https://www.gnu.org/software/classpath/license.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ * #L%
+ */
+package nl.teslanet.mule.connectors.coap.internal.config;
+
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Set;
+
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.elements.UdpMulticastConnector;
+
+import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
+import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
+
+
+/**
+ * Configuration visitor that collects multi-cast UDP Endpoint configuration
+ *
+ */
+public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
+{
+    /**
+     * The UDP MulticasConnetor Builder that collects relevant configuration and will be used to build the connector.
+     */
+    private UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
+
+    /**
+     * Network interface to use for multicast.
+     */
+    private String multiCastNetworkInterfaceConfig= null;
+
+    /**
+     * The configured multicast groups.
+     */
+    private Set< String > multicastGroups;
+
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
+     */
+    @Override
+    public void visit( MulticastParams toVisit )
+    {
+        super.visit( toVisit );
+        //TODO rename parameter
+        multiCastNetworkInterfaceConfig= toVisit.interfaceAddress;
+        //TODO add feature to specify interface per multicast-group
+        multicastGroups= toVisit.multicastGroups;
+    }
+
+    @Override
+    public void visit( SocketParams toVisit )
+    {
+        //Do not call super because UDP endpoint bind configuration is not allowed by Cf when connector is is set.  
+        //super.visit( toVisit );
+        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : CoAP.DEFAULT_COAP_PORT );
+
+        if ( toVisit.bindToHost != null )
+        {
+            connectorBuilder.setLocalAddress( new InetSocketAddress( toVisit.bindToHost, port ) );
+        }
+        else
+        {
+            connectorBuilder.setLocalAddress( new InetSocketAddress( port ) );
+        }
+    }
+
+    /**
+     * Get the Builder that is ready to build the endpoint.
+     * @return The Endpoint Builder.
+     * @throws EndpointConstructionException  When the configuration cannot be create an endpoint builder.
+     */
+    @Override
+    public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
+    {
+        NetworkInterface networkInterface;
+        if ( multiCastNetworkInterfaceConfig == null )
+        {
+            networkInterface= null;
+        }
+        else
+        {
+            try
+            {
+                networkInterface= NetworkInterface.getByName( multiCastNetworkInterfaceConfig );
+            }
+            catch ( SocketException e )
+            {
+                throw new EndpointConstructionException(
+                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
+                    e );
+            }
+        }
+        if ( multicastGroups != null )
+        {
+            for ( String group : multicastGroups )
+            {
+                InetAddress groupAddress;
+                try
+                {
+                    groupAddress= InetAddress.getByName( group );
+                }
+                catch ( UnknownHostException e )
+                {
+                    throw new EndpointConstructionException( "CoAP Endpoint { " + getEndpointName() + " } construction failed. Multicast group { " + group + " } is invalid.", e );
+                }
+                connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
+            }
+        }
+        endPointBuilder.setNetworkConfig( this.getNetworkConfig() );
+        endPointBuilder.setConnector( connectorBuilder.build() );
+        return endPointBuilder;
+    }
+}
