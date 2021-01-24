@@ -169,6 +169,8 @@ public class MulticastUDPEndpointConfigTest
             case leisure:
             case maxTransmitWait:
             case probingRate:
+
+            case multicastGroups:
                 return true;
             default:
                 return false;

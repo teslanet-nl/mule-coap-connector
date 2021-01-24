@@ -28,14 +28,15 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
-import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
+import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -58,18 +59,15 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     /**
      * The configured multicast groups.
      */
-    private Set< String > multicastGroups;
+    private List< MulticastGroupConfig > multicastGroups;
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
      */
     @Override
-    public void visit( MulticastParams toVisit )
+    public void visit( MulticastUDPEndpoint toVisit )
     {
         super.visit( toVisit );
-        //TODO rename parameter
-        multiCastNetworkInterfaceConfig= toVisit.interfaceAddress;
-        //TODO add feature to specify interface per multicast-group
         multicastGroups= toVisit.multicastGroups;
     }
 
@@ -98,36 +96,36 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     @Override
     public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
     {
-        NetworkInterface networkInterface;
-        if ( multiCastNetworkInterfaceConfig == null )
-        {
-            networkInterface= null;
-        }
-        else
-        {
-            try
-            {
-                networkInterface= NetworkInterface.getByName( multiCastNetworkInterfaceConfig );
-            }
-            catch ( SocketException e )
-            {
-                throw new EndpointConstructionException(
-                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
-                    e );
-            }
-        }
         if ( multicastGroups != null )
         {
-            for ( String group : multicastGroups )
+            for ( MulticastGroupConfig groupConfig : multicastGroups )
             {
+                NetworkInterface networkInterface;
+                if ( groupConfig.networkInterface == null )
+                {
+                    networkInterface= null;
+                }
+                else
+                {
+                    try
+                    {
+                        networkInterface= NetworkInterface.getByName( groupConfig.networkInterface );
+                    }
+                    catch ( SocketException e )
+                    {
+                        throw new EndpointConstructionException(
+                            "CoAP Endpoint { " + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
+                            e );
+                    }
+                }
                 InetAddress groupAddress;
                 try
                 {
-                    groupAddress= InetAddress.getByName( group );
+                    groupAddress= InetAddress.getByName( groupConfig.group );
                 }
                 catch ( UnknownHostException e )
                 {
-                    throw new EndpointConstructionException( "CoAP Endpoint { " + getEndpointName() + " } construction failed. Multicast group { " + group + " } is invalid.", e );
+                    throw new EndpointConstructionException( "CoAP Endpoint { " + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.", e );
                 }
                 connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
             }

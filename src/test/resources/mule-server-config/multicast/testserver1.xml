@@ -37,12 +37,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<coap:server-config name="config1">
 		<coap:endpoint>
 		    <coap:multicast-udp-endpoint logCoapMessages="true">
-		        <coap:multicast-params>
-		            <coap:multicast-groups>
-		                <coap:multicast-group value="224.0.1.187"/>
-		            </coap:multicast-groups>
-		        </coap:multicast-params>
-		        <coap:udp-params />
+                <coap:multicast-groups>
+	                <coap:multicast-group group="224.0.1.187"/>
+	            </coap:multicast-groups>
 		    </coap:multicast-udp-endpoint>
 		</coap:endpoint>
 		<coap:resources>

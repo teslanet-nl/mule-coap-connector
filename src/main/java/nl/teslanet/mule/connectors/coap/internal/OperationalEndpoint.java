@@ -356,6 +356,7 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( DTLSEndpoint config ) throws EndpointConstructionException
     {
+        //TODO make DtlsEndpointConfigVisitor
         this.configName= config.configName;
         MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
         SslContextUtil.configure( streamFactory.getScheme(), streamFactory );

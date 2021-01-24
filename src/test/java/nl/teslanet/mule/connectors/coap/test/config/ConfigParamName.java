@@ -91,7 +91,6 @@ public enum ConfigParamName
     // httpServerSocketBufferSize,
     // httpCacheResponseMaxAge,
     // httpCacheSize,
-    interfaceAddress,
     multicastGroups,
     logHealthStatus,
     healthStatusInterval

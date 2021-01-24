@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -350,36 +350,31 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.MulticastParams">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="multicast-groups">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="multicast-group">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="interfaceAddress"></xs:attribute>
-        <xs:attribute type="mule:substitutableName" use="optional" name="multicastGroups"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="group"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="networkInterface"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig" abstract="true" name="abstract-multicast-group"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-multicast-group" name="multicast-group">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="multicast-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="multicast-groups">
             <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.MulticastParams"></xs:extension>
-              </xs:complexContent>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-multicast-group"></xs:element>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="udp-params">
@@ -390,7 +385,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="multicastParams"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableName" use="optional" name="multicastGroups"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1697,5 +1692,4 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
 

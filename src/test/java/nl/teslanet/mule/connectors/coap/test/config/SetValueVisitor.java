@@ -23,14 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.config;
 
 
-import java.util.LinkedHashSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
-import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
@@ -42,6 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -543,22 +544,20 @@ public class SetValueVisitor implements ConfigVisitor
     }
 
     @Override
-    public void visit( MulticastParams toVisit )
+    public void visit( MulticastUDPEndpoint toVisit )
     {
         switch ( configParamName )
         {
-            case interfaceAddress:
-                toVisit.interfaceAddress= value;
-                break;
             case multicastGroups:
                 if ( toVisit.multicastGroups == null )
                 {
-                    toVisit.multicastGroups= new LinkedHashSet< String >();
+                    toVisit.multicastGroups= new CopyOnWriteArrayList< MulticastGroupConfig >();
                 }
                 String[] values= value.split( "[\\[\\]\\s,]+" );
                 for ( int i= 1; i < values.length; i++ )
                 {
-                    toVisit.multicastGroups.add( values[i] );
+                    String[] fields= values[i].split( "|" );
+                    toVisit.multicastGroups.add( new MulticastGroupConfig( fields[0], (fields.length > 0 ? fields[1] : null )));
                 }
                 break;
             default:

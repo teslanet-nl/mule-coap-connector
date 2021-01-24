@@ -194,8 +194,6 @@ public class ConfigAttributes
             //from EndpointConfig
             case bindToHost:
                 return new ConfigAttributeDesc( ConfigParamName.bindToHost, null, null, null, "somehost.org", "somehost.org" );
-            case interfaceAddress:
-                return new ConfigAttributeDesc( ConfigParamName.interfaceAddress, null, null, null, "somehost.org", "somehost.org" );
             case bindToPort:
                 return new ConfigAttributeDesc( ConfigParamName.bindToPort, NetworkConfig.Keys.COAP_PORT, null, "5683", "9983", "9983" );
             case bindToSecurePort:
@@ -331,7 +329,7 @@ public class ConfigAttributes
             case healthStatusInterval:
                 return new ConfigAttributeDesc( ConfigParamName.healthStatusInterval, NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, null, "0", "100", "100" );
             case multicastGroups:
-                return new ConfigAttributeDesc( ConfigParamName.multicastGroups, null, null, null, "[224.0.1.187, test]", "[224.0.1.187, test]" );
+                return new ConfigAttributeDesc( ConfigParamName.multicastGroups, null, null, null, "[224.0.1.187, test|eth0]", "[224.0.1.187, test|eth0]" );
             default:
                 throw new Exception( "cannot create AttributeDesc: name unknown" );
         }

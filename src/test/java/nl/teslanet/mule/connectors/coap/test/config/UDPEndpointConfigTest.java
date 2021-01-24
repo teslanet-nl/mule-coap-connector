@@ -171,7 +171,6 @@ public class UDPEndpointConfigTest
             case maxTransmitWait:
             case probingRate:
 
-            case interfaceAddress:
             case multicastGroups:
                 return true;
             default:

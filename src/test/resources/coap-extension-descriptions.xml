@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -677,7 +677,7 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="multicastParams">
+                <parameter name="multicastGroups">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="udpParams">

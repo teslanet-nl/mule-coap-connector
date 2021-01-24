@@ -23,15 +23,20 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 
 
 /**
@@ -42,15 +47,16 @@ import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 public class MulticastUDPEndpoint extends UDPEndpoint
 {
     /**
-     * Parameters for receiving  multi-cast messages. 
-     * None will be received when no multi-cast groups are configured.
+     * The list of multi-cast groups the endpint supports.
      */
     @Parameter
-    @Summary(value= "Parameters for receiving  multi-cast messages. None will be received when no multi-cast groups are configured.")
+    @Optional
+    @NullSafe
+    @Summary(value= "The list of multi-cast groups the endpint supports. When one multicast group is configured the endpoint can be used as multicast receiver.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public MulticastParams multicastParams;
-
+    @ParameterDsl(allowInlineDefinition= true, allowReferences= false)
+    public List< MulticastGroupConfig > multicastGroups;
+    
     /**
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
@@ -68,7 +74,7 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     public MulticastUDPEndpoint( String name )
     {
         super( name );
-        multicastParams= new MulticastParams();
+        multicastGroups= new CopyOnWriteArrayList< MulticastGroupConfig >();
     }
 
     /* (non-Javadoc)
@@ -79,6 +85,5 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     {
         super.accept( visitor );
         visitor.visit( this );
-        multicastParams.accept( visitor );
     }
 }
