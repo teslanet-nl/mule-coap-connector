@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,58 +20,68 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config.endpoint;
+package nl.teslanet.mule.connectors.coap.api.config;
 
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
-import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
+import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.OutgoingMulticastConfig;
 
 
 /**
- * This is UDP coap endpoint
+ * Configuration of multi-cast.
  *
  */
-@TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
-public class UDPEndpoint extends Endpoint
+public class MulticastParams implements VisitableConfig
 {
     /**
-     * UDP endpoint parameters.
+     * Parameters for outgoing multicast traffic.
      */
+    @ParameterGroup(name= "Outgoing")
+    public OutgoingMulticastConfig outgoingMulticastConfig;
+    
+    /**
+    * The list of multi-cast groups the endpint supports.
+    */
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "UDP parameters")
+    @Summary(value= "The list of multi-cast groups the endpint supports.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public UdpParams udpParams= null;
+    @ParameterDsl(allowInlineDefinition= true, allowReferences= false)
+    @DisplayName("Join multicast groups")
+    public List< MulticastGroupConfig > join;
 
     /**
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public UDPEndpoint()
+    public MulticastParams()
     {
-        super();
+        //NOOP
     }
-
+    
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
-     * @param name the manually set name of the endpoint
+     * @param joinMulticastGroups List of groups to join. 
      */
-    public UDPEndpoint( String name )
+    public MulticastParams( CopyOnWriteArrayList< MulticastGroupConfig > joinMulticastGroups )
     {
-        super( name );
-        udpParams= new UdpParams();
+        join= joinMulticastGroups;
+        outgoingMulticastConfig= new OutgoingMulticastConfig();
     }
 
     /* (non-Javadoc)
@@ -80,8 +90,6 @@ public class UDPEndpoint extends Endpoint
     @Override
     public void accept( ConfigVisitor visitor )
     {
-        super.accept( visitor );
         visitor.visit( this );
-        udpParams.accept( visitor );
     }
 }

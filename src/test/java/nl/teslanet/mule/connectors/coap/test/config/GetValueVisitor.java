@@ -27,6 +27,7 @@ import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
+import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
@@ -38,7 +39,6 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -409,12 +409,12 @@ public class GetValueVisitor implements ConfigVisitor
     }
 
     @Override
-    public void visit( MulticastUDPEndpoint toVisit )
+    public void visit( MulticastParams toVisit )
     {
         switch ( configParamName )
         {
             case multicastGroups:
-                result= ( toVisit.multicastGroups != null ? toVisit.multicastGroups.toString() : null );
+                result= ( toVisit.join != null ? toVisit.join.toString() : null );
                 break;
             default:
                 break;

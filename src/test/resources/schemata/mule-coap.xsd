@@ -366,15 +366,34 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.MulticastParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="join">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-multicast-group"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="xs:string" use="optional" name="outgoingInterface"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="outgoingAddress"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="disableLoopback"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="join"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="multicast-groups">
+          <xs:element minOccurs="0" maxOccurs="1" name="multicast-params">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-multicast-group"></xs:element>
-              </xs:sequence>
+              <xs:complexContent>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.MulticastParams"></xs:extension>
+              </xs:complexContent>
             </xs:complexType>
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="udp-params">
@@ -385,7 +404,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableName" use="optional" name="multicastGroups"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="multicastParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1692,4 +1711,6 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+
+
 

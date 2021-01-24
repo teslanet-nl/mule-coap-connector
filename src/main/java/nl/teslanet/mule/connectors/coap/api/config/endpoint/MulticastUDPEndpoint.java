@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -37,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
+import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 
 
 /**
@@ -47,15 +47,15 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 public class MulticastUDPEndpoint extends UDPEndpoint
 {
     /**
-     * The list of multi-cast groups the endpint supports.
+     * Parameters for receiving  multi-cast messages..
      */
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "The list of multi-cast groups the endpint supports. When one multicast group is configured the endpoint can be used as multicast receiver.")
+    @Summary(value= "Parameters for receiving  multi-cast messages.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowInlineDefinition= true, allowReferences= false)
-    public List< MulticastGroupConfig > multicastGroups;
+    @ParameterDsl(allowReferences= false)
+    public MulticastParams multicastParams;
     
     /**
      * Default Constructor used by Mule. 
@@ -74,7 +74,7 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     public MulticastUDPEndpoint( String name )
     {
         super( name );
-        multicastGroups= new CopyOnWriteArrayList< MulticastGroupConfig >();
+        multicastParams= new MulticastParams( new CopyOnWriteArrayList< MulticastGroupConfig >());
     }
 
     /* (non-Javadoc)
@@ -84,6 +84,7 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     public void accept( ConfigVisitor visitor )
     {
         super.accept( visitor );
+        multicastParams.accept( visitor );
         visitor.visit( this );
     }
 }

@@ -35,8 +35,8 @@ import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
+import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -59,16 +59,34 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     /**
      * The configured multicast groups.
      */
-    private List< MulticastGroupConfig > multicastGroups;
+    private List< MulticastGroupConfig > joinMulticastGroups= null;
+
+    /**
+     * The configured disable loopback flag, if any.
+     */
+    private boolean disableLoopback= false;
+
+    /**
+     * The configured interface for outgoing multicast traffic, if any.
+     */
+    private String outgoingInterface= null;
+
+    /**
+     * The configured address indicating the interface for outgoing multicast traffic, if any.
+     */
+    private String outgoingAddress= null;
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
      */
     @Override
-    public void visit( MulticastUDPEndpoint toVisit )
+    public void visit( MulticastParams toVisit )
     {
         super.visit( toVisit );
-        multicastGroups= toVisit.multicastGroups;
+        joinMulticastGroups= toVisit.join;
+        disableLoopback= toVisit.outgoingMulticastConfig.disableLoopback;
+        outgoingInterface= toVisit.outgoingMulticastConfig.outgoingInterface;
+        outgoingAddress= toVisit.outgoingMulticastConfig.outgoingAddress;
     }
 
     @Override
@@ -96,9 +114,35 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     @Override
     public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
     {
-        if ( multicastGroups != null )
+        if ( outgoingInterface != null )
         {
-            for ( MulticastGroupConfig groupConfig : multicastGroups )
+            try
+            {
+                connectorBuilder.setOutgoingMulticastInterface( NetworkInterface.getByName(  outgoingInterface ));
+            }
+            catch ( SocketException e )
+            {
+                throw new EndpointConstructionException(
+                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
+                    e );
+            }
+        }
+        if ( outgoingAddress != null )
+        {
+            try
+            {
+                connectorBuilder.setOutgoingMulticastInterface( InetAddress.getByName(  outgoingAddress ));
+            }
+            catch ( UnknownHostException e )
+            {
+                throw new EndpointConstructionException(
+                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
+                    e );
+            }
+        }
+        if ( joinMulticastGroups != null )
+        {
+            for ( MulticastGroupConfig groupConfig : joinMulticastGroups )
             {
                 NetworkInterface networkInterface;
                 if ( groupConfig.networkInterface == null )
@@ -131,7 +175,9 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             }
         }
         endPointBuilder.setNetworkConfig( this.getNetworkConfig() );
-        endPointBuilder.setConnector( connectorBuilder.build() );
+        UdpMulticastConnector connector= connectorBuilder.build();
+        connector.setLoopbackMode( disableLoopback );
+        endPointBuilder.setConnectorWithAutoConfiguration( connector );
         return endPointBuilder;
     }
 }

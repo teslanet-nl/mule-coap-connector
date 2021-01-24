@@ -31,6 +31,7 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
+import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
@@ -42,7 +43,6 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -544,20 +544,20 @@ public class SetValueVisitor implements ConfigVisitor
     }
 
     @Override
-    public void visit( MulticastUDPEndpoint toVisit )
+    public void visit( MulticastParams toVisit )
     {
         switch ( configParamName )
         {
             case multicastGroups:
-                if ( toVisit.multicastGroups == null )
+                if ( toVisit.join == null )
                 {
-                    toVisit.multicastGroups= new CopyOnWriteArrayList< MulticastGroupConfig >();
+                    toVisit.join= new CopyOnWriteArrayList< MulticastGroupConfig >();
                 }
                 String[] values= value.split( "[\\[\\]\\s,]+" );
                 for ( int i= 1; i < values.length; i++ )
                 {
                     String[] fields= values[i].split( "|" );
-                    toVisit.multicastGroups.add( new MulticastGroupConfig( fields[0], (fields.length > 0 ? fields[1] : null )));
+                    toVisit.join.add( new MulticastGroupConfig( fields[0], (fields.length > 0 ? fields[1] : null )));
                 }
                 break;
             default:

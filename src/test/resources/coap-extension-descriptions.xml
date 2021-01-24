@@ -677,7 +677,7 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="multicastGroups">
+                <parameter name="multicastParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="udpParams">
@@ -973,4 +973,5 @@
         </type>
     </types>
 </extension-documentation>
+
 

@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  Mule CoAP Connector
-  %%
-  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
-  
-  Contributors:
-      (teslanet.nl) Rogier Cobben - initial creation
-  %%
-  This program and the accompanying materials are made available under the
-  terms of the Eclipse Public License 2.0 which is available at
-  http://www.eclipse.org/legal/epl-2.0.
-  
-  This Source Code may also be made available under the following Secondary
-  Licenses when the conditions for such availability set forth in the Eclipse
-  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
-  with the GNU Classpath Exception which is
-  available at https://www.gnu.org/software/classpath/license.html.
-  
-  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-  #L%
-  -->
+<!-- #%L Mule CoAP Connector %% Copyright (C) 2019 - 2020 (teslanet.nl) Rogier 
+	Cobben Contributors: (teslanet.nl) Rogier Cobben - initial creation %% This 
+	program and the accompanying materials are made available under the terms 
+	of the Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0. 
+	This Source Code may also be made available under the following Secondary 
+	Licenses when the conditions for such availability set forth in the Eclipse 
+	Public License, v. 2.0 are satisfied: GNU General Public License, version 
+	2 with the GNU Classpath Exception which is available at https://www.gnu.org/software/classpath/license.html. 
+	SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 
+	#L% -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -33,32 +22,37 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
-	
+
 	<coap:server-config name="config1">
 		<coap:endpoint>
-		    <coap:multicast-udp-endpoint logCoapMessages="true">
-                <coap:multicast-groups>
-	                <coap:multicast-group group="224.0.1.187"/>
-	            </coap:multicast-groups>
-		    </coap:multicast-udp-endpoint>
+			<coap:multicast-udp-endpoint
+				logCoapMessages="true">
+				<coap:multicast-params>
+					<coap:join>
+						<coap:multicast-group group="224.0.1.187" />
+					</coap:join>
+				</coap:multicast-params>
+			</coap:multicast-udp-endpoint>
 		</coap:endpoint>
 		<coap:resources>
-				<coap:resource resourceName="service">
-					<coap:sub-resources>
-						<coap:resource resourceName="get_me" get="true" />
-						<coap:resource resourceName="put_me" put="true" />
-						<coap:resource resourceName="post_me" post="true" />
-						<coap:resource resourceName="delete_me" delete="true" />
-					</coap:sub-resources>
-				</coap:resource>
-			</coap:resources>
+			<coap:resource resourceName="service">
+				<coap:sub-resources>
+					<coap:resource resourceName="get_me" get="true" />
+					<coap:resource resourceName="put_me" put="true" />
+					<coap:resource resourceName="post_me" post="true" />
+					<coap:resource resourceName="delete_me" delete="true" />
+				</coap:sub-resources>
+			</coap:resource>
+		</coap:resources>
 	</coap:server-config>
 
 	<flow name="listen1">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config1">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/*" config-ref="config1">
 			<coap:response />
 		</coap:listener>
-		<java:new doc:name="New spy" doc:id="5bb95d63-aab2-4453-95c7-fa180f548484"
+		<java:new doc:name="New spy"
+			doc:id="5bb95d63-aab2-4453-95c7-fa180f548484"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			constructor="MuleEventSpy(String)" target="spy">
 			<java:args><![CDATA[#[{ arg0: "listen1" }]]]></java:args>
@@ -71,6 +65,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</java:invoke>
 	</flow>
 
-	
+
 
 </mule>

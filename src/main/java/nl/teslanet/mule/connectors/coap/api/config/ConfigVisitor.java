@@ -290,4 +290,12 @@ public interface ConfigVisitor
     default public void visit( DtlsParams toVisit )
     {
     };
+    
+    /**
+     * Visit MulticastParams configuration object.
+     * @param toVisit the object to visit.
+     */
+    default public void visit( MulticastParams toVisit )
+    {
+    };
 }
