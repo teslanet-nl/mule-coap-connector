@@ -1,36 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  Mule CoAP Connector
-  %%
-  Copyright (C) 2019 - 2020 (teslanet.nl) Rogier Cobben
-  
-  Contributors:
-      (teslanet.nl) Rogier Cobben - initial creation
-  %%
-  This program and the accompanying materials are made available under the
-  terms of the Eclipse Public License 2.0 which is available at
-  http://www.eclipse.org/legal/epl-2.0.
-  
-  This Source Code may also be made available under the following Secondary
-  Licenses when the conditions for such availability set forth in the Eclipse
-  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
-  with the GNU Classpath Exception which is
-  available at https://www.gnu.org/software/classpath/license.html.
-  
-  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-  #L%
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- #%L Mule CoAP Connector %% Copyright (C) 2019 - 2020 (teslanet.nl) Rogier 
+	Cobben Contributors: (teslanet.nl) Rogier Cobben - initial creation %% This 
+	program and the accompanying materials are made available under the terms 
+	of the Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0. 
+	This Source Code may also be made available under the following Secondary 
+	Licenses when the conditions for such availability set forth in the Eclipse 
+	Public License, v. 2.0 are satisfied: GNU General Public License, version 
+	2 with the GNU Classpath Exception which is available at https://www.gnu.org/software/classpath/license.html. 
+	SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 
+	#L% -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mule.extensions</groupId>
 		<artifactId>mule-modules-parent</artifactId>
 		<version>1.1.8</version>
 	</parent>
-	
+
 	<groupId>nl.teslanet.mule.connectors.coap</groupId>
 	<artifactId>mule-coap-connector</artifactId>
 	<version>2.0.0-M6-T22-SNAPSHOT</version>
@@ -38,18 +28,18 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
 	<url>http://www.teslanet.nl</url>
-    <organization>
-        <name>Teslanet.nl</name>
-    </organization>
-    <inceptionYear>2019</inceptionYear>
-    	
+	<organization>
+		<name>Teslanet.nl</name>
+	</organization>
+	<inceptionYear>2019</inceptionYear>
+
 	<licenses>
 		<license>
 			<name>Eclipse Public License - v 2.0</name>
 			<url>https://www.eclipse.org/legal/epl-2.0/</url>
 		</license>
 	</licenses>
-	
+
 	<developers>
 		<developer>
 			<name>Rogier Cobben</name>
@@ -63,8 +53,8 @@
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
 		<californium.version>2.6.0</californium.version>
-        <commonsLangVersion>3.7</commonsLangVersion>
-        <testutils.version>1.0.0-M4</testutils.version>
+		<commonsLangVersion>3.7</commonsLangVersion>
+		<testutils.version>1.0.0-M4</testutils.version>
 	</properties>
 
 	<scm>
@@ -201,7 +191,7 @@ Contributors:
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
@@ -220,10 +210,10 @@ Contributors:
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commonsLangVersion}</version>             
-        </dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commonsLangVersion}</version>
+		</dependency>
 
 		<!-- Test Dependencies -->
 		<dependency>
@@ -259,14 +249,14 @@ Contributors:
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-objectstore-connector</artifactId>
-            <version>1.1.1</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-objectstore-connector</artifactId>
+			<version>1.1.1</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mule.runtime</groupId>
 			<artifactId>mule-module-extensions-support</artifactId>
 			<version>${mule.version}</version>
@@ -285,17 +275,11 @@ Contributors:
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- parent 1.1.6: jakarta.mail is inherited from parent, re-scope jakarta.mail to remove 
-			from packaging 
-		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
-			<version>${jakarta.mail.version}</version>
-			<scope>test</scope>
-		</dependency>
-		-->
+		<!-- parent 1.1.6: jakarta.mail is inherited from parent, re-scope jakarta.mail 
+			to remove from packaging <dependency> <groupId>com.sun.mail</groupId> <artifactId>jakarta.mail</artifactId> 
+			<version>${jakarta.mail.version}</version> <scope>test</scope> </dependency> -->
 	</dependencies>
-	
+
 	<repositories>
 		<repository>
 			<id>mulesoft-releases</id>
@@ -304,5 +288,33 @@ Contributors:
 			<layout>default</layout>
 		</repository>
 	</repositories>
-	
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.6</version>
+						<executions>
+							<execution>
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
