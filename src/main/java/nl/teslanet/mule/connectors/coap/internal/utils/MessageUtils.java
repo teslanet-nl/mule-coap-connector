@@ -25,9 +25,12 @@ package nl.teslanet.mule.connectors.coap.internal.utils;
 
 import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -36,11 +39,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.core.internal.util.ArrayUtils;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
@@ -73,7 +78,7 @@ public class MessageUtils
      * @return converted value as bytes
      * @throws IOException when the value is an outputhandler that cannot write.
      */
-    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException 
+    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException
     {
         Object object= typedValueObject.getValue();
 
@@ -114,12 +119,58 @@ public class MessageUtils
     }
 
     /**
-     * Convert a typed value to ETag.
-     * @param typedValue The value to construct an ETag from.
-     * @return The ETag object that has been constructed.
-     * @throws IOException When the value is a stream that could not be read.
-     * @throws InvalidETagException When value cannot be converted to a valid ETag.
+     * Convert a typed value to {@code InputStream}.
+     * @param typedValueObject is the value to convert.
+     * @return converted value as {@code InputStream}.
+     * @throws IOException when the value is an outputhandler that cannot write.
      */
+    public static InputStream toInputStream( TypedValue< Object > typedValueObject ) throws IOException
+    {
+        Object object= typedValueObject.getValue();
+
+        if ( object == null )
+        {
+            return null;
+        }
+        else if ( object instanceof String )
+        {
+            return new ByteArrayInputStream( ( (String) object ).getBytes( Defs.COAP_CHARSET ) );
+        }
+        if ( object instanceof CursorStreamProvider )
+        {
+            return ( (CursorStreamProvider) object ).openCursor();
+        }
+        else if ( object instanceof InputStream )
+        {
+            return (InputStream) object;
+        }
+        else if ( object instanceof byte[] )
+        {
+            return new ByteArrayInputStream( (byte[]) object );
+        }
+        else if ( object instanceof Byte[] )
+        {
+            return new ByteArrayInputStream( ArrayUtils.toPrimitive( (Byte[]) object ) );
+        }
+        else if ( object instanceof OutputHandler )
+        {
+            PipedOutputStream output= new PipedOutputStream();
+            ( (OutputHandler) object ).write( null, output );
+            return new PipedInputStream( output );
+        }
+        else //do transform using Mule's transformers.
+        {
+            return (InputStream) transformationService.transform( Message.builder().payload( typedValueObject ).build(), DataType.INPUT_STREAM ).getPayload().getValue();
+        }
+    }
+
+    /**
+    * Convert a typed value to ETag.
+    * @param typedValue The value to construct an ETag from.
+    * @return The ETag object that has been constructed.
+    * @throws IOException When the value is a stream that could not be read.
+    * @throws InvalidETagException When value cannot be converted to a valid ETag.
+    */
     public static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
         Object object= typedValue.getValue();
