@@ -23,12 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -122,8 +124,10 @@ public class AsyncResponseTest extends AbstractClientTestCase
         flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
             "5683" ).withVariable( "path", resourcePath ).run();
-        Thread.sleep( 5000 );
-        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
+        //let handler do its asynchronous work
+        await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1;
+        } );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",

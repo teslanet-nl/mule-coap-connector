@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -153,8 +155,6 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
         spy.clear();
 
-        Thread.sleep( 2000 );
-
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", host ).withVariable(
             "port",
             port ).withVariable( "path", path ).run();
@@ -164,16 +164,17 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         assertEquals( "wrong response payload", "nothing_important", (String) response.getPayload().getValue() );
 
         //let handler do its asynchronous work
-        Thread.sleep( 10000L );
-
-        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
+        await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1;
+        } );
+        //assertions
         response= (Message) spy.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) (response.getPayload().getValue());
+        byte[] payload= (byte[]) ( response.getPayload().getValue() );
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

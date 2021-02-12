@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.exceptionhandling;
 
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -30,7 +31,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -155,17 +158,15 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         MuleEventSpy spy3= new MuleEventSpy( "spy-me3" );
         spy3.clear();
 
-        Thread.sleep( 2000 );
-
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
             port ).withVariable( "path", path ).withVariable( "handler", "catching_handler" ).run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
-        Thread.sleep( 2000 );
-
-        assertEquals( "spy 1 has not been called once", 1, spy1.getEvents().size() );
+        await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy1.getEvents().size() == 1 && spy2.getEvents().size() == 1;
+        } );
         response= (Message) spy1.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
@@ -177,7 +178,6 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
 
-        assertEquals( "spy 2 has not been called once", 1, spy2.getEvents().size() );
         response= (Message) spy2.getEvents().get( 0 ).getContent();
         //message containing message!!
         response= (Message) response.getPayload().getValue();
@@ -190,7 +190,15 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
-
+        //wait some more time and see that spy 3 is really not called
+        try
+        {
+            await().atMost( 1, TimeUnit.SECONDS );
+        }
+        catch ( ConditionTimeoutException e )
+        {
+            //as expected
+        }
         assertEquals( "spy 3 has wrongfully been called", 0, spy3.getEvents().size() );
     }
 
@@ -214,7 +222,16 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
-        Thread.sleep( 100L );
+        try
+        {
+            await().atMost( 1, TimeUnit.SECONDS ).until( () -> {
+                return false;
+            } );
+        }
+        catch ( ConditionTimeoutException e )
+        {
+            //as expected
+        }
 
         assertEquals( "spy 2 has wrongfully been called", 0, spy2.getEvents().size() );
 
@@ -240,12 +257,12 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     {
         //exception.expect( hasMessage( containsString( "referenced handler { nonexisting_handler } not found" ) ) );
 
-        Exception e= assertThrows( Exception.class, () -> { flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
-            "port",
-            port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run(); });
-        assertTrue(
-            "wrong exception message",
-            e.getMessage().contains( "async request failed" ) );
+        Exception e= assertThrows( Exception.class, () -> {
+            flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
+                "port",
+                port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
+        } );
+        assertTrue( "wrong exception message", e.getMessage().contains( "async request failed" ) );
         assertEquals( "wrong exception cause", InvalidHandlerNameException.class, e.getCause().getClass() );
     }
 

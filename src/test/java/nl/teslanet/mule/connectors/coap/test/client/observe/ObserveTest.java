@@ -23,12 +23,15 @@
 package nl.teslanet.mule.connectors.coap.test.client.observe;
 
 
+import static nl.teslanet.mule.connectors.coap.test.utils.Timing.pauze;
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -52,8 +55,6 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
 //TODO test configuration faults (no host)
 public class ObserveTest extends AbstractClientTestCase
 {
-    static final long PAUZE= 2000L;
-
     /**
      * The contents to set on observable resource
      */
@@ -107,15 +108,15 @@ public class ObserveTest extends AbstractClientTestCase
     @Test(timeout= 100000L)
     public void testPermanentObserve() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( "permanent" );
+        final MuleEventSpy spy= new MuleEventSpy( "permanent" );
         spy.clear();
 
         //let asynchronous work happen
-        Thread.sleep( PAUZE );
+        pauze();
 
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( PAUZE );
+            pauze();
             Event result= flowRunner( "do_put_permanent" ).withPayload( contents.get( i ) ).run();
             Message response= result.getMessage();
             assertEquals(
@@ -125,10 +126,9 @@ public class ObserveTest extends AbstractClientTestCase
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
             assertEquals( "put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-
-        Thread.sleep( PAUZE );
-        assertEquals( "wrong count of observations", contents.size(), spy.getEvents().size() );
-
+        await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
         int obsOffset= 0;
         for ( int i= 0; i < spy.getEvents().size(); i++ )
         {
@@ -161,13 +161,12 @@ public class ObserveTest extends AbstractClientTestCase
         spy.clear();
 
         //let asynchronous work happen
-        Thread.sleep( PAUZE );
-
+        pauze();
         assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
 
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( PAUZE );
+            pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
             assertEquals(
@@ -177,19 +176,16 @@ public class ObserveTest extends AbstractClientTestCase
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
             assertEquals( "1st series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-
-        //let asynchronous work happen
-        Thread.sleep( PAUZE );
         assertEquals( "unexpected obsevation after 1st test series", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_temporary" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        Thread.sleep( PAUZE );
-        assertEquals( "missing observation start response", 1, spy.getEvents().size() );
-
+        await( "missing observation start response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1;
+        } );
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( PAUZE );
+            pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
             assertEquals(
@@ -199,17 +195,17 @@ public class ObserveTest extends AbstractClientTestCase
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
             assertEquals( "2nd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-        Thread.sleep( PAUZE );
-        assertEquals( "unexpected number of obsevation after 2nd test series", contents.size(), spy.getEvents().size() );
-
+        await( "number of obsevation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
         result= flowRunner( "stop_temporary" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        Thread.sleep( PAUZE );
-        assertEquals( "missing observation stop response", contents.size() + 1, spy.getEvents().size() );
-
+        await( "observation stop response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size() + 1;
+        } );
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( PAUZE );
+            pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
             assertEquals(
@@ -219,8 +215,9 @@ public class ObserveTest extends AbstractClientTestCase
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
             assertEquals( "3rd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-        Thread.sleep( PAUZE );
-        assertEquals( "unexpected number of obsevation after 3rd test series", contents.size() + 1, spy.getEvents().size() );
+        await( "number of obsevation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size() + 1;
+        } );
 
         int obsOffset= 0;
         for ( int i= 1; i < contents.size(); i++ )
@@ -255,22 +252,24 @@ public class ObserveTest extends AbstractClientTestCase
         spy.clear();
 
         //let asynchronous work happen
-        Thread.sleep( PAUZE );
+        pauze();
 
         assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage1" ).withPayload( "nothing_important" ).run();
-        Thread.sleep( 5500 );
+        pauze( 5500 );
         result= flowRunner( "stop_maxage1" ).withPayload( "nothing_important" ).run();
-
-        Thread.sleep( PAUZE );
         // GET observe=0 response + notifications= 1+5+1
-        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
+        await( "number of notifications received" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
 
-        Thread.sleep( 5500 );
+        pauze( 5500 );
         // GET observe=0 response + notifications= 1+5
         //stop result is also handled -> 1+5+1 times
-        assertEquals( "unexpected notifications received", 1 + 5 + 1, spy.getEvents().size() );
+        await( "number of notifications received" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
     }
 
     /**
@@ -287,24 +286,26 @@ public class ObserveTest extends AbstractClientTestCase
         spy.clear();
 
         //let asynchronous work happen
-        Thread.sleep( PAUZE );
+        pauze();
 
         //check clean start
         assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage1_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
-        Thread.sleep( 5000 + 500 + 100 );
+        pauze( 5000 + 500 + 100 );
         result= flowRunner( "stop_maxage1_nonotify" ).withPayload( "nothing_important" ).run();
 
-        Thread.sleep( PAUZE );
         // GET observe=0 response + notification= 1 + 5
-        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
-
+        await( "number of notifications received 1" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
         //wait some more
-        Thread.sleep( 5000 + 500 + 100 );
+        pauze( 5000 + 500 + 100 );
         //stop result is also handled -> 1+5+1 times
-        assertEquals( "unexpected notifications received", 1 + 5 + 1, spy.getEvents().size() );
+        await( "number of notifications received 2" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
     }
 
     /**
@@ -321,24 +322,25 @@ public class ObserveTest extends AbstractClientTestCase
         spy.clear();
 
         //let asynchronous work happen
-        Thread.sleep( PAUZE );
+        pauze();
 
         //check clean start
         assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage4_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
-        Thread.sleep( 5 * ( 4 * 1000 + 100 ) + 500 );
+        pauze( 5 * ( 4 * 1000 + 100 ) + 500 );
         result= flowRunner( "stop_maxage4_nonotify" ).withPayload( "nothing_important" ).run();
         // GET observe=0 response + notification= 1 + 5
-        Thread.sleep( 500 );
-        assertEquals( "wrong number of notifications received", 1 + 5 + 1, spy.getEvents().size() );
-
+        await( "number of notifications received 1" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
-        Thread.sleep( 5 * ( 4 * 1000 + 100 ) + 500 );
+        pauze( 5 * ( 4 * 1000 + 100 ) + 500 );
         // GET observe=0 response + notification= 1 + 5
-        assertEquals( "unexpected notifications received", 1 + 5 + 1, spy.getEvents().size() );
-
+        await( "number of notifications received 2" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1 + 5 + 1;
+        } );
     }
 
     /**
@@ -352,7 +354,7 @@ public class ObserveTest extends AbstractClientTestCase
         Event result;
         Message response;
 
-        Thread.sleep( PAUZE );
+        pauze();
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
@@ -360,18 +362,18 @@ public class ObserveTest extends AbstractClientTestCase
 
         //first observe
         result= flowRunner( "start_temporary1" ).withPayload( "nothing_important" ).run();
-        Thread.sleep( PAUZE );
+        pauze();
 
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
-        Thread.sleep( PAUZE );
+        pauze();
 
         //second observe
         result= flowRunner( "start_temporary2" ).withPayload( "nothing_important" ).run();
-        Thread.sleep( PAUZE );
+        pauze();
 
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
@@ -379,22 +381,22 @@ public class ObserveTest extends AbstractClientTestCase
         assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary2" ) );
-        Thread.sleep( PAUZE );
+        pauze();
 
         //remove second observe
         result= flowRunner( "stop_temporary2" ).withPayload( "nothing_important" ).run();
-        Thread.sleep( PAUZE );
+        pauze();
 
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
-        Thread.sleep( PAUZE );
+        pauze();
 
         //remove first observe
         result= flowRunner( "stop_temporary1" ).withPayload( "nothing_important" ).run();
-        Thread.sleep( PAUZE );
+        pauze();
 
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
@@ -402,4 +404,6 @@ public class ObserveTest extends AbstractClientTestCase
         assertEquals( "wrong number of observer", 0, ( (Set< String >) response.getPayload().getValue() ).size() );
 
     }
+
+
 }

@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.Timing;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapHandler;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapObserveRelation;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
@@ -115,13 +116,13 @@ public class ObserveConCheckTest extends AbstractServerTestCase
 
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( 100 );
+            Timing.pauze( 100 );
             response= client.put( contents.get( i ), 0 );
             assertNotNull( "put nr: " + i + " gave no response", response );
             assertTrue( "response nr: " + i + " indicates failure", response.isSuccess() );
         }
 
-        Thread.sleep( 100 );
+        Timing.pauze( 100 );
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 
@@ -155,13 +156,13 @@ public class ObserveConCheckTest extends AbstractServerTestCase
 
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( 350 );
+            Timing.pauze( 350 );
             response= client.put( contents.get( i ), 0 );
             assertNotNull( "put nr: " + i + " gave no response", response );
             assertTrue( "response nr: " + i + " indicates failure", response.isSuccess() );
         }
 
-        Thread.sleep( 100 );
+        Timing.pauze( 100 );
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
         long ts1= observations.get( 0 ).ts;

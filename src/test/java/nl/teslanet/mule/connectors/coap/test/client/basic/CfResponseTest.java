@@ -23,10 +23,12 @@
 package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
@@ -184,7 +186,8 @@ public class CfResponseTest
             };
 
         client.get( handler );
-        Thread.sleep( 10000 );
+        //let handler do its asynchronous work
+        await().atMost( 10, TimeUnit.SECONDS ).untilTrue( onLoadCalled );
         assertTrue( "onLoad should be called", onLoadCalled.get() );
         assertFalse( "onError should not have been called", onErrorCalled.get() );
         client.shutdown();
@@ -228,7 +231,7 @@ public class CfResponseTest
             };
 
         client.get( handler );
-        Thread.sleep( 10000 );
+        await().atMost( 10, TimeUnit.SECONDS ).untilTrue( onLoadCalled );
         assertTrue( "onLoad should be called", onLoadCalled.get() );
         assertFalse( "onError should not have been called", onErrorCalled.get() );
         client.shutdown();
@@ -274,9 +277,8 @@ public class CfResponseTest
         client.setTimeout( 2000L );
         client.get( handler );
         //wait for async processes to complete
-        Thread.sleep( 10000 );
+        await().atMost( 10, TimeUnit.SECONDS ).untilTrue( onErrorCalled );
         assertFalse( "onLoad should not be called", onLoadCalled.get() );
-        assertTrue( "onError should have been called", onErrorCalled.get() );
         client.shutdown();
     }
 
