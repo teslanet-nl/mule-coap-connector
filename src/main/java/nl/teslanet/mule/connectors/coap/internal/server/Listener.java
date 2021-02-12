@@ -99,7 +99,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @Parameter
     @Optional(defaultValue= "false")
     @DisplayName("Receive Get requests")
-    @Summary( "The listener will only receive GET requests." )
+    @Summary("The listener will only receive GET requests.")
     private boolean get;
 
     /**
@@ -108,7 +108,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @Parameter
     @Optional(defaultValue= "false")
     @DisplayName("Receive Post requests")
-    @Summary( "The listener will only receive POST requests." )
+    @Summary("The listener will only receive POST requests.")
     private boolean post;
 
     /**
@@ -117,7 +117,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @Parameter
     @Optional(defaultValue= "false")
     @DisplayName("Receive Put requests")
-    @Summary( "The listener will only receive PUT requests." )
+    @Summary("The listener will only receive PUT requests.")
     private boolean put;
 
     /**
@@ -126,7 +126,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     @Parameter
     @Optional(defaultValue= "false")
     @DisplayName("Receive Delete requests")
-    @Summary( "The listener will only receive DELETE requests." )
+    @Summary("The listener will only receive DELETE requests.")
     private boolean delete;
 
     /**
@@ -159,27 +159,25 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         IOException,
         InvalidETagException
     {
+        CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
+        Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
+        //TODO give user control
+        TypedValue< Object > responsePayload= response.getResponsePayload();
+        coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
+        if ( responseOptions != null )
         {
-            CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
-            Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
-            //TODO give user control
-            TypedValue< Object > responsePayload= response.getResponsePayload();
-            coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
-            if ( responseOptions != null )
-            {
-                CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
-            }
-            //TODO add streaming & blockwise cooperation
-            try
-            {
-                coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ) );
-            }
-            catch ( Exception e )
-            {
-                throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
-            }
-            ( (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get() ).respond( coapResponse );
+            CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
         }
+        //TODO add streaming & blockwise cooperation
+        try
+        {
+            coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ) );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
+        }
+        ( (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get() ).respond( coapResponse );
     }
 
     @OnTerminate
@@ -268,7 +266,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         return put;
     }
-    
+
     /**
      * Get String repesentation.
      */

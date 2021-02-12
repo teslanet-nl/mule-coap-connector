@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.api.config;
 
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -78,7 +77,7 @@ public class MulticastParams implements VisitableConfig
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param joinMulticastGroups List of groups to join. 
      */
-    public MulticastParams( CopyOnWriteArrayList< MulticastGroupConfig > joinMulticastGroups )
+    public MulticastParams( List< MulticastGroupConfig > joinMulticastGroups )
     {
         join= joinMulticastGroups;
         outgoingMulticastConfig= new OutgoingMulticastConfig();

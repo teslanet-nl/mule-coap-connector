@@ -218,7 +218,7 @@ public class ClientOperations
      * @return The resources description on the server that have been discovered.
      */
     @Throws({ DiscoverErrorProvider.class })
-    public CopyOnWriteArraySet< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
+    public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
     {
         Set< WebLink > links= null;
         try
