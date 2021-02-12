@@ -163,7 +163,7 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
         endpoint.start();
 
         client= new CoapClient();
-        client.setTimeout( 3000L );
+        client.setTimeout( 5000L );
         client.setEndpoint( endpoint );
     }
 
@@ -206,7 +206,7 @@ public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCas
         return spy;
     }
 
-    @Test(timeout= 20000L)
+    @Test(timeout= 60000L)
     public void testInbound() throws Exception
     {
         expectException();

@@ -121,7 +121,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 10000L)
+    @Test(timeout= 20000L)
     public void testAsyncRequest() throws Exception
     {
         MuleEventSpy spy= new MuleEventSpy( "async-handler" );
