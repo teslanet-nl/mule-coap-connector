@@ -45,7 +45,6 @@ import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.util.IOUtils;
-import org.mule.runtime.core.internal.util.ArrayUtils;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
@@ -104,7 +103,7 @@ public class MessageUtils
         }
         else if ( object instanceof Byte[] )
         {
-            return (byte[]) object;
+            return toPrimitives( (Byte[]) object );
         }
         else if ( object instanceof OutputHandler )
         {
@@ -150,7 +149,7 @@ public class MessageUtils
         }
         else if ( object instanceof Byte[] )
         {
-            return new ByteArrayInputStream( ArrayUtils.toPrimitive( (Byte[]) object ) );
+            return new ByteArrayInputStream( toPrimitives( (Byte[]) object ) );
         }
         else if ( object instanceof OutputHandler )
         {
@@ -201,7 +200,7 @@ public class MessageUtils
         }
         else if ( object instanceof Byte[] )
         {
-            return new ETag( (byte[]) object );
+            return new ETag( toPrimitives( (Byte[]) object ));
         }
         else if ( object instanceof OutputHandler )
         {
@@ -243,5 +242,24 @@ public class MessageUtils
             list.add( toETag( typedValue ) );
         }
         return Collections.unmodifiableList( list );
+    }
+    
+    /**
+     * Converts {@code Byte[]} to array of primitives.
+     * @param bytes the array to convert.
+     * @return the {@code byte[]} or  {@code null} when empty.
+     */
+    public static byte[] toPrimitives( Byte[] bytes )
+    {
+        if ( bytes == null || bytes.length == 0 )
+        {
+            return null;
+        }
+        final byte[] result= new byte [bytes.length];
+        for ( int i= 0; i < bytes.length; i++ )
+        {
+            result[i]= bytes[i].byteValue();
+        }
+        return result;
     }
 }

@@ -101,9 +101,9 @@ public class ResourceBuilder
     @Optional
     @Expression(ExpressionSupport.SUPPORTED)
     @ParameterDsl(allowReferences= true)
-    @Summary("The discovery info of the resource.")
-    @DisplayName("Discovery info")
-    private ResourceInfoBuilder info;
+    @Summary("The CoRE information describing the contrained resource for discovery.")
+    @DisplayName("Discovery CoRE Info")
+    private ResourceInfoBuilder coreInfo;
 
     /**
     * @return the absolute path of the resource.
@@ -218,19 +218,19 @@ public class ResourceBuilder
     }
 
     /**
-     * @return the discovery info of the resource
+     * @return the discovery coreInfo of the resource
      */
     public ResourceInfoBuilder getInfo()
     {
-        return info;
+        return coreInfo;
     }
     
     /**
-     * @param info The discovery info to add to the resource
+     * @param coreInfo The discovery coreInfo to add to the resource
      */
-    public void setAddInfo( ResourceInfoBuilder info )
+    public void setAddInfo( ResourceInfoBuilder coreInfo )
     {
-        this.info= info;
+        this.coreInfo= coreInfo;
     }
 
     /* (non-Javadoc)

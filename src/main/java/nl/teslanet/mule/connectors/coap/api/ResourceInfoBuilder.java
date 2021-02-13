@@ -72,7 +72,6 @@ public class ResourceInfoBuilder
     @DisplayName("rt")
     private String rt;
 
-    //TODO change to integer?
     /**
      * Maximum size estimate of the resource. [bytes]
      */

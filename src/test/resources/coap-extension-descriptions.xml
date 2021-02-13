@@ -272,7 +272,7 @@
                 <parameter name="earlyAck">
                     <description><![CDATA[When true an acknowledgement is immediately sent to the client, before processing the request and returning the response. Use this when processing takes longer than the acknowledgment-timeout of the client.]]></description>
                 </parameter>
-                <parameter name="info">
+                <parameter name="coreInfo">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -530,7 +530,7 @@
                 <parameter name="earlyAck">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="infoConfig">
+                <parameter name="coreInfoConfig">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="subResources">
@@ -973,5 +973,4 @@
         </type>
     </types>
 </extension-documentation>
-
 

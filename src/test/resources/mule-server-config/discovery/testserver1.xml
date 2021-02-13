@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  Mule CoAP Connector
-  %%
-  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
-  
-  Contributors:
-      (teslanet.nl) Rogier Cobben - initial creation
-  %%
-  This program and the accompanying materials are made available under the
-  terms of the Eclipse Public License 2.0 which is available at
-  http://www.eclipse.org/legal/epl-2.0.
-  
-  This Source Code may also be made available under the following Secondary
-  Licenses when the conditions for such availability set forth in the Eclipse
-  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
-  with the GNU Classpath Exception which is
-  available at https://www.gnu.org/software/classpath/license.html.
-  
-  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
-  #L%
-  -->
+<!-- #%L Mule CoAP Connector %% Copyright (C) 2019 - 2021 (teslanet.nl) Rogier 
+	Cobben Contributors: (teslanet.nl) Rogier Cobben - initial creation %% This 
+	program and the accompanying materials are made available under the terms 
+	of the Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0. 
+	This Source Code may also be made available under the following Secondary 
+	Licenses when the conditions for such availability set forth in the Eclipse 
+	Public License, v. 2.0 are satisfied: GNU General Public License, version 
+	2 with the GNU Classpath Exception which is available at https://www.gnu.org/software/classpath/license.html. 
+	SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 
+	#L% -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -33,44 +22,83 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
-			
-	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+
+	<coap:udp-endpoint name="udp" logCoapMessages="true">
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config" endpoint="udp">
 		<coap:resources>
-				<coap:resource resourceName="service">
-					<coap:sub-resources>
-               <coap:resource resourceName="add_resources" post="true"/>
-               <coap:resource resourceName="resource_with_ct" get="true"  ><coap:info-config ct="0,41"/></coap:resource>
-               <coap:resource resourceName="resource_with_if" get="true"  ><coap:info-config if="if1,if2"/></coap:resource>
-               <coap:resource resourceName="resource_with_obs" get="true" observable="true"/>
-               <coap:resource resourceName="resource_with_rt" get="true"  ><coap:info-config rt="rt1,rt2"/></coap:resource>
-               <coap:resource resourceName="resource_with_sz" get="true"  ><coap:info-config sz="123456"/></coap:resource>
-               <coap:resource resourceName="resource_with_title" get="true"
-                   ><coap:info-config title="a resource with a title"/></coap:resource>
-					</coap:sub-resources>
-				</coap:resource>
-			</coap:resources>
+			<coap:resource resourceName="service">
+				<coap:sub-resources>
+					<coap:resource resourceName="add_resources"
+						post="true" />
+					<coap:resource resourceName="resource_with_ct"
+						get="true">
+						<coap:core-info-config ct="0,41" />
+					</coap:resource>
+					<coap:resource resourceName="resource_with_if"
+						get="true">
+						<coap:core-info-config if="if1,if2" />
+					</coap:resource>
+					<coap:resource resourceName="resource_with_obs"
+						get="true" observable="true" />
+					<coap:resource resourceName="resource_with_rt"
+						get="true">
+						<coap:core-info-config rt="rt1,rt2" />
+					</coap:resource>
+					<coap:resource resourceName="resource_with_sz"
+						get="true">
+						<coap:core-info-config sz="123456" />
+					</coap:resource>
+					<coap:resource resourceName="resource_with_title"
+						get="true">
+						<coap:core-info-config title="a resource with a title" />
+					</coap:resource>
+				</coap:sub-resources>
+			</coap:resource>
+		</coap:resources>
 	</coap:server-config>
 
- 
-   <flow name="listen_add_resources">
-      <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/add_resources" config-ref="config"><coap:response/></coap:listener>
 
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_ct" get="true" ><coap:info ct="0,41"/></coap:resource-add>
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_if" get="true" ><coap:info if="if1,if2"/></coap:resource-add>
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_obs" get="true" observable="true"/>
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_rt" get="true" ><coap:info rt="rt1,rt2"/></coap:resource-add>
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_sz" get="true" ><coap:info sz="123456"/></coap:resource-add>
-      <coap:resource-add config-ref="config" resourcePath="/service/resource2_with_title" get="true">
-         <coap:info title="another resource with a title"/>   </coap:resource-add>
-   </flow>
+	<flow name="listen_add_resources">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/add_resources"
+			config-ref="config">
+			<coap:response />
+		</coap:listener>
 
-   <flow name="listen_service_resource">
-      <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config"><coap:response/></coap:listener>
-      <set-payload value="some content" doc:name="Set Payload"/>
-   </flow>
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_ct" get="true">
+			<coap:core-info ct="0,41" />
+		</coap:resource-add>
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_if" get="true">
+			<coap:core-info if="if1,if2" />
+		</coap:resource-add>
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_obs" get="true"
+			observable="true" />
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_rt" get="true">
+			<coap:core-info rt="rt1,rt2" />
+		</coap:resource-add>
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_sz" get="true">
+			<coap:core-info sz="123456" />
+		</coap:resource-add>
+		<coap:resource-add config-ref="config"
+			resourcePath="/service/resource2_with_title" get="true">
+			<coap:core-info title="another resource with a title" />
+		</coap:resource-add>
+	</flow>
+
+	<flow name="listen_service_resource">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/*" config-ref="config">
+			<coap:response />
+		</coap:listener>
+		<set-payload value="some content" doc:name="Set Payload" />
+	</flow>
 
 </mule>

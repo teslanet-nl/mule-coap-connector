@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+  xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+  xmlns:java="http://www.mulesoft.org/schema/mule/java"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+  http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+  http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+  <description>Mule CoAP connector test application</description>
+
+  <coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true">
+    <coap:socket-params bindToPort="0"/>
+    <coap:exchange-params exchangeLifetime="1000"/>
+  </coap:udp-endpoint>
+
+  <coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint"/>
+
+  <flow name="do_test">
+    <coap:request doc:name="Request" config-ref="config" requestCode="PUT" path="/echo">
+      <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+    </coap:request>
+  </flow>
+
+</mule>

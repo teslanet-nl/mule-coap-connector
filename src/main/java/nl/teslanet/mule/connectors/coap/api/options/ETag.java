@@ -158,7 +158,7 @@ public final class ETag implements Comparable< ETag >
      * @return The etag object created.
      * @throws InvalidETagException when the number of bytes > 8
      */
-    static public ETag valueOf( byte[] bytes ) throws InvalidETagException
+    public static ETag valueOf( byte[] bytes ) throws InvalidETagException
     {
         return new ETag( bytes );
     }
@@ -168,7 +168,7 @@ public final class ETag implements Comparable< ETag >
      * @param longValue The long value to create etag from.
      * @return The etag object created.
      */
-    static public ETag valueOf( Long longValue )
+    public static ETag valueOf( Long longValue )
     {
         return new ETag( longValue );
     }
@@ -179,7 +179,7 @@ public final class ETag implements Comparable< ETag >
      * @return The etag object created.
      * @throws InvalidETagException when given 
      */
-    static public ETag valueOf( String hexString ) throws InvalidETagException
+    public static ETag valueOf( String hexString ) throws InvalidETagException
     {
         return new ETag( hexString );
     }
@@ -190,7 +190,7 @@ public final class ETag implements Comparable< ETag >
      * @return The list of etags. 
      * @throws InvalidETagException when etag could not be created from bytes
      */
-    static public List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
+    public static List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
     {
         LinkedList< ETag > result= new LinkedList< ETag >();
         for ( byte[] bytes : bytesList )

@@ -1327,7 +1327,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="info-config">
+          <xs:element minOccurs="0" maxOccurs="1" name="core-info-config">
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResourceInfoConfig"></xs:extension>
@@ -1349,7 +1349,7 @@
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="delete"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="observable"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="infoConfig"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="coreInfoConfig"></xs:attribute>
         <xs:attribute type="mule:substitutableName" use="optional" name="subResources"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1495,7 +1495,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="info">
+          <xs:element minOccurs="0" maxOccurs="1" name="core-info">
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResourceInfoBuilder"></xs:extension>
@@ -1543,7 +1543,7 @@
             <xs:documentation>When true an acknowledgement is immediately sent to the client, before processing the request and returning the response. Use this when processing takes longer than the acknowledgment-timeout of the client.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="info"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="coreInfo"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

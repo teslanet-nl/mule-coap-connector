@@ -81,6 +81,7 @@ public class Data
     {
         return validateContent( content.getBytes(), size );
     }
+
     /**
      * Validates the test content of standard size
      * @param content to validate
@@ -89,10 +90,13 @@ public class Data
      */
     public static boolean validateContent( byte[] content, int size )
     {
-        if ( size == -1 && content == null ) return true;
-        if ( size == -1 && content != null ) return false;
-        if ( size != -1 && content == null ) return false;
+        //check if stream should be null.
+        if ( size == -1 ) return content == null;
+        //stream should not be null.
+        if ( content == null ) return false;
+        //check length
         if ( content.length != size ) return false;
+        //check content
         for ( int i= 0; i < content.length; i++ )
         {
             if ( content[i] != (byte) ( i % ( Byte.MAX_VALUE + 1 ) ) )
@@ -101,5 +105,39 @@ public class Data
             } ;
         }
         return true;
+    }
+
+    /**
+     * Validates the test content of standard size
+     * @param content to validate
+     * @param size the content size, when -1 content should be null
+     * @return true when the content is as expected, otherwise false
+     */
+    public static boolean validateContent( InputStream content, int size )
+    {
+        //check if stream should be null.
+        if ( size == -1 ) return content == null;
+        //stream should not be null.
+        if ( content == null ) return false;
+        //check content
+        try
+        {
+            for ( int i= 0; i < size; i++ )
+            {
+                int value;
+                value= content.read();
+                if ( value != ( i % ( Byte.MAX_VALUE + 1 ) ) )
+                {
+                    return false;
+                } ;
+            }
+            //check if end of stream is reached.
+            return content.read() == -1;
+        }
+        catch ( IOException e )
+        {
+            //when stream is not readable it is not valid.
+            return false;
+        }
     }
 }

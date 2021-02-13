@@ -32,6 +32,7 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
@@ -113,8 +114,9 @@ public class ResourceConfig
     @Optional
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
-    @Summary("The list of resources contained by this resource.")
-    private ResourceInfoConfig infoConfig;
+    @Summary("The CoRE information describing the contrained resource for discovery.")
+    @DisplayName("Discovery CoRE Info")
+    private ResourceInfoConfig coreInfoConfig;
 
     /**
      * The subordinate resources of the resource..
@@ -216,7 +218,7 @@ public class ResourceConfig
     }
 
     /**
-     * @param observable the observable to set
+     * @param observable the observable to set.
      */
     public void setObservable( boolean observable )
     {
@@ -224,7 +226,7 @@ public class ResourceConfig
     }
 
     /**
-     * @return the earlyAck
+     * @return the earlyAck.
      */
     public boolean isEarlyAck()
     {
@@ -232,7 +234,7 @@ public class ResourceConfig
     }
 
     /**
-     * @param earlyAck the earlyAck to set
+     * @param earlyAck the earlyAck to set.
      */
     public void setEarlyAck( boolean earlyAck )
     {
@@ -240,23 +242,23 @@ public class ResourceConfig
     }
 
     /**
-     * @return the info
+     * @return the configured CoRE info.
      */
-    public ResourceInfoConfig getInfoConfig()
+    public ResourceInfoConfig getCoreInfoConfig()
     {
-        return infoConfig;
+        return coreInfoConfig;
     }
 
     /**
-     * @param infoConfig the infoConfig to set
+     * @param coreInfo the CoRE info configuration to set.
      */
-    public void setInfoCOnfig( ResourceInfoConfig infoConfig )
+    public void setCoreInfoConfig( ResourceInfoConfig coreInfo )
     {
-        this.infoConfig= infoConfig;
+        this.coreInfoConfig= coreInfo;
     }
 
     /**
-     * @return the subordinate resources
+     * @return the subordinate resources.
      */
     public List< ResourceConfig > getSubResources()
     {

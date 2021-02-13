@@ -142,10 +142,8 @@ public class PayloadTest extends AbstractServerTestCase
     public int maxResourceBodySize= 16001;
 
     /**
-     * Flag indicating the message processor that is spied on was activated 
+     * Mule config to use in tests.
      */
-    //private AtomicBoolean spyActivated= new AtomicBoolean();
-
     @Override
     protected String getConfigResources()
     {

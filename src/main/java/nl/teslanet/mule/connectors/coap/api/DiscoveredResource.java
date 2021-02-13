@@ -42,23 +42,22 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     /**
      * The CoRE attribute information of the resource.
      */
-    //TODO change to ResourceInfo or CoreInfo?
-    private final ResourceInfoConfig info;
+    private final ResourceInfoConfig coreInfo;
 
     /**
      * Construct DiscoveredResource from uri and ResourceInfo.
      * @param path Identifies the resource.
-     * @param info The resource attributes.
+     * @param coreInfo The resource attributes.
      */
-    public DiscoveredResource( String path, ResourceInfoConfig info )
+    public DiscoveredResource( String path, ResourceInfoConfig coreInfo )
     {
         if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path: null is not allowed" );
         this.path= path;
-        this.info= new ResourceInfoConfig( info );
+        this.coreInfo= new ResourceInfoConfig( coreInfo );
     }
 
     /**
-     * Construct DiscoveredResource from uri-path and meta info.
+     * Construct DiscoveredResource from uri-path and meta coreInfo.
      * @param path Identifies the resource.
      * @param obs Flag indicating the resource is observable ({@code True}), or not ({@code False})
      * @param title Human readable title of the resource.
@@ -72,12 +71,12 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
         if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path of null is not allowed" );
         this.path= path;
         this.obs= obs;
-        this.info= new ResourceInfoConfig();
-        this.info.setTitle( title );
-        this.info.setIfdesc( ifdesc );
-        this.info.setRt( rt );
-        this.info.setSz( sz );
-        this.info.setCt( ct );
+        this.coreInfo= new ResourceInfoConfig();
+        this.coreInfo.setTitle( title );
+        this.coreInfo.setIfdesc( ifdesc );
+        this.coreInfo.setRt( rt );
+        this.coreInfo.setSz( sz );
+        this.coreInfo.setCt( ct );
     }
 
     /**
@@ -104,7 +103,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getTitle()
     {
-        return info.getTitle();
+        return coreInfo.getTitle();
     }
 
     /**
@@ -113,7 +112,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getIf()
     {
-        return info.getIfdesc();
+        return coreInfo.getIfdesc();
     }
 
     /**
@@ -122,7 +121,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getRt()
     {
-        return info.getRt();
+        return coreInfo.getRt();
     }
 
     /**
@@ -131,7 +130,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getSz()
     {
-        return info.getSz();
+        return coreInfo.getSz();
     }
 
     /**
@@ -140,7 +139,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getCt()
     {
-        return info.getCt();
+        return coreInfo.getCt();
     }
 
     /* (non-Javadoc)

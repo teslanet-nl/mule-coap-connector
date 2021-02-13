@@ -111,36 +111,36 @@ public class ServedResource extends CoapResource
         }
 
         //process info configuration
-        if ( resource.getInfoConfig() != null )
+        if ( resource.getCoreInfoConfig() != null )
         {
-            if ( resource.getInfoConfig().getTitle() != null )
+            if ( resource.getCoreInfoConfig().getTitle() != null )
             {
-                getAttributes().setTitle( resource.getInfoConfig().getTitle() );
+                getAttributes().setTitle( resource.getCoreInfoConfig().getTitle() );
             } ;
-            if ( resource.getInfoConfig().getRt() != null )
+            if ( resource.getCoreInfoConfig().getRt() != null )
             {
-                for ( String rt : resource.getInfoConfig().getRt().split( "\\s*,\\s*" ) )
+                for ( String rt : resource.getCoreInfoConfig().getRt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             } ;
-            if ( resource.getInfoConfig().getIfdesc() != null )
+            if ( resource.getCoreInfoConfig().getIfdesc() != null )
             {
-                for ( String ifdesc : resource.getInfoConfig().getIfdesc().split( "\\s*,\\s*" ) )
+                for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             } ;
-            if ( resource.getInfoConfig().getCt() != null )
+            if ( resource.getCoreInfoConfig().getCt() != null )
             {
-                for ( String ct : resource.getInfoConfig().getCt().split( "\\s*,\\s*" ) )
+                for ( String ct : resource.getCoreInfoConfig().getCt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }
             }
-            if ( resource.getInfoConfig().getSz() != null )
+            if ( resource.getCoreInfoConfig().getSz() != null )
             {
-                getAttributes().setMaximumSizeEstimate( resource.getInfoConfig().getSz() );
+                getAttributes().setMaximumSizeEstimate( resource.getCoreInfoConfig().getSz() );
             }
         }
         //process resource configuration
