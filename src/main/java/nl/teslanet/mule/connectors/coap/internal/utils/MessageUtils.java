@@ -25,12 +25,9 @@ package nl.teslanet.mule.connectors.coap.internal.utils;
 
 import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,7 +36,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.transformation.TransformationService;
@@ -117,12 +113,12 @@ public class MessageUtils
         }
     }
 
-    /**
+    /* TODO needed in later release
      * Convert a typed value to {@code InputStream}.
      * @param typedValueObject is the value to convert.
      * @return converted value as {@code InputStream}.
      * @throws IOException when the value is an outputhandler that cannot write.
-     */
+     *
     public static InputStream toInputStream( TypedValue< Object > typedValueObject ) throws IOException
     {
         Object object= typedValueObject.getValue();
@@ -162,6 +158,7 @@ public class MessageUtils
             return (InputStream) transformationService.transform( Message.builder().payload( typedValueObject ).build(), DataType.INPUT_STREAM ).getPayload().getValue();
         }
     }
+    */
 
     /**
     * Convert a typed value to ETag.
