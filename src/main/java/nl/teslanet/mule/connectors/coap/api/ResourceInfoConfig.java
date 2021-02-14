@@ -102,6 +102,18 @@ public class ResourceInfoConfig
      */
     public ResourceInfoConfig()
     {
+    }    
+    
+    /**
+     * Default constructor of ResourceInfo.
+     */
+    public ResourceInfoConfig( String title, String ifdesc, String rt, String sz, String ct )
+    {
+        this.title= title;
+        this.ifdesc= ifdesc;
+        this.rt= rt;
+        this.sz= sz;
+        this.ct= ct;
     }
 
     /**

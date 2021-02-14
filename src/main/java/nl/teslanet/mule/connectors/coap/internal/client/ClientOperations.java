@@ -241,6 +241,7 @@ public class ClientOperations
         {
             throw new NoResponseException( client + ": discover failed.", e );
         }
+        //TODO map
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {
