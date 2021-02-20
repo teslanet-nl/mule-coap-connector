@@ -22,11 +22,10 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
-
 /**
- *  Exception that is thrown when no response has been received from a server.
+ *  Exception that is thrown when a response is received that indicates a server error (5.xx).
  */
-public class InternalNoResponseException extends Exception
+public class InternalServerErrorResponseException extends Exception
 {
 
     /**
@@ -35,21 +34,30 @@ public class InternalNoResponseException extends Exception
     private static final long serialVersionUID= 1L;
 
     /**
-     * 
+     * Construct exception with given 
+     * @param message
      */
-    public InternalNoResponseException()
+    public InternalServerErrorResponseException( String message )
     {
-        super();
+        super( message );
     }
     
     /**
      * Construct exception with given 
      * @param message
+     * @param e The cause of the exception
      */
-    public InternalNoResponseException( String message )
+    public InternalServerErrorResponseException( String message, Throwable e )
     {
-        super( message );
+        super( message, e );
     }
-
-
+    
+    /**
+     * Construct exception with given 
+     * @param e The cause of the exception
+     */
+    public InternalServerErrorResponseException( Throwable e )
+    {
+        super( e );
+    }
 }

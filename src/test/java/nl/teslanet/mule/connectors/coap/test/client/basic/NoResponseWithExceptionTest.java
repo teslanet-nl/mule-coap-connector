@@ -24,7 +24,8 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -34,11 +35,9 @@ import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
@@ -46,7 +45,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo(Parameterized.class)
-public class NoResponseTest extends AbstractClientTestCase
+public class NoResponseWithExceptionTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
@@ -95,7 +94,7 @@ public class NoResponseTest extends AbstractClientTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-client-config/basic/testclient3.xml";
+        return "mule-client-config/basic/testclient6.xml";
     };
 
     /* (non-Javadoc)
@@ -117,22 +116,13 @@ public class NoResponseTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "do_request" );
         spy.clear();
 
-        flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            "999" ).withVariable( "path", resourcePath ).run();
-
-        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
-        Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) ( response.getPayload().getValue() );
-        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertEquals( "wrong response payload", expectedResponsePayload, payload );
-        assertFalse( "wrong success flag", attributes.isSuccess() );
-        //TODO test for property clienterror, servererror
+        Exception e= assertThrows(
+            Exception.class,
+            () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
+                "port",
+                "999" ).withVariable( "path", resourcePath ).run() );
+        assertEquals( "spy has not been called once", 0, spy.getEvents().size() );
+        assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
+        assertEquals( "wrong exception cause", e.getCause().getClass(), NoResponseException.class );
     }
-
 }

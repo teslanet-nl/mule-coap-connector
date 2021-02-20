@@ -20,36 +20,34 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.exceptions;
+package nl.teslanet.mule.connectors.coap.api.error;
+
+
+import org.mule.runtime.extension.api.exception.ModuleException;
 
 
 /**
- *  Exception that is thrown when no response has been received from a server.
+ * Exception thrown when CoAP response is received that indicates that the request is rejected by the server.
  */
-public class InternalNoResponseException extends Exception
+public class ClientErrorResponseException extends ModuleException
 {
-
     /**
-     * serial version id
+     * Serial version id.
      */
     private static final long serialVersionUID= 1L;
 
-    /**
-     * 
-     */
-    public InternalNoResponseException()
+    public ClientErrorResponseException( String message )
     {
-        super();
-    }
-    
-    /**
-     * Construct exception with given 
-     * @param message
-     */
-    public InternalNoResponseException( String message )
-    {
-        super( message );
+        super( message, Errors.CLIENT_ERROR_RESPONSE );
     }
 
+    public ClientErrorResponseException( Throwable cause )
+    {
+        super( Errors.CLIENT_ERROR_RESPONSE, cause );
+    }
 
+    public ClientErrorResponseException( String message, Throwable cause )
+    {
+        super( message, Errors.CLIENT_ERROR_RESPONSE, cause );
+    }
 }

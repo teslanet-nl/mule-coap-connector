@@ -40,7 +40,7 @@
     <coap:exchange-params exchangeLifetime="10000"/>
   </coap:udp-endpoint>
 
-  <coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint"/>
+  <coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
 
   <coap:udp-endpoint name="Udp_Endpoint2" logCoapMessages="true">
     <coap:socket-params bindToPort="0"/>
@@ -48,7 +48,7 @@
     <coap:blockwise-params maxResourceBodySize="16000"/>
   </coap:udp-endpoint>
 
-  <coap:client-config name="config2" host="127.0.0.1" port="5685" endpoint="Udp_Endpoint2"/>
+  <coap:client-config name="config2" host="127.0.0.1" port="5685" endpoint="Udp_Endpoint2" throwExceptionOnErrorResponse="false"/>
 
   <flow name="do_get">
     <coap:request doc:name="Request" config-ref="config" requestCode="GET" path="#[vars.path]">

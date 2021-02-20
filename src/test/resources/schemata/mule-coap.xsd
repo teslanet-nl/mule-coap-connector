@@ -671,6 +671,11 @@
               <xs:documentation>The default port the server is listening on. Can be overridden by the port setting on the operation.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
+          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="throwExceptionOnErrorResponse">
+            <xs:annotation>
+              <xs:documentation>When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -1711,6 +1716,5 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
 
 

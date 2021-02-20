@@ -20,36 +20,23 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.exceptions;
+package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
-/**
- *  Exception that is thrown when no response has been received from a server.
- */
-public class InternalNoResponseException extends Exception
+import org.junit.runners.Parameterized;
+import org.mule.test.runner.RunnerDelegateTo;
+
+
+@RunnerDelegateTo(Parameterized.class)
+public class ResponseWithDefaultTest extends ResponseWithExceptionTest
 {
 
     /**
-     * serial version id
+     * Get mule configuration.
      */
-    private static final long serialVersionUID= 1L;
-
-    /**
-     * 
-     */
-    public InternalNoResponseException()
+    @Override
+    protected String getConfigResources()
     {
-        super();
-    }
-    
-    /**
-     * Construct exception with given 
-     * @param message
-     */
-    public InternalNoResponseException( String message )
-    {
-        super( message );
-    }
-
-
+        return "mule-client-config/basic/testclient5.xml";
+    };
 }

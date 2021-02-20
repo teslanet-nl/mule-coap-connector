@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
         <coap:exchange-params exchangeLifetime="3000" />
     </coap:udp-endpoint>
 
-    <coap:client-config name="config" host="127.0.0.1" port="5684" endpoint="Udp_endpoint"/>
+    <coap:client-config name="config" host="127.0.0.1" port="5684" endpoint="Udp_endpoint" throwExceptionOnErrorResponse="false"/>
 
 
     <flow name="get_me">

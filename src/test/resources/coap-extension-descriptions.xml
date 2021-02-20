@@ -35,6 +35,9 @@
                 <parameter name="port">
                     <description><![CDATA[The default port the server is listening on. Can be overridden by the port setting on the operation.]]></description>
                 </parameter>
+                <parameter name="throwExceptionOnErrorResponse">
+                    <description><![CDATA[When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.]]></description>
+                </parameter>
             </parameters>
         </config>
         <config name="server">

@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 /**
- *  Exception that is thrown when an invalid request payload is used.
+ *  Exception that is thrown when an invalid response is received.
  */
 public class InternalResponseException extends Exception
 {

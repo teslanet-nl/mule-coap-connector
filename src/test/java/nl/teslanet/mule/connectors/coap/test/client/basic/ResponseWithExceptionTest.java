@@ -40,7 +40,9 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
+import nl.teslanet.mule.connectors.coap.api.error.ServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
@@ -48,7 +50,7 @@ import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo(Parameterized.class)
-public class ResponseTest extends AbstractClientTestCase
+public class ResponseWithExceptionTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
@@ -61,10 +63,21 @@ public class ResponseTest extends AbstractClientTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-            tests.add( new Object []{ "GET", "/response/" + code.name(), code, "Response is: " + code.name() } );
-            tests.add( new Object []{ "POST", "/response/" + code.name(), code, "Response is: " + code.name() } );
-            tests.add( new Object []{ "PUT", "/response/" + code.name(), code, "Response is: " + code.name() } );
-            tests.add( new Object []{ "DELETE", "/response/" + code.name(), code, "Response is: " + code.name() } );
+
+            tests.add(
+                new Object []{ "GET", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() } );
+            tests.add(
+                new Object []{ "POST", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() } );
+            tests.add(
+                new Object []{ "PUT", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() } );
+            tests.add(
+                new Object []{
+                    "DELETE",
+                    "/response/" + code.name(),
+                    ResponseCode.isClientError( code ),
+                    ResponseCode.isServerError( code ),
+                    code,
+                    "Response is: " + code.name() } );
         }
         return tests;
     }
@@ -82,15 +95,27 @@ public class ResponseTest extends AbstractClientTestCase
     public String resourcePath;
 
     /**
-     * The response code that is expected.
+     * Client error exception is expected.
      */
     @Parameter(2)
+    public boolean expectClientError;
+
+    /**
+     * Server error exception is expected.
+     */
+    @Parameter(3)
+    public boolean expectServerError;
+
+    /**
+     * The response code that is expected.
+     */
+    @Parameter(4)
     public ResponseCode expectedResponseCode;
 
     /**
      * The response payload that is expected.
      */
-    @Parameter(3)
+    @Parameter(5)
     public String expectedResponsePayload;
 
     /* (non-Javadoc)
@@ -99,7 +124,7 @@ public class ResponseTest extends AbstractClientTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-client-config/basic/testclient3.xml";
+        return "mule-client-config/basic/testclient6.xml";
     };
 
     /* (non-Javadoc)
@@ -121,7 +146,7 @@ public class ResponseTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "do_request" );
         spy.clear();
 
-        if ( expectedResponseCode.name().startsWith( "_" ) )
+        if ( expectClientError || expectServerError || expectedResponseCode.name().startsWith( "_" ) )
         {
             Exception e= assertThrows(
                 Exception.class,
@@ -129,7 +154,18 @@ public class ResponseTest extends AbstractClientTestCase
                     "port",
                     "5683" ).withVariable( "path", resourcePath ).run() );
             assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
-            assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
+            if ( expectClientError )
+            {
+                assertEquals( "wrong exception cause", e.getCause().getClass(), ClientErrorResponseException.class );
+            }
+            else if ( expectServerError )
+            {
+                assertEquals( "wrong exception cause", e.getCause().getClass(), ServerErrorResponseException.class );
+            }
+            else
+            {
+                assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
+            }
         }
         else
         {

@@ -32,11 +32,12 @@ import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
  */
 public enum Errors implements ErrorTypeDefinition< Errors >
 {
+    NO_RESPONSE,
+    CLIENT_ERROR_RESPONSE,
+    SERVER_ERROR_RESPONSE,
     ENDPOINT_ERROR,
     INVALID_REQUEST,
     INVALID_RESPONSE,
-    NO_RESPONSE,
-    ERROR_RESPONSE,
     INVALID_ETAG,
     INVALID_OPTION_VALUE,
     INVALID_RESOURCE_URI,

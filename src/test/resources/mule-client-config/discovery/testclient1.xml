@@ -38,10 +38,10 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
         <coap:exchange-params exchangeLifetime="1000" />
     </coap:udp-endpoint>
               
-   <coap:client-config name="service" host="127.0.0.1" endpoint="Udp_Endpoint"/>
-   <coap:client-config name="dynamic_service"  endpoint="Udp_Endpoint"/>
-   <coap:client-config name="wrong_port" host="127.0.0.1" port="6767" endpoint="Udp_Endpoint"/>
-   <coap:client-config name="wrong_host" host="ditbestaatniet.org" port="6767" endpoint="Udp_Endpoint"/>
+   <coap:client-config name="service" host="127.0.0.1" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
+   <coap:client-config name="dynamic_service"  endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
+   <coap:client-config name="wrong_port" host="127.0.0.1" port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
+   <coap:client-config name="wrong_host" host="ditbestaatniet.org" port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
 
    <flow name="ping_ok">
       <coap:ping config-ref="service"/>

@@ -55,10 +55,10 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 
 
 @SmallTest
-public class ExtensionModelResourceFactoryTestCase extends AbstractGeneratedResourceFactoryTestCase
+public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
 {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionModelResourceFactoryTestCase.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
 
     private static final String RESOURCE_NAME= "coap-extension-descriptions.xml";
 

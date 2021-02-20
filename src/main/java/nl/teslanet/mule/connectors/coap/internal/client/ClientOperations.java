@@ -52,22 +52,27 @@ import nl.teslanet.mule.connectors.coap.api.PingBuilder;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
+import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
+import nl.teslanet.mule.connectors.coap.api.error.ServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
@@ -123,13 +128,25 @@ public class ClientOperations
         {
             throw new RequestException( client + ": request failed.", e );
         }
-        catch ( InternalResponseException e )
+        catch ( InternalResponseException | InternalInvalidResponseCodeException e )
         {
             throw new ResponseException( client + ": request failed.", e );
         }
         catch ( InternalUriException e )
         {
             throw new UriException( client + ": request failed.", e );
+        }
+        catch ( InternalNoResponseException e )
+        {
+            throw new NoResponseException( client + ": request failed.", e );
+        }
+        catch ( InternalClientErrorResponseException e )
+        {
+            throw new ClientErrorResponseException( client + ": request failed.", e );
+        }
+        catch ( InternalServerErrorResponseException e )
+        {
+            throw new ServerErrorResponseException( client + ": request failed.", e );
         }
     }
 
@@ -182,6 +199,22 @@ public class ClientOperations
         {
             throw new UriException( client + ": async request failed.", e );
         }
+        catch ( InternalInvalidResponseCodeException e )
+        {
+            throw new ResponseException( client + ": request failed.", e );
+        }
+        catch ( InternalNoResponseException e )
+        {
+            throw new NoResponseException( client + ": request failed.", e );
+        }
+        catch ( InternalClientErrorResponseException e )
+        {
+            throw new ClientErrorResponseException( client + ": request failed.", e );
+        }
+        catch ( InternalServerErrorResponseException e )
+        {
+            throw new ServerErrorResponseException( client + ": request failed.", e );
+        }
     }
 
     // TODO add custom timeout
@@ -233,7 +266,7 @@ public class ClientOperations
         {
             throw new UriException( client + ": discover failed.", e );
         }
-        catch ( InternalUnexpectedResponseException e )
+        catch ( InternalUnexpectedResponseException  | InternalInvalidResponseCodeException | InternalResponseException e  )
         {
             throw new ResponseException( client + ": discover failed.", e );
         }
@@ -241,7 +274,16 @@ public class ClientOperations
         {
             throw new NoResponseException( client + ": discover failed.", e );
         }
-        //TODO map
+        catch ( InternalClientErrorResponseException e )
+        {
+            throw new ResponseException( client + ": discover failed.", e );
+
+        }
+        catch ( InternalServerErrorResponseException e )
+        {
+            throw new ResponseException( client + ": discover failed.", e );
+        }
+        //TODO exception
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {

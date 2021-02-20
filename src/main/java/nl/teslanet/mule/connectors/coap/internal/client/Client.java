@@ -41,6 +41,7 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -86,6 +87,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
@@ -95,6 +97,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRespo
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
@@ -176,6 +179,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private Integer port= null;
 
     /**
+     * When {@code true} synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. 
+     * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
+     */
+    @Parameter
+    @Optional(defaultValue= "true")
+    @Expression(ExpressionSupport.NOT_SUPPORTED)
+    @Summary("When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false.")
+    private boolean throwExceptionOnErrorResponse= true;
+
+    /**
      * The endpoint the client uses.
      */
     private OperationalEndpoint operationalEndpoint= null;
@@ -188,12 +201,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * observe relations contains the active observers.
      */
-    private ConcurrentHashMap< String, ObserveRelation > observeRelations= new ConcurrentHashMap< String, ObserveRelation >();
+    private ConcurrentHashMap< String, ObserveRelation > observeRelations= new ConcurrentHashMap<>();
 
     /**
      * The list of response handlers
      */
-    private ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > >();;
+    private ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentHashMap<>();
 
     /* (non-Javadoc)
      * @see org.mule.runtime.api.lifecycle.Startable#start()
@@ -213,11 +226,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void stop() throws MuleException
     {
-        //        for ( CoapObserveRelation relation : staticRelations.values() )
-        //        {
-        //            relation.proactiveCancel();
-        //        }
-        //        staticRelations.clear();
         for ( ObserveRelation relation : observeRelations.values() )
         {
             relation.stop();
@@ -457,30 +465,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     // TODO add custom timeout
     /**
      * Issue a request on a CoAP resource residing on a server.
-     * @param confirmable indicating the requst must be confirmed
-     * @param requestCode indicating the request type to issue
-     * @param uri addresses the resource of the server for which the request is intended 
-     * @param requestPayload is the contents of the request
-     * @param options the CoAP options to add to the request
-     * @param otherOptions the not standard options to add to the request
-     * @param handlerName when a handler is specified the response will be handled asynchronously
-     * @return the result of the request
-     * @throws InternalInvalidHandlerNameException
-     * @throws ConnectorException
-     * @throws IOException
-     * @throws InternalMalformedUriException
-     * @throws InternalInvalidRequestCodeException
-     * @throws InternalInvalidOptionValueException
-     * @throws InternalInvalidByteArrayValueException 
-     * @throws InternalRequestPayloadException 
-     * @throws InternalRequestOptionValueException 
-     * @throws InternalRequestException 
-     * @throws InternalResponseException 
-     * @throws InvalidETagException 
-     * @throws InternalInvalidResponseCodeException 
-     */
-    /**
-     * Issue a request on a CoAP resource residing on a server.
+     * When throwExceptionOnErrorResponse is {@code true } an appropriate exception is thrown.
      * @param confirmable indicating the requst must be confirmed
      * @param requestCode indicating the request type to issue
      * @param uri addresses the resource of the server for which the request is intended 
@@ -494,6 +479,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalResponseException When the received response appears to be invalid and cannot be processed.
      * @throws InternalEndpointException When CoAP communication failed.
      * @throws InternalInvalidRequestCodeException When the request code has invalid value.
+     * @throws InternalServerErrorResponseException When response indicates server error.
+     * @throws InternalInvalidResponseCodeException When response indicates other error.
+     * @throws InternalClientErrorResponseException When response indicates client error.
+     * @throws InternalNoResponseException When timeout has occurred.
      */
     Result< InputStream, ReceivedResponseAttributes > doRequest(
         boolean confirmable,
@@ -506,7 +495,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
-        InternalInvalidRequestCodeException
+        InternalInvalidRequestCodeException,
+        InternalNoResponseException,
+        InternalClientErrorResponseException,
+        InternalInvalidResponseCodeException,
+        InternalServerErrorResponseException
     {
         Result< InputStream, ReceivedResponseAttributes > result= null;
         CoapHandler handler= null;
@@ -573,6 +566,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 throw new InternalEndpointException( "CoAP request failed", e );
             }
+            throwExceptionWhenNeeded( throwExceptionOnErrorResponse, response );
             ReceivedResponseAttributes responseAttributes;
             try
             {
@@ -582,7 +576,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 throw new InternalResponseException( "CoAP response cannot be processed", e );
             }
-            //TODO make exception when no response configurable
             if ( response == null )
             {
                 result= Result.< InputStream, ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
@@ -612,6 +605,66 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
+     * Throw an exception when the response is giving cause for.
+     * @param response The response to inspect.
+     * @throws InternalNoResponseException When timeout has occurred.
+     * @throws InternalClientErrorResponseException When response indicates client error.
+     * @throws InternalInvalidResponseCodeException When response has invalid code.
+     * @throws InternalServerErrorResponseException When response indicates server error.
+     * @throws InternalResponseException When response indicates other error.
+     */
+    private void throwExceptionWhenNeeded( CoapResponse response ) throws InternalNoResponseException,
+        InternalClientErrorResponseException,
+        InternalInvalidResponseCodeException,
+        InternalServerErrorResponseException,
+        InternalResponseException
+    {
+        throwExceptionWhenNeeded( true, response );
+    }
+
+    /**
+     * Throw an exception when the response is giving cause for, only if an exception is wanted.
+     * @param needed When ({@code true} the exception is wanted, otherwise it is not.
+     * @param response The response to inspect.
+     * @throws InternalNoResponseException When timeout has occurred.
+     * @throws InternalClientErrorResponseException When response indicates client error.
+     * @throws InternalInvalidResponseCodeException When response has invalid code.
+     * @throws InternalServerErrorResponseException When response indicates server error.
+     * @throws InternalResponseException When response indicates other error.
+     */
+    private void throwExceptionWhenNeeded( boolean needed, CoapResponse response ) throws InternalNoResponseException,
+        InternalClientErrorResponseException,
+        InternalInvalidResponseCodeException,
+        InternalServerErrorResponseException,
+        InternalResponseException
+    {
+        if ( needed )
+        {
+            if ( response == null )
+            {
+                throw new InternalNoResponseException();
+            }
+            if ( !response.isSuccess() )
+            {
+                String message= "Response code received: " + AttributeUtils.toResponseCodeAttribute( response.getCode() );
+                if ( ResponseCode.isClientError( response.getCode() ) )
+                {
+                    throw new InternalClientErrorResponseException( message );
+                }
+                else if ( ResponseCode.isServerError( response.getCode() ) )
+                {
+                    throw new InternalServerErrorResponseException( message );
+                }
+                else
+                {
+                    throw new InternalResponseException( message );
+
+                }
+            }
+        }
+    }
+
+    /**
      * Create response attributes that describe a response that is received.
      * @param request the request that caused the response.
      * @param response the response that is received from the server.
@@ -624,7 +677,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalInvalidResponseCodeException
     {
         ReceivedResponseAttributes attributes= new ReceivedResponseAttributes();
-        //TODO maybe enum value in attributes.
         attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( operationalEndpoint.getCoapEndpoint().getAddress().toString() );
         attributes.setRequestUri( requestUri );
@@ -660,10 +712,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
     {
         final Client thisClient= this;
-        final String logMessageRequestOrResponseError= "Handler { " + thisClient.getClientName() + "::" + handlerName
-            + " } cannot proces an error on asynchronous request or response";
-        final String logMessageResonseError= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } cannot proces an asynchronous response";
-        final String logMessageResponseErrorError= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } cannot proces an error on asynchronous response";
+        final String handlerDescription= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } ";
 
         return new CoapHandler()
             {
@@ -680,7 +729,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     catch ( InternalResponseException e )
                     {
                         //this should never happen
-                        LOGGER.error( logMessageRequestOrResponseError, e );
+                        LOGGER.error( handlerDescription + "cannot proces an error on asynchronous request or response", e );
                     }
                 }
 
@@ -697,7 +746,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     }
                     catch ( InternalResponseException e )
                     {
-                        LOGGER.error( logMessageResonseError, e );
+                        LOGGER.error( handlerDescription + "cannot proces an asynchronous response", e );
                         try
                         {
                             thisClient.processMuleFlow( requestUri, requestCode, null, callback );
@@ -705,7 +754,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                         catch ( InternalResponseException e1 )
                         {
                             //this should never happen
-                            LOGGER.error( logMessageResponseErrorError, e );
+                            LOGGER.error( handlerDescription + "cannot proces an error on asynchronous response", e );
                         }
                     }
                 }
@@ -788,28 +837,32 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param host hostname or ip of server to ping, when null client configuration is used
      * @param port portnumber of server to ping, when null client configuration is used
      * @param queryString
-     * @return
-     * @throws InternalUriException 
-     * @throws InternalNoResponseException 
-     * @throws InternalUnexpectedResponseException 
-     * @throws IOException 
-     * @throws ConnectorException 
+     * @return The set containg the discovered resources.
+     * @throws InternalUriException When no valid uri could be constructed.
+     * @throws InternalUnexpectedResponseException When resonse does not contain link format payload.
+     * @throws ConnectorException
+     * @throws IOException
+     * @throws InternalNoResponseException When timeout has occurred.
+     * @throws InternalClientErrorResponseException When response indicates client error.
+     * @throws InternalInvalidResponseCodeException When response has invalid code.
+     * @throws InternalServerErrorResponseException When response indicates server error.
+     * @throws InternalResponseException When response indicates other error.
      */
     Set< WebLink > discover( boolean confirmable, String host, Integer port, List< ? extends AbstractQueryParam > query ) throws InternalUriException,
         InternalNoResponseException,
         InternalUnexpectedResponseException,
         ConnectorException,
-        IOException
+        IOException,
+        InternalClientErrorResponseException,
+        InternalInvalidResponseCodeException,
+        InternalServerErrorResponseException,
+        InternalResponseException
     {
         Request request= new Request( Code.GET, ( confirmable ? Type.CON : Type.NON ) );
         request.setURI( getURI( host, port, "/.well-known/core", toQueryString( query ) ) );
         CoapResponse response= coapClient.advanced( request );
 
-        // if no response, return null (e.g., timeout)
-        if ( response == null )
-        {
-            throw new InternalNoResponseException( "discover request failed on { " + request.getURI() + " }" );
-        }
+        throwExceptionWhenNeeded( response );
         // check if Link Format
         if ( response.getOptions().getContentFormat() != MediaTypeRegistry.APPLICATION_LINK_FORMAT )
         {
@@ -819,7 +872,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         return LinkFormat.parse( response.getResponseText() );
     }
 
-    //TODO add client/observer/handler name for logging
     /**
      * Start observing a resource of a CoAP server.
      * @param handlerName the name of the response-handler that will process responses
@@ -848,9 +900,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             relation.stop();
             removeRelation( uri );
         }
-        relation= new ObserveRelation( "CoAP Observer { " + getClientName() + "::" + uri + " }", coapClient, confirmable, uri, ( requestUri, requestCode, response ) -> {
-            this.processMuleFlow( requestUri, requestCode, response, handler );
-        } );
+        relation= new ObserveRelation(
+            "CoAP Observer { " + getClientName() + "::" + uri + " }",
+            coapClient,
+            confirmable,
+            uri,
+            ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler ) );
         addRelation( uri, relation );
         relation.start();
     }

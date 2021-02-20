@@ -45,13 +45,14 @@ public class RequestErrorProvider implements ErrorTypeProvider
     @Override
     public Set< ErrorTypeDefinition > getErrorTypes()
     {
-        Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
+        Set< ErrorTypeDefinition > errors= new HashSet<>();
         errors.add( Errors.ENDPOINT_ERROR );
         errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_REQUEST );
         errors.add( Errors.INVALID_RESPONSE );
         errors.add( Errors.NO_RESPONSE );
-        errors.add( Errors.ERROR_RESPONSE );
+        errors.add( Errors.CLIENT_ERROR_RESPONSE );
+        errors.add( Errors.SERVER_ERROR_RESPONSE );
         return errors;
     }
 }

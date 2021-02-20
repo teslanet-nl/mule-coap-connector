@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
         <coap:exchange-params maxRetransmit="1" />
     </coap:udp-endpoint>
               
-   <coap:client-config name="config" endpoint="Udp_Endpoint" />
+   <coap:client-config name="config" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
       
    <flow name="do_request">
 		<coap:request-async config-ref="config" responseHandler="handler" requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]" path="#[vars.path]">

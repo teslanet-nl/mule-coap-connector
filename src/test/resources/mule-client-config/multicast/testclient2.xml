@@ -42,9 +42,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
         <coap:exchange-params maxRetransmit="0" />
     </coap:udp-endpoint>
               
-   <coap:client-config name="config" host="224.0.1.187" endpoint="Udp_Endpoint" />
-   <coap:client-config name="configNOK" host="224.0.1.187"  port="6767" endpoint="Udp_Endpoint" />
-   <coap:client-config name="configNOR" host="ditbestaatniet"  port="6767" endpoint="Udp_Endpoint" />
+   <coap:client-config name="config" host="224.0.1.187" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
+   <coap:client-config name="configNOK" host="224.0.1.187"  port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
+   <coap:client-config name="configNOR" host="ditbestaatniet"  port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
         
     <flow name="get_me">
         <coap:request-async config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/get_me" confirmable="false">
