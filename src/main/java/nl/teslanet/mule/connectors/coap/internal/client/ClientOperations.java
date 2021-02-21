@@ -82,7 +82,6 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorPro
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
 
 
-//TODO add error tests
 /**
  * This class is a container for CoAP client operations.
  */
@@ -104,6 +103,7 @@ public class ClientOperations
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
         @Alias("request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
+        String errorMsg= ": request failed.";
         try
         {
             String uri= client.getURI(
@@ -122,31 +122,31 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + ": request failed.", e );
+            throw new EndpointException( client + errorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new RequestException( client + ": request failed.", e );
+            throw new RequestException( client + errorMsg, e );
         }
         catch ( InternalResponseException | InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + ": request failed.", e );
+            throw new ResponseException( client + errorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": request failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + ": request failed.", e );
+            throw new NoResponseException( client + errorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + ": request failed.", e );
+            throw new ClientErrorResponseException( client + errorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + ": request failed.", e );
+            throw new ServerErrorResponseException( client + errorMsg, e );
         }
     }
 
@@ -167,6 +167,7 @@ public class ClientOperations
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
         @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
     {
+        String errorMsg= ": async request failed.";
         try
         {
             String uri= client.getURI(
@@ -185,35 +186,35 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + ": async request failed.", e );
+            throw new EndpointException( client + errorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
-            throw new RequestException( client + ": async request failed.", e );
+            throw new RequestException( client + errorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + ": async request failed.", e );
+            throw new InvalidHandlerNameException( client + errorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": async request failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
         catch ( InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + ": request failed.", e );
+            throw new ResponseException( client + errorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + ": request failed.", e );
+            throw new NoResponseException( client + errorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + ": request failed.", e );
+            throw new ClientErrorResponseException( client + errorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + ": request failed.", e );
+            throw new ServerErrorResponseException( client + errorMsg, e );
         }
     }
 
@@ -228,17 +229,18 @@ public class ClientOperations
     @Throws({ PingErrorProvider.class })
     public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping uri") PingBuilder pingBuilder )
     {
+        String errorMsg= ": ping failed.";
         try
         {
             return client.ping( pingBuilder.getHost(), pingBuilder.getPort() );
         }
         catch ( ConnectorException | IOException e )
         {
-            throw new EndpointException( client + ": ping failed.", e );
+            throw new EndpointException( client + errorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": ping failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
     }
 
@@ -253,6 +255,7 @@ public class ClientOperations
     @Throws({ DiscoverErrorProvider.class })
     public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
     {
+        String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
         try
         {
@@ -260,30 +263,29 @@ public class ClientOperations
         }
         catch ( IOException | ConnectorException e )
         {
-            throw new EndpointException( client + ": discover failed.", e );
+            throw new EndpointException( client + errorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": discover failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
         catch ( InternalUnexpectedResponseException  | InternalInvalidResponseCodeException | InternalResponseException e  )
         {
-            throw new ResponseException( client + ": discover failed.", e );
+            throw new ResponseException( client + errorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + ": discover failed.", e );
+            throw new NoResponseException( client + errorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ResponseException( client + ": discover failed.", e );
+            throw new ResponseException( client + errorMsg, e );
 
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ResponseException( client + ": discover failed.", e );
+            throw new ResponseException( client + errorMsg, e );
         }
-        //TODO exception
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {
@@ -343,6 +345,7 @@ public class ClientOperations
         @ParameterGroup(name= "Notification handling") ResponseHandlerBuilder responseHandlerBuilder,
         @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {
+        String errorMsg= ": observer start failed.";
         try
         {
             client.startObserver(
@@ -355,15 +358,15 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": observer start failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + ": observer start failed.", e );
+            throw new InvalidObserverException( client + errorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + ": observer start failed.", e );
+            throw new InvalidHandlerNameException( client + errorMsg, e );
         }
     }
 
@@ -376,6 +379,7 @@ public class ClientOperations
     @Throws({ ObserverStopErrorProvider.class })
     public void observerStop( @Config Client client, @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {
+        String errorMsg= ": observer stop failed.";
         // TODO confirmable is not applicable
         try
         {
@@ -383,11 +387,11 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + ": observer stop failed.", e );
+            throw new UriException( client + errorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + ": observer stop failed.", e );
+            throw new InvalidObserverException( client + errorMsg, e );
         }
     }
 
