@@ -211,7 +211,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
 
     /**
      * Calculate the hashcode of this object.
-     * @return 
+     * @return The hashCode of the object
      */
     protected int calculateHashCode()
     {
