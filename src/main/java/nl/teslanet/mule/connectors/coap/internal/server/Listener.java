@@ -98,7 +98,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      */
     @Parameter
     @Optional(defaultValue= "false")
-    @DisplayName("Receive Get requests")
+    @DisplayName("Accept Get requests")
     @Summary("The listener will only receive GET requests.")
     private boolean get;
 
@@ -107,7 +107,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      */
     @Parameter
     @Optional(defaultValue= "false")
-    @DisplayName("Receive Post requests")
+    @DisplayName("Accept Post requests")
     @Summary("The listener will only receive POST requests.")
     private boolean post;
 
@@ -116,7 +116,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      */
     @Parameter
     @Optional(defaultValue= "false")
-    @DisplayName("Receive Put requests")
+    @DisplayName("Accept Put requests")
     @Summary("The listener will only receive PUT requests.")
     private boolean put;
 
@@ -125,7 +125,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      */
     @Parameter
     @Optional(defaultValue= "false")
-    @DisplayName("Receive Delete requests")
+    @DisplayName("Accept Delete requests")
     @Summary("The listener will only receive DELETE requests.")
     private boolean delete;
 
