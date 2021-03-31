@@ -46,7 +46,7 @@ public class DiscoverBuilder
     @Parameter
     @Optional(defaultValue= "true")
     @Expression(ExpressionSupport.SUPPORTED)
-    @Summary(" When true the server is expected to acknowledge reception of the request.")
+    @Summary("When true the server is expected to acknowledge reception of the request.")
     private boolean confirmable= true;
 
     /**
