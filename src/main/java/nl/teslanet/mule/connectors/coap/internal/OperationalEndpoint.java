@@ -333,7 +333,6 @@ public final class OperationalEndpoint
         this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
     }
 
-    //TODO rename interfaceAddress param
     /**
      * Constructor for an operational Multicast UDP endpoint.
      * @param config the Multicast UDP endpoint configuration

@@ -147,6 +147,7 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Integer nstart= null;
 
+    //TODO move to UDP params
     /**
      * When {@code true} the message IDs will start at a random index. Otherwise the
      * first message ID returned will be {@code 0}.
@@ -158,6 +159,7 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Boolean useRandomMidStart= null;
 
+    //TODO move to UDP params
     /**
      * The message identity tracker used. The tracker maintains the administration
      * of message id's uses in the CoAP exchanges. These use different strategies
