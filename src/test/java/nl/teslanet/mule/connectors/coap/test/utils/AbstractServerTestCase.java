@@ -28,17 +28,16 @@ import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapClient;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.EndpointManager;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.network.EndpointManager;
 
 
 /**
  * Get method basic tests
  *
  */
-public abstract class AbstractServerTestCase extends MuleArtifactFunctionalTestCase
+public abstract class AbstractServerTestCase extends AbstractTestCase
 {
     /**
      * The CoAP client for testing CoAP servers.

@@ -33,10 +33,15 @@
 	</Appenders>
 	<Loggers>
 		<!-- used by testcode -->
-		<Logger name="nl.teslanet.shaded.org.eclipse" level="info"
-			additivity="false">
+		org.mule.runtime.module.artifact.api.classloader.FineGrainedControlClassLoader
+		<Logger name="org.mule.runtime.module.artifact.api.classloader.FineGrainedControlClassLoader" level="debug"
+			additivity="true">
 			<AppenderRef ref="Console" />
 		</Logger>
+		<Logger name="nl.teslanet.shaded.org.eclipse" level="info"
+            additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
 		<!-- used by connector -->
 		<Logger name="org.eclipse" level="info" additivity="false">
 			<AppenderRef ref="Console" />
