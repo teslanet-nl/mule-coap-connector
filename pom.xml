@@ -64,9 +64,9 @@
 	<properties>
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
-		<californium.version>2.6.3</californium.version>
+		<californium.version>2.6.5</californium.version>
 		<commonsLangVersion>3.7</commonsLangVersion>
-		<testutils.version>1.0.0-M7</testutils.version>
+		<testutils.version>1.0.0-M8</testutils.version>
 	</properties>
 
 	<scm>
