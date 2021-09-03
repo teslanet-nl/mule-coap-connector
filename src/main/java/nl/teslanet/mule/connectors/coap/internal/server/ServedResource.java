@@ -39,8 +39,8 @@ import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -348,7 +348,7 @@ public class ServedResource extends CoapResource
         attributes.setRemoteAddress( exchange.getSourceAddress().toString() );
         attributes.setRemotePort( exchange.getSourcePort() );
 
-        CoAPOptions.copyOptions( exchange.getRequestOptions(), attributes.getOptions() );
+        MessageUtils.copyOptions( exchange.getRequestOptions(), attributes.getOptions() );
         return attributes;
     }
 

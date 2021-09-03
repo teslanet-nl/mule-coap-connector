@@ -100,7 +100,6 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
-import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
@@ -542,7 +541,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         try
         {
-            CoAPOptions.copyOptions( options, request.getOptions(), false );
+            MessageUtils.copyOptions( options, request.getOptions(), false );
         }
         catch ( InternalInvalidOptionValueException e )
         {
@@ -692,7 +691,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             attributes.setNotification( response.advanced().isNotification() );
             attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().getHostString() );
             attributes.setRemotePort( response.advanced().getSourceContext().getPeerAddress().getPort() );
-            CoAPOptions.copyOptions( response.getOptions(), attributes.getOptions() );
+            MessageUtils.copyOptions( response.getOptions(), attributes.getOptions() );
         }
         return attributes;
     }

@@ -62,7 +62,6 @@ import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
-import nl.teslanet.mule.connectors.coap.internal.options.CoAPOptions;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
@@ -166,7 +165,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            CoAPOptions.copyOptions( responseOptions, coapResponse.getOptions(), false );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), false );
         }
         //TODO add streaming & blockwise cooperation
         try
