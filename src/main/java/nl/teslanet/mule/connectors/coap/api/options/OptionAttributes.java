@@ -40,11 +40,13 @@ public class OptionAttributes
     /*
      * Options defined by the CoAP protocol
      */
-    private List< ETag > ifMatchList= null;
+    private boolean ifExists= false;
+
+    private List< ETag > ifMatch= null;
 
     private String uriHost= null;
 
-    private List< ETag > etagList= null;
+    private List< ETag > etags= null;
 
     private boolean ifNoneMatch= false;
 
@@ -90,24 +92,40 @@ public class OptionAttributes
     //private byte[] oscore= null;
 
     /**
+     * @return the ifExists
+     */
+    public boolean isifExists()
+    {
+        return ifExists;
+    }
+
+    /**
+     * @param ifExists the ifExists to set
+     */
+    public void setifExists( boolean ifExists )
+    {
+        this.ifExists= ifExists;
+    }
+
+    /**
      * The other CoAP options received.
      */
     private MultiMap< String, Object > otherOptions= new MultiMap< String, Object >();
 
     /**
-     * @return the ifMatchList
+     * @return the ifMatch list
      */
-    public List< ETag > getIfMatchList()
+    public List< ETag > getifMatch()
     {
-        return ifMatchList;
+        return ifMatch;
     }
 
     /**
-     * @param ifMatchList the ifMatchList to set
+     * @param ifMatch the ifMatch to set
      */
-    public void setIfMatchList( List< ETag > ifMatchList )
+    public void setifMatch( List< ETag > ifMatch )
     {
-        this.ifMatchList= ifMatchList;
+        this.ifMatch= ifMatch;
     }
 
     /**
@@ -127,19 +145,19 @@ public class OptionAttributes
     }
 
     /**
-     * @return the etagList
+     * @return the etags list
      */
-    public List< ETag > getEtagList()
+    public List< ETag > getEtags()
     {
-        return etagList;
+        return etags;
     }
 
     /**
-     * @param etagList the etagList to set
+     * @param etags the etags to set
      */
-    public void setEtagList( List< ETag > etagList )
+    public void setEtags( List< ETag > etags )
     {
-        this.etagList= etagList;
+        this.etags= etags;
     }
 
     /**

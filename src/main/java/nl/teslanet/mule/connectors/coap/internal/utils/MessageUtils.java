@@ -94,7 +94,17 @@ public class MessageUtils
         {
             try
             {
-                attributes.setIfMatchList( ETag.getList( optionSet.getIfMatch() ) );
+                List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
+                ETag emptEtag= new ETag();
+                boolean emptyPresent= ifMatch.removeIf( etag -> etag.equals( emptEtag ) );
+                if ( emptyPresent )
+                {
+                    attributes.setifExists( true );
+                }
+                if ( !ifMatch.isEmpty() )
+                {
+                    attributes.setifMatch( ifMatch );
+                }
             }
             catch ( InvalidETagException e )
             {
@@ -109,7 +119,7 @@ public class MessageUtils
         {
             try
             {
-                attributes.setEtagList( ETag.getList( optionSet.getETags() ) );
+                attributes.setEtags( ETag.getList( optionSet.getETags() ) );
             }
             catch ( InvalidETagException e )
             {
@@ -195,21 +205,21 @@ public class MessageUtils
      */
     public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
+        if ( requestOptions.isifExists() )
+        {
+            optionSet.addIfMatch( new byte [0] );
+        }
         if ( requestOptions.isIfNoneMatch() )
         {
             optionSet.setIfNoneMatch( true );
         }
-        if ( requestOptions.getIfMatchList() != null )
+        if ( requestOptions.getifMatch() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getIfMatchList() );
-                if ( etags.isEmpty())
-                {
-                    optionSet.addIfMatch( new byte[0] );
-                }
-                else for ( ETag etag : etags )
+                etags= MessageUtils.toEtagList( requestOptions.getifMatch() );
+                for ( ETag etag : etags )
                 {
                     optionSet.addIfMatch( MessageUtils.optionToBytes( etag ) );
                 }
@@ -219,12 +229,12 @@ public class MessageUtils
                 throw new InternalInvalidOptionValueException( "If-Match", "", e );
             }
         }
-        if ( requestOptions.getEtagList() != null )
+        if ( requestOptions.getEtags() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getEtagList() );
+                etags= MessageUtils.toEtagList( requestOptions.getEtags() );
                 for ( ETag etag : etags )
                 {
                     optionSet.addETag( etag.getBytes() );

@@ -23,31 +23,19 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import java.util.LinkedList;
-
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-
-
 /**
- * Test outbound If Match list property, multiple String value
+ * Test outbound If None Match property as String with value true 
  *
  */
-public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTestCase
+public class OptifExistsOutbound4Test extends AbstractOutboundPropertiesTestCase
 {
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidETagException 
      */
-    private LinkedList< ETag > getValue() throws InvalidETagException
+    private Boolean getValue()
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "68656C6C6F" ) );
-        list.add( new ETag( "6F6C6C61" ) );
-        list.add( new ETag( "686F69" ) );
-
-        return list;
+        return new Boolean( true );
     }
 
     /* (non-Javadoc)
@@ -56,29 +44,24 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.if_match.etags";
+        return "coap.opt.if_match.any";
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidETagException
+    protected Object getOutboundPropertyValue()
     {
-        LinkedList< String > propertyValue= new LinkedList< String >();
-        for ( ETag value : getValue() )
-        {
-            propertyValue.add( value.getHexString() );
-        }
-        return propertyValue;
+        return getValue().toString();
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidETagException
+    protected OptionStrategy getStrategy()
     {
-        return new OptIfMatchListStrategy( getValue() );
+        return new OptifExistsStrategy( getValue() );
     }
 }

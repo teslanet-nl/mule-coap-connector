@@ -27,6 +27,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -60,6 +61,51 @@ public class OptionSetToAttributesTest
     }
 
     @Test
+    public void testOptionSetifExists() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        byte[] etagValue1= { };
+        set.addIfMatch( etagValue1.clone() );
+
+        OptionAttributes attributes= new OptionAttributes();
+
+        MessageUtils.copyOptions( set, attributes );
+
+        List< ETag > list= attributes.getifMatch();
+        boolean ifExists= attributes.isifExists();
+
+        assertNull( list );
+        assertTrue( "coap.opt.if_match.any: wrong value", ifExists );
+    }
+
+    @Test
+    public void testOptionSetifExistsMultiple() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        byte[] etagValue1= { };
+        byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
+        byte[] etagValue3= { };
+
+        set.addIfMatch( etagValue1.clone() );
+        set.addIfMatch( etagValue2.clone() );
+        set.addIfMatch( etagValue3.clone() );
+
+        OptionAttributes attributes= new OptionAttributes();
+
+        MessageUtils.copyOptions( set, attributes );
+
+        List< ETag > list= attributes.getifMatch();
+        boolean ifExists= attributes.isifExists();
+
+        assertNotNull( list );
+        assertTrue( "coap.opt.if_match.any: wrong value", ifExists );
+        assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
+        assertFalse( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue2 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue3 ) ) );
+    }
+
+    @Test
     public void testOptionSetIfMatch() throws InvalidETagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
@@ -71,12 +117,12 @@ public class OptionSetToAttributesTest
 
         MessageUtils.copyOptions( set, attributes );
 
-        List< ETag > list= attributes.getIfMatchList();
+        List< ETag > list= attributes.getifMatch();
 
         assertNotNull( list );
-        assertEquals( "coap.opt.if_match.list: wrong number of etags", 1, list.size() );
-        assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertFalse( "coap.opt.if_match.list: etag not expected", list.contains( new ETag( etagValue2 ) ) );
+        assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue2 ) ) );
     }
 
     @Test
@@ -87,20 +133,20 @@ public class OptionSetToAttributesTest
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
         byte[] etagValue3= { (byte) 0x22, (byte) 0xFF };
 
-        set.addIfMatch( new ETag( etagValue1 ).getBytes() );
-        set.addIfMatch( new ETag( etagValue2 ).getBytes() );
+        set.addIfMatch( etagValue1.clone() );
+        set.addIfMatch( etagValue2.clone() );
 
         OptionAttributes attributes= new OptionAttributes();
 
         MessageUtils.copyOptions( set, attributes );
 
-        List< ETag > list= attributes.getIfMatchList();
+        List< ETag > list= attributes.getifMatch();
 
         assertNotNull( list );
-        assertEquals( "coap.opt.if_match.list: wrong number of etags", 2, list.size() );
-        assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertTrue( "coap.opt.if_match.list: missing etag", list.contains( new ETag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.list: etag not expected", list.contains( new ETag( etagValue3 ) ) );
+        assertEquals( "coap.opt.if_match.etags: wrong number of etags", 2, list.size() );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue2 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue3 ) ) );
     }
 
     @Test
@@ -134,7 +180,7 @@ public class OptionSetToAttributesTest
 
         MessageUtils.copyOptions( set, attributes );
 
-        List< ETag > list= attributes.getEtagList();
+        List< ETag > list= attributes.getEtags();
 
         assertNotNull( list );
         assertEquals( "coap.opt.etag.list: wrong number of etags", 2, list.size() );

@@ -129,8 +129,29 @@ public class RequestOptions
     @Parameter
     @Optional
     @Content(primary= false)
-    @Summary("An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource.")
-    private TypedValue< Object > etagList= null;
+    @Summary("An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values be set.")
+    private TypedValue< Object > etags= null;
+
+    /**
+     * RFC 7252: The value of an If-Match option is either an ETag or the empty
+     * string.  An If-Match option with an ETag matches a representation
+     * with that exact ETag.  An If-Match option with an empty value matches
+     * any existing representation (i.e., it places the precondition on the
+     * existence of any current representation for the target resource).
+     * The If-Match Option can occur multiple times. If any of the options
+     * match, then the condition is fulfilled.
+     * If there is one or more If-Match Options, but none of the options
+     * match, then the condition is not fulfilled.
+     * 
+     * @see <a href=
+     *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 -
+     *      5.10.8.1. If-Match</a>
+     */
+    @Parameter
+    @Optional(defaultValue= "false")
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Summary("Sets an empty If-Match Option which makes a request conditional on the existence of the resource only. When set If-MAtch options containing ETags must be ignored server-side.")
+    private boolean ifExists= false;
 
     /**
      * RFC 7252: The If-Match Option MAY be used to make a request conditional on
@@ -149,7 +170,7 @@ public class RequestOptions
     @Content(primary= false)
     @Expression(ExpressionSupport.SUPPORTED)
     @Summary("The If-Match Option makes a request conditional on the resources ETag.")
-    private TypedValue< Object > ifMatchList= null;
+    private TypedValue< Object > ifMatch= null;
 
     /**
      * RFC 7252: The If-None-Match Option MAY be used to make a request conditional
@@ -278,39 +299,55 @@ public class RequestOptions
     }
 
     /**
-     * @return the etagList
+     * @return the etags list
      */
-    public TypedValue< Object > getEtagList()
+    public TypedValue< Object > getEtags()
     {
-        return etagList;
+        return etags;
     }
 
     /**
-     * @param etagList the etagList to set
+     * @param etags the etags to set
      */
-    public void setEtagList( TypedValue< Object > etagList )
+    public void setEtags( TypedValue< Object > etags )
     {
-        this.etagList= etagList;
+        this.etags= etags;
     }
 
     /**
-     * @return the ifMatchList
+     * @return the ifExists value
      */
-    public TypedValue< Object > getIfMatchList()
+    public boolean isifExists()
     {
-        return ifMatchList;
+        return ifExists;
     }
 
     /**
-     * @param ifMatchList the ifMatchList to set
+     * @param ifExists the ifExists to set
      */
-    public void setIfMatchList( TypedValue< Object > ifMatchList )
+    public void setifExists( boolean ifExists )
     {
-        this.ifMatchList= ifMatchList;
+        this.ifExists= ifExists;
     }
 
     /**
-     * @return the ifNoneMatch
+     * @return the ifMatch list
+     */
+    public TypedValue< Object > getifMatch()
+    {
+        return ifMatch;
+    }
+
+    /**
+     * @param ifMatch the ifMatch to set
+     */
+    public void setifMatch( TypedValue< Object > ifMatch )
+    {
+        this.ifMatch= ifMatch;
+    }
+
+    /**
+     * @return the ifNoneMatch value
      */
     public boolean isIfNoneMatch()
     {

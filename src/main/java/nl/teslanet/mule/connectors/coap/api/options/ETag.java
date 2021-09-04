@@ -202,16 +202,14 @@ public final class ETag implements Comparable< ETag >
 
     /**
      * Check a collection of etags whether it contains the etag.
+     * When nthe collection is null the etag is considered not found.
      * @param etags The collection of etags to check.
      * @return True when the etag is found in the collection, otherwise false.
      */
     public boolean isIn( Collection< ETag > etags )
     {
-        for ( ETag e : etags )
-        {
-            if ( this.equals( e ) ) return true;
-        }
-        return false;
+        if ( etags == null ) return false;
+        return etags.contains( this );
     }
 
     /**

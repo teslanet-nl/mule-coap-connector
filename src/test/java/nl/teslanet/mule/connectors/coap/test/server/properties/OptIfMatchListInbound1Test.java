@@ -42,7 +42,7 @@ public class OptIfMatchListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.if_match.list";
+        return "coap.opt.if_match.etags";
     }
 
     @Override

@@ -23,38 +23,31 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import java.util.LinkedList;
-
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
 
 
-public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
+public class OptifExistsInbound1Test extends AbstractInboundPropertyTestcase
 {
+
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "A0" ).getBytes() );
         options.addIfMatch( new ETag( "0011FF" ).getBytes() );
-        options.addIfMatch( new ETag( "0011223344556677" ).getBytes() );
+        options.addIfMatch( new byte[0] );
     }
 
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.if_match.etags";
+        return "coap.opt.if_match.any";
     }
 
     @Override
     protected Object getExpectedPropertyValue() throws InvalidETagException
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "A0" ) );
-        list.add( new ETag( "0011FF" ) );
-        list.add( new ETag( "0011223344556677" ) );
-
-        return list;
+        return Boolean.TRUE;
     }
     
     /* (non-Javadoc)
@@ -63,6 +56,6 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-ifMatch.xml";
+        return "mule-server-config/properties/testserver-options-ifExists.xml";
     };
 }

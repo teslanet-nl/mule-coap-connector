@@ -56,7 +56,7 @@ public class OptIfMatchListOutbound1mTest extends AbstractOutboundPropertiesTest
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.if_match.list";
+        return "coap.opt.if_match.etags";
     }
 
     /* (non-Javadoc)

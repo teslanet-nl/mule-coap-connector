@@ -24,6 +24,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,9 +40,9 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
@@ -134,6 +136,15 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     }
 
     /**
+     * Override to set the expected exception if any.
+     * @return The expected exception.
+     */
+    protected Exception getExpectedException()
+    {
+        return null;
+    }
+
+    /**
      * The property value that is expected to receive in inbound test
      * @return the value to expect
      */
@@ -170,20 +181,33 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         requestAttibutes.setRequestCode( requestCode );
         requestAttibutes.setHost( "127.0.0.1" );
         requestAttibutes.setPath( getResourcePath() );
-        Event result= flowRunner( "do_request-" + getFlowNameExtension() )
-                .withPayload( "nothing_important" )
-                .withVariable( "requestCode", requestCode )
-                .withVariable("host",
-            "127.0.0.1" )
-                .withVariable( "path", getResourcePath() )
-                .withVariable( "option", getOutboundPropertyValue() )
-                .run();
-        Message response= result.getMessage();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        Event result;
+
+        if ( getExpectedException() != null )
+        {
+            Exception e= assertThrows( Exception.class, () -> {
+                runFlow();
+            } );
+            assertTrue( "wrong exception message", e.getMessage().contains( getExpectedException().getMessage() ) );
+            assertEquals( "wrong exception cause", getExpectedException().getClass(), e.getCause().getClass() );
+        }
+        else
+        {
+            result= runFlow();
+            Message response= result.getMessage();
+            assertEquals(
+                "wrong attributes class",
+                new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+                response.getAttributes().getClass() );
+            ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+            assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        }
+    }
+
+    private Event runFlow() throws InvalidETagException, Exception
+    {
+        return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
+            "host",
+            "127.0.0.1" ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).run();
     }
 }
