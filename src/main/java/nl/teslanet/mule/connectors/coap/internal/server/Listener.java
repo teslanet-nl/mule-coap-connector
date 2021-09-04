@@ -165,12 +165,12 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), false );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions() );
         }
         //TODO add streaming & blockwise cooperation
         try
         {
-            coapResponse.setPayload( MessageUtils.toByteArray( responsePayload ) );
+            coapResponse.setPayload( MessageUtils.payloadToByteArray( responsePayload ) );
         }
         catch ( Exception e )
         {

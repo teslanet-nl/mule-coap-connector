@@ -530,7 +530,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 //TODO add streaming & blockwise cooperation
                 try
                 {
-                    request.setPayload( MessageUtils.toByteArray( requestPayload ) );
+                    request.setPayload( MessageUtils.payloadToByteArray( requestPayload ) );
                 }
                 catch ( RuntimeException | IOException e )
                 {
@@ -541,7 +541,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         try
         {
-            MessageUtils.copyOptions( options, request.getOptions(), false );
+            MessageUtils.copyOptions( options, request.getOptions() );
         }
         catch ( InternalInvalidOptionValueException e )
         {

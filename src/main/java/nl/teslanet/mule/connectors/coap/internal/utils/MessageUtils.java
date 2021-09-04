@@ -46,7 +46,6 @@ import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.util.IOUtils;
-import org.slf4j.Logger;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
@@ -70,7 +69,7 @@ public class MessageUtils
      * Mule transformation service.
      */
     @Inject
-    static private TransformationService transformationService;
+    private static TransformationService transformationService;
 
     /**
      * Do not create objects.
@@ -80,218 +79,139 @@ public class MessageUtils
         //NOOP
     }
 
-    //TODO move to AttibuteUtils
-    //TODO rename
     /**
-     * Copy options to option attributes from given optionSet.
+     * Copy options from given optionSet to optionAttributes .
      * Processing options stops when an exception occurs.
-     * @param optionSet source of the properties
-     * @param options Options to fill
-     * @throws InvalidOptionValueException when option value could not be converted into a property
+     * @param optionSet to copy from.
+     * @param attributes to copy to
+     * @throws InvalidOptionValueException when given option value could not be copied
      */
-    public static void copyOptions( OptionSet optionSet, OptionAttributes options ) throws InternalInvalidOptionValueException
+    public static void copyOptions( OptionSet optionSet, OptionAttributes attributes ) throws InternalInvalidOptionValueException
     {
-        String errorMsg= "cannot create property";
-        copyOptionsLoggingOrThrowingErrors( optionSet, options, null, errorMsg );
-    }
-
-    //TODO move to AttibuteUtils
-    /**
-     * Copy options to option attributes from given optionSet.
-     * Processing options continues when an exception occurs, after logging an error message.
-     * @param optionSet source of the properties
-     * @param options Options attributes to copy to
-     * @param logger uses for logging errors
-     * @param errorMsg message to log on errors
-     * @throws InternalInvalidOptionValueException should not be thrown
-     */
-    public static void copyOptions( OptionSet optionSet, OptionAttributes options, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
-    {
-        copyOptionsLoggingOrThrowingErrors( optionSet, options, logger, errorMsg );
-    }
-
-    /**
-     * Handle error that occurs during property processing
-     * @param propertyName 
-     * @param e cause exception
-     * @param logger logger to use for logging when not null
-     * @param errorMsg that will be logged or put into exception
-     * @throws InternalInvalidOptionValueException when when logger is null in stead of logging
-     */
-    private static void handlePropertyError( String propertyName, Exception e, Logger logger, String errorMsg ) throws InternalInvalidOptionValueException
-    {
-        InternalInvalidOptionValueException exception= new InternalInvalidOptionValueException( propertyName, errorMsg, e );
-        if ( logger == null )
-        {
-            throw exception;
-        }
-        else
-        {
-            logger.error( errorMsg + " { " + propertyName + " }", exception );
-        }
-
-    }
-
-    //TODO move to AttibuteUtils
-    /**
-     * Copy options to option attributes from given optionSet.
-     * Processing options continues when an exception occurs and logger is given.
-     * @param optionSet source of the properties
-     * @param options Options attributes to copy to
-     * @param logger uses for logging errors
-     * @param errorMsg message to log on errors
-     * @throws InternalInvalidOptionValueException when an option cannot be converted.
-     */
-    private static void copyOptionsLoggingOrThrowingErrors( OptionSet optionSet, OptionAttributes options, final Logger logger, String errorMsg )
-        throws InternalInvalidOptionValueException
-    {
+        String errorMsg= "cannot create attribute";
         // List<byte[]> if_match_list;
         if ( !optionSet.getIfMatch().isEmpty() )
         {
             try
             {
-                options.setIfMatchList( ETag.getList( optionSet.getIfMatch() ) );
+                attributes.setIfMatchList( ETag.getList( optionSet.getIfMatch() ) );
             }
             catch ( InvalidETagException e )
             {
-                handlePropertyError( "IfMatch", e, logger, errorMsg );
+                throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
             }
         }
-        // String       uri_host;
         if ( optionSet.hasUriHost() )
         {
-            options.setUriHost( optionSet.getUriHost() );
+            attributes.setUriHost( optionSet.getUriHost() );
         }
-        // List<byte[]> etag_list;
         if ( !optionSet.getETags().isEmpty() )
         {
             try
             {
-                options.setEtagList( ETag.getList( optionSet.getETags() ) );
+                attributes.setEtagList( ETag.getList( optionSet.getETags() ) );
             }
             catch ( InvalidETagException e )
             {
-                handlePropertyError( "ETags", e, logger, errorMsg );
+                throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
             }
         }
-        // boolean      if_none_match; // true if option is set
-        options.setIfNoneMatch( optionSet.hasIfNoneMatch() );
-
-        // Integer      uri_port; // null if no port is explicitly defined
+        attributes.setIfNoneMatch( optionSet.hasIfNoneMatch() );
         if ( optionSet.hasUriPort() )
         {
-            options.setUriPort( optionSet.getUriPort() );
+            attributes.setUriPort( optionSet.getUriPort() );
         }
-        // List<String> location_path_list;
         if ( !optionSet.getLocationPath().isEmpty() )
         {
-            options.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
-            options.setLocationPath( optionSet.getLocationPathString() );
+            attributes.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
+            attributes.setLocationPath( optionSet.getLocationPathString() );
         }
-        // List<String> uri_path_list;
         if ( !optionSet.getUriPath().isEmpty() )
         {
-            options.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
-            options.setUriPath( optionSet.getUriPathString() );
+            attributes.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
+            attributes.setUriPath( optionSet.getUriPathString() );
         }
-        // Integer      content_format;
         if ( optionSet.hasContentFormat() )
         {
-            options.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
+            attributes.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
         }
-        // Long         max_age; // (0-4 bytes)
         if ( optionSet.hasMaxAge() )
         {
-            options.setMaxAge( optionSet.getMaxAge() );
+            attributes.setMaxAge( optionSet.getMaxAge() );
         }
-        // List<String> uri_query_list;
         if ( !optionSet.getUriQuery().isEmpty() )
         {
-            options.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
-            options.setUriQuery( optionSet.getUriQueryString() );
+            attributes.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
+            attributes.setUriQuery( optionSet.getUriQueryString() );
         }
-        // Integer      accept;
         if ( optionSet.hasAccept() )
         {
-            options.setAccept( Integer.valueOf( optionSet.getAccept() ) );
+            attributes.setAccept( Integer.valueOf( optionSet.getAccept() ) );
         }
-        // List<String> location_query_list;
         if ( !optionSet.getLocationQuery().isEmpty() )
         {
-            options.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
-            options.setLocationQuery( optionSet.getLocationQueryString() );
+            attributes.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
+            attributes.setLocationQuery( optionSet.getLocationQueryString() );
         }
-        // String       proxy_uri;
         if ( optionSet.hasProxyUri() )
         {
-            options.setProxyUri( optionSet.getProxyUri() );
+            attributes.setProxyUri( optionSet.getProxyUri() );
         }
-        // String       proxy_scheme;
         if ( optionSet.hasProxyScheme() )
         {
-            options.setProxyScheme( optionSet.getProxyScheme() );
+            attributes.setProxyScheme( optionSet.getProxyScheme() );
         }
-        // BlockOption  block1;
         if ( optionSet.hasBlock1() )
         {
-            options.setBlock1( toBlockValue( optionSet.getBlock1() ) );
+            attributes.setBlock1( toBlockValue( optionSet.getBlock1() ) );
         }
-        // BlockOption  block2;
         if ( optionSet.hasBlock2() )
         {
-            options.setBlock2( toBlockValue( optionSet.getBlock2() ) );
+            attributes.setBlock2( toBlockValue( optionSet.getBlock2() ) );
         }
-        // Integer      size1;
         if ( optionSet.hasSize1() )
         {
-            options.setSize1( optionSet.getSize1() );
+            attributes.setSize1( optionSet.getSize1() );
         }
-        // Integer      size2;
         if ( optionSet.hasSize2() )
         {
-            options.setSize2( optionSet.getSize2() );
+            attributes.setSize2( optionSet.getSize2() );
         }
-        // Integer      observe;
         if ( optionSet.hasObserve() )
         {
-            options.setObserve( optionSet.getObserve() );
+            attributes.setObserve( optionSet.getObserve() );
         }
-        // Arbitrary options
-        // List<Option> others;
         for ( Option other : optionSet.getOthers() )
         {
-            options.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
+            attributes.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
         }
     }
 
     /**
      * Copy options from {@link RequestOptions} to {@link OptionSet}.
-     * @param options to copy from
+     * @param requestOptions to copy from
      * @param optionSet to copy to
-     * @param clear when {@code true } the optionSet will be cleared before copying. 
-     * @throws InternalInvalidOptionValueException 
-    
+     * @throws InvalidOptionValueException when given option value could not be copied
      */
-    public static void copyOptions( RequestOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidOptionValueException
+    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
-        //make sure Optionset is empty, if needed
-        if ( clear ) optionSet.clear();
-
-        /* if_none_match */
-        if ( options.isIfNoneMatch() )
+        if ( requestOptions.isIfNoneMatch() )
         {
             optionSet.setIfNoneMatch( true );
         }
-        /* if_match_list       = null; // new LinkedList<byte[]>();*/
-        if ( options.getIfMatchList() != null )
+        if ( requestOptions.getIfMatchList() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( options.getIfMatchList() );
-                for ( ETag etag : etags )
+                etags= MessageUtils.toEtagList( requestOptions.getIfMatchList() );
+                if ( etags.isEmpty())
                 {
-                    optionSet.addIfMatch( MessageUtils.toBytes( etag ) );
+                    optionSet.addIfMatch( new byte[0] );
+                }
+                else for ( ETag etag : etags )
+                {
+                    optionSet.addIfMatch( MessageUtils.optionToBytes( etag ) );
                 }
             }
             catch ( IOException | InvalidETagException | InternalInvalidByteArrayValueException e )
@@ -299,13 +219,12 @@ public class MessageUtils
                 throw new InternalInvalidOptionValueException( "If-Match", "", e );
             }
         }
-        /* etag_list           = null; // new LinkedList<byte[]>();*/
-        if ( options.getEtagList() != null )
+        if ( requestOptions.getEtagList() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( options.getEtagList() );
+                etags= MessageUtils.toEtagList( requestOptions.getEtagList() );
                 for ( ETag etag : etags )
                 {
                     optionSet.addETag( etag.getBytes() );
@@ -316,35 +235,30 @@ public class MessageUtils
                 throw new InternalInvalidOptionValueException( "ETag", "", e );
             }
         }
-        /* content_format      = null;*/
-        if ( options.getContentFormat() != null )
+        if ( requestOptions.getContentFormat() != null )
         {
-            optionSet.setContentFormat( options.getContentFormat() );
+            optionSet.setContentFormat( requestOptions.getContentFormat() );
         }
-        /* accept              = null;*/
-        if ( options.getAccept() != null )
+        if ( requestOptions.getAccept() != null )
         {
-            optionSet.setAccept( options.getAccept() );
+            optionSet.setAccept( requestOptions.getAccept() );
         }
-        /* proxy_uri           = null;*/
-        if ( options.getProxyUri() != null )
+        if ( requestOptions.getProxyUri() != null )
         {
-            optionSet.setProxyUri( options.getProxyUri() );
+            optionSet.setProxyUri( requestOptions.getProxyUri() );
         }
-        /* proxy_scheme        = null;*/
-        if ( options.getProxyScheme() != null )
+        if ( requestOptions.getProxyScheme() != null )
         {
-            optionSet.setProxyScheme( options.getProxyScheme() );
+            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
         }
-        // process other options
-        for ( Entry< String, Object > otherOption : options.getOtherRequestOptions().entryList() )
+        for ( Entry< String, Object > otherOption : requestOptions.getOtherRequestOptions().entryList() )
         {
             if ( !otherOption.getKey().isEmpty() )
             {
                 int optionNr= Integer.parseInt( otherOption.getKey() );
                 try
                 {
-                    optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
                 }
                 catch ( InternalInvalidByteArrayValueException e )
                 {
@@ -356,92 +270,60 @@ public class MessageUtils
 
     /**
      * Copy options from {@link ResponseOptions} to {@link OptionSet}.
-     * @param options to copy from
+     * @param responseOptions to copy from
      * @param optionSet to copy to
-     * @param clear when {@code true } the optionSet will be cleared before copying. 
      * @throws InternalInvalidByteArrayValueException 
      * @throws InvalidETagException when an option containes invalid ETag value
      * @throws IOException when an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions options, OptionSet optionSet, boolean clear ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
+    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
     {
-        //make sure Optionset is empty, if needed
-        if ( clear ) optionSet.clear();
-
-        /* etag_list           = null; // new LinkedList<byte[]>();*/
-        //TODO check for NothingType?
-        if ( options.getEtag() != null )
+        if ( responseOptions.getEtag() != null )
         {
-            optionSet.addETag( MessageUtils.toETag( options.getEtag() ).getBytes() );
+            optionSet.addETag( MessageUtils.toETag( responseOptions.getEtag() ).getBytes() );
         }
-        /* content_format      = null;*/
-        if ( options.getContentFormat() != null )
+        if ( responseOptions.getContentFormat() != null )
         {
-            optionSet.setContentFormat( options.getContentFormat() );
+            optionSet.setContentFormat( responseOptions.getContentFormat() );
         }
-        /* max_age             = null;*/
-        if ( options.getMaxAge() != null )
+        if ( responseOptions.getMaxAge() != null )
         {
-            optionSet.setMaxAge( options.getMaxAge() );
+            optionSet.setMaxAge( responseOptions.getMaxAge() );
         }
-        //            case PropertyNames.COAP_OPT_URIQUERY:
-        //
-        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-        //                {
-        //                    optionSet.setUriQuery( otherOption.getValue().toString() );
-        //                }
-        //                break;
-        /* location_path */
-        if ( options.getLocationPath() != null )
+        if ( responseOptions.getLocationPath() != null )
         {
-            optionSet.setLocationPath( options.getLocationPath() );
+            optionSet.setLocationPath( responseOptions.getLocationPath() );
         }
-        /* location_query */
-        if ( options.getLocationQuery() != null )
+        if ( responseOptions.getLocationQuery() != null )
         {
-            optionSet.setLocationQuery( options.getLocationQuery() );
+            optionSet.setLocationQuery( responseOptions.getLocationQuery() );
         }
-
-        //        if ( options.getLocationQueryList() != null )
-        //        {
-        //            for ( String path : options.getLocationQueryList() )
-        //            {
-        //                optionSet.addLocationQueryString( path );
-        //            }
-        //        }
-        //            case PropertyNames.COAP_OPT_LOCATIONQUERY:
-        //                if ( Object.class.isInstance( otherOption.getValue() ) )
-        //                {
-        //                    optionSet.setLocationQuery( otherOption.getValue().toString() );
-        //                }
-        //                break;
-        // process other options
-        for ( Entry< String, Object > otherOption : options.getOtherResponseOptions().entryList() )
+        for ( Entry< String, Object > otherOption : responseOptions.getOtherResponseOptions().entryList() )
         {
             if ( !otherOption.getKey().isEmpty() )
             {
                 int optionNr= Integer.parseInt( otherOption.getKey() );
-                optionSet.addOption( new Option( optionNr, toBytes( otherOption.getValue() ) ) );
+                optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
             }
         }
     }
 
     /**
-     * Convert Object to bytes.
-     * @param object to convert
-     * @return Converted object as bytes,
-     * @throws InternalInvalidByteArrayValueException
+     * Convert option object to bytes.
+     * @param optionObject to convert.
+     * @return Converted object as bytes.
+     * @throws InternalInvalidByteArrayValueException when object cannot be converted to bytes.
      */
-    public static byte[] toBytes( Object object ) throws InternalInvalidByteArrayValueException
+    private static byte[] optionToBytes( Object optionObject ) throws InternalInvalidByteArrayValueException
     {
-        if ( Object.class.isInstance( object ) )
+        if ( Object.class.isInstance( optionObject ) )
         {
-            if ( InputStream.class.isInstance( object ) )
+            if ( InputStream.class.isInstance( optionObject ) )
             {
                 byte[] bytes= null;
                 try
                 {
-                    bytes= IOUtils.toByteArray( (InputStream) object );
+                    bytes= IOUtils.toByteArray( (InputStream) optionObject );
                 }
                 catch ( RuntimeException e )
                 {
@@ -449,39 +331,39 @@ public class MessageUtils
                 }
                 finally
                 {
-                    IOUtils.closeQuietly( (InputStream) object );
+                    IOUtils.closeQuietly( (InputStream) optionObject );
                 }
                 return bytes;
             }
-            else if ( Byte[].class.isInstance( object ) )
+            else if ( Byte[].class.isInstance( optionObject ) )
             {
-                return (byte[]) object;
+                return (byte[]) optionObject;
             }
-            else if ( byte[].class.isInstance( object ) )
+            else if ( byte[].class.isInstance( optionObject ) )
             {
-                return (byte[]) object;
+                return (byte[]) optionObject;
             }
-            else if ( ETag.class.isInstance( object ) )
+            else if ( ETag.class.isInstance( optionObject ) )
             {
-                return ( (ETag) object ).getBytes();
+                return ( (ETag) optionObject ).getBytes();
             }
             else
             {
-                return object.toString().getBytes( CoAP.UTF8_CHARSET );
+                return optionObject.toString().getBytes( CoAP.UTF8_CHARSET );
             }
         }
         return null;
     }
 
     /**
-     * Convert a typed value to byte array.
-     * @param typedValueObject is the value to convert.
-     * @return converted value as bytes
-     * @throws IOException when the value is an outputhandler that cannot write.
+     * Convert a payload value to byte array.
+     * @param payload is the payload to convert.
+     * @return converted payload as bytes
+     * @throws IOException when the payload is an outputhandler that cannot write.
      */
-    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException
+    public static byte[] payloadToByteArray( TypedValue< Object > payload ) throws IOException
     {
-        Object object= typedValueObject.getValue();
+        Object object= TypedValue.unwrap( payload );
 
         if ( object == null )
         {
@@ -515,7 +397,7 @@ public class MessageUtils
         }
         else //do transform using Mule's transformers.
         {
-            return (byte[]) transformationService.transform( Message.builder().payload( typedValueObject ).build(), BYTE_ARRAY ).getPayload().getValue();
+            return (byte[]) transformationService.transform( Message.builder().payload( payload ).build(), BYTE_ARRAY ).getPayload().getValue();
         }
     }
 
@@ -527,7 +409,7 @@ public class MessageUtils
      *
     public static InputStream toInputStream( TypedValue< Object > typedValueObject ) throws IOException
     {
-        Object object= typedValueObject.getValue();
+        Object object= TypedValue.unwrap( payload );
     
         if ( object == null )
         {
@@ -573,9 +455,9 @@ public class MessageUtils
     * @throws IOException When the value is a stream that could not be read.
     * @throws InvalidETagException When value cannot be converted to a valid ETag.
     */
-    public static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
-        Object object= typedValue.getValue();
+        Object object= TypedValue.unwrap( typedValue );
 
         if ( object == null )
         {
@@ -624,9 +506,9 @@ public class MessageUtils
      * @throws InvalidETagException 
      * @throws IOException 
      */
-    public static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
-        Object object= typedValue.getValue();
+        Object object= TypedValue.unwrap( typedValue );
         LinkedList< ETag > list= new LinkedList< ETag >();
 
         if ( object == null )
@@ -662,7 +544,7 @@ public class MessageUtils
      * @param bytes the array to convert.
      * @return the {@code byte[]} or  {@code null} when empty.
      */
-    public static byte[] toPrimitives( Byte[] bytes )
+    private static byte[] toPrimitives( Byte[] bytes )
     {
         if ( bytes == null || bytes.length == 0 )
         {
