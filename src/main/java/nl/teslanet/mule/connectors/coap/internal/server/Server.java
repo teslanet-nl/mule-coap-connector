@@ -39,8 +39,8 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
-import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.core.api.lifecycle.StartException;
+import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -52,12 +52,12 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
@@ -94,59 +94,23 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Inject
     private SchedulerConfig schedulerConfig;
 
-    // mule sdk does not seem to support a list of root level configurations
-    // @Parameter
-    // @Optional
-    // @ConfigReference(namespace = "COAP", name = "UDP_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "TCP_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "DTLS_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "TLS_ENDPOINT")
-    // @Expression(ExpressionSupport.NOT_SUPPORTED)
-    // @ParameterDsl(allowReferences = true, allowInlineDefinition = true)
-    // private List<Endpoint> endpoints;
-
-    // sort of workaround
     @Parameter
     @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
+    @ParameterDsl(allowReferences= false)
+    @Summary(value= "Locally defined endpoint the server uses.")
     @Placement(order= 1, tab= "Endpoint")
-    Endpoint endpoint;
+    AbstractEndpoint endpoint;
 
+    /**
+     * The root resources of the server.
+     */
     @Parameter
-    @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Placement(order= 1, tab= "Endpoint 1")
-    Endpoint endpoint1;
-
-    @Parameter
-    @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Placement(order= 1, tab= "Endpoint 2")
-    Endpoint endpoint2;
+    @ParameterDsl(allowReferences= false)
+    @Summary(value= "Global endpoints the server uses.")
+    @Placement(order= 1, tab= "Global-Endpoints")
+    private List< GlobalEndpoint > globalEndpoints;
 
     /**
      * The root resources of the server.
@@ -204,35 +168,28 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
         }
         //workaround, Mule sdk does not support list of root-configurations
-        ArrayList< Endpoint > endpoints= new ArrayList< Endpoint >();
+        ArrayList< AbstractEndpoint > abstractEndpoints= new ArrayList<>();
+
         if ( endpoint != null )
         {
-            endpoints.add( endpoint );
+            abstractEndpoints.add( endpoint );
         }
-        if ( endpoint1 != null )
-        {
-            endpoints.add( endpoint1 );
-        }
-        if ( endpoint2 != null )
-        {
-            endpoints.add( endpoint2 );
-        }
-        if ( endpoints.isEmpty() )
+        if ( abstractEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            endpoints.add( new UDPEndpoint( this.toString() ) );
+            abstractEndpoints.add( new UDPEndpoint( this.toString() ) );
         }
         int endpointNr= 0;
-        for ( Endpoint endpoint : endpoints )
+        for ( AbstractEndpoint abstractEndpoint : abstractEndpoints )
         {
-            if ( endpoint.configName == null )
+            if ( abstractEndpoint.configName == null )
             {
                 // inline endpoint will get this as name
-                endpoint.configName= ( this.toString() + "-" + endpointNr++ );
+                abstractEndpoint.configName= ( this.toString() + "-" + endpointNr++ );
             }
             try
             {
-                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
+                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, abstractEndpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
                 LOGGER.info( this + " connected to " + operationalEndpoint );
             }
@@ -285,10 +242,14 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         try
         {
-            //stop server
-            server.stop();
-            //remove all resources from registry
+            //remove all resources from registry before stopping 
+            //to get observing clients notified of the fact that resources 
+            //are not available anymore. 
             registry.remove( "/*" );
+            //stop server after waiting
+            //TODO
+            Thread.sleep( 2000L );
+            server.stop();
         }
         catch ( Exception e )
         {
@@ -345,6 +306,22 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void setResources( List< ResourceConfig > resources )
     {
         this.resources= resources;
+    }
+
+    /**
+     * @return the endpointRefs of the server.
+     */
+    public List< GlobalEndpoint > getEndpointRefs()
+    {
+        return globalEndpoints;
+    }
+
+    /**
+     * @param globalEndpoints the endpoints references to set.
+     */
+    public void setEndpointRefs( List< GlobalEndpoint > globalEndpoints )
+    {
+        this.globalEndpoints= globalEndpoints;
     }
 
     /**

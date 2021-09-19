@@ -41,7 +41,7 @@ import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
  *
  */
 @TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
-public class UDPEndpoint extends Endpoint
+public class UDPEndpoint extends AbstractEndpoint
 {
     /**
      * UDP endpoint parameters.

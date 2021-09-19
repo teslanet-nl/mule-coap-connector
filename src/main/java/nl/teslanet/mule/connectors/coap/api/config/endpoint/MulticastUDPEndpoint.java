@@ -52,7 +52,7 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "Parameters for receiving  multi-cast messages.")
+    @Summary(value= "Parameters for multi-cast communication.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     public MulticastParams multicastParams;

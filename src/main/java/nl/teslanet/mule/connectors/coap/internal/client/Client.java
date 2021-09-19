@@ -69,7 +69,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
@@ -78,7 +77,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
@@ -135,20 +134,31 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private SchedulerConfig schedulerConfig;
 
     /**
-     * Endpoint configuration to use for the client.
+     * The endpoint the client uses.
      */
     @Parameter
     @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Placement(order= 1, tab= "Endpoint")
     @ParameterDsl(allowReferences= true, allowInlineDefinition= true)
-    private Endpoint endpoint= null;
+    @Summary(value= "The endpoint the client uses.")
+    @Placement(order= 1, tab= "Endpoint")
+    private AbstractEndpoint endpoint;
+
+    /**
+     * @return the endpoint
+     */
+    public AbstractEndpoint getEndpoint()
+    {
+        return endpoint;
+    }
+
+    /**
+     * @param abstractEndpoint the endpoint to set
+     */
+    public void setEndpoint( AbstractEndpoint abstractEndpoint )
+    {
+        this.endpoint= abstractEndpoint;
+    }
 
     /**
      * The actual URI scheme

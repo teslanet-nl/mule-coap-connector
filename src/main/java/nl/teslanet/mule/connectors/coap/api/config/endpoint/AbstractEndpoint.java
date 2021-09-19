@@ -48,7 +48,7 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
  * Endpoint configuration parameters
  *
  */
-abstract public class Endpoint implements VisitableConfig
+public abstract class AbstractEndpoint implements VisitableConfig
 {
     @RefName
     public String configName;
@@ -127,7 +127,7 @@ abstract public class Endpoint implements VisitableConfig
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public Endpoint()
+    public AbstractEndpoint()
     {
     }
 
@@ -136,7 +136,7 @@ abstract public class Endpoint implements VisitableConfig
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public Endpoint( String name )
+    public AbstractEndpoint( String name )
     {
         configName= name;
         //initialise nullsafe params

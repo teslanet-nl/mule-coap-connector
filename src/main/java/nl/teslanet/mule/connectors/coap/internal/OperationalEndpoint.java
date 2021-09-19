@@ -46,7 +46,7 @@ import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVe
 
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
@@ -100,7 +100,7 @@ public final class OperationalEndpoint
      * @throws EndpointConstructionException 
      * @throws Exception
      */
-    private static OperationalEndpoint create( Endpoint config ) throws EndpointConstructionException
+    private static OperationalEndpoint create( AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint;
         //check sub-class before superclass
@@ -150,7 +150,7 @@ public final class OperationalEndpoint
      * @return the operational endpoint
      * @throws EndpointConstructionException when endpoint cannot be created or used
      */
-    public synchronized static OperationalEndpoint getOrCreate( Server server, Endpoint config ) throws EndpointConstructionException
+    public synchronized static OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
 
@@ -183,7 +183,7 @@ public final class OperationalEndpoint
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
      * @throws EndpointConstructionException When client parameter is empty
      */
-    public synchronized static OperationalEndpoint getOrCreate( Client client, Endpoint config ) throws EndpointConstructionException
+    public synchronized static OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )

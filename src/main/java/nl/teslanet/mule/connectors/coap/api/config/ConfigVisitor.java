@@ -31,13 +31,13 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractTCPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
@@ -191,7 +191,7 @@ public interface ConfigVisitor
      * Visit Endpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( Endpoint toVisit )
+    public default void visit( AbstractEndpoint toVisit )
     {
     }
 
@@ -223,7 +223,7 @@ public interface ConfigVisitor
      * Visit TCPEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TCPEndpoint toVisit )
+    public default void visit( AbstractTCPEndpoint toVisit )
     {
     }
 
@@ -263,7 +263,7 @@ public interface ConfigVisitor
      * Visit TLSEndpoint configuration object.
      * @param toVisit the object to visit.
      */
-    public default void visit( TLSEndpoint toVisit )
+    public default void visit( AbstractTLSEndpoint toVisit )
     {
     }
 
