@@ -139,7 +139,7 @@ public class ObserveRelation implements CoapHandler
      */
     public void start()
     {
-        coapRelation= doObserveRequest();
+        coapRelation= sendObserveRequest();
         LOGGER.info( this + " started." );
     }
 
@@ -165,7 +165,7 @@ public class ObserveRelation implements CoapHandler
             //TODO wait time?
             if ( coapRelation.isCanceled() )
             {
-                coapRelation= doObserveRequest();
+                coapRelation= sendObserveRequest();
                 if ( coapRelation != null )
                 {
                     LOGGER.info( logMessageRecreated );
@@ -215,13 +215,10 @@ public class ObserveRelation implements CoapHandler
     }
 
     /**
-     * Send an observe request for a resource with given uri
-     * @param confirmable when true the request will be sent confirmable
-     * @param uri the uri of the resource to observe
-     * @param handler the handler that will receive notifications from the observed resource
-     * @return the established relation with the resource when the request succeeded, otherwise null 
+     * Send an observe request
+     * @return the established CoAP relation with the resource when the request succeeded, otherwise null 
      */
-    private CoapObserveRelation doObserveRequest()
+    private CoapObserveRelation sendObserveRequest()
     {
         Request request= new Request( Code.GET, ( confirmable ? Type.CON : Type.NON ) );
         request.setURI( uri );

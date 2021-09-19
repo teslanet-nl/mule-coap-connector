@@ -32,9 +32,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.eclipse.californium.core.coap.BlockOption;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.Option;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
@@ -43,8 +48,15 @@ import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
 
 /**
@@ -57,7 +69,7 @@ public class MessageUtils
      * Mule transformation service.
      */
     @Inject
-    static private TransformationService transformationService;
+    private static TransformationService transformationService;
 
     /**
      * Do not create objects.
@@ -68,14 +80,300 @@ public class MessageUtils
     }
 
     /**
-     * Convert a typed value to byte array.
-     * @param typedValueObject is the value to convert.
-     * @return converted value as bytes
-     * @throws IOException when the value is an outputhandler that cannot write.
+     * Copy options from given optionSet to optionAttributes .
+     * Processing options stops when an exception occurs.
+     * @param optionSet to copy from.
+     * @param attributes to copy to
+     * @throws InvalidOptionValueException when given option value could not be copied
      */
-    public static byte[] toByteArray( TypedValue< Object > typedValueObject ) throws IOException
+    public static void copyOptions( OptionSet optionSet, OptionAttributes attributes ) throws InternalInvalidOptionValueException
     {
-        Object object= typedValueObject.getValue();
+        String errorMsg= "cannot create attribute";
+        // List<byte[]> if_match_list;
+        if ( !optionSet.getIfMatch().isEmpty() )
+        {
+            try
+            {
+                List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
+                ETag emptEtag= new ETag();
+                boolean emptyPresent= ifMatch.removeIf( etag -> etag.equals( emptEtag ) );
+                if ( emptyPresent )
+                {
+                    attributes.setifExists( true );
+                }
+                if ( !ifMatch.isEmpty() )
+                {
+                    attributes.setifMatch( ifMatch );
+                }
+            }
+            catch ( InvalidETagException e )
+            {
+                throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
+            }
+        }
+        if ( optionSet.hasUriHost() )
+        {
+            attributes.setUriHost( optionSet.getUriHost() );
+        }
+        if ( !optionSet.getETags().isEmpty() )
+        {
+            try
+            {
+                attributes.setEtags( ETag.getList( optionSet.getETags() ) );
+            }
+            catch ( InvalidETagException e )
+            {
+                throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
+            }
+        }
+        attributes.setIfNoneMatch( optionSet.hasIfNoneMatch() );
+        if ( optionSet.hasUriPort() )
+        {
+            attributes.setUriPort( optionSet.getUriPort() );
+        }
+        if ( !optionSet.getLocationPath().isEmpty() )
+        {
+            attributes.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
+            attributes.setLocationPath( optionSet.getLocationPathString() );
+        }
+        if ( !optionSet.getUriPath().isEmpty() )
+        {
+            attributes.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
+            attributes.setUriPath( optionSet.getUriPathString() );
+        }
+        if ( optionSet.hasContentFormat() )
+        {
+            attributes.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
+        }
+        if ( optionSet.hasMaxAge() )
+        {
+            attributes.setMaxAge( optionSet.getMaxAge() );
+        }
+        if ( !optionSet.getUriQuery().isEmpty() )
+        {
+            attributes.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
+            attributes.setUriQuery( optionSet.getUriQueryString() );
+        }
+        if ( optionSet.hasAccept() )
+        {
+            attributes.setAccept( Integer.valueOf( optionSet.getAccept() ) );
+        }
+        if ( !optionSet.getLocationQuery().isEmpty() )
+        {
+            attributes.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
+            attributes.setLocationQuery( optionSet.getLocationQueryString() );
+        }
+        if ( optionSet.hasProxyUri() )
+        {
+            attributes.setProxyUri( optionSet.getProxyUri() );
+        }
+        if ( optionSet.hasProxyScheme() )
+        {
+            attributes.setProxyScheme( optionSet.getProxyScheme() );
+        }
+        if ( optionSet.hasBlock1() )
+        {
+            attributes.setBlock1( toBlockValue( optionSet.getBlock1() ) );
+        }
+        if ( optionSet.hasBlock2() )
+        {
+            attributes.setBlock2( toBlockValue( optionSet.getBlock2() ) );
+        }
+        if ( optionSet.hasSize1() )
+        {
+            attributes.setSize1( optionSet.getSize1() );
+        }
+        if ( optionSet.hasSize2() )
+        {
+            attributes.setSize2( optionSet.getSize2() );
+        }
+        if ( optionSet.hasObserve() )
+        {
+            attributes.setObserve( optionSet.getObserve() );
+        }
+        for ( Option other : optionSet.getOthers() )
+        {
+            attributes.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
+        }
+    }
+
+    /**
+     * Copy options from {@link RequestOptions} to {@link OptionSet}.
+     * @param requestOptions to copy from
+     * @param optionSet to copy to
+     * @throws InvalidOptionValueException when given option value could not be copied
+     */
+    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException
+    {
+        if ( requestOptions.isifExists() )
+        {
+            optionSet.addIfMatch( new byte [0] );
+        }
+        if ( requestOptions.isIfNoneMatch() )
+        {
+            optionSet.setIfNoneMatch( true );
+        }
+        if ( requestOptions.getifMatch() != null )
+        {
+            List< ETag > etags;
+            try
+            {
+                etags= MessageUtils.toEtagList( requestOptions.getifMatch() );
+                for ( ETag etag : etags )
+                {
+                    optionSet.addIfMatch( MessageUtils.optionToBytes( etag ) );
+                }
+            }
+            catch ( IOException | InvalidETagException | InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException( "If-Match", "", e );
+            }
+        }
+        if ( requestOptions.getEtags() != null )
+        {
+            List< ETag > etags;
+            try
+            {
+                etags= MessageUtils.toEtagList( requestOptions.getEtags() );
+                for ( ETag etag : etags )
+                {
+                    optionSet.addETag( etag.getBytes() );
+                }
+            }
+            catch ( IOException | InvalidETagException e )
+            {
+                throw new InternalInvalidOptionValueException( "ETag", "", e );
+            }
+        }
+        if ( requestOptions.getContentFormat() != null )
+        {
+            optionSet.setContentFormat( requestOptions.getContentFormat() );
+        }
+        if ( requestOptions.getAccept() != null )
+        {
+            optionSet.setAccept( requestOptions.getAccept() );
+        }
+        if ( requestOptions.getProxyUri() != null )
+        {
+            optionSet.setProxyUri( requestOptions.getProxyUri() );
+        }
+        if ( requestOptions.getProxyScheme() != null )
+        {
+            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
+        }
+        for ( Entry< String, Object > otherOption : requestOptions.getOtherRequestOptions().entryList() )
+        {
+            if ( !otherOption.getKey().isEmpty() )
+            {
+                int optionNr= Integer.parseInt( otherOption.getKey() );
+                try
+                {
+                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
+                }
+                catch ( InternalInvalidByteArrayValueException e )
+                {
+                    throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + Integer.toString( optionNr ) + " }", e );
+                }
+            }
+        }
+    }
+
+    /**
+     * Copy options from {@link ResponseOptions} to {@link OptionSet}.
+     * @param responseOptions to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidByteArrayValueException 
+     * @throws InvalidETagException when an option containes invalid ETag value
+     * @throws IOException when an option stream throws an error.
+     */
+    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
+    {
+        if ( responseOptions.getEtag() != null )
+        {
+            optionSet.addETag( MessageUtils.toETag( responseOptions.getEtag() ).getBytes() );
+        }
+        if ( responseOptions.getContentFormat() != null )
+        {
+            optionSet.setContentFormat( responseOptions.getContentFormat() );
+        }
+        if ( responseOptions.getMaxAge() != null )
+        {
+            optionSet.setMaxAge( responseOptions.getMaxAge() );
+        }
+        if ( responseOptions.getLocationPath() != null )
+        {
+            optionSet.setLocationPath( responseOptions.getLocationPath() );
+        }
+        if ( responseOptions.getLocationQuery() != null )
+        {
+            optionSet.setLocationQuery( responseOptions.getLocationQuery() );
+        }
+        for ( Entry< String, Object > otherOption : responseOptions.getOtherResponseOptions().entryList() )
+        {
+            if ( !otherOption.getKey().isEmpty() )
+            {
+                int optionNr= Integer.parseInt( otherOption.getKey() );
+                optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
+            }
+        }
+    }
+
+    /**
+     * Convert option object to bytes.
+     * @param optionObject to convert.
+     * @return Converted object as bytes.
+     * @throws InternalInvalidByteArrayValueException when object cannot be converted to bytes.
+     */
+    private static byte[] optionToBytes( Object optionObject ) throws InternalInvalidByteArrayValueException
+    {
+        if ( Object.class.isInstance( optionObject ) )
+        {
+            if ( InputStream.class.isInstance( optionObject ) )
+            {
+                byte[] bytes= null;
+                try
+                {
+                    bytes= IOUtils.toByteArray( (InputStream) optionObject );
+                }
+                catch ( RuntimeException e )
+                {
+                    throw new InternalInvalidByteArrayValueException( "Cannot convert object to byte[]", e );
+                }
+                finally
+                {
+                    IOUtils.closeQuietly( (InputStream) optionObject );
+                }
+                return bytes;
+            }
+            else if ( Byte[].class.isInstance( optionObject ) )
+            {
+                return (byte[]) optionObject;
+            }
+            else if ( byte[].class.isInstance( optionObject ) )
+            {
+                return (byte[]) optionObject;
+            }
+            else if ( ETag.class.isInstance( optionObject ) )
+            {
+                return ( (ETag) optionObject ).getBytes();
+            }
+            else
+            {
+                return optionObject.toString().getBytes( CoAP.UTF8_CHARSET );
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Convert a payload value to byte array.
+     * @param payload is the payload to convert.
+     * @return converted payload as bytes
+     * @throws IOException when the payload is an outputhandler that cannot write.
+     */
+    public static byte[] payloadToByteArray( TypedValue< Object > payload ) throws IOException
+    {
+        Object object= TypedValue.unwrap( payload );
 
         if ( object == null )
         {
@@ -109,11 +407,11 @@ public class MessageUtils
         }
         else //do transform using Mule's transformers.
         {
-            return (byte[]) transformationService.transform( Message.builder().payload( typedValueObject ).build(), BYTE_ARRAY ).getPayload().getValue();
+            return (byte[]) transformationService.transform( Message.builder().payload( payload ).build(), BYTE_ARRAY ).getPayload().getValue();
         }
     }
 
-    /* TODO needed in later release
+    /* TODO needed in future release
      * Convert a typed value to {@code InputStream}.
      * @param typedValueObject is the value to convert.
      * @return converted value as {@code InputStream}.
@@ -121,8 +419,8 @@ public class MessageUtils
      *
     public static InputStream toInputStream( TypedValue< Object > typedValueObject ) throws IOException
     {
-        Object object= typedValueObject.getValue();
-
+        Object object= TypedValue.unwrap( payload );
+    
         if ( object == null )
         {
             return null;
@@ -167,9 +465,9 @@ public class MessageUtils
     * @throws IOException When the value is a stream that could not be read.
     * @throws InvalidETagException When value cannot be converted to a valid ETag.
     */
-    public static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
-        Object object= typedValue.getValue();
+        Object object= TypedValue.unwrap( typedValue );
 
         if ( object == null )
         {
@@ -197,7 +495,7 @@ public class MessageUtils
         }
         else if ( object instanceof Byte[] )
         {
-            return new ETag( toPrimitives( (Byte[]) object ));
+            return new ETag( toPrimitives( (Byte[]) object ) );
         }
         else if ( object instanceof OutputHandler )
         {
@@ -218,9 +516,9 @@ public class MessageUtils
      * @throws InvalidETagException 
      * @throws IOException 
      */
-    public static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
-        Object object= typedValue.getValue();
+        Object object= TypedValue.unwrap( typedValue );
         LinkedList< ETag > list= new LinkedList< ETag >();
 
         if ( object == null )
@@ -240,13 +538,23 @@ public class MessageUtils
         }
         return Collections.unmodifiableList( list );
     }
-    
+
+    /**
+     * Creates a BlockValue from a Cf block option 
+     * @param block1 block option to use the values from
+     * @return a BlockValue that corresponds to the block option
+     */
+    private static BlockValue toBlockValue( BlockOption block )
+    {
+        return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
+    }
+
     /**
      * Converts {@code Byte[]} to array of primitives.
      * @param bytes the array to convert.
      * @return the {@code byte[]} or  {@code null} when empty.
      */
-    public static byte[] toPrimitives( Byte[] bytes )
+    private static byte[] toPrimitives( Byte[] bytes )
     {
         if ( bytes == null || bytes.length == 0 )
         {

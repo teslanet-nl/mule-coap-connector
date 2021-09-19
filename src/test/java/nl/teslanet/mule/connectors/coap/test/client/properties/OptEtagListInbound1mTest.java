@@ -91,6 +91,6 @@ public class OptEtagListInbound1mTest extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
     {
-        return attributes.getOptions().getEtagList();
+        return attributes.getOptions().getEtags();
     }
 }

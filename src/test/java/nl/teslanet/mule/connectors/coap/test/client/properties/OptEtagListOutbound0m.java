@@ -25,18 +25,16 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 
 
 /**
- * Test inbound etag property
+ * Test outbound Etag list property, multiple values
  *
  */
-public class OptEtagListInbound1Test extends AbstractInboundPropertyTestCase
+public class OptEtagListOutbound0m extends AbstractOutboundPropertiesTestCase
 {
-
     /**
      * Test value
      * @return the value to use in test
@@ -44,8 +42,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestCase
      */
     private LinkedList< ETag > getValue() throws InvalidETagException
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "0011FF" ) );
+        LinkedList< ETag > list= new LinkedList<>();
 
         return list;
     }
@@ -60,35 +57,20 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestCase
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected PropertyType getPropertyType()
-    {
-        return PropertyType.CollectionOfETag;
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
-    @Override
-    protected Object getExpectedInboundPropertyValue() throws InvalidETagException
+    protected Object getOutboundPropertyValue() throws InvalidETagException
     {
         return getValue();
     }
 
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
     protected OptionStrategy getStrategy() throws InvalidETagException
     {
         return new OptEtagListStrategy( getValue() );
-    }
-
-    @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
-    {
-        return attributes.getOptions().getEtags();
     }
 }

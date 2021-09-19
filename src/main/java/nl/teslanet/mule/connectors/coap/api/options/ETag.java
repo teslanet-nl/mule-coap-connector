@@ -192,7 +192,7 @@ public final class ETag implements Comparable< ETag >
      */
     public static List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
     {
-        LinkedList< ETag > result= new LinkedList< ETag >();
+        LinkedList< ETag > result= new LinkedList<>();
         for ( byte[] bytes : bytesList )
         {
             result.add( new ETag( bytes ) );
@@ -202,16 +202,14 @@ public final class ETag implements Comparable< ETag >
 
     /**
      * Check a collection of etags whether it contains the etag.
+     * When nthe collection is null the etag is considered not found.
      * @param etags The collection of etags to check.
      * @return True when the etag is found in the collection, otherwise false.
      */
     public boolean isIn( Collection< ETag > etags )
     {
-        for ( ETag e : etags )
-        {
-            if ( this.equals( e ) ) return true;
-        }
-        return false;
+        if ( etags == null ) return false;
+        return etags.contains( this );
     }
 
     /**
@@ -239,14 +237,20 @@ public final class ETag implements Comparable< ETag >
     public int compareTo( ETag other )
     {
         if ( this == other ) return 0;
-        if ( null == other && null == this.value ) return 0;
-        if ( null == other && null != this.value ) return 1;
-        if ( null == other.value && null == this.value ) return 0;
-        if ( null == other.value && null != this.value ) return 1;
-        if ( null == this.value ) return -1;
-        if ( this.value.length < other.value.length ) return -1;
+        if ( other == null || other.value == null )
+        {
+            if ( this.value == null )
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        if ( this.value == null || this.value.length < other.value.length ) return -1;
         if ( this.value.length > other.value.length ) return 1;
-        for ( int i= 0; i < this.value.length && i < other.value.length; i++ )
+        for ( int i= 0; i < this.value.length ; i++ )
         {
             if ( this.value[i] < other.value[i] ) return -1;
             if ( this.value[i] > other.value[i] ) return 1;

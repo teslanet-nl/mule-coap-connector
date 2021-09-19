@@ -26,7 +26,6 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,6 +133,15 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
     abstract protected Object getExpectedOptionValue() throws Exception;
 
     /**
+     * Override and return false to specify that the response is expected to indicate failure.
+     * @return {@code true} when successfull response is expected
+     */
+    protected boolean getExpectedSuccess()
+    {
+        return true;
+    }
+
+    /**
      * Override to specify whether the option is an collection of ByteArray
      * @return {@code true} when option is a collection of ByteArray
      */
@@ -150,7 +158,7 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
     {
         return false;
     }
-    
+
     /**
      * Mock that sets the outbound property in the Mule flow
      * @param propertyName name of the outbound property to set
@@ -179,7 +187,7 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
-        assertTrue( "response indicates failure", response.isSuccess() );
+        assertEquals( "response succes/failure unexpected", getExpectedSuccess(), response.isSuccess() );
 
         if ( optionValueIsCollectionOfByteArray() )
         {
