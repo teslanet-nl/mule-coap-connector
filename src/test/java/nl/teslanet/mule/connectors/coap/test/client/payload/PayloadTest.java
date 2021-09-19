@@ -47,7 +47,7 @@ import org.mule.tck.core.streaming.SimpleByteBufferManager;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.CoapServer;
 
 
 public class PayloadTest extends AbstractClientTestCase
@@ -116,13 +116,13 @@ public class PayloadTest extends AbstractClientTestCase
     @Test
     public void testByteArrayPayload2() throws Exception
     {
-        byte[] data= Data.getContent( PAYLOAD_SIZE ) ;
+        byte[] data= Data.getContent( PAYLOAD_SIZE );
         Byte[] requestPayload= new Byte [PAYLOAD_SIZE];
-        for ( int i= 0 ; i < PAYLOAD_SIZE ; i++ )
+        for ( int i= 0; i < PAYLOAD_SIZE; i++ )
         {
             requestPayload[i]= data[i];
         } ;
-        
+
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
@@ -187,7 +187,7 @@ public class PayloadTest extends AbstractClientTestCase
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
         assertTrue( "wrong response payload contents", Data.validateContent( responsePayload.openCursor(), PAYLOAD_SIZE ) );
     }
-    
+
     /** 
      * Test CoAP request with OutputHandler payload
      * @throws Exception should not happen in this test
@@ -195,7 +195,7 @@ public class PayloadTest extends AbstractClientTestCase
     @Test
     public void testOutputHandlerPayload() throws Exception
     {
-        OutputHandler requestPayload= new TestOutputHandler( Data.getContent( PAYLOAD_SIZE ));
+        OutputHandler requestPayload= new TestOutputHandler( Data.getContent( PAYLOAD_SIZE ) );
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
@@ -205,9 +205,9 @@ public class PayloadTest extends AbstractClientTestCase
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
         assertTrue( "wrong response payload contents", Data.validateContent( responsePayload.openCursor(), PAYLOAD_SIZE ) );
     }
-    
+
     //TODO testTransformedPayload()
-        
+
     /**
      * Outputhandler for testing.
      *
@@ -215,6 +215,7 @@ public class PayloadTest extends AbstractClientTestCase
     private class TestOutputHandler implements OutputHandler
     {
         private byte[] content;
+
         public TestOutputHandler( byte[] content )
         {
             this.content= content;
@@ -226,6 +227,6 @@ public class PayloadTest extends AbstractClientTestCase
             out.write( content );
             out.flush();
         }
-        
+
     }
 }

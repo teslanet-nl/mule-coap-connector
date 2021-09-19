@@ -26,14 +26,14 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResource;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.CoapEndpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.config.NetworkConfig;
-import nl.teslanet.shaded.org.eclipse.californium.core.server.resources.CoapExchange;
-import nl.teslanet.shaded.org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.core.CoapResource;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.core.server.resources.Resource;
 
 
 /**

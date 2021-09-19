@@ -37,13 +37,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapClient;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapHandler;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.CoapEndpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.Endpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.config.NetworkConfig;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.interceptors.MessageTracer;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.Endpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.network.interceptors.MessageTracer;
 
 
 /**

@@ -43,14 +43,14 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapHandler;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Type;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.CoapEndpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 
 
 //TODO add IPv6 test

@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
-import nl.teslanet.shaded.org.eclipse.californium.core.WebLink;
+import org.eclipse.californium.core.WebLink;
 
 
 public class StaticResourcesTest extends AbstractServerTestCase

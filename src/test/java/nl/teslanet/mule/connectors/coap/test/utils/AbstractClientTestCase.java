@@ -27,17 +27,16 @@ import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.EndpointManager;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.network.EndpointManager;
 
 
 /**
  * Get method basic tests
  *
  */
-public abstract class AbstractClientTestCase extends MuleArtifactFunctionalTestCase
+public abstract class AbstractClientTestCase extends AbstractTestCase
 {
     /**
      * The CoAP servers for testing Mule CoAP client.

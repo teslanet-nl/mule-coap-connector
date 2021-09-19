@@ -30,10 +30,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.Request;
 
 
 public class ResourceExistsTest extends AbstractServerTestCase

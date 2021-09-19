@@ -66,7 +66,6 @@
 		<licensePath>LICENSE.md</licensePath>
 		<californium.version>2.6.5</californium.version>
 		<commonsLangVersion>3.7</commonsLangVersion>
-		<testutils.version>1.0.0-M8</testutils.version>
 	</properties>
 
 	<scm>
@@ -205,16 +204,22 @@ Contributors:
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.californium</groupId>
-			<artifactId>californium-core</artifactId>
-			<version>${californium.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.californium</groupId>
+            <artifactId>californium-core</artifactId>
+            <version>${californium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.californium</groupId>
+            <artifactId>element-connector</artifactId>
+            <version>${californium.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>scandium</artifactId>
 			<version>${californium.version}</version>
 		</dependency>
+	
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -232,12 +237,6 @@ Contributors:
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>demo-certs</artifactId>
 			<version>${californium.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.teslanet.mule.connectors.coap</groupId>
-			<artifactId>mule-coap-connector-testutils</artifactId>
-			<version>${testutils.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

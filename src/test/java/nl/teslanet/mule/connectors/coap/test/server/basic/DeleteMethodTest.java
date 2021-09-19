@@ -31,9 +31,9 @@ import java.io.IOException;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.elements.exception.ConnectorException;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.elements.exception.ConnectorException;
 
 
 public class DeleteMethodTest extends AbstractServerTestCase

@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Response;
 
 
 /**

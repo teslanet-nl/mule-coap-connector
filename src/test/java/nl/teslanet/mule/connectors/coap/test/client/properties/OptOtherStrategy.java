@@ -23,9 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.coap.Option;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Response;
 
 
 /**
