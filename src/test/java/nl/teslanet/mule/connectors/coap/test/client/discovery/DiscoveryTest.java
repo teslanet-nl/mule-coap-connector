@@ -44,8 +44,8 @@ import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
 
 
 public class DiscoveryTest extends AbstractClientTestCase

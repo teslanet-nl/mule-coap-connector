@@ -27,7 +27,7 @@ import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase

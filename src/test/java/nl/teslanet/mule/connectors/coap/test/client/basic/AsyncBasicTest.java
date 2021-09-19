@@ -23,15 +23,17 @@
 package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.awaitility.Awaitility.await;
-import java.util.concurrent.TimeUnit;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -45,8 +47,6 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
 
 
 @RunnerDelegateTo(Parameterized.class)

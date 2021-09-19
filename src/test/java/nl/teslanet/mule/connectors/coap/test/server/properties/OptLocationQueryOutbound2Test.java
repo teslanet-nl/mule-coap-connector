@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestcase

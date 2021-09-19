@@ -38,12 +38,12 @@ import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Timing;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapHandler;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapObserveRelation;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.Request;
 
 
 public class ObserveTest extends AbstractServerTestCase
