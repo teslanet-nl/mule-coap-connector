@@ -42,7 +42,7 @@ import org.mule.runtime.core.api.message.OutputHandler;
 import org.mule.runtime.core.api.streaming.bytes.InMemoryCursorStreamConfig;
 import org.mule.runtime.core.api.streaming.bytes.InMemoryCursorStreamProvider;
 import org.mule.runtime.core.api.util.IOUtils;
-import org.mule.runtime.core.internal.streaming.bytes.SimpleByteBufferManager;
+import org.mule.tck.core.streaming.SimpleByteBufferManager;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -159,12 +159,7 @@ public class PayloadTest extends AbstractClientTestCase
     @Test
     public void testCursorStreamProviderPayload() throws Exception
     {
-        CursorStreamProvider requestPayload= new InMemoryCursorStreamProvider(
-            new ByteArrayInputStream( Data.getContent( PAYLOAD_SIZE ) ),
-            InMemoryCursorStreamConfig.getDefault(),
-            new SimpleByteBufferManager(),
-            null,
-            false );
+        CursorStreamProvider requestPayload= new InMemoryCursorStreamProvider( new ByteArrayInputStream( Data.getContent( PAYLOAD_SIZE )), InMemoryCursorStreamConfig.getDefault(), new SimpleByteBufferManager() );
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
