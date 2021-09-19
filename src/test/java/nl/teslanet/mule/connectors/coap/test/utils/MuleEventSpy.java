@@ -140,6 +140,7 @@ public class MuleEventSpy
      * @return
      * @throws IOException 
      */
+    @SuppressWarnings("deprecation")
     private Object consume( Object msg ) throws IOException
     {
         Object result= null;

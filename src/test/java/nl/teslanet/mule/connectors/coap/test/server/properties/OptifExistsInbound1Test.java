@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptifExistsInbound1Test extends AbstractInboundPropertyTestcase
