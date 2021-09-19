@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import org.junit.Ignore;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
+import org.eclipse.californium.core.coap.Option;
 
 
 /**

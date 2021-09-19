@@ -33,23 +33,16 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
     { 
     },
     applicationRuntimeLibs= {
-        "org.eclipse.californium:californium-core",
-        "org.eclipse.californium:scandium"
-
     }, 
-    testRunnerExportedRuntimeLibs=
-    { 
-        "org.mule.tests:mule-tests-functional",
-        "org.eclipse.californium:californium-core",
-        "org.eclipse.californium:scandium"
+    testRunnerExportedRuntimeLibs= { 
+        "org.mule.tests:mule-tests-functional"
     },
     applicationSharedRuntimeLibs= {
         "org.eclipse.californium:californium-core",
+        "org.eclipse.californium:element-connector",
         "org.eclipse.californium:scandium"
-
     },
-    exportPluginClasses=
-    {
+    exportPluginClasses= {
     }, 
     testExclusions= 
     {
@@ -63,17 +56,11 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
         "com.mulesoft.mule.runtime*:*:*:*:*",
         "com.mulesoft.licm:*:*:*:*"
     }, 
-    testInclusions=
-    { 
-        "org.eclipse.californium:californium-core:jar:*:*",
-        "org.eclipse.californium:scandium:jar:*:*",
+    testInclusions= { 
         "*:*:jar:tests:*", 
-        "*:*:test-jar:*:*"
+        "*:*:test-jar:*:*",
     }, 
     extraPrivilegedArtifacts= {
-        "org.eclipse.californium:californium-core:jar:*:*",
-        "org.eclipse.californium:scandium:jar:*:*"
-
     }
 )
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase

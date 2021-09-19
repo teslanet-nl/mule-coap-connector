@@ -27,7 +27,7 @@ import java.util.LinkedList;
 
 import org.junit.Ignore;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.OptionSet;
 
 //TODO list support?
 @Ignore

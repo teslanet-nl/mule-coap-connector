@@ -45,18 +45,18 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapClient;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResponse;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.Code;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Request;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.CoapEndpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.config.NetworkConfig;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.DTLSConnector;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.CertificateType;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
-import nl.teslanet.shaded.org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
+import org.eclipse.californium.scandium.dtls.CertificateType;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 /**
  * Template class for testing using a secure client

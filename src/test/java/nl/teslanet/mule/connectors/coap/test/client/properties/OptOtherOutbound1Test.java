@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.Option;
+import org.eclipse.californium.core.coap.Option;
 
 
 /**

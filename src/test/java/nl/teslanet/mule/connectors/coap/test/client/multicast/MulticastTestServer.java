@@ -27,15 +27,15 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapResource;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP;
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.CoapEndpoint;
-import nl.teslanet.shaded.org.eclipse.californium.core.network.config.NetworkConfig;
-import nl.teslanet.shaded.org.eclipse.californium.core.server.resources.CoapExchange;
-import nl.teslanet.shaded.org.eclipse.californium.elements.Connector;
-import nl.teslanet.shaded.org.eclipse.californium.elements.UdpMulticastConnector;
+import org.eclipse.californium.core.CoapResource;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.elements.Connector;
+import org.eclipse.californium.elements.UdpMulticastConnector;
 
 
 /**

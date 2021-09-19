@@ -205,29 +205,22 @@ Contributors:
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.californium</groupId>
-			<artifactId>californium-core</artifactId>
-			<version>${californium.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.californium</groupId>
+            <artifactId>californium-core</artifactId>
+            <version>${californium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.californium</groupId>
+            <artifactId>element-connector</artifactId>
+            <version>${californium.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>scandium</artifactId>
 			<version>${californium.version}</version>
 		</dependency>
-		<dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>californium-core</artifactId>
-            <version>2.6.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>scandium</artifactId>
-            <version>2.6.2</version>
-            <scope>test</scope>
-        </dependency>
-		
+	
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

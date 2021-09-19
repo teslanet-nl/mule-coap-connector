@@ -30,6 +30,7 @@ import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapServer;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -42,7 +43,6 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
 
 
 @RunnerDelegateTo(Parameterized.class)

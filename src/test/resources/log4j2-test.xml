@@ -32,9 +32,7 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<!-- used by testcode -->
-		org.mule.runtime.module.artifact.api.classloader.FineGrainedControlClassLoader
-		<Logger name="org.mule.runtime.module.artifact.api.classloader.FineGrainedControlClassLoader" level="debug"
+		<Logger name="org.mule.runtime.module.artifact.api.classloader.FineGrainedControlClassLoader" level="warn"
 			additivity="true">
 			<AppenderRef ref="Console" />
 		</Logger>

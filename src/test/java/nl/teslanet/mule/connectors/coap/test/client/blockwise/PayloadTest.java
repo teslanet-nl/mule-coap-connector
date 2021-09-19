@@ -42,7 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import nl.teslanet.shaded.org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.CoapServer;
 
 
 @RunnerDelegateTo(Parameterized.class)

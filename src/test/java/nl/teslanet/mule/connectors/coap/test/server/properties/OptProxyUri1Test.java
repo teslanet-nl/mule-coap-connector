@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import nl.teslanet.shaded.org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.OptionSet;
 
 
 //TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
