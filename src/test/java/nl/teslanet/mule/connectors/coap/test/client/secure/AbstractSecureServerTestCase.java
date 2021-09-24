@@ -26,10 +26,10 @@ package nl.teslanet.mule.connectors.coap.test.client.secure;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
 
 
-public abstract class AbstractSecureServerTestCase extends AbstractSecureTestCase
+public abstract class AbstractSecureServerTestCase extends AbstractTestCase
 {
     /**
      * Server to test against
