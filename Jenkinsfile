@@ -43,7 +43,7 @@ pipeline
         {
             steps
             {
-                sh 'mvn -B -s $MVN_SETTINGS clean package -DskipTest'
+                sh 'mvn -B -s $MVN_SETTINGS clean package -DskipTests'
             }
         }
         stage('verify')
