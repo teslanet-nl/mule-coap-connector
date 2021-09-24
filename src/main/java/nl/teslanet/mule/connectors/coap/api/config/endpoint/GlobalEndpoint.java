@@ -61,6 +61,22 @@ public class GlobalEndpoint
     @ParameterDsl(allowReferences= true, allowInlineDefinition= false)
     @Summary(value= "Global endpoint the server uses.")
     @Placement(order= 1, tab= "Endpoint")
-    AbstractEndpoint endpoint;
+    private AbstractEndpoint endpoint;
+
+    /**
+     * @return the endpoint
+     */
+    public AbstractEndpoint getEndpoint()
+    {
+        return endpoint;
+    }
+
+    /**
+     * @param endpoint the endpoint to set
+     */
+    public void setEndpoint( AbstractEndpoint endpoint )
+    {
+        this.endpoint= endpoint;
+    }
 
 }

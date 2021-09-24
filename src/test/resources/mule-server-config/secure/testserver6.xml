@@ -24,46 +24,51 @@
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
-   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
-   
-   <description>Mule CoAP connector test application</description>
-   
-	<coap:dtls-endpoint name="Dtls_endpoint2" doc:name="Dtls endpoint" logCoapMessages="true">
-		<coap:dtls-params  />
-		<coap:encryption-params 
-			keyStoreLocation="certs/keyStore.jks" 
-			keyStorePassword="endPass" 
-			privateKeyAlias="server"
-			privateKeyPassword="endPass"
-			trustStoreLocation="certs/trustStore.jks" 
+
+	<description>Mule CoAP connector test application</description>
+
+	<coap:dtls-endpoint name="Dtls_endpoint2"
+		doc:name="Dtls endpoint" logCoapMessages="true">
+		<coap:dtls-params />
+		<coap:encryption-params
+			keyStoreLocation="certs/keyStore.jks" keyStorePassword="endPass"
+			privateKeyAlias="server" privateKeyPassword="endPass"
+			trustStoreLocation="certs/trustStore.jks"
 			trustStorePassword="rootPassNONEXISTENT"
-			trustedRootCertificateAlias="root"/>
+			trustedRootCertificateAlias="root" />
 	</coap:dtls-endpoint>
-   
-	<coap:server-config name="config" endpoint="Dtls_endpoint2">
+
+	<coap:server-config name="config">
+		<coap:global-endpoints>
+			<coap:global-endpoint endpoint="Dtls_endpoint2" />
+		</coap:global-endpoints>
 		<coap:resources>
-				<coap:resource resourceName="service">
-					<coap:sub-resources>
-						<coap:resource resourceName="get_me" get="true" />
-						<coap:resource resourceName="put_me" put="true" />
-						<coap:resource resourceName="post_me" post="true" />
-						<coap:resource resourceName="delete_me" delete="true" />
-					</coap:sub-resources>
-				</coap:resource>
-			</coap:resources>
+			<coap:resource resourceName="service">
+				<coap:sub-resources>
+					<coap:resource resourceName="get_me" get="true" />
+					<coap:resource resourceName="put_me" put="true" />
+					<coap:resource resourceName="post_me" post="true" />
+					<coap:resource resourceName="delete_me" delete="true" />
+				</coap:sub-resources>
+			</coap:resource>
+		</coap:resources>
 	</coap:server-config>
 
-   <flow name="listen">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-			<coap:response responsePayload="#[vars.replacement]"/>
+	<flow name="listen">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/*" config-ref="config">
+			<coap:response responsePayload="#[vars.replacement]" />
 		</coap:listener>
-		<java:new doc:name="New spy" doc:id="e8b6ab2a-b8bd-4661-8568-404428785a07" 
+		<java:new doc:name="New spy"
+			doc:id="e8b6ab2a-b8bd-4661-8568-404428785a07"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			constructor="MuleEventSpy(String)" target="spy">
 			<java:args><![CDATA[#[{ arg0: "securityTest" }]]]></java:args>
@@ -74,6 +79,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			method="event(Object)">
 			<java:args><![CDATA[#[{ arg0: payload }]]]></java:args>
 		</java:invoke>
-   </flow>
-   
+	</flow>
+
 </mule>

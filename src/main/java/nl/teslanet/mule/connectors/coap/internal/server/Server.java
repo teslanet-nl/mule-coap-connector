@@ -167,29 +167,34 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             throw new InitialisationException( e1, this );
 
         }
-        //workaround, Mule sdk does not support list of root-configurations
-        ArrayList< AbstractEndpoint > abstractEndpoints= new ArrayList<>();
+        ArrayList< AbstractEndpoint > endpoints= new ArrayList<>();
 
         if ( endpoint != null )
         {
-            abstractEndpoints.add( endpoint );
+            //add inline endpoint config
+            endpoints.add( endpoint );
         }
-        if ( abstractEndpoints.isEmpty() )
+        else if ( globalEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            abstractEndpoints.add( new UDPEndpoint( this.toString() ) );
+            endpoints.add( new UDPEndpoint( this.toString() ) );
+            LOGGER.info( this + " using default udp endpoint." );
+        }
+        for ( GlobalEndpoint globalEndpoint : globalEndpoints )
+        {
+            endpoints.add( globalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
-        for ( AbstractEndpoint abstractEndpoint : abstractEndpoints )
+        for ( AbstractEndpoint endpoint : endpoints )
         {
-            if ( abstractEndpoint.configName == null )
+            if ( endpoint.configName == null )
             {
                 // inline endpoint will get this as name
-                abstractEndpoint.configName= ( this.toString() + "-" + endpointNr++ );
+                endpoint.configName= ( this.toString() + "-" + endpointNr++ );
             }
             try
             {
-                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, abstractEndpoint );
+                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
                 LOGGER.info( this + " connected to " + operationalEndpoint );
             }
