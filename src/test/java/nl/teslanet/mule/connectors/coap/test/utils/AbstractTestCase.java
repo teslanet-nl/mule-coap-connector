@@ -40,7 +40,8 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
     applicationSharedRuntimeLibs= {
         "org.eclipse.californium:californium-core",
         "org.eclipse.californium:element-connector",
-        "org.eclipse.californium:scandium"
+        "org.eclipse.californium:scandium",
+        "org.eclipse.californium:demo-certs"
     },
     exportPluginClasses= {
     }, 

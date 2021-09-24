@@ -27,7 +27,7 @@
             <description><![CDATA[The Client is used to send requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default for the requests using this client. The request can override if necessary.]]></description>
             <parameters>
                 <parameter name="endpoint">
-                    <description><![CDATA[Endpoint to be used by client.]]></description>
+                    <description><![CDATA[The endpoint the client uses.]]></description>
                 </parameter>
                 <parameter name="host">
                     <description><![CDATA[The default hostname or ip of the server to address. Can be overridden by the host setting on operations.]]></description>
@@ -43,13 +43,10 @@
         <config name="server">
             <description><![CDATA[The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.]]></description>
             <parameters>
-                <parameter name="endpoint1">
+                <parameter name="endpoint">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="endpoint2">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="serverEndpoints">
+                <parameter name="globalEndpoints">
                     <description><![CDATA[The root resources of the server.]]></description>
                 </parameter>
                 <parameter name="resources">
@@ -677,6 +674,14 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpoint">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
@@ -705,14 +710,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logCoapMessages">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.ServerEndpoint">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="endpoint">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -987,3 +984,4 @@
         </type>
     </types>
 </extension-documentation>
+

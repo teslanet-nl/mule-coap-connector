@@ -36,15 +36,6 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
-import nl.teslanet.mule.connectors.coap.test.utils.Data;
-import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
@@ -57,12 +48,21 @@ import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
 import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.Data;
+import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 /**
  * Template class for testing using a secure client
  *
  */
-public abstract class AbstractSecureClientTestCase extends AbstractSecureTestCase
+public abstract class AbstractSecureClientTestCase extends AbstractTestCase
 {
     private static URI uri= null;
 

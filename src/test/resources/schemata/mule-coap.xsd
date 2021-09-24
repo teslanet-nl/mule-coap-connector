@@ -645,7 +645,7 @@
           <xs:sequence minOccurs="0" maxOccurs="1">
             <xs:element minOccurs="0" maxOccurs="1" name="endpoint">
               <xs:annotation>
-                <xs:documentation>Endpoint to be used by client.</xs:documentation>
+                <xs:documentation>The endpoint the client uses.</xs:documentation>
               </xs:annotation>
               <xs:complexType>
                 <xs:choice minOccurs="1" maxOccurs="1">
@@ -658,7 +658,7 @@
           <xs:attribute type="xs:string" use="required" name="name"></xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="endpoint">
             <xs:annotation>
-              <xs:documentation>Endpoint to be used by client.</xs:documentation>
+              <xs:documentation>The endpoint the client uses.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="host">
@@ -1257,7 +1257,7 @@
             <xs:documentation>The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.</xs:documentation>
           </xs:annotation>
           <xs:sequence minOccurs="0" maxOccurs="1">
-            <xs:element minOccurs="0" maxOccurs="1" name="endpoint1">
+            <xs:element minOccurs="0" maxOccurs="1" name="endpoint">
               <xs:complexType>
                 <xs:choice minOccurs="1" maxOccurs="1">
                   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-abstract-endpoint"></xs:element>
@@ -1265,21 +1265,13 @@
                 </xs:choice>
               </xs:complexType>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="endpoint2">
-              <xs:complexType>
-                <xs:choice minOccurs="1" maxOccurs="1">
-                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-abstract-endpoint"></xs:element>
-                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-abstract-endpoint"></xs:element>
-                </xs:choice>
-              </xs:complexType>
-            </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="server-endpoints">
+            <xs:element minOccurs="0" maxOccurs="1" name="global-endpoints">
               <xs:annotation>
                 <xs:documentation>The root resources of the server.</xs:documentation>
               </xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-server-endpoint"></xs:element>
+                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-global-endpoint"></xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -1295,9 +1287,7 @@
             </xs:element>
           </xs:sequence>
           <xs:attribute type="xs:string" use="required" name="name"></xs:attribute>
-          <xs:attribute type="xs:string" use="optional" name="endpoint1"></xs:attribute>
-          <xs:attribute type="xs:string" use="optional" name="endpoint2"></xs:attribute>
-          <xs:attribute type="mule:substitutableName" use="optional" name="serverEndpoints">
+          <xs:attribute type="mule:substitutableName" use="optional" name="globalEndpoints">
             <xs:annotation>
               <xs:documentation>The root resources of the server.</xs:documentation>
             </xs:annotation>
@@ -1316,7 +1306,7 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.endpoint.ServerEndpoint">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
@@ -1333,11 +1323,11 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.ServerEndpoint" abstract="true" name="abstract-server-endpoint"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-server-endpoint" name="server-endpoint">
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint" abstract="true" name="abstract-global-endpoint"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-global-endpoint" name="global-endpoint">
     <xs:complexType>
       <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.ServerEndpoint"></xs:extension>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint"></xs:extension>
       </xs:complexContent>
     </xs:complexType>
   </xs:element>

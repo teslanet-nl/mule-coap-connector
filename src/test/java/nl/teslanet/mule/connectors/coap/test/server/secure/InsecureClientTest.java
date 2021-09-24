@@ -30,19 +30,20 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import nl.teslanet.mule.connectors.coap.test.utils.AbstractSecureTestCase;
-import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
+import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
-public class InsecureClientTest extends AbstractSecureTestCase
+public class InsecureClientTest extends AbstractTestCase
 {
     URI uri= null;
 
