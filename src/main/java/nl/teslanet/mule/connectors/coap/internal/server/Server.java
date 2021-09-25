@@ -251,9 +251,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             //to get observing clients notified of the fact that resources 
             //are not available anymore. 
             registry.remove( "/*" );
-            //stop server after waiting
-            //TODO
-            Thread.sleep( 2000L );
+            //stop server after waiting to get notifications sent.
+            //TODO make shutdown behavior configurable
+            Thread.sleep( 1000L );
             server.stop();
         }
         catch ( Exception e )
