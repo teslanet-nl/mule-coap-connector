@@ -106,6 +106,8 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      * The root resources of the server.
      */
     @Parameter
+    @Optional
+    @NullSafe
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @Summary(value= "Global endpoints the server uses.")
