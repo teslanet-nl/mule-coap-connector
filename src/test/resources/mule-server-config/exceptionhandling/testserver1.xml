@@ -88,8 +88,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			<scripting:execute engine="groovy"
 				doc:name="throw exception"
 				doc:id="ac9a7d98-4358-49e7-bce8-0ddfec7aeb3b">
-				<scripting:code>throw new java.lang.Exception(&quot;test the
-					exception&quot;);</scripting:code>
+				<scripting:code>throw new java.lang.Exception(&quot;test the exception&quot;);</scripting:code>
 			</scripting:execute>
 			<error-handler>
 				<on-error-continue enableNotifications="true"

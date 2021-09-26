@@ -63,7 +63,7 @@ public class ExceptionHandlingTest extends AbstractServerTestCase
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}, path= {2}, exceptionHandling= {5}")
+    @Parameters(name= "request= {0}, exceptionHandling= {4}")
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
