@@ -43,6 +43,7 @@ import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.Request;
 
 
@@ -189,6 +190,67 @@ public class ObserveTest extends AbstractServerTestCase
             assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
         }
+
+        relation.reactiveCancel();
+    }
+
+    @Test(timeout= 10000L)
+    public void testObserveOnRemovedResource() throws Exception
+    {
+        String resourcePath= "/service/observe_me_too";
+        setClientPath( resourcePath );
+        CoapResponse response= client.put( contents.get( 0 ), 0 );
+        assertNotNull( "put nr: 0 gave no response", response );
+        assertFalse( "response nr: 0 indicates failure", response.isSuccess() );
+        assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+
+        setClientPath( "/service" );
+        Request request= new Request( Code.POST );
+        request.setPayload( contents.get( 0 ) );
+        request.getOptions().addLocationPath( "service" ).addLocationPath( "observe_me_too" );
+        response= client.advanced( request );
+        assertNotNull( "post gave no response", response );
+        assertTrue( "post response indicates failure", response.isSuccess() );
+        assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
+
+        setClientPath( "/service/observe_me_too" );
+        response= client.get();
+        assertNotNull( "get gave no response", response );
+        assertTrue( "get response indicates failure", response.isSuccess() );
+        assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
+        assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
+
+        CoapObserveRelation relation= client.observe( getHandler() );
+
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            Timing.pauze( 100 );
+            response= client.put( contents.get( i ), 0 );
+            assertNotNull( "put nr: " + i + " gave no response", response );
+            assertTrue( "response nr: " + i + " indicates failure", response.isSuccess() );
+        }
+
+        Timing.pauze( 100 );
+        assertEquals( "handler errors count ", 0, handlerErrors.get() );
+        assertEquals( "wrong count of observations", contents.size(), observations.size() );
+
+        int i= 0;
+        for ( ; i < observations.size(); i++ )
+        {
+            response= observations.get( i );
+            assertNotNull( "observation nr: " + i + " is empty", response );
+            assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
+            assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
+        }
+
+        flowRunner( "remove_resource" ).withVariable( "resource_path", resourcePath ).run();
+        Timing.pauze( 1000 );
+
+        response= observations.get( i );
+        assertNotNull( "observation nr: " + i + " is empty", response );
+        assertFalse( "observation nr: " + i + " indicates failure", response.isSuccess() );
+        assertEquals( "observation nr: " + i + " has wrong code", ResponseCode.NOT_FOUND, response.getCode() );
+        assertEquals( "observation nr: " + i + " has wrong type", Type.CON, response.advanced().getType() );
 
         relation.reactiveCancel();
     }

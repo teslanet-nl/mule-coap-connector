@@ -94,6 +94,13 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable variableName="location_path" value="#[ vars.resource_path ]" />
 		<set-variable variableName="response_code" value="CREATED" />
 	</sub-flow>
+	
+	<flow name="remove_resource">
+        <coap:resource-remove config-ref="config"
+            pathPattern="#[vars.resource_path]" doc:name="remove resource"/>
+        <set-variable variableName="location_path" value="#[ vars.resource_path ]" />
+        <set-variable variableName="response_code" value="DELETED" />
+    </flow>
 
 	<flow name="listen_exists">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/exists" config-ref="config">
@@ -145,9 +152,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 						<os:remove doc:name="Remove" key="#[ vars.uri ]" objectStore="Object_store"/>
 					</when>
 				</choice>
-				<coap:resource-remove config-ref="config"
-					pathPattern="#[ vars.uri ]" />
-				<set-variable variableName="response_code" value="DELETED" />
+				<set-variable variableName="resource_path" value="#[ vars.uri ]" />
+                <flow-ref name="remove_resource" doc:name="remove_resource" />
 				<set-payload value="OK" doc:name="return OK" doc:id="cbe2e932-f189-4cda-b6df-9de782e6bf93" />
 			</when>
 			<otherwise>
