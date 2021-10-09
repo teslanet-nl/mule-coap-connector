@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
@@ -104,9 +104,8 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
- * The Client is used to send requests to resources on CoAP servers and/or to observe these. 
- * The CoAP server address (host, port) configured here is default for the requests using 
- * this client. The request can override if necessary.
+ * The Client is used to issue requests to resources on CoAP servers and/or to observe these. 
+ * The CoAP server address (host, port) configured here is default and can be overridden by individual requests.
  */
 @Configuration(name= "client")
 @Sources(value= { Observer.class, ResponseHandler.class })
@@ -134,30 +133,30 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private SchedulerConfig schedulerConfig;
 
     /**
-     * The endpoint the client uses.
+     * The endpoint this client uses.
      */
     @Parameter
     @Optional
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true, allowInlineDefinition= true)
+    @ParameterDsl(allowReferences= false, allowInlineDefinition= true)
     @Summary(value= "The endpoint the client uses.")
     @Placement(order= 1, tab= "Endpoint")
-    private AbstractEndpoint endpoint;
+    private Endpoint endpoint;
 
     /**
      * @return the endpoint
      */
-    public AbstractEndpoint getEndpoint()
+    public Endpoint getEndpoint()
     {
         return endpoint;
     }
 
     /**
-     * @param abstractEndpoint the endpoint to set
+     * @param endpoint the endpoint to set
      */
-    public void setEndpoint( AbstractEndpoint abstractEndpoint )
+    public void setEndpoint( Endpoint endpoint )
     {
-        this.endpoint= abstractEndpoint;
+        this.endpoint= endpoint;
     }
 
     /**
@@ -217,8 +216,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentHashMap<>();
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Startable#start()
+    /**
+     * Start the client. After starting the client is ready for issuing requests.
      */
     @Override
     public void start() throws MuleException
@@ -229,8 +228,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " started." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Stoppable#stop()
+    /**
+     * Stop the client. When stopped no more requests can be sent using this client.
      */
     @Override
     public void stop() throws MuleException
@@ -246,26 +245,31 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " stopped." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Initialisable#initialise()
+    /**
+     * Intitialise the client. The client is assigned an endpoint, which is created when needed. 
      */
     @Override
     public void initialise() throws InitialisationException
     {
+        AbstractEndpoint abstractEndpoint;
         CoAPConnector.setSchedulerService( schedulerService, schedulerConfig );
         if ( endpoint == null )
         {
             //user wants default endpoint
-            endpoint= new UDPEndpoint( this.toString() );
+            abstractEndpoint= new DefaultClientEndpoint( this.toString() + "-endpoint" );
         }
-        if ( endpoint.configName == null )
+        else
+        {
+            abstractEndpoint= endpoint.getEndpoint();
+        }
+        if ( abstractEndpoint.configName == null )
         {
             //inline endpoint will get this as name
-            endpoint.configName= this.toString();
+            abstractEndpoint.configName= this.toString();
         }
         try
         {
-            operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
+            operationalEndpoint= OperationalEndpoint.getOrCreate( this, abstractEndpoint );
         }
         catch ( EndpointConstructionException e )
         {
@@ -275,8 +279,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " initialised." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Disposable#dispose()
+    /**
+     * The client is disposed of. The client is detached from the endpoint, which will be deleted when not used anymore.
      */
     @Override
     public void dispose()

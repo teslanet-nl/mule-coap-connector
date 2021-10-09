@@ -22,98 +22,124 @@
   #L%
   -->
 
-<mule 
-    xmlns:validation="http://www.mulesoft.org/schema/mule/validation" 
-    xmlns="http://www.mulesoft.org/schema/mule/core"
-    xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
-    xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
-    xmlns:java="http://www.mulesoft.org/schema/mule/java"
-    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
-    <description>Mule CoAP connector test application</description>
+	<description>Mule CoAP connector test application</description>
 
-    <coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true" >
-        <coap:socket-params bindToPort="0" />
-        <coap:exchange-params maxRetransmit="0" />
-    </coap:udp-endpoint>
-              
-   <coap:client-config name="config" host="224.0.1.187" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
-   <coap:client-config name="configNOK" host="224.0.1.187"  port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
-   <coap:client-config name="configNOR" host="ditbestaatniet"  port="6767" endpoint="Udp_Endpoint" throwExceptionOnErrorResponse="false"/>
-        
-    <flow name="get_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/get_me" confirmable="false">
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="do_not_get_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="GET" path="/basic/do_not_get_me" confirmable="false">
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="post_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/post_me" confirmable="false">
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="do_not_post_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="POST" path="/basic/do_not_post_me" confirmable="false">
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
+	<coap:udp-endpoint name="Udp_Endpoint"
+		logCoapMessages="true">
+		<coap:socket-params bindToPort="0" />
+		<coap:exchange-params maxRetransmit="0" />
+	</coap:udp-endpoint>
 
-   <flow name="put_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/put_me" confirmable="false">
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="do_not_put_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="PUT" path="/basic/do_not_put_me" confirmable="false">
+	<coap:client-config name="config" host="224.0.1.187"
+		throwExceptionOnErrorResponse="false">
+		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+	</coap:client-config>
+	<coap:client-config name="configNOK"
+		host="224.0.1.187" port="6767" throwExceptionOnErrorResponse="false">
+		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+	</coap:client-config>
+	<coap:client-config name="configNOR"
+		host="ditbestaatniet" port="6767"
+		throwExceptionOnErrorResponse="false">
+		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+	</coap:client-config>
 
-            
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
+	<flow name="get_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="GET" path="/basic/get_me"
+			confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
 
-   <flow name="delete_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/delete_me" confirmable="false">
+	<flow name="do_not_get_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="GET"
+			path="/basic/do_not_get_me" confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="post_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="POST" path="/basic/post_me"
+			confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="do_not_post_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="POST"
+			path="/basic/do_not_post_me" confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="put_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="PUT" path="/basic/put_me"
+			confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="do_not_put_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="PUT"
+			path="/basic/do_not_put_me" confirmable="false">
 
 
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="do_not_delete_me">
-        <coap:request-async config-ref="config" responseHandler="handler" requestCode="DELETE" path="/basic/do_not_delete_me" confirmable="false">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
 
-            
-            <coap:request-payload ><![CDATA[#[payload]]]></coap:request-payload>
-        </coap:request-async>
-   </flow>
-   
-   <flow name="handler">
-        <coap:response-handler config-ref="config" handlerName="handler"/>
-             
-        <java:new doc:name="New spy" 
-            class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-            constructor="MuleEventSpy(String)" target="spy">
-            <java:args><![CDATA[#[{ arg0: "async-handler" }]]]></java:args>
-        </java:new>
-        <java:invoke doc:name="Invoke"
-            instance="#[vars.spy]"
-            class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-            method="event(Object)">
-            <java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-        </java:invoke>
-   </flow>
-    
+	<flow name="delete_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="DELETE"
+			path="/basic/delete_me" confirmable="false">
+
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="do_not_delete_me">
+		<coap:request-async config-ref="config"
+			responseHandler="handler" requestCode="DELETE"
+			path="/basic/do_not_delete_me" confirmable="false">
+
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request-async>
+	</flow>
+
+	<flow name="handler">
+		<coap:response-handler config-ref="config"
+			handlerName="handler" />
+
+		<java:new doc:name="New spy"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "async-handler" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
+		</java:invoke>
+	</flow>
+
 </mule>

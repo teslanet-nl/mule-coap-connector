@@ -43,7 +43,10 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 			  
-   <coap:client-config name="config" endpoint="Udp_Endpoint"/>
+   <coap:client-config name="config">
+        <coap:endpoint udpEndpoint="Udp_Endpoint" />
+    </coap:client-config>
+
       
    <flow name="do_request">
 		<coap:request config-ref="config" requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]" path="#[vars.path]">

@@ -42,9 +42,9 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config">
-		<coap:global-endpoints>
-			<coap:global-endpoint endpoint="UDP_endpoint" />
-		</coap:global-endpoints>
+		 
+			<coap:endpoint udpEndpoint="UDP_endpoint" />
+		 
 		<coap:resources>
 			<coap:resource resourceName="service">
 				<coap:sub-resources>

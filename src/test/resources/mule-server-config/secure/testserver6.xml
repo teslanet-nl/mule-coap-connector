@@ -47,9 +47,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:dtls-endpoint>
 
 	<coap:server-config name="config">
-		<coap:global-endpoints>
-			<coap:global-endpoint endpoint="Dtls_endpoint2" />
-		</coap:global-endpoints>
+		 
+			<coap:endpoint dtlsEndpoint="Dtls_endpoint2" />
+		 
 		<coap:resources>
 			<coap:resource resourceName="service">
 				<coap:sub-resources>

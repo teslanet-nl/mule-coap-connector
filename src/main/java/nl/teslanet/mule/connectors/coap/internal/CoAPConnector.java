@@ -45,6 +45,7 @@ import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;

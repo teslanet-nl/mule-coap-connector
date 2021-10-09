@@ -22,9 +22,12 @@
   #L%
   -->
 
-<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+<mule
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
@@ -38,24 +41,29 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
 		<coap:socket-params bindToPort="0" />
-		<coap:exchange-params exchangeLifetime="10000"/>
-		<coap:notification-params notificationReregistrationBackoff="100" />
+		<coap:exchange-params exchangeLifetime="10000" />
+		<coap:notification-params
+			notificationReregistrationBackoff="100" />
 	</coap:udp-endpoint>
 
-	<coap:client-config name="config" host="127.0.0.1" endpoint="Udp_Endpoint" />
+	<coap:client-config name="config" host="127.0.0.1">
+		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+	</coap:client-config>
 
 	<flow name="start_temporary">
-		<coap:observer-start config-ref="config" responseHandler="handler_temporary" path="/observe/temporary"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_temporary" path="/observe/temporary" />
 	</flow>
 
 	<flow name="stop_temporary">
-		<coap:observer-stop config-ref="config" path="/observe/temporary"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/temporary" />
 	</flow>
 
 
 	<flow name="do_put_temporary">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/temporary">
+			path="/observe/temporary">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -77,17 +85,19 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_temporary1">
-		<coap:observer-start config-ref="config" responseHandler="handler_temporary1" path="/observe/temporary1"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_temporary1" path="/observe/temporary1" />
 	</flow>
 
 	<flow name="stop_temporary1">
-		<coap:observer-stop config-ref="config" path="/observe/temporary1"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/temporary1" />
 	</flow>
 
 
 	<flow name="do_put_temporary1">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/temporary1">
+			path="/observe/temporary1">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -110,18 +120,20 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_temporary2">
-		<coap:observer-start config-ref="config" responseHandler="handler_temporary2"  path="/observe/temporary2"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_temporary2" path="/observe/temporary2" />
 	</flow>
 
 	<flow name="stop_temporary2">
-		<coap:observer-stop config-ref="config" path="/observe/temporary2"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/temporary2" />
 
 	</flow>
 
 
 	<flow name="do_put_temporary2">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/temporary2">
+			path="/observe/temporary2">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -143,16 +155,18 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage1">
-		<coap:observer-start config-ref="config" responseHandler="handler_maxage1" path="/observe/maxage1"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_maxage1" path="/observe/maxage1" />
 	</flow>
 
 	<flow name="stop_maxage1">
-		<coap:observer-stop config-ref="config" path="/observe/maxage1"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/maxage1" />
 	</flow>
 
 	<flow name="do_put_maxage1">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/maxage1">
+			path="/observe/maxage1">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -173,16 +187,19 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="start_maxage1_nonotify">
-		<coap:observer-start config-ref="config" responseHandler="handler_maxage1_nonotify" path="/observe/maxage1_nonotify"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_maxage1_nonotify"
+			path="/observe/maxage1_nonotify" />
 	</flow>
 
 	<flow name="stop_maxage1_nonotify">
-		<coap:observer-stop config-ref="config" path="/observe/maxage1_nonotify"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/maxage1_nonotify" />
 	</flow>
 
 	<flow name="do_put_maxage1_nonotify">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/maxage1_nonotify">
+			path="/observe/maxage1_nonotify">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -204,17 +221,19 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage4_nonotify">
-		<coap:observer-start config-ref="config" responseHandler="handler_maxage4_nonotify" 
-			path="/observe/maxage4_nonotify"/>
+		<coap:observer-start config-ref="config"
+			responseHandler="handler_maxage4_nonotify"
+			path="/observe/maxage4_nonotify" />
 	</flow>
 
 	<flow name="stop_maxage4_nonotify">
-		<coap:observer-stop config-ref="config" path="/observe/maxage4_nonotify"/>
+		<coap:observer-stop config-ref="config"
+			path="/observe/maxage4_nonotify" />
 	</flow>
 
 	<flow name="do_put_maxage4_nonotify">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/maxage4_nonotify">
+			path="/observe/maxage4_nonotify">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -236,7 +255,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="observe_handler_permanent">
-		<coap:observer config-ref="config" path="/observe/permanent"/>
+		<coap:observer config-ref="config"
+			path="/observe/permanent" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -253,7 +273,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="do_put_permanent">
 		<coap:request config-ref="config" requestCode="PUT"
-				path="/observe/permanent">
+			path="/observe/permanent">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>

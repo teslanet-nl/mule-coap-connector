@@ -37,10 +37,10 @@ import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 
 
 /**
- * This is UDP coap endpoint
+ * UDP coap endpoint configuration
  *
  */
-@TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
+@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
 public class UDPEndpoint extends AbstractEndpoint
 {
     /**
@@ -49,9 +49,9 @@ public class UDPEndpoint extends AbstractEndpoint
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "UDP parameters")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( value= "UDP parameters" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public UdpParams udpParams= null;
 
     /**
@@ -66,7 +66,7 @@ public class UDPEndpoint extends AbstractEndpoint
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
-     * @param name the manually set name of the endpoint
+     * @param name the name of the endpoint.
      */
     public UDPEndpoint( String name )
     {
@@ -74,8 +74,8 @@ public class UDPEndpoint extends AbstractEndpoint
         udpParams= new UdpParams();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept a visitor and pass on.
      */
     @Override
     public void accept( ConfigVisitor visitor )

@@ -56,9 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.GlobalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
@@ -69,9 +69,10 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegi
  * The configuration is static, which means Mule will create one instance per
  * configuration.
  */
-@Configuration(name= "server")
-@Sources(value= { Listener.class })
-@Operations(ServerOperations.class)
+@Configuration( name= "server" )
+@Sources( value=
+{ Listener.class } )
+@Operations( ServerOperations.class )
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
     private final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
@@ -94,13 +95,28 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Inject
     private SchedulerConfig schedulerConfig;
 
+    /**
+     * Main endpoint the server uses.
+     */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "Locally defined endpoint the server uses.")
-    @Placement(order= 1, tab= "Endpoint")
-    AbstractEndpoint endpoint;
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "Main endpoint the server uses." )
+    @Placement( order= 1, tab= "Endpoint" )
+    Endpoint endpoint;
+
+    /**
+     * The additional endpoints the server uses.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "Additional endpoints the server uses." )
+    @Placement( order= 4, tab= "Advanced" )
+    private List< AdditionalEndpoint > additionalEndpoints;
 
     /**
      * The root resources of the server.
@@ -108,22 +124,36 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "Global endpoints the server uses.")
-    @Placement(order= 1, tab= "Global-Endpoints")
-    private List< GlobalEndpoint > globalEndpoints;
-
-    /**
-     * The root resources of the server.
-     */
-    @Parameter
-    @Optional
-    @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "The root resources of the server.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "The root resources of the server." )
     private List< ResourceConfig > resources;
+
+    /**
+     * Notify observing clients of shutdown of the server.
+     * When true observing clients are notified by Not-Found notifications.
+     * Default value is true.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "Notify observing clients of shutdown of the server.\nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 1, tab= "Advanced" )
+    public boolean notifyOnShutdown= true;
+
+    /**
+     * The linger time (in milliseconds [ms]) during shutdown of the server 
+     * which gives active exchanges time to complete.
+     * Default value is 100 ms.
+     */
+    @Parameter
+    @Optional( defaultValue= "100" )
+    @Summary( value= "The linger time (in milliseconds [ms]) during shutdown of the server \nwhich gives active exchanges time to complete. \nDefault value is 100 ms." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 2, tab= "Advanced" )
+    public long shutdownLinger= 100L;
 
     /**
      * Thread pool size of endpoint executor. Default value is equal to the number
@@ -131,10 +161,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Placement(tab= "Advanced")
-    @Summary("Thread pool size of endpoint executor. Default value is equal to the number of cores.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 3, tab= "Advanced" )
+    @Summary( "Thread pool size of endpoint executor. Default value is equal to the number of cores." )
     private Integer protocolStageThreadCount= null;
 
     /**
@@ -167,24 +197,26 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         catch ( InternalResourceRegistryException e1 )
         {
             throw new InitialisationException( e1, this );
-
         }
         ArrayList< AbstractEndpoint > endpoints= new ArrayList<>();
 
         if ( endpoint != null )
         {
-            //add inline endpoint config
-            endpoints.add( endpoint );
+            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in EndpointConfig." ), this );
+            //add main endpoint config
+            endpoints.add( endpoint.getEndpoint() );
         }
-        else if ( globalEndpoints.isEmpty() )
+        else if ( additionalEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            endpoints.add( new UDPEndpoint( this.toString() ) );
+            endpoints.add( new DefaultServerEndpoint( this.toString() + "-endpoint" ) );
             LOGGER.info( this + " using default udp endpoint." );
         }
-        for ( GlobalEndpoint globalEndpoint : globalEndpoints )
+        for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
-            endpoints.add( globalEndpoint.getEndpoint() );
+            if ( additionalEndpoint.getEndpoint() == null )
+                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additionalEndpoint." ), this );
+            endpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
         for ( AbstractEndpoint endpoint : endpoints )
@@ -208,6 +240,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " initalised." );
     }
 
+    /**
+     * Dispose of the server. Endpoints will be disconnected and cleaned up when needed.
+     */
     @Override
     public void dispose()
     {
@@ -216,8 +251,8 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " disposed." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Startable#start()
+    /**
+     * Start the server. When started the server will accept requests.
      */
     @Override
     public void start() throws MuleException
@@ -241,22 +276,30 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Stoppable#stop()
+    /**
+     * Stop the server. All resources of the server will be removed and observing clients will be notified of this.
+     * After  
      */
     @Override
     public void stop() throws MuleException
     {
         try
         {
-            //remove all resources from registry before stopping 
-            //to get observing clients notified of the fact that resources 
-            //are not available anymore. 
-            registry.remove( "/*" );
+            if ( notifyOnShutdown )
+            {
+                //remove all resources from registry before stopping 
+                //to get observing clients notified of the fact that resources 
+                //are not available anymore. 
+                registry.remove( "/*" );
+            }
             //stop server after waiting to get notifications sent.
-            //TODO make shutdown behavior configurable
-            Thread.sleep( 1000L );
+            Thread.sleep( shutdownLinger );
             server.stop();
+            if ( !notifyOnShutdown )
+            {
+                //cleanup still needed
+                registry.remove( "/*" );
+            }
         }
         catch ( Exception e )
         {
@@ -318,17 +361,17 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     /**
      * @return the endpointRefs of the server.
      */
-    public List< GlobalEndpoint > getEndpointRefs()
+    public List< AdditionalEndpoint > getAdditionalEndpoints()
     {
-        return globalEndpoints;
+        return additionalEndpoints;
     }
 
     /**
-     * @param globalEndpoints the endpoints references to set.
+     * @param endpoints the endpoints references to set.
      */
-    public void setEndpointRefs( List< GlobalEndpoint > globalEndpoints )
+    public void setAdditionalEndpoints( List< AdditionalEndpoint > endpoints )
     {
-        this.globalEndpoints= globalEndpoints;
+        this.additionalEndpoints= endpoints;
     }
 
     /**

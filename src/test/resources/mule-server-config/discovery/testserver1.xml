@@ -39,9 +39,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config">
-		<coap:global-endpoints>
-			<coap:global-endpoint endpoint="udp" />
-		</coap:global-endpoints>
+		 
+			<coap:endpoint udpEndpoint="udp" />
+		 
 		<coap:resources>
 			<coap:resource resourceName="service">
 				<coap:sub-resources>
