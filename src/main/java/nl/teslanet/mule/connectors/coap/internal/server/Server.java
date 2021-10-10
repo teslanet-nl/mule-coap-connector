@@ -145,7 +145,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     /**
      * The linger time (in milliseconds [ms]) during shutdown of the server 
      * which gives active exchanges time to complete.
-     * Default value is 100 ms.
+     * Default value is 250 ms.
      */
     @Parameter
     @Optional( defaultValue= "250" )
@@ -202,7 +202,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
         if ( endpoint != null )
         {
-            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in EndpointConfig." ), this );
+            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in main server endpoint." ), this );
             //add main endpoint config
             endpoints.add( endpoint.getEndpoint() );
         }
@@ -215,7 +215,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
             if ( additionalEndpoint.getEndpoint() == null )
-                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additionalEndpoint." ), this );
+                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additional server endpoint." ), this );
             endpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;

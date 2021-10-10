@@ -107,9 +107,10 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
  * The Client is used to issue requests to resources on CoAP servers and/or to observe these. 
  * The CoAP server address (host, port) configured here is default and can be overridden by individual requests.
  */
-@Configuration(name= "client")
-@Sources(value= { Observer.class, ResponseHandler.class })
-@Operations(ClientOperations.class)
+@Configuration( name= "client" )
+@Sources( value=
+{ Observer.class, ResponseHandler.class } )
+@Operations( ClientOperations.class )
 public class Client implements Initialisable, Disposable, Startable, Stoppable
 {
     /**
@@ -137,10 +138,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false, allowInlineDefinition= true)
-    @Summary(value= "The endpoint the client uses.")
-    @Placement(order= 1, tab= "Endpoint")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
+    @Summary( value= "The endpoint the client uses." )
+    @Placement( order= 1, tab= "Endpoint" )
     private Endpoint endpoint;
 
     /**
@@ -172,8 +173,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The default hostname or ip of the server to address. Can be overridden by the host setting on operations.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The default hostname or ip of the server to address. Can be overridden by the host setting on operations." )
     private String host= null;
 
     /**
@@ -182,8 +183,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The default port the server is listening on. Can be overridden by the port setting on operations.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The default port the server is listening on. Can be overridden by the port setting on operations." )
     private Integer port= null;
 
     /**
@@ -191,9 +192,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
      */
     @Parameter
-    @Optional(defaultValue= "true")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false.")
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary(
+        "When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false."
+    )
     private boolean throwExceptionOnErrorResponse= true;
 
     /**
@@ -256,11 +259,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         if ( endpoint == null )
         {
             //user wants default endpoint
-            abstractEndpoint= new DefaultClientEndpoint( this.toString() + "-endpoint" );
+            abstractEndpoint= new DefaultClientEndpoint( this.toString() + " endpoint" );
         }
         else
         {
             abstractEndpoint= endpoint.getEndpoint();
+            //mule should have set the mandatory endpoint.
+            if ( abstractEndpoint == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in client endpoint." ), this );
         }
         if ( abstractEndpoint.configName == null )
         {
@@ -458,15 +463,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 callback.handle(
                     Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                    requestcontext );
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
             else
             {
                 callback.handle(
                     Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                    requestcontext );
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
         }
         else
@@ -504,7 +513,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         TypedValue< Object > requestPayload,
         boolean forcePayload,
         RequestOptions options,
-        String handlerName ) throws InternalInvalidHandlerNameException,
+        String handlerName
+    ) throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
@@ -599,12 +609,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 if ( payload != null )
                 {
                     result= Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length(
-                        payload.length ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                        payload.length
+                    ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
                 }
                 else
                 {
                     result= Result.< InputStream, ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build();
                 }
             }
         }
@@ -722,7 +734,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         final String handlerName,
         final String requestUri,
         final CoAPRequestCode requestCode,
-        final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
+        final SourceCallback< InputStream, ReceivedResponseAttributes > callback
+    )
     {
         final Client thisClient= this;
         final String handlerDescription= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } ";
@@ -813,7 +826,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         catch ( Exception e )
         {
             throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }" );
+                "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }"
+            );
         }
         return uri;
     }
@@ -918,7 +932,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             coapClient,
             confirmable,
             uri,
-            ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler ) );
+            ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler )
+        );
         addRelation( uri, relation );
         relation.start();
     }
