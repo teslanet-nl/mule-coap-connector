@@ -37,7 +37,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
-	<coap:server-config name="config"><coap:global-endpoints ><coap:endpoint udpEndpoint="udp" /> 
+	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
 		<coap:resources>
 				<coap:resource resourceName="requestcode">
 					<coap:sub-resources>

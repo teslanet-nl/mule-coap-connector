@@ -41,7 +41,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:client-config name="config" host="127.0.0.1"
 		port="5684" throwExceptionOnErrorResponse="false">
-		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:endpoint udpEndpoint="Udp_endpoint" />
 	</coap:client-config>
 
 

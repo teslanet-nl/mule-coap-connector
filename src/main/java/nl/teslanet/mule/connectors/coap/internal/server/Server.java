@@ -75,7 +75,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegi
 @Operations( ServerOperations.class )
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
-    private final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Server.class.getCanonicalName() );
 
     /**
      * The name of the server.
@@ -198,46 +198,46 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new InitialisationException( e1, this );
         }
-        ArrayList< AbstractEndpoint > endpoints= new ArrayList<>();
+        ArrayList< AbstractEndpoint > configuredEndpoints= new ArrayList<>();
 
         if ( endpoint != null )
         {
             if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in main server endpoint." ), this );
             //add main endpoint config
-            endpoints.add( endpoint.getEndpoint() );
+            configuredEndpoints.add( endpoint.getEndpoint() );
         }
         else if ( additionalEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            endpoints.add( new DefaultServerEndpoint( this.toString() + "-endpoint" ) );
-            LOGGER.info( this + " using default udp endpoint." );
+            configuredEndpoints.add( new DefaultServerEndpoint( this.toString() + "-endpoint" ) );
+            logger.info( this + " using default udp endpoint." );
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
             if ( additionalEndpoint.getEndpoint() == null )
                 throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additional server endpoint." ), this );
-            endpoints.add( additionalEndpoint.getEndpoint() );
+            configuredEndpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
-        for ( AbstractEndpoint endpoint : endpoints )
+        for ( AbstractEndpoint configuredEndpoint : configuredEndpoints )
         {
-            if ( endpoint.configName == null )
+            if ( configuredEndpoint.configName == null )
             {
                 // inline endpoint will get this as name
-                endpoint.configName= ( this.toString() + "-" + endpointNr++ );
+                configuredEndpoint.configName= ( this.toString() + " endpont-" + endpointNr++ );
             }
             try
             {
-                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
+                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                LOGGER.info( this + " connected to " + operationalEndpoint );
+                logger.info( this + " connected to " + operationalEndpoint );
             }
             catch ( Exception e )
             {
                 throw new InitialisationException( e, this );
             }
         }
-        LOGGER.info( this + " initalised." );
+        logger.info( this + " initalised." );
     }
 
     /**
@@ -248,7 +248,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         server.destroy();
         OperationalEndpoint.disposeAll( this );
-        LOGGER.info( this + " disposed." );
+        logger.info( this + " disposed." );
     }
 
     /**
@@ -272,7 +272,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new StartException( e, this );
         }
-        LOGGER.info( this + " started." );
+        logger.info( this + " started." );
 
     }
 
@@ -305,7 +305,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new StopException( e, this );
         }
-        LOGGER.info( this + " stopped" );
+        logger.info( this + " stopped" );
     }
 
     /**
