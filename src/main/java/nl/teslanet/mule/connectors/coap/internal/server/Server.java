@@ -148,12 +148,12 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      * Default value is 100 ms.
      */
     @Parameter
-    @Optional( defaultValue= "100" )
-    @Summary( value= "The linger time (in milliseconds [ms]) during shutdown of the server \nwhich gives active exchanges time to complete. \nDefault value is 100 ms." )
+    @Optional( defaultValue= "250" )
+    @Summary( value= "The linger time (in milliseconds [ms]) during shutdown of the server \nwhich gives active exchanges time to complete. \nDefault value is 250 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
-    public long shutdownLinger= 100L;
+    public long shutdownLinger= 250L;
 
     /**
      * Thread pool size of endpoint executor. Default value is equal to the number
