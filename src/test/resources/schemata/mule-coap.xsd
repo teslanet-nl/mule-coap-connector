@@ -1365,9 +1365,9 @@
               <xs:documentation>Notify observing clients of shutdown of the server. When true observing clients are notified by Not-Found notifications. Default value is true.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableLong" use="optional" default="100" name="shutdownLinger">
+          <xs:attribute type="mule:substitutableLong" use="optional" default="250" name="shutdownLinger">
             <xs:annotation>
-              <xs:documentation>The linger time (in milliseconds [ms]) during shutdown of the server which gives active exchanges time to complete. Default value is 100 ms.</xs:documentation>
+              <xs:documentation>The linger time (in milliseconds [ms]) during shutdown of the server which gives active exchanges time to complete. Default value is 250 ms.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute type="mule:substitutableInt" use="optional" name="protocolStageThreadCount">
@@ -1858,3 +1858,4 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+
