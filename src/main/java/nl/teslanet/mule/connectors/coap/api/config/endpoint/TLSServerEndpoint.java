@@ -36,7 +36,7 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 //@Configuration(name="tls-server-endpoint")
 @Alias("tls-server-endpoint")
 @TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
-public class TLSServerEndpoint extends TLSEndpoint
+public class TLSServerEndpoint extends AbstractTLSEndpoint
 {
     /**
      * Default Constructor used by Mule. 

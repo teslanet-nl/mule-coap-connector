@@ -40,7 +40,7 @@ import nl.teslanet.mule.connectors.coap.api.config.TlsParams;
  * Abstract TLS coap endpoint
  *
  */
-public abstract class TLSEndpoint extends TCPEndpoint
+public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
 {
     /**
      * The TLS parameters.
@@ -66,7 +66,7 @@ public abstract class TLSEndpoint extends TCPEndpoint
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public TLSEndpoint()
+    public AbstractTLSEndpoint()
     {
         super();
     }
@@ -76,7 +76,7 @@ public abstract class TLSEndpoint extends TCPEndpoint
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public TLSEndpoint( String name )
+    public AbstractTLSEndpoint( String name )
     {
         super( name );
         tlsParams= new TlsParams();

@@ -22,11 +22,10 @@
   #L%
   -->
 
-<mule 
-	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" 
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -39,84 +38,98 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	">
 
 	<description>Mule CoAP connector test application</description>
-			
-	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+
+	<coap:udp-endpoint name="udp" logCoapMessages="true">
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
-	
-	
 
-	<coap:server-config name="config" endpoint="udp">
+
+
+	<coap:server-config name="config">
+		 
+			<coap:endpoint udpEndpoint="udp" />
+		 
 		<coap:resources>
-				<coap:resource resourceName="service">
-					<coap:sub-resources>
-						<coap:resource resourceName="add_resource">
-							<coap:sub-resources>
-								<coap:resource resourceName="all_methods" post="true" />
-								<coap:resource resourceName="get_only" post="true" />
-								<coap:resource resourceName="post_only" post="true" />
-								<coap:resource resourceName="put_only" post="true" />
-								<coap:resource resourceName="delete_only" post="true" />
-							</coap:sub-resources>
-						</coap:resource>
-						<coap:resource resourceName="exists" get="true" />
-						<coap:resource resourceName="resource1" get="true"
-							post="true" put="true" delete="true" observable="true" />
-						<coap:resource resourceName="resource-to-remove"
-							get="true" post="true" put="true" delete="true" observable="true" />
-					</coap:sub-resources>
-				</coap:resource>
-			</coap:resources>
+			<coap:resource resourceName="service">
+				<coap:sub-resources>
+					<coap:resource resourceName="add_resource">
+						<coap:sub-resources>
+							<coap:resource resourceName="all_methods"
+								post="true" />
+							<coap:resource resourceName="get_only" post="true" />
+							<coap:resource resourceName="post_only" post="true" />
+							<coap:resource resourceName="put_only" post="true" />
+							<coap:resource resourceName="delete_only"
+								post="true" />
+						</coap:sub-resources>
+					</coap:resource>
+					<coap:resource resourceName="exists" get="true" />
+					<coap:resource resourceName="resource1" get="true"
+						post="true" put="true" delete="true" observable="true" />
+					<coap:resource resourceName="resource-to-remove"
+						get="true" post="true" put="true" delete="true" observable="true" />
+				</coap:sub-resources>
+			</coap:resource>
+		</coap:resources>
 	</coap:server-config>
-	
-	<os:object-store name="Object_store" doc:name="Object store" doc:id="249c6420-a649-4d60-8331-17c6eeca6ca8" persistent="false" />
-	
+
+	<os:object-store name="Object_store"
+		doc:name="Object store" doc:id="249c6420-a649-4d60-8331-17c6eeca6ca8"
+		persistent="false" />
+
 	<flow name="listen_add_resource">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/add_resource/*"
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/add_resource/*"
 			config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<!-- TODO location path -->
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
-		<set-variable variableName="method" value="#[ vars.attr.requestCode ]"
-			doc:name="set method" />
-		<set-variable variableName="uri" value="#[ vars.attr.requestUri ]"
-			doc:name="set method" />
+		<set-variable variableName="method"
+			value="#[ vars.attr.requestCode ]" doc:name="set method" />
+		<set-variable variableName="uri"
+			value="#[ vars.attr.requestUri ]" doc:name="set method" />
 		<!-- TODO: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
-			value="#['/' ++ vars.attr.options.locationPath!]" doc:name="set resource_path" />
+			value="#['/' ++ vars.attr.options.locationPath!]"
+			doc:name="set resource_path" />
 
 		<choice doc:name="by method">
-			<when expression="#[ vars.uri == '/service/add_resource/all_methods' ]">
+			<when
+				expression="#[ vars.uri == '/service/add_resource/all_methods' ]">
 				<set-variable variableName="get" value="true" />
 				<set-variable variableName="post" value="true" />
 				<set-variable variableName="put" value="true" />
 				<set-variable variableName="delete" value="true" />
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
-			<when expression="#[ vars.uri == '/service/add_resource/get_only' ]">
+			<when
+				expression="#[ vars.uri == '/service/add_resource/get_only' ]">
 				<set-variable variableName="get" value="true" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="false" />
 				<set-variable variableName="delete" value="false" />
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
-			<when expression="#[ vars.uri == '/service/add_resource/post_only' ]">
+			<when
+				expression="#[ vars.uri == '/service/add_resource/post_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="true" />
 				<set-variable variableName="put" value="false" />
 				<set-variable variableName="delete" value="false" />
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
-			<when expression="#[ vars.uri == '/service/add_resource/put_only' ]">
+			<when
+				expression="#[ vars.uri == '/service/add_resource/put_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="true" />
 				<set-variable variableName="delete" value="false" />
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
-			<when expression="#[ vars.uri == '/service/add_resource/delete_only' ]">
+			<when
+				expression="#[ vars.uri == '/service/add_resource/delete_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="false" />
@@ -125,79 +138,99 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</when>
 			<otherwise>
 				<set-payload value="not expected" doc:name="Set Payload" />
-				<set-variable variableName="response_code" value="BAD_REQUEST" />
+				<set-variable variableName="response_code"
+					value="BAD_REQUEST" />
 			</otherwise>
 		</choice>
 	</flow>
 
 	<sub-flow name="add_resource">
-		<os:store objectStore="Object_store" doc:name="Store" key="#[ vars.resource_path ]" failOnNullValue="false"/>
+		<os:store objectStore="Object_store" doc:name="Store"
+			key="#[ vars.resource_path ]" failOnNullValue="false" />
 		<coap:resource-add config-ref="config"
-			resourcePath="#[vars.resource_path]" get="#[vars.get]" put="#[vars.put]" post="#[vars.post]"
-			delete="#[vars.delete]" doc:name="add resource" />
-		<set-variable variableName="location_path" value="#[ vars.resource_path ]" />
-		<set-variable variableName="response_code" value="CREATED" />
+			resourcePath="#[vars.resource_path]" get="#[vars.get]"
+			put="#[vars.put]" post="#[vars.post]" delete="#[vars.delete]"
+			doc:name="add resource" />
+		<set-variable variableName="location_path"
+			value="#[ vars.resource_path ]" />
+		<set-variable variableName="response_code"
+			value="CREATED" />
 	</sub-flow>
 
 	<flow name="listen_exists">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/exists" config-ref="config">
-			<coap:response responsePayload="#[ payload as String ]"/>
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/exists" config-ref="config">
+			<coap:response responsePayload="#[ payload as String ]" />
 		</coap:listener>
-		<logger message="#[ attributes.options.locationPath! ]"/>
+		<logger message="#[ attributes.options.locationPath! ]" />
 		<!-- TODO align root resource / -->
 		<coap:resource-exists config-ref="config"
 			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
 	</flow>
 
 	<flow name="listen_service_resource">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response responseCode="#[ vars.response_code]" />
 		</coap:listener>
-		
-		<set-variable variableName="method" value="#[ attributes.requestCode ]"
-			doc:name="set method" />
-		<set-variable variableName="uri" value="#[ attributes.requestUri ]"
-			doc:name="set method" />
+
+		<set-variable variableName="method"
+			value="#[ attributes.requestCode ]" doc:name="set method" />
+		<set-variable variableName="uri"
+			value="#[ attributes.requestUri ]" doc:name="set method" />
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
 
 		<choice doc:name="by method">
 			<when expression="#[vars.method == 'GET']">
-				<os:retrieve doc:name="Retrieve" key="#[ vars.uri ]" objectStore="Object_store">
-					<os:default-value ><![CDATA[#['']]]></os:default-value>
+				<os:retrieve doc:name="Retrieve" key="#[ vars.uri ]"
+					objectStore="Object_store">
+					<os:default-value><![CDATA[#['']]]></os:default-value>
 				</os:retrieve>
-				<set-variable variableName="response_code" value="CONTENT" />
+				<set-variable variableName="response_code"
+					value="CONTENT" />
 			</when>
 			<when expression="#[ vars.method == 'PUT']">
-				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false" objectStore="Object_store"/>
+				<os:store doc:name="Store" key="#[ vars.uri ]"
+					failOnNullValue="false" objectStore="Object_store" />
 				<coap:notify config-ref="config"
 					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
-				<set-variable variableName="response_code" value="CHANGED" />
-				<set-payload value="OK" doc:name="return OK" doc:id="509de38a-e978-4b5c-a35a-6aa803eee68e" />
-				
+				<set-variable variableName="response_code"
+					value="CHANGED" />
+				<set-payload value="OK" doc:name="return OK"
+					doc:id="509de38a-e978-4b5c-a35a-6aa803eee68e" />
+
 			</when>
 			<when expression="#[vars.method == 'POST']">
-				<os:store doc:name="Store" key="#[ vars.uri ]" failOnNullValue="false" objectStore="Object_store"/>
+				<os:store doc:name="Store" key="#[ vars.uri ]"
+					failOnNullValue="false" objectStore="Object_store" />
 				<coap:notify config-ref="config"
 					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
-				<set-variable variableName="response_code" value="CHANGED" />
-				<set-payload value="OK" doc:name="return OK" doc:id="1fa85d9c-0c23-4641-a3a0-198b0ed45d7a" />				
+				<set-variable variableName="response_code"
+					value="CHANGED" />
+				<set-payload value="OK" doc:name="return OK"
+					doc:id="1fa85d9c-0c23-4641-a3a0-198b0ed45d7a" />
 			</when>
 			<when expression="#[vars.method == 'DELETE']">
-				<os:contains doc:name="Contains" key="#[ vars.uri ]" objectStore="Object_store" target="exists"/>
-				<choice doc:name="Choice" >
+				<os:contains doc:name="Contains" key="#[ vars.uri ]"
+					objectStore="Object_store" target="exists" />
+				<choice doc:name="Choice">
 					<when expression="#[vars.exists]">
-						<os:remove doc:name="Remove" key="#[ vars.uri ]" objectStore="Object_store"/>
+						<os:remove doc:name="Remove" key="#[ vars.uri ]"
+							objectStore="Object_store" />
 					</when>
 				</choice>
 				<coap:resource-remove config-ref="config"
 					pathPattern="#[ vars.uri ]" />
-				<set-variable variableName="response_code" value="DELETED" />
-				<set-payload value="OK" doc:name="return OK" doc:id="8046e2bd-abbb-4996-b58d-cbe7c19ab447" />
+				<set-variable variableName="response_code"
+					value="DELETED" />
+				<set-payload value="OK" doc:name="return OK"
+					doc:id="8046e2bd-abbb-4996-b58d-cbe7c19ab447" />
 			</when>
 			<otherwise>
 				<set-payload value="not expected" doc:name="Set Payload" />
-				<set-variable variableName="response_code" value="INTERNAL_SERVER_ERROR" />
+				<set-variable variableName="response_code"
+					value="INTERNAL_SERVER_ERROR" />
 			</otherwise>
 		</choice>
 	</flow>

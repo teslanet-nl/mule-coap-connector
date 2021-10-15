@@ -24,10 +24,10 @@
 <extension-documentation>
     <configs>
         <config name="client">
-            <description><![CDATA[The Client is used to send requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default for the requests using this client. The request can override if necessary.]]></description>
+            <description><![CDATA[The Client is used to issue requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default and can be overridden by individual requests.]]></description>
             <parameters>
                 <parameter name="endpoint">
-                    <description><![CDATA[The endpoint the client uses.]]></description>
+                    <description><![CDATA[The endpoint this client uses.]]></description>
                 </parameter>
                 <parameter name="host">
                     <description><![CDATA[The default hostname or ip of the server to address. Can be overridden by the host setting on operations.]]></description>
@@ -44,16 +44,19 @@
             <description><![CDATA[The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.]]></description>
             <parameters>
                 <parameter name="endpoint">
-                    <description><![CDATA[]]></description>
+                    <description><![CDATA[Main endpoint the server uses.]]></description>
                 </parameter>
-                <parameter name="endpoint1">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="endpoint2">
-                    <description><![CDATA[]]></description>
+                <parameter name="additionalEndpoints">
+                    <description><![CDATA[The additional endpoints the server uses.]]></description>
                 </parameter>
                 <parameter name="resources">
                     <description><![CDATA[The root resources of the server.]]></description>
+                </parameter>
+                <parameter name="notifyOnShutdown">
+                    <description><![CDATA[Notify observing clients of shutdown of the server. When true observing clients are notified by Not-Found notifications. Default value is true.]]></description>
+                </parameter>
+                <parameter name="shutdownLinger">
+                    <description><![CDATA[The linger time (in milliseconds [ms]) during shutdown of the server which gives active exchanges time to complete. Default value is 250 ms.]]></description>
                 </parameter>
                 <parameter name="protocolStageThreadCount">
                     <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
@@ -616,6 +619,40 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointGroup">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
@@ -654,25 +691,7 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="socketParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="blockwiseParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="notificationParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="congestionControl">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="logHealthStatus">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="endpointGroup">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

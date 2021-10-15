@@ -117,7 +117,7 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional(defaultValue= "247000")
-    @Summary(value= "The time duration (in milliseconds [ms]) between starting to send a Confirmable message to the time when an acknowledgement is no longer expected. Default values is 247000 (247 seconds).")
+    @Summary(value= "The time duration (in milliseconds [ms]) between starting to send a Confirmable message to the time when an acknowledgement is no longer expected. Default value is 247000 (247 seconds).")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @Placement(tab= "Exchange", order= 5)
@@ -130,7 +130,7 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional(defaultValue= "145000")
-    @Summary(value= "The time (in milliseconds [ms]) from sending a Non-confirmable message to the time its Message ID can be safely reused. Default values is 145000 (145 seconds).")
+    @Summary(value= "The time (in milliseconds [ms]) from sending a Non-confirmable message to the time its Message ID can be safely reused. Default value is 145000 (145 seconds).")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @Placement(tab= "Exchange", order= 6)

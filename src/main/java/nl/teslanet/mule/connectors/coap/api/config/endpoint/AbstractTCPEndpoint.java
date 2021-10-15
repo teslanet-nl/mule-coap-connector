@@ -39,7 +39,7 @@ import nl.teslanet.mule.connectors.coap.api.config.TcpParams;
  * Abstract TCP coap endpoint
  *
  */
-abstract public class TCPEndpoint extends Endpoint
+public abstract class AbstractTCPEndpoint extends AbstractEndpoint
 {
     /**
      * The tcpParams to use.
@@ -56,7 +56,7 @@ abstract public class TCPEndpoint extends Endpoint
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public TCPEndpoint()
+    public AbstractTCPEndpoint()
     {
         super();
     }
@@ -66,7 +66,7 @@ abstract public class TCPEndpoint extends Endpoint
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public TCPEndpoint( String name )
+    public AbstractTCPEndpoint( String name )
     {
         super( name );
         tcpParams= new TcpParams();

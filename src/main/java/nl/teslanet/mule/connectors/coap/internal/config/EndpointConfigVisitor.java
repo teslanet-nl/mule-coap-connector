@@ -29,7 +29,7 @@ import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -54,7 +54,7 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
      * @param toVisit the object to visit.
      */
     @Override
-    public void visit( Endpoint toVisit )
+    public void visit( AbstractEndpoint toVisit )
     {
         super.visit( toVisit );
         endpointName= toVisit.configName;

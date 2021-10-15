@@ -38,7 +38,7 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -65,7 +65,7 @@ public class GetValueVisitor implements ConfigVisitor
      * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
      */
     @Override
-    public void visit( Endpoint toVisit )
+    public void visit( AbstractEndpoint toVisit )
     {
         switch ( configParamName )
         {

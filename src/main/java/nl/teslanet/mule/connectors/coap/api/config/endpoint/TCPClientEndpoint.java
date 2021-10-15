@@ -35,7 +35,7 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
  */
 @Alias("tcp-client-endpoint")
 @TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
-public class TCPClientEndpoint extends TCPEndpoint
+public class TCPClientEndpoint extends AbstractTCPEndpoint
 {
     /**
      * Default Constructor used by Mule. 

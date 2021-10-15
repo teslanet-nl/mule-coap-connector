@@ -30,9 +30,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * Endpoint configuration
  */
-public class Endpoint
+public class AdditionalEndpoint
 {
-    @ParameterGroup( name= "Define one of the endpoint types" )
+    @ParameterGroup( name= "endpoint" )
     @Summary( value= "Endpoint configuration." )
     private EndpointGroup endpointGroup;
 
@@ -53,7 +53,7 @@ public class Endpoint
     }
 
     /**
-     * @return the endpoint that is configured.
+     * @return The endpoint that additionally has been configured.
      */
     public AbstractEndpoint getEndpoint()
     {

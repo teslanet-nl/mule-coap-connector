@@ -46,6 +46,7 @@ import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
@@ -67,7 +68,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
  */
 @Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
 @Extension(name= "CoAP", vendor= "Teslanet.nl")
-@SubTypeMapping(baseType= Endpoint.class, subTypes= {
+@SubTypeMapping(baseType= AbstractEndpoint.class, subTypes= {
     UDPEndpoint.class,
     MulticastUDPEndpoint.class,
     DTLSEndpoint.class,

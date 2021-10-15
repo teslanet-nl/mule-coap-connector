@@ -34,8 +34,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</coap:dtls-endpoint>
 
 	<coap:client-config name="config" host="127.0.0.1"
-		endpoint="Dtls_endpoint" throwExceptionOnErrorResponse="false"/>
-
+		throwExceptionOnErrorResponse="false">
+		<coap:endpoint dtlsEndpoint="Dtls_endpoint" />
+	</coap:client-config>
 
 	<flow name="get_me">
 		<coap:request config-ref="config" requestCode="GET"

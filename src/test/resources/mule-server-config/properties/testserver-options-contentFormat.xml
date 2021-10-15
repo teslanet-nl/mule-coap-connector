@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:exchange-params exchangeLifetime="1000"/>
 	</coap:udp-endpoint>
 
-	<coap:server-config name="config" endpoint="udp">
+	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
 		<coap:resources>
 			<coap:resource resourceName="service">
 				<coap:sub-resources>

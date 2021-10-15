@@ -39,8 +39,8 @@ import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
-import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.core.api.lifecycle.StartException;
+import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -52,13 +52,13 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
@@ -69,12 +69,13 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegi
  * The configuration is static, which means Mule will create one instance per
  * configuration.
  */
-@Configuration(name= "server")
-@Sources(value= { Listener.class })
-@Operations(ServerOperations.class)
+@Configuration( name= "server" )
+@Sources( value=
+{ Listener.class } )
+@Operations( ServerOperations.class )
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
-    private final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Server.class.getCanonicalName() );
 
     /**
      * The name of the server.
@@ -94,59 +95,28 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Inject
     private SchedulerConfig schedulerConfig;
 
-    // mule sdk does not seem to support a list of root level configurations
-    // @Parameter
-    // @Optional
-    // @ConfigReference(namespace = "COAP", name = "UDP_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "TCP_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "DTLS_ENDPOINT")
-    // @ConfigReference(namespace = "COAP", name = "TLS_ENDPOINT")
-    // @Expression(ExpressionSupport.NOT_SUPPORTED)
-    // @ParameterDsl(allowReferences = true, allowInlineDefinition = true)
-    // private List<Endpoint> endpoints;
-
-    // sort of workaround
+    /**
+     * Main endpoint the server uses.
+     */
     @Parameter
     @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Placement(order= 1, tab= "Endpoint")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "Main endpoint the server uses." )
+    @Placement( order= 1, tab= "Endpoint" )
     Endpoint endpoint;
 
+    /**
+     * The additional endpoints the server uses.
+     */
     @Parameter
     @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Placement(order= 1, tab= "Endpoint 1")
-    Endpoint endpoint1;
-
-    @Parameter
-    @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "MULTICAST_UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Placement(order= 1, tab= "Endpoint 2")
-    Endpoint endpoint2;
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "Additional endpoints the server uses." )
+    @Placement( order= 4, tab= "Advanced" )
+    private List< AdditionalEndpoint > additionalEndpoints;
 
     /**
      * The root resources of the server.
@@ -154,10 +124,36 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "The root resources of the server.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "The root resources of the server." )
     private List< ResourceConfig > resources;
+
+    /**
+     * Notify observing clients of shutdown of the server.
+     * When true observing clients are notified by Not-Found notifications.
+     * Default value is true.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "Notify observing clients of shutdown of the server.\nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 1, tab= "Advanced" )
+    public boolean notifyOnShutdown= true;
+
+    /**
+     * The linger time (in milliseconds [ms]) during shutdown of the server 
+     * which gives active exchanges time to complete.
+     * Default value is 250 ms.
+     */
+    @Parameter
+    @Optional( defaultValue= "250" )
+    @Summary( value= "The linger time (in milliseconds [ms]) during shutdown of the server \nwhich gives active exchanges time to complete. \nDefault value is 250 ms." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 2, tab= "Advanced" )
+    public long shutdownLinger= 250L;
 
     /**
      * Thread pool size of endpoint executor. Default value is equal to the number
@@ -165,10 +161,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Placement(tab= "Advanced")
-    @Summary("Thread pool size of endpoint executor. Default value is equal to the number of cores.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 3, tab= "Advanced" )
+    @Summary( "Thread pool size of endpoint executor. Default value is equal to the number of cores." )
     private Integer protocolStageThreadCount= null;
 
     /**
@@ -201,59 +197,62 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         catch ( InternalResourceRegistryException e1 )
         {
             throw new InitialisationException( e1, this );
-
         }
-        //workaround, Mule sdk does not support list of root-configurations
-        ArrayList< Endpoint > endpoints= new ArrayList< Endpoint >();
+        ArrayList< AbstractEndpoint > configuredEndpoints= new ArrayList<>();
+
         if ( endpoint != null )
         {
-            endpoints.add( endpoint );
+            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in main server endpoint." ), this );
+            //add main endpoint config
+            configuredEndpoints.add( endpoint.getEndpoint() );
         }
-        if ( endpoint1 != null )
-        {
-            endpoints.add( endpoint1 );
-        }
-        if ( endpoint2 != null )
-        {
-            endpoints.add( endpoint2 );
-        }
-        if ( endpoints.isEmpty() )
+        else if ( additionalEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            endpoints.add( new UDPEndpoint( this.toString() ) );
+            configuredEndpoints.add( new DefaultServerEndpoint( this.toString() + "-endpoint" ) );
+            logger.info( this + " using default udp endpoint." );
+        }
+        for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
+        {
+            if ( additionalEndpoint.getEndpoint() == null )
+                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additional server endpoint." ), this );
+            configuredEndpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
-        for ( Endpoint endpoint : endpoints )
+        for ( AbstractEndpoint configuredEndpoint : configuredEndpoints )
         {
-            if ( endpoint.configName == null )
+            if ( configuredEndpoint.configName == null )
             {
                 // inline endpoint will get this as name
-                endpoint.configName= ( this.toString() + "-" + endpointNr++ );
+                configuredEndpoint.configName= ( this.toString() + " endpont-" + endpointNr++ );
             }
             try
             {
-                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
+                OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                LOGGER.info( this + " connected to " + operationalEndpoint );
+                logger.info( this + " connected to " + operationalEndpoint );
             }
             catch ( Exception e )
             {
                 throw new InitialisationException( e, this );
             }
         }
-        LOGGER.info( this + " initalised." );
+        logger.info( this + " initalised." );
     }
 
+    /**
+     * Dispose of the server. Endpoints will be disconnected and cleaned up when needed.
+     */
     @Override
     public void dispose()
     {
         server.destroy();
         OperationalEndpoint.disposeAll( this );
-        LOGGER.info( this + " disposed." );
+        logger.info( this + " disposed." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Startable#start()
+    /**
+     * Start the server. When started the server will accept requests.
      */
     @Override
     public void start() throws MuleException
@@ -273,28 +272,40 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new StartException( e, this );
         }
-        LOGGER.info( this + " started." );
+        logger.info( this + " started." );
 
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Stoppable#stop()
+    /**
+     * Stop the server. All resources of the server will be removed and observing clients will be notified of this.
+     * After  
      */
     @Override
     public void stop() throws MuleException
     {
         try
         {
-            //stop server
+            if ( notifyOnShutdown )
+            {
+                //remove all resources from registry before stopping 
+                //to get observing clients notified of the fact that resources 
+                //are not available anymore. 
+                registry.remove( "/*" );
+            }
+            //stop server after waiting to get notifications sent.
+            Thread.sleep( shutdownLinger );
             server.stop();
-            //remove all resources from registry
-            registry.remove( "/*" );
+            if ( !notifyOnShutdown )
+            {
+                //cleanup still needed
+                registry.remove( "/*" );
+            }
         }
         catch ( Exception e )
         {
             throw new StopException( e, this );
         }
-        LOGGER.info( this + " stopped" );
+        logger.info( this + " stopped" );
     }
 
     /**
@@ -345,6 +356,22 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void setResources( List< ResourceConfig > resources )
     {
         this.resources= resources;
+    }
+
+    /**
+     * @return the endpointRefs of the server.
+     */
+    public List< AdditionalEndpoint > getAdditionalEndpoints()
+    {
+        return additionalEndpoints;
+    }
+
+    /**
+     * @param endpoints the endpoints references to set.
+     */
+    public void setAdditionalEndpoints( List< AdditionalEndpoint > endpoints )
+    {
+        this.additionalEndpoints= endpoints;
     }
 
     /**

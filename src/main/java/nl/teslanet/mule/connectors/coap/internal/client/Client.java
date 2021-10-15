@@ -69,7 +69,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
@@ -78,8 +77,8 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
@@ -105,13 +104,13 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
- * The Client is used to send requests to resources on CoAP servers and/or to observe these. 
- * The CoAP server address (host, port) configured here is default for the requests using 
- * this client. The request can override if necessary.
+ * The Client is used to issue requests to resources on CoAP servers and/or to observe these. 
+ * The CoAP server address (host, port) configured here is default and can be overridden by individual requests.
  */
-@Configuration(name= "client")
-@Sources(value= { Observer.class, ResponseHandler.class })
-@Operations(ClientOperations.class)
+@Configuration( name= "client" )
+@Sources( value=
+{ Observer.class, ResponseHandler.class } )
+@Operations( ClientOperations.class )
 public class Client implements Initialisable, Disposable, Startable, Stoppable
 {
     /**
@@ -135,20 +134,31 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private SchedulerConfig schedulerConfig;
 
     /**
-     * Endpoint configuration to use for the client.
+     * The endpoint this client uses.
      */
     @Parameter
     @Optional
-    @ConfigReference(namespace= "COAP", name= "UDP_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "DTLS_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TCP_SERVER_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_CLIENT_ENDPOINT")
-    @ConfigReference(namespace= "COAP", name= "TLS_SERVER_ENDPOINT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Placement(order= 1, tab= "Endpoint")
-    @ParameterDsl(allowReferences= true, allowInlineDefinition= true)
-    private Endpoint endpoint= null;
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
+    @Summary( value= "The endpoint the client uses." )
+    @Placement( order= 1, tab= "Endpoint" )
+    private Endpoint endpoint;
+
+    /**
+     * @return the endpoint
+     */
+    public Endpoint getEndpoint()
+    {
+        return endpoint;
+    }
+
+    /**
+     * @param endpoint the endpoint to set
+     */
+    public void setEndpoint( Endpoint endpoint )
+    {
+        this.endpoint= endpoint;
+    }
 
     /**
      * The actual URI scheme
@@ -163,8 +173,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The default hostname or ip of the server to address. Can be overridden by the host setting on operations.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The default hostname or ip of the server to address. Can be overridden by the host setting on operations." )
     private String host= null;
 
     /**
@@ -173,8 +183,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The default port the server is listening on. Can be overridden by the port setting on operations.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The default port the server is listening on. Can be overridden by the port setting on operations." )
     private Integer port= null;
 
     /**
@@ -182,9 +192,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
      */
     @Parameter
-    @Optional(defaultValue= "true")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false.")
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary(
+        "When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false."
+    )
     private boolean throwExceptionOnErrorResponse= true;
 
     /**
@@ -207,8 +219,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private ConcurrentHashMap< String, SourceCallback< InputStream, ReceivedResponseAttributes > > handlers= new ConcurrentHashMap<>();
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Startable#start()
+    /**
+     * Start the client. After starting the client is ready for issuing requests.
      */
     @Override
     public void start() throws MuleException
@@ -219,8 +231,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " started." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Stoppable#stop()
+    /**
+     * Stop the client. When stopped no more requests can be sent using this client.
      */
     @Override
     public void stop() throws MuleException
@@ -236,26 +248,33 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " stopped." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Initialisable#initialise()
+    /**
+     * Intitialise the client. The client is assigned an endpoint, which is created when needed. 
      */
     @Override
     public void initialise() throws InitialisationException
     {
+        AbstractEndpoint abstractEndpoint;
         CoAPConnector.setSchedulerService( schedulerService, schedulerConfig );
         if ( endpoint == null )
         {
             //user wants default endpoint
-            endpoint= new UDPEndpoint( this.toString() );
+            abstractEndpoint= new DefaultClientEndpoint( this.toString() + " endpoint" );
         }
-        if ( endpoint.configName == null )
+        else
+        {
+            abstractEndpoint= endpoint.getEndpoint();
+            //mule should have set the mandatory endpoint.
+            if ( abstractEndpoint == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in client endpoint." ), this );
+        }
+        if ( abstractEndpoint.configName == null )
         {
             //inline endpoint will get this as name
-            endpoint.configName= this.toString();
+            abstractEndpoint.configName= this.toString();
         }
         try
         {
-            operationalEndpoint= OperationalEndpoint.getOrCreate( this, endpoint );
+            operationalEndpoint= OperationalEndpoint.getOrCreate( this, abstractEndpoint );
         }
         catch ( EndpointConstructionException e )
         {
@@ -265,8 +284,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         LOGGER.info( this + " initialised." );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Disposable#dispose()
+    /**
+     * The client is disposed of. The client is detached from the endpoint, which will be deleted when not used anymore.
      */
     @Override
     public void dispose()
@@ -444,15 +463,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 callback.handle(
                     Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                    requestcontext );
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
             else
             {
                 callback.handle(
                     Result.< InputStream, ReceivedResponseAttributes > builder().attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build(),
-                    requestcontext );
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
         }
         else
@@ -490,7 +513,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         TypedValue< Object > requestPayload,
         boolean forcePayload,
         RequestOptions options,
-        String handlerName ) throws InternalInvalidHandlerNameException,
+        String handlerName
+    ) throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
@@ -585,12 +609,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 if ( payload != null )
                 {
                     result= Result.< InputStream, ReceivedResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length(
-                        payload.length ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                        payload.length
+                    ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
                 }
                 else
                 {
                     result= Result.< InputStream, ReceivedResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build();
                 }
             }
         }
@@ -708,7 +734,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         final String handlerName,
         final String requestUri,
         final CoAPRequestCode requestCode,
-        final SourceCallback< InputStream, ReceivedResponseAttributes > callback )
+        final SourceCallback< InputStream, ReceivedResponseAttributes > callback
+    )
     {
         final Client thisClient= this;
         final String handlerDescription= "Handler { " + thisClient.getClientName() + "::" + handlerName + " } ";
@@ -799,7 +826,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         catch ( Exception e )
         {
             throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }" );
+                "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }"
+            );
         }
         return uri;
     }
@@ -904,7 +932,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             coapClient,
             confirmable,
             uri,
-            ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler ) );
+            ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler )
+        );
         addRelation( uri, relation );
         relation.start();
     }
