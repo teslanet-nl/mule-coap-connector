@@ -36,15 +36,14 @@
 			additivity="true">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Logger name="nl.teslanet.shaded.org.eclipse" level="info"
+		<Logger name="nl.teslanet" level="warn"
             additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
-		<!-- used by connector -->
-		<Logger name="org.eclipse" level="info" additivity="false">
+		<Logger name="org.eclipse" level="warn" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Root level="info">
+		<Root level="warn">
 			<AppenderRef ref="Console" />
 		</Root>
 	</Loggers>
