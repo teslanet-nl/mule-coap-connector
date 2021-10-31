@@ -1315,7 +1315,7 @@
       <xs:complexContent>
         <xs:extension base="mule:abstractExtensionType">
           <xs:annotation>
-            <xs:documentation>The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.</xs:documentation>
+            <xs:documentation>The CoAP Server configures resources and one or more endpoints. The endpoints make the server resources available to clients.</xs:documentation>
           </xs:annotation>
           <xs:sequence minOccurs="0" maxOccurs="1">
             <xs:element minOccurs="0" maxOccurs="1" name="endpoint">

@@ -36,15 +36,19 @@
 			additivity="true">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Logger name="nl.teslanet" level="warn"
-            additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-		<Logger name="org.eclipse" level="warn" additivity="false">
-			<AppenderRef ref="Console" />
-		</Logger>
-		<Root level="warn">
-			<AppenderRef ref="Console" />
-		</Root>
-	</Loggers>
+
+        <!-- Reduce startup noise -->
+        <AsyncLogger name="com.mulesoft.mule.runtime.plugin" level="WARN"/>
+        <AsyncLogger name="org.mule.maven.client" level="WARN"/>
+        <AsyncLogger name="org.mule.runtime.core.internal.util" level="WARN"/>
+        <AsyncLogger name="org.quartz" level="WARN"/>
+        <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="WARN"/>
+
+        <!-- Mule logger -->
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
+
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="Console"/>
+        </AsyncRoot>
+    </Loggers>
 </Configuration>

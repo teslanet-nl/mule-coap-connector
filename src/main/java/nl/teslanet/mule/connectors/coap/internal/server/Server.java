@@ -67,7 +67,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegi
 
 /**
  * The CoAP Server configures resources and one or more endpoints. 
- * The resources are made available to clients through these the endpoint(s).
+ * The endpoints make the server resources available to clients.
  */
 @Configuration( name= "server" )
 @Sources( value=

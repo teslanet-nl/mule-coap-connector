@@ -41,7 +41,7 @@
             </parameters>
         </config>
         <config name="server">
-            <description><![CDATA[The Server is used to receive requests on resources from CoAP clients. The configuration is static, which means Mule will create one instance per configuration.]]></description>
+            <description><![CDATA[The CoAP Server configures resources and one or more endpoints. The endpoints make the server resources available to clients.]]></description>
             <parameters>
                 <parameter name="endpoint">
                     <description><![CDATA[Main endpoint the server uses.]]></description>

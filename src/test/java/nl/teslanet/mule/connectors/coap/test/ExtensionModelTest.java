@@ -60,7 +60,7 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
 
     private static final Logger logger= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
 
-    private static final String RESOURCE_NAME= "coap-extension-descriptions.xml";
+    private static final String descriptionPath= "schemata/coap-extension-descriptions.xml";
 
     private ExtensionDocumentationResourceGenerator resourceFactory= new ExtensionDocumentationResourceGenerator();
 
@@ -83,8 +83,8 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
     public void generate() throws Exception
     {
         GeneratedResource resource= resourceFactory.generateResource( extensionModel ).get();
-        assertEquals( resource.getPath(), RESOURCE_NAME );
-        String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( RESOURCE_NAME ).openStream() );
+        assertEquals( "schemata/" + resource.getPath(), descriptionPath );
+        String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( descriptionPath ).openStream() );
         String content= new String( resource.getContent() );
         logger.info( "\n---\n" + content + "\n---" );
         Source expectedSource= Input.from( expected ).build();
