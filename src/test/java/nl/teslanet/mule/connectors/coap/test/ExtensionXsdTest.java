@@ -51,7 +51,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 
 public class ExtensionXsdTest
 {
-    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionXsdTest.class.getCanonicalName());
+    private static final Logger logger= LoggerFactory.getLogger( ExtensionXsdTest.class.getCanonicalName());
 
     private static final String SCHEMA_PATH= "schemata/mule-coap.xsd";
 
@@ -77,7 +77,7 @@ public class ExtensionXsdTest
 
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( SCHEMA_PATH ).openStream() );
 
-        LOGGER.info( "\n---\n" + schema + "\n---" );
+        logger.info( "\n---\n" + schema + "\n---" );
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( schema ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()

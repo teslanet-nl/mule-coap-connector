@@ -32,15 +32,14 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  */
 public class InvalidResourceUriException extends ModuleException
 {
-
     /**
-     * 
+     * Serial version id.
      */
     private static final long serialVersionUID= 1L;
 
-    public InvalidResourceUriException( String Uri )
+    public InvalidResourceUriException( String uri )
     {
-        super( "CoAP resource uri { " + Uri + " } is invalid.", Errors.INVALID_RESOURCE_URI );
+        super( "CoAP resource uri { " + uri + " } is invalid.", Errors.INVALID_RESOURCE_URI );
     }
 
     public InvalidResourceUriException( String message, String uri )

@@ -39,6 +39,14 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRespo
 public class AttributeUtils
 {
     /**
+     * No instances needed.
+     */
+    private AttributeUtils()
+    {
+        //NOOP
+    }
+
+    /**
      * Translate requestCode attribute to Cf request Code.
      * @param requestCodeAttribute to convert
      * @return the converted requestCode

@@ -116,7 +116,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * Logger of the class
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( Client.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Client.class.getCanonicalName() );
 
     @RefName
     private String clientName= null;
@@ -227,8 +227,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         coapClient= new CoapClient();
         coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
-        LOGGER.info( this + " connected to " + operationalEndpoint );
-        LOGGER.info( this + " started." );
+        logger.info( this + " connected to " + operationalEndpoint );
+        logger.info( this + " started." );
     }
 
     /**
@@ -245,7 +245,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         handlers.clear();
         coapClient.shutdown();
         coapClient= null;
-        LOGGER.info( this + " stopped." );
+        logger.info( this + " stopped." );
     }
 
     /**
@@ -281,7 +281,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             throw new InitialisationException( e, this );
         }
         scheme= operationalEndpoint.getCoapEndpoint().getUri().getScheme();
-        LOGGER.info( this + " initialised." );
+        logger.info( this + " initialised." );
     }
 
     /**
@@ -292,7 +292,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         OperationalEndpoint.disposeAll( this );
         operationalEndpoint= null;
-        LOGGER.info( this + " disposed." );
+        logger.info( this + " disposed." );
     }
 
     /**
@@ -755,7 +755,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     catch ( InternalResponseException e )
                     {
                         //this should never happen
-                        LOGGER.error( handlerDescription + "cannot proces an error on asynchronous request or response", e );
+                        logger.error( handlerDescription + "cannot proces an error on asynchronous request or response", e );
                     }
                 }
 
@@ -772,7 +772,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     }
                     catch ( InternalResponseException e )
                     {
-                        LOGGER.error( handlerDescription + "cannot proces an asynchronous response", e );
+                        logger.error( handlerDescription + "cannot proces an asynchronous response", e );
                         try
                         {
                             thisClient.processMuleFlow( requestUri, requestCode, null, callback );
@@ -780,7 +780,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                         catch ( InternalResponseException e1 )
                         {
                             //this should never happen
-                            LOGGER.error( handlerDescription + "cannot proces an error on asynchronous response", e );
+                            logger.error( handlerDescription + "cannot proces an error on asynchronous response", e );
                         }
                     }
                 }

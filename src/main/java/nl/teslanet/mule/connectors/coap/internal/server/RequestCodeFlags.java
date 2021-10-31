@@ -29,13 +29,13 @@ package nl.teslanet.mule.connectors.coap.internal.server;
  */
 public class RequestCodeFlags implements Comparable< RequestCodeFlags >
 {
-    private final int GETFLAG= 0x1;
+    private static final int getFlag= 0x1;
 
-    private final int POSTFLAG= 0x2;
+    private static final int postFlag= 0x2;
 
-    private final int PUTFLAG= 0x4;
+    private static final int putFlag= 0x4;
 
-    private final int DELETEFLAG= 0x8;
+    private static final int deleteFlag= 0x8;
 
     /**
      * Bitflags indicating which request codes are active.
@@ -89,11 +89,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= GETFLAG;
+            flags|= getFlag;
         }
         else
         {
-            flags&= ~GETFLAG;
+            flags&= ~getFlag;
         }
     }
 
@@ -102,7 +102,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isGet()
     {
-        return ( flags & GETFLAG ) != 0;
+        return ( flags & getFlag ) != 0;
     }
 
     /**
@@ -110,7 +110,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotGet()
     {
-        return ( flags & GETFLAG ) == 0;
+        return ( flags & getFlag ) == 0;
     }
 
     /**
@@ -121,11 +121,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= POSTFLAG;
+            flags|= postFlag;
         }
         else
         {
-            flags&= ~POSTFLAG;
+            flags&= ~postFlag;
         }
     }
 
@@ -134,7 +134,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isPost()
     {
-        return ( flags & POSTFLAG ) != 0;
+        return ( flags & postFlag ) != 0;
     }
 
     /**
@@ -142,7 +142,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotPost()
     {
-        return ( flags & POSTFLAG ) == 0;
+        return ( flags & postFlag ) == 0;
     }
 
     /**
@@ -153,11 +153,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= PUTFLAG;
+            flags|= putFlag;
         }
         else
         {
-            flags&= ~PUTFLAG;
+            flags&= ~putFlag;
         }
     }
 
@@ -166,7 +166,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isPut()
     {
-        return ( flags & PUTFLAG ) != 0;
+        return ( flags & putFlag ) != 0;
     }
 
     /**
@@ -174,7 +174,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotPut()
     {
-        return ( flags & PUTFLAG ) == 0;
+        return ( flags & putFlag ) == 0;
     }
     
     /**
@@ -185,11 +185,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= DELETEFLAG;
+            flags|= deleteFlag;
         }
         else
         {
-            flags&= ~DELETEFLAG;
+            flags&= ~deleteFlag;
         }
     }
 
@@ -198,7 +198,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isDelete()
     {
-        return ( flags & DELETEFLAG ) != 0;
+        return ( flags & deleteFlag ) != 0;
     }
 
     /**
@@ -206,7 +206,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotDelete()
     {
-        return ( flags & DELETEFLAG ) == 0;
+        return ( flags & deleteFlag ) == 0;
     }
     
     /**
@@ -255,7 +255,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     @Override
     public String toString()
     {
-        StringBuffer bfr= new StringBuffer();
+        StringBuilder  bfr= new StringBuilder ();
         bfr.append( "RequestCodeFlags[ " );
         bfr.append( isGet() ? "GET" : "get" );
         bfr.append( " " );

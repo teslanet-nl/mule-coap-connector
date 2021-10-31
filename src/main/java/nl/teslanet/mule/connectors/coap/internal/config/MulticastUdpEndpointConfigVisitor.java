@@ -37,6 +37,7 @@ import org.eclipse.californium.elements.UdpMulticastConnector;
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
+import nl.teslanet.mule.connectors.coap.internal.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -123,7 +124,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             catch ( SocketException e )
             {
                 throw new EndpointConstructionException(
-                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
+                    Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
                     e );
             }
         }
@@ -136,7 +137,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             catch ( UnknownHostException e )
             {
                 throw new EndpointConstructionException(
-                    "CoAP Endpoint { " + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
+                    Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
                     e );
             }
         }
@@ -158,7 +159,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                     catch ( SocketException e )
                     {
                         throw new EndpointConstructionException(
-                            "CoAP Endpoint { " + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
+                            Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
                             e );
                     }
                 }
@@ -169,7 +170,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                 }
                 catch ( UnknownHostException e )
                 {
-                    throw new EndpointConstructionException( "CoAP Endpoint { " + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.", e );
+                    throw new EndpointConstructionException( Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.", e );
                 }
                 connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
             }

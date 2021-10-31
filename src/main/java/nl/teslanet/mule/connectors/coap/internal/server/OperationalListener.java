@@ -104,7 +104,7 @@ public class OperationalListener
         if ( !this.uriPattern.startsWith( Defs.COAP_URI_PATHSEP ) )
         {
             this.uriPattern= Defs.COAP_URI_PATHSEP + this.uriPattern;
-        } ;
+        }
         int wildcardIndex= this.uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
         if ( wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1 )
             throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character." );

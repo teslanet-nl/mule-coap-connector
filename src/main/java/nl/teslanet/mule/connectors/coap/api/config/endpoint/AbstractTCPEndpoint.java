@@ -56,7 +56,7 @@ public abstract class AbstractTCPEndpoint extends AbstractEndpoint
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public AbstractTCPEndpoint()
+    protected AbstractTCPEndpoint()
     {
         super();
     }
@@ -66,7 +66,7 @@ public abstract class AbstractTCPEndpoint extends AbstractEndpoint
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public AbstractTCPEndpoint( String name )
+    protected AbstractTCPEndpoint( String name )
     {
         super( name );
         tcpParams= new TcpParams();

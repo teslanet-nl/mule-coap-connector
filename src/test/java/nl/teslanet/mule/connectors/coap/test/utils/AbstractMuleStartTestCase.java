@@ -103,7 +103,7 @@ import org.slf4j.Logger;
 @SuppressWarnings("deprecation")
 public abstract class AbstractMuleStartTestCase
 {
-    private static final Logger LOGGER= getLogger( AbstractMuleStartTestCase.class.getCanonicalName() );
+    private static final Logger logger= getLogger( AbstractMuleStartTestCase.class.getCanonicalName() );
 
     /**
      * As part of providing support for handling different artifacts without unzipping them, the factory for URL must be registered
@@ -357,7 +357,7 @@ public abstract class AbstractMuleStartTestCase
                 MuleContextBuilder contextBuilder= MuleContextBuilder.builder( APP );
                 DefaultMuleConfiguration muleConfiguration= new DefaultMuleConfiguration();
                 String workingDirectory= this.workingDirectory.getRoot().getAbsolutePath();
-                LOGGER.info( "Using working directory for test: " + workingDirectory );
+                logger.info( "Using working directory for test: " + workingDirectory );
                 muleConfiguration.setWorkingDirectory( workingDirectory );
                 muleConfiguration.setId( this.getClass().getSimpleName() + "#" + name.getMethodName() );
                 contextBuilder.setMuleConfiguration( muleConfiguration );
@@ -513,7 +513,7 @@ public abstract class AbstractMuleStartTestCase
                 catch ( IllegalStateException e )
                 {
                     // Ignore
-                    LOGGER.warn( e + " : " + e.getMessage() );
+                    logger.warn( e + " : " + e.getMessage() );
                 }
 
                 verifyAndStopSchedulers();

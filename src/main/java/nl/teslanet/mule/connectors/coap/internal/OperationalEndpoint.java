@@ -71,7 +71,7 @@ public final class OperationalEndpoint
     /**
      * registry of operational endpoints
      */
-    static final Map< String, OperationalEndpoint > registry= Collections.synchronizedMap( new HashMap< String, OperationalEndpoint >() );
+    private static final Map< String, OperationalEndpoint > registry= Collections.synchronizedMap( new HashMap<>() );
 
     /**
      * COnfigured name of the endpoint
@@ -134,7 +134,7 @@ public final class OperationalEndpoint
         }
         else
         {
-            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
+            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
         }
         if ( config.logCoapMessages )
         {
@@ -150,7 +150,7 @@ public final class OperationalEndpoint
      * @return the operational endpoint
      * @throws EndpointConstructionException when endpoint cannot be created or used
      */
-    public synchronized static OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config ) throws EndpointConstructionException
+    public static synchronized OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
 
@@ -158,13 +158,10 @@ public final class OperationalEndpoint
         {
             // endpoint already created
             operationalEndpoint= registry.get( config.configName );
-            if ( server != null && operationalEndpoint.server != null )
+            // endpoint must match, multiple server usage of the endpoint is not allowed
+            if ( server != null && operationalEndpoint.server != null && server != operationalEndpoint.server )
             {
-                //multiple server usage of the endpoint is not allowed
-                if ( server != operationalEndpoint.server )
-                {
-                    throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: usage by multiple servers not allowed." );
-                }
+                throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: usage by multiple servers not allowed." );
             }
             operationalEndpoint.server= server;
             return operationalEndpoint;
@@ -183,12 +180,12 @@ public final class OperationalEndpoint
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
      * @throws EndpointConstructionException When client parameter is empty
      */
-    public synchronized static OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config ) throws EndpointConstructionException
+    public static synchronized OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
         {
-            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " }: no client configured." );
+            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: no client configured." );
         }
         if ( registry.containsKey( config.configName ) )
         {
@@ -211,7 +208,7 @@ public final class OperationalEndpoint
      */
     public static List< String > find( Server server )
     {
-        ArrayList< String > found= new ArrayList< String >();
+        ArrayList< String > found= new ArrayList<>();
         for ( Entry< String, OperationalEndpoint > entry : registry.entrySet() )
         {
             if ( entry.getValue().server == server )
@@ -229,7 +226,7 @@ public final class OperationalEndpoint
      */
     public static List< String > find( Client client )
     {
-        ArrayList< String > found= new ArrayList< String >();
+        ArrayList< String > found= new ArrayList<>();
         for ( Entry< String, OperationalEndpoint > entry : registry.entrySet() )
         {
             if ( entry.getValue().clients.contains( client ) )
@@ -245,7 +242,7 @@ public final class OperationalEndpoint
      * The endpoint will only be destroyed when not in use by any client
      * @param server The server instance.
      */
-    public synchronized static void disposeAll( Server server )
+    public static synchronized void disposeAll( Server server )
     {
         List< String > names= find( server );
         for ( String endpointName : names )
@@ -269,7 +266,7 @@ public final class OperationalEndpoint
      * De endpoint is only destroyed when not in use by any client
      * @param client the client instance.
      */
-    public synchronized static void disposeAll( Client client )
+    public static synchronized void disposeAll( Client client )
     {
         List< String > names= find( client );
         for ( String endpointName : names )
@@ -337,9 +334,9 @@ public final class OperationalEndpoint
      * Constructor for an operational Multicast UDP endpoint.
      * @param config the Multicast UDP endpoint configuration
      * @throws EndpointConstructionException When the endpoint could not be constructed.
-
+    
      */
-    private OperationalEndpoint( MulticastUDPEndpoint config ) throws EndpointConstructionException 
+    private OperationalEndpoint( MulticastUDPEndpoint config ) throws EndpointConstructionException
     {
         MulticastUdpEndpointConfigVisitor visitor= new MulticastUdpEndpointConfigVisitor();
         config.accept( visitor );
@@ -371,12 +368,14 @@ public final class OperationalEndpoint
                 streamFactory.getScheme() + config.encryptionParams.keyStoreLocation,
                 config.encryptionParams.privateKeyAlias,
                 ( config.encryptionParams.keyStorePassword != null ? config.encryptionParams.keyStorePassword.toCharArray() : null ),
-                ( config.encryptionParams.privateKeyPassword != null ? config.encryptionParams.privateKeyPassword.toCharArray() : null ) );
+                ( config.encryptionParams.privateKeyPassword != null ? config.encryptionParams.privateKeyPassword.toCharArray() : null )
+            );
             //load trust store
             Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
                 streamFactory.getScheme() + config.encryptionParams.trustStoreLocation,
                 config.encryptionParams.trustedRootCertificateAlias,
-                ( config.encryptionParams.trustStorePassword != null ? config.encryptionParams.trustStorePassword.toCharArray() : null ) );
+                ( config.encryptionParams.trustStorePassword != null ? config.encryptionParams.trustStorePassword.toCharArray() : null )
+            );
 
             verifierBuilder.setTrustedCertificates( trustedCertificates );
             DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
@@ -396,28 +395,28 @@ public final class OperationalEndpoint
         }
         catch ( Exception e )
         {
-            throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } construction DTLS Endpoint failed.", e );
+            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } construction DTLS Endpoint failed.", e );
         }
     }
 
     private OperationalEndpoint( TCPServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TCP Server Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TCP Server Endpoint NIY." );
     }
 
     private OperationalEndpoint( TCPClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TCP Client Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TCP Client Endpoint NIY." );
     }
 
     private OperationalEndpoint( TLSServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TLS Server Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TLS Server Endpoint NIY." );
     }
 
     private OperationalEndpoint( TLSClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( "CoAP Endpoint { " + config.configName + " } TLS Client Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TLS Client Endpoint NIY." );
     }
 
     /**
@@ -446,6 +445,6 @@ public final class OperationalEndpoint
      */
     public String toString()
     {
-        return "CoAP Endpoint { " + configName + " }";
+        return Defs.endpointMsgPrefix + configName + " }";
     }
 }

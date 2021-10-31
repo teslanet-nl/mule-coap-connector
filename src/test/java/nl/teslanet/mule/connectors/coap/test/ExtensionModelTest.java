@@ -58,7 +58,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
 {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
 
     private static final String RESOURCE_NAME= "coap-extension-descriptions.xml";
 
@@ -86,7 +86,7 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
         assertEquals( resource.getPath(), RESOURCE_NAME );
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( RESOURCE_NAME ).openStream() );
         String content= new String( resource.getContent() );
-        LOGGER.info( "\n---\n" + content + "\n---" );
+        logger.info( "\n---\n" + content + "\n---" );
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( content ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()

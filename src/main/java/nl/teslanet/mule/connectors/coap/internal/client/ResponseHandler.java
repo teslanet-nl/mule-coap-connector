@@ -52,7 +52,7 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
     /**
      * The logger of this class.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( ResponseHandler.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( ResponseHandler.class.getCanonicalName() );
 
     /**
      * The client that owns the handler.
@@ -81,7 +81,7 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
         {
             throw new StartException( this + " failed to start, invalid handler name.", e );
         }
-        LOGGER.info( this + " started." );
+        logger.info( this + " started." );
     }
 
     /* (non-Javadoc)
@@ -91,7 +91,7 @@ public class ResponseHandler extends Source< InputStream, ReceivedResponseAttrib
     public void onStop()
     {
         client.removeHandler( handlerName );
-        LOGGER.info( this + " stopped." );
+        logger.info( this + " stopped." );
 
     }
 

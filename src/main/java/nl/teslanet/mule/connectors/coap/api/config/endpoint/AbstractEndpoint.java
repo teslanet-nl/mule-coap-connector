@@ -127,7 +127,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public AbstractEndpoint()
+    protected AbstractEndpoint()
     {
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public AbstractEndpoint( String name )
+    protected AbstractEndpoint( String name )
     {
         configName= name;
         //initialise nullsafe params

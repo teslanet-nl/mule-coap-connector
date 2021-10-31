@@ -32,12 +32,11 @@ import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
  */
 public interface MidTracker extends VisitableConfig
 {
-
     /**
      * @return the name of the Midtracker algoritm
      */
     default String name()
     {
         return this.getClass().getSimpleName();
-    };
+    }
 }

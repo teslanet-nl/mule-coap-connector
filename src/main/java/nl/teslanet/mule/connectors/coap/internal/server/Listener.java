@@ -77,7 +77,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
 public class Listener extends Source< InputStream, ReceivedRequestAttributes >
 {
-    private static final Logger LOGGER= LoggerFactory.getLogger( Listener.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Listener.class.getCanonicalName() );
 
     @Config
     private Server server;
@@ -145,7 +145,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
             new DefaultMuleException( this + " start failed.", e );
         }
         server.addListener( operationalListener );
-        LOGGER.info( this + " started." );
+        logger.info( this + " started." );
     }
 
     @OnSuccess
@@ -205,7 +205,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         server.removeListener( operationalListener );
         operationalListener= null;
-        LOGGER.info( this + " stopped." );
+        logger.info( this + " stopped." );
     }
 
     /**
@@ -216,14 +216,6 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     {
         return server;
     }
-
-    /**
-     * @param config the config to set
-     */
-    //    public void setServer( Server config )
-    //    {
-    //        this.server= server;
-    //    }
 
     /**
      * Gets the uriPattern describing the resources the listener listens on.

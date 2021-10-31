@@ -41,7 +41,7 @@ public class RequestErrorProvider implements ErrorTypeProvider
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings( "rawtypes" )
     @Override
     public Set< ErrorTypeDefinition > getErrorTypes()
     {

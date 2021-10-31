@@ -35,6 +35,14 @@ import org.mule.runtime.api.metadata.MediaType;
 public class MediaTypeMediator
 {
     /**
+     * No instances needed.
+     */
+    private MediaTypeMediator()
+    {
+        //NOOP
+    }
+
+    /**
      * Convert CoAP content format to Mule MediaType.
      * @param coapContentFormat the content format to convert
      * @return the converted MediaType, ANY when no conversion is found

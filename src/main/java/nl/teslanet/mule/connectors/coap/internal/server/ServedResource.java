@@ -81,7 +81,7 @@ public class ServedResource extends CoapResource
     /**
      * Flag that indicates whether the resource should acknowledge before processing the request.
      */
-    private Boolean earlyAck= false;
+    private boolean earlyAck= false;
 
     /**
      * Constuctor that creates a ServedResource object according to given configuration.
@@ -116,21 +116,21 @@ public class ServedResource extends CoapResource
             if ( resource.getCoreInfoConfig().getTitle() != null )
             {
                 getAttributes().setTitle( resource.getCoreInfoConfig().getTitle() );
-            } ;
+            }
             if ( resource.getCoreInfoConfig().getRt() != null )
             {
                 for ( String rt : resource.getCoreInfoConfig().getRt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
-            } ;
+            }
             if ( resource.getCoreInfoConfig().getIfdesc() != null )
             {
                 for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
-            } ;
+            }
             if ( resource.getCoreInfoConfig().getCt() != null )
             {
                 for ( String ct : resource.getCoreInfoConfig().getCt().split( "\\s*,\\s*" ) )
@@ -188,21 +188,21 @@ public class ServedResource extends CoapResource
             if ( resource.getInfo().getTitle() != null )
             {
                 getAttributes().setTitle( resource.getInfo().getTitle() );
-            } ;
+            }
             if ( resource.getInfo().getRt() != null )
             {
                 for ( String rt : resource.getInfo().getRt().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
-            } ;
+            }
             if ( resource.getInfo().getIfdesc() != null )
             {
                 for ( String ifdesc : resource.getInfo().getIfdesc().split( "\\s*,\\s*" ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
-            } ;
+            }
             if ( resource.getInfo().getCt() != null )
             {
                 for ( String ct : resource.getInfo().getCt().split( "\\s*,\\s*" ) )
@@ -324,15 +324,19 @@ public class ServedResource extends CoapResource
         {
             callback.handle(
                 Result.< InputStream, ReceivedRequestAttributes > builder().output( new ByteArrayInputStream( requestPayload ) ).length( requestPayload.length ).attributes(
-                    requestAttributes ).mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
-                requestcontext );
+                    requestAttributes
+                ).mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
+                requestcontext
+            );
         }
         else
         {
             callback.handle(
                 Result.< InputStream, ReceivedRequestAttributes > builder().attributes( requestAttributes ).output( null ).mediaType(
-                    MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
-                requestcontext );
+                    MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() )
+                ).build(),
+                requestcontext
+            );
         }
 
     }

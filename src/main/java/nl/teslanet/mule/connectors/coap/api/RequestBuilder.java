@@ -59,10 +59,8 @@ public class RequestBuilder
      */
     @Parameter
     @Expression(ExpressionSupport.SUPPORTED)
-    //@OfValues(RequestCodeValueProvider.class)
     @Example(value= "GET")
     @Summary("The CoAP request code specifying the requested action on the resource on the server.")
-    //private String requestCode;
     private CoAPRequestCode requestCode;
 
     @Parameter

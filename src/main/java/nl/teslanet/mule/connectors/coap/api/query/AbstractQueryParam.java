@@ -37,12 +37,12 @@ public abstract class AbstractQueryParam
     /**
      * @return the key of the query parameter.
      */
-    abstract public String getKey();
+    public abstract String getKey();
 
     /**
      * @return the value of the query parameter.
      */
-    abstract public String getValue();
+    public abstract String getValue();
 
     /**
      * @return {@code true} when parameter has a key that is not empty, otherwise {@code false}.
@@ -57,7 +57,7 @@ public abstract class AbstractQueryParam
      */
     public boolean hasValue()
     {
-        return( getValue() != null && !getValue().isEmpty());
+        return( getValue() != null && !getValue().isEmpty() );
     }
 
     /* (non-Javadoc)

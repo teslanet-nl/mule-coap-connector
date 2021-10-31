@@ -83,7 +83,7 @@
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_unary_operator" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.format_line_comment_starting_on_first_column" value="true"/>
         <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_annotation" value="separate_lines_if_wrapped"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_ellipsis" value="do not insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_ellipsis" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_semicolon_in_try_resources" value="do not insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_colon_in_assert" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_enum_constant" value="49"/>

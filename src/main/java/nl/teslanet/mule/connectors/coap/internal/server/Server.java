@@ -50,6 +50,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.slf4j.Logger;
@@ -65,9 +66,8 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegi
 
 
 /**
- * The Server is used to receive requests on resources from CoAP clients.
- * The configuration is static, which means Mule will create one instance per
- * configuration.
+ * The CoAP Server configures resources and one or more endpoints. 
+ * The resources are made available to clients through these the endpoint(s).
  */
 @Configuration( name= "server" )
 @Sources( value=
@@ -139,6 +139,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Summary( value= "Notify observing clients of shutdown of the server.\nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
+    @DisplayName(value= "Notify observing clients on shutdown")
     @Placement( order= 1, tab= "Advanced" )
     public boolean notifyOnShutdown= true;
 
@@ -170,7 +171,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     /**
      * The Californium CoAP server instance.
      */
-    private CoapServer server= null;
+    private CoapServer coapServer= null;
 
     /**
      * The registry of resources and listeners. 
@@ -189,10 +190,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             networkConfig.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
         }
-        server= new CoapServer( networkConfig );
+        coapServer= new CoapServer( networkConfig );
         try
         {
-            registry= new ResourceRegistry( server.getRoot() );
+            registry= new ResourceRegistry( coapServer.getRoot() );
         }
         catch ( InternalResourceRegistryException e1 )
         {
@@ -229,7 +230,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             try
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
-                server.addEndpoint( operationalEndpoint.getCoapEndpoint() );
+                coapServer.addEndpoint( operationalEndpoint.getCoapEndpoint() );
                 logger.info( this + " connected to " + operationalEndpoint );
             }
             catch ( Exception e )
@@ -246,7 +247,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void dispose()
     {
-        server.destroy();
+        coapServer.destroy();
         OperationalEndpoint.disposeAll( this );
         logger.info( this + " disposed." );
     }
@@ -265,7 +266,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 {
                     registry.add( null, resourceConfig );
                 }
-                server.start();
+                coapServer.start();
             }
         }
         catch ( Exception e )
@@ -294,7 +295,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             }
             //stop server after waiting to get notifications sent.
             Thread.sleep( shutdownLinger );
-            server.stop();
+            coapServer.stop();
             if ( !notifyOnShutdown )
             {
                 //cleanup still needed

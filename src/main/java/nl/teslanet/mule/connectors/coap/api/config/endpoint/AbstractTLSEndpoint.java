@@ -66,7 +66,7 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public AbstractTLSEndpoint()
+    protected AbstractTLSEndpoint()
     {
         super();
     }
@@ -76,7 +76,7 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
      * (Mule uses default constructor and sets Nullsafe params.)
      * @param name the manually set name of the endpoint
      */
-    public AbstractTLSEndpoint( String name )
+    protected AbstractTLSEndpoint( String name )
     {
         super( name );
         tlsParams= new TlsParams();

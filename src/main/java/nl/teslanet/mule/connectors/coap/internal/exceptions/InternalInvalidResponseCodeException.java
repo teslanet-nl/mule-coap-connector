@@ -22,9 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
+
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+
 
 /**
  *  Exception that is thrown when an invalid response code is used.
@@ -33,7 +35,17 @@ public class InternalInvalidResponseCodeException extends Exception
 {
 
     /**
-     * serial version id
+     * Exception message prefix.
+     */
+    private static final String msgPrefix= "Invalid response code { ";
+
+    /**
+     * Exception message postfix.
+     */
+    private static final String msgPostfix= " }";
+
+    /**
+     * serial version id.
      */
     private static final long serialVersionUID= 1L;
 
@@ -43,16 +55,16 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( String responseCodeString )
     {
-        super( "Invalid response code { " + responseCodeString + " }" );
+        super( msgPrefix + responseCodeString + msgPostfix );
     }
-    
+
     /**
      * Construct exception with given 
      * @param responseCode
      */
     public InternalInvalidResponseCodeException( ResponseCode responseCode )
     {
-        super( "Invalid response code { " + responseCode.name() + " / " + responseCode.text + " }" );
+        super( msgPrefix + responseCode.name() + " / " + responseCode.text + msgPostfix );
     }
 
     /**
@@ -61,6 +73,6 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( CoAPResponseCode reponseCodeAttribute )
     {
-        super( "Invalid response code { " + reponseCodeAttribute.name() + " }" );
+        super( msgPrefix + reponseCodeAttribute.name() + msgPostfix );
     }
 }

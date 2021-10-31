@@ -62,7 +62,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
     /**
      * The logger.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( Observer.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Observer.class.getCanonicalName() );
 
     /**
      * The client owning the observer.
@@ -169,7 +169,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
             relation.stop();
             relation= null;
         }
-        LOGGER.info( this + " stopped." );
+        logger.info( this + " stopped." );
     }
     
     /**

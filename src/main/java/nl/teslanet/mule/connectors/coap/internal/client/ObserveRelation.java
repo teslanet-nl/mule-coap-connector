@@ -45,7 +45,7 @@ public class ObserveRelation implements CoapHandler
     /**
      * The logger.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( ObserveRelation.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( ObserveRelation.class.getCanonicalName() );
 
     /**
      * 
@@ -140,7 +140,7 @@ public class ObserveRelation implements CoapHandler
     public void start()
     {
         coapRelation= sendObserveRequest();
-        LOGGER.info( this + " started." );
+        logger.info( this + " started." );
     }
 
     /**
@@ -150,7 +150,7 @@ public class ObserveRelation implements CoapHandler
     {
         coapRelation.proactiveCancel();
         coapRelation= null;
-        LOGGER.info( this + " stopped." );
+        logger.info( this + " stopped." );
     }
 
     /**
@@ -159,7 +159,7 @@ public class ObserveRelation implements CoapHandler
     @Override
     public void onError()
     {
-        LOGGER.warn( logMessageFailed );
+        logger.warn( logMessageFailed );
         if ( coapRelation != null )
         {
             //TODO wait time?
@@ -168,22 +168,22 @@ public class ObserveRelation implements CoapHandler
                 coapRelation= sendObserveRequest();
                 if ( coapRelation != null )
                 {
-                    LOGGER.info( logMessageRecreated );
+                    logger.info( logMessageRecreated );
                 }
                 else
                 {
-                    LOGGER.error( logMessageRecreatedFailed );
+                    logger.error( logMessageRecreatedFailed );
                 }
             }
             else
             {
                 if ( coapRelation.reregister() )
                 {
-                    LOGGER.info( logMessageReregistered );
+                    logger.info( logMessageReregistered );
                 }
                 else
                 {
-                    LOGGER.error( logMessageReregisterFailed );
+                    logger.error( logMessageReregisterFailed );
 
                 }
             }
@@ -194,7 +194,7 @@ public class ObserveRelation implements CoapHandler
         }
         catch ( InternalResponseException e )
         {
-            LOGGER.error( logMessageErrorProcessingFailed, e );
+            logger.error( logMessageErrorProcessingFailed, e );
         }
     }
 
@@ -210,7 +210,7 @@ public class ObserveRelation implements CoapHandler
         }
         catch ( InternalResponseException e )
         {
-            LOGGER.error( logMessageProcessingFailed, e );
+            logger.error( logMessageProcessingFailed, e );
         }
     }
 

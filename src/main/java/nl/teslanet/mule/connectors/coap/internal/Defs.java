@@ -41,6 +41,7 @@ public class Defs
 
     public static final String COAP_URI_ROOTRESOURCE= "";
 
+    public static final String endpointMsgPrefix= "CoAP Endpoint { ";
     /**
      * No need to instantiate.
      */

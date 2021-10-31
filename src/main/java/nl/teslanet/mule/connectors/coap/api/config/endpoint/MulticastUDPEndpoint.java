@@ -34,7 +34,6 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 
@@ -43,7 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
  * UDP endpoint that can receive coap multi-cast messages.
  *
  */
-@TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
+@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
 public class MulticastUDPEndpoint extends UDPEndpoint
 {
     /**
@@ -52,11 +51,11 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "Parameters for multi-cast communication.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( value= "Parameters for multi-cast communication." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public MulticastParams multicastParams;
-    
+
     /**
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
@@ -74,7 +73,7 @@ public class MulticastUDPEndpoint extends UDPEndpoint
     public MulticastUDPEndpoint( String name )
     {
         super( name );
-        multicastParams= new MulticastParams( new CopyOnWriteArrayList< MulticastGroupConfig >());
+        multicastParams= new MulticastParams( new CopyOnWriteArrayList<>() );
     }
 
     /* (non-Javadoc)

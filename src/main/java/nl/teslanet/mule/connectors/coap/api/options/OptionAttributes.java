@@ -110,7 +110,7 @@ public class OptionAttributes
     /**
      * The other CoAP options received.
      */
-    private MultiMap< String, Object > otherOptions= new MultiMap< String, Object >();
+    private MultiMap< String, Object > otherOptions= new MultiMap<>();
 
     /**
      * @return the ifMatch list
@@ -508,7 +508,7 @@ public class OptionAttributes
     {
         this.otherOptions.put( optionNr, value );
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

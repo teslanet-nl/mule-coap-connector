@@ -32,9 +32,11 @@ import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
  */
 public interface CongestionControl extends VisitableConfig
 {
-
+    /**
+     * @return The name of the congestion control.
+     */
     public default String name()
     {
         return this.getClass().getSimpleName();
-    };
+    }
 }

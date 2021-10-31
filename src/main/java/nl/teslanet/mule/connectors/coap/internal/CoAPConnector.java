@@ -44,9 +44,8 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
@@ -87,7 +86,7 @@ public class CoAPConnector
     /**
      * The logger.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( CoAPConnector.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( CoAPConnector.class );
 
     /**
      * The Scheduler service.
@@ -108,6 +107,14 @@ public class CoAPConnector
      * The CPU Light scheduler.
      */
     private static Scheduler lightScheduler= null;
+    
+    /**
+     * No instances needed.
+     */
+    private CoAPConnector()
+    {
+        //NOOP
+    }
 
     /**
      * Set the IO scheduler supplied by Mule.
@@ -118,7 +125,7 @@ public class CoAPConnector
         {
             schedulerService= schedulerServiceCandidate;
             schedulerConfig= schedulerConfigCandidate;
-            LOGGER.info( "CoAP schedulerService registered" );
+            logger.info( "CoAP schedulerService registered" );
         }
     }
 
@@ -131,7 +138,7 @@ public class CoAPConnector
         if ( ioScheduler == null )
         {
             ioScheduler= schedulerService.ioScheduler( schedulerConfig.withName( "CoAP IO scheduler" ) );
-            LOGGER.info( "CoAP IO scheduler is started" );
+            logger.info( "CoAP IO scheduler is started" );
         }
         return ioScheduler;
     }
@@ -145,7 +152,7 @@ public class CoAPConnector
         if ( lightScheduler == null )
         {
             lightScheduler= schedulerService.cpuLightScheduler( schedulerConfig.withName( "CoAP Light scheduler" ) );
-            LOGGER.info( "CoAP CPU Light scheduler is started" );
+            logger.info( "CoAP CPU Light scheduler is started" );
         }
         return lightScheduler;
     }
@@ -159,7 +166,7 @@ public class CoAPConnector
         {
             ioScheduler.stop();
             ioScheduler= null;
-            LOGGER.info( "CoAP IO scheduler is stopped" );
+            logger.info( "CoAP IO scheduler is stopped" );
         }
     }
 
@@ -172,7 +179,7 @@ public class CoAPConnector
         {
             lightScheduler.stop();
             lightScheduler= null;
-            LOGGER.info( "CoAP CPU Light scheduler is stopped" );
+            logger.info( "CoAP CPU Light scheduler is stopped" );
         }
     }
 }

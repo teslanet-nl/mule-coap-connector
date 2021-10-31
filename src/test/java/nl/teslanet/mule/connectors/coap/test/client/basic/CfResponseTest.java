@@ -52,7 +52,7 @@ import org.eclipse.californium.core.network.interceptors.MessageTracer;
  */
 public class CfResponseTest
 {
-    private static final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( CfResponseTest.class.getCanonicalName() );
    /**
      * Server to get test responses.
      */
@@ -174,14 +174,14 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    LOGGER.info( "onLoad called" );
+                    logger.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    LOGGER.info( "onLoad called" );
+                    logger.info( "onLoad called" );
                 }
             };
 
@@ -219,14 +219,14 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    LOGGER.info( "onLoad called" );
+                    logger.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    LOGGER.info( "onLoad called" );
+                    logger.info( "onLoad called" );
                 }
             };
 
@@ -263,14 +263,14 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    LOGGER.info( "onLoad called" );
+                    logger.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    LOGGER.info( "onError called" );
+                    logger.info( "onError called" );
                 }
             };
         

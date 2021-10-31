@@ -125,7 +125,6 @@ public class ResponseOptions
     @Summary("The Location-Path specifies the absolute path to a resource that is created.")
     @Example("/some/location/on/server")
     private String locationPath= null;
-    // private List< String > locationPathList= null;
 
     /**
      * RFC 7252: The Location-Path and Location-Query Options together indicate a
@@ -148,7 +147,6 @@ public class ResponseOptions
     @Summary("The Location-Query specifies the arguments parameterizing the resource that is created.")
     @Example("someparam&param1=1&param2=2")
     private String locationQuery= null;
-    // private List< String > locationQueryList= null;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE

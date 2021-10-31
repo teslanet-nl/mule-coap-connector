@@ -89,7 +89,7 @@ public class MessageUtils
     public static void copyOptions( OptionSet optionSet, OptionAttributes attributes ) throws InternalInvalidOptionValueException
     {
         String errorMsg= "cannot create attribute";
-        // List<byte[]> if_match_list;
+
         if ( !optionSet.getIfMatch().isEmpty() )
         {
             try
@@ -519,7 +519,7 @@ public class MessageUtils
     private static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
     {
         Object object= TypedValue.unwrap( typedValue );
-        LinkedList< ETag > list= new LinkedList< ETag >();
+        LinkedList< ETag > list= new LinkedList<>();
 
         if ( object == null )
         {
@@ -529,7 +529,7 @@ public class MessageUtils
         {
             for ( Object item : (Collection< ? >) object )
             {
-                list.add( toETag( new TypedValue< Object >( item, null ) ) );
+                list.add( toETag( new TypedValue<>( item, null ) ) );
             }
         }
         else

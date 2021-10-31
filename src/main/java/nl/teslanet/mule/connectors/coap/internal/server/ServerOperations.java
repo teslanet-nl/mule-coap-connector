@@ -56,11 +56,14 @@ public class ServerOperations
      * @param pathPattern The path pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".
      * @throws InvalidResourceUriException Thrown when given uri pattern is invalid.
      */
-    @Throws({ ServerOperationErrorProvider.class })
-    public void notify(
-        @Config Server server,
-        @Alias("pathPattern") @Summary("For resources that apply to the path-pattern notifications are issued.") @Example("/my_resources/*") String pathPattern )
-        throws InvalidResourceUriException
+    @Throws( { ServerOperationErrorProvider.class } )
+    public void notify( @Config
+    Server server,
+        @Alias( "pathPattern" )
+        @Summary( "For resources that apply to the path-pattern notifications are issued." )
+        @Example( "/my_resources/*" )
+        String pathPattern
+    ) throws InvalidResourceUriException
     {
         if ( pathPattern == null )
         {
@@ -82,8 +85,10 @@ public class ServerOperations
      * @param resourceBuilder The builder that delivers the resource parameters.
      * @throws InvalidResourceUriException When the uri has invalid value.
      */
-    @Throws({ ServerOperationErrorProvider.class })
-    public void resourceAdd( @Config Server server, @ParameterGroup(name= "Resource to add") ResourceBuilder resourceBuilder ) throws InvalidResourceUriException
+    @Throws( { ServerOperationErrorProvider.class } )
+    public void resourceAdd( @Config
+    Server server, @ParameterGroup( name= "Resource to add" )
+    ResourceBuilder resourceBuilder ) throws InvalidResourceUriException
     {
         if ( resourceBuilder.getResourcePath() == null )
         {
@@ -113,10 +118,14 @@ public class ServerOperations
      * @param pathPattern The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*". 
      * @throws InvalidResourceUriException Thrown when given uri pattern is not valid.
      */
-    @Throws({ ServerOperationErrorProvider.class })
-    public void resourceRemove(
-        @Config Server server,
-        @Alias("pathPattern") @Summary("Resources that apply to the path-pattern are removed.") @Example("/resources/*") String pathPattern ) throws InvalidResourceUriException
+    @Throws( { ServerOperationErrorProvider.class } )
+    public void resourceRemove( @Config
+    Server server,
+        @Alias( "pathPattern" )
+        @Summary( "Resources that apply to the path-pattern are removed." )
+        @Example( "/resources/*" )
+        String pathPattern
+    ) throws InvalidResourceUriException
     {
         if ( pathPattern == null )
         {
@@ -133,11 +142,14 @@ public class ServerOperations
      * @return {@code True} when at least one resource is found to which the pattern applies, otherwise {@code False}. 
      * @throws InvalidResourceUriException When given resource uri is not valid
      */
-    @Throws({ ServerOperationErrorProvider.class })
-    public Boolean resourceExists(
-        @Config Server server,
-        @Alias("pathPattern") @Summary("If any resources that apply to the path-pattern exist true is retuned, otherwise false.") @Example("/resources/*") String pathPattern )
-        throws InvalidResourceUriException
+    @Throws( { ServerOperationErrorProvider.class } )
+    public Boolean resourceExists( @Config
+    Server server,
+        @Alias( "pathPattern" )
+        @Summary( "If any resources that apply to the path-pattern exist true is retuned, otherwise false." )
+        @Example( "/resources/*" )
+        String pathPattern
+    ) throws InvalidResourceUriException
     {
         if ( pathPattern == null )
         {
@@ -155,18 +167,23 @@ public class ServerOperations
      * @return The list containing uri's of resources that apply to the parttern.
      * @throws InvalidResourceUriException Thrown when given uri pattern is not valid.
      */
-    @Throws({ ServerOperationErrorProvider.class })
-    public List< String > resourceList( @Config Server server, @Alias("pathPattern") @Summary("Paths of the resources that apply to the path-pattern are listed and returned.") String pathPattern ) throws InvalidResourceUriException
+    @Throws( { ServerOperationErrorProvider.class } )
+    public List< String > resourceList( 
+        @Config Server server,
+        @Alias( "pathPattern" )
+        @Summary( "Paths of the resources that apply to the path-pattern are listed and returned." )
+        String pathPattern
+    ) throws InvalidResourceUriException
     {
         if ( pathPattern == null )
         {
             throw new InvalidResourceUriException( server + ": resource list operation failed", "null" );
         }
-        List< String > uriList= new ArrayList< String >();
+        List< String > uriList= new ArrayList<>();
         for ( ServedResource found : server.getRegistry().findResources( pathPattern ) )
         {
             uriList.add( found.getURI() );
         }
-        return new CopyOnWriteArrayList< String >( uriList );
+        return new CopyOnWriteArrayList<>( uriList );
     }
 }

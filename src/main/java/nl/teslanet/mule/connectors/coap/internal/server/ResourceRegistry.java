@@ -63,8 +63,8 @@ public class ResourceRegistry
         if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
 
-        servedResources= new ConcurrentHashMap< String, ServedResource >();
-        listeners= new CopyOnWriteArrayList< OperationalListener >();
+        servedResources= new ConcurrentHashMap<>();
+        listeners= new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -292,7 +292,7 @@ public class ResourceRegistry
             }
         }
         throw new InternalResourceUriException( "resource { " + uri + " } does not exist." );
-        
+
     }
 
     /**
@@ -304,7 +304,7 @@ public class ResourceRegistry
     {
         //TODO regex support
         //TODO concurrent?
-        ArrayList< ServedResource > found= new ArrayList< ServedResource >();
+        ArrayList< ServedResource > found= new ArrayList<>();
 
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {

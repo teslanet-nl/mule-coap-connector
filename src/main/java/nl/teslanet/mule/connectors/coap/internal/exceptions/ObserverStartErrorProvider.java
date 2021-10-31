@@ -41,11 +41,11 @@ public class ObserverStartErrorProvider implements ErrorTypeProvider
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings( "rawtypes" )
     @Override
     public Set< ErrorTypeDefinition > getErrorTypes()
     {
-        Set< ErrorTypeDefinition > errors= new HashSet< ErrorTypeDefinition >();
+        Set< ErrorTypeDefinition > errors= new HashSet<>();
         errors.add( Errors.INVALID_HANDLER_NAME );
         errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_OBSERVER );
