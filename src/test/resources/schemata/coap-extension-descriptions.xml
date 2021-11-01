@@ -53,10 +53,10 @@
                     <description><![CDATA[The root resources of the server.]]></description>
                 </parameter>
                 <parameter name="notifyOnShutdown">
-                    <description><![CDATA[Notify observing clients of shutdown of the server. When true observing clients are notified by Not-Found notifications. Default value is true.]]></description>
+                    <description><![CDATA[Notify observing clients of server shutdown. When true observing clients are notified by Not-Found notifications. Default value is true.]]></description>
                 </parameter>
-                <parameter name="shutdownLinger">
-                    <description><![CDATA[The linger time (in milliseconds [ms]) during shutdown of the server which gives active exchanges time to complete. Default value is 250 ms.]]></description>
+                <parameter name="lingerOnShutdown">
+                    <description><![CDATA[The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.]]></description>
                 </parameter>
                 <parameter name="protocolStageThreadCount">
                     <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>

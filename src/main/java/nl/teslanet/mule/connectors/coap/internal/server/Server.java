@@ -130,13 +130,13 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     private List< ResourceConfig > resources;
 
     /**
-     * Notify observing clients of shutdown of the server.
+     * Notify observing clients of server shutdown.
      * When true observing clients are notified by Not-Found notifications.
      * Default value is true.
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "Notify observing clients of shutdown of the server.\nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
+    @Summary( value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @DisplayName(value= "Notify observing clients on shutdown")
@@ -144,17 +144,17 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public boolean notifyOnShutdown= true;
 
     /**
-     * The linger time (in milliseconds [ms]) during shutdown of the server 
-     * which gives active exchanges time to complete.
+     * The linger time (in milliseconds [ms]) on shutdown of the server, 
+     * giving notifications time to complete.
      * Default value is 250 ms.
      */
     @Parameter
     @Optional( defaultValue= "250" )
-    @Summary( value= "The linger time (in milliseconds [ms]) during shutdown of the server \nwhich gives active exchanges time to complete. \nDefault value is 250 ms." )
+    @Summary( value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
-    public long shutdownLinger= 250L;
+    public long lingerOnShutdown= 250L;
 
     /**
      * Thread pool size of endpoint executor. Default value is equal to the number
@@ -293,8 +293,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 //are not available anymore. 
                 registry.remove( "/*" );
             }
-            //stop server after waiting to get notifications sent.
-            Thread.sleep( shutdownLinger );
+            //linger to get notifications sent.
+            Thread.sleep( lingerOnShutdown );
+            //stop server
             coapServer.stop();
             if ( !notifyOnShutdown )
             {
