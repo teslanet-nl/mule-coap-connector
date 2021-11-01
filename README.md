@@ -12,9 +12,7 @@ The connector uses Californium, a Java CoAP implementation. More information abo
 
 The complete Mule CoAP Connector documentation can be found at [Teslanet.nl](http://www.teslanet.nl)
 ## Mule supported versions
-* Mule 4.1
-* Mule 4.2
-* Mule 4.3
+* Mule 4.1+
 
 ## Implemented CoAP specifications
 The CoAP protocol is supported as defined in: 
@@ -24,7 +22,7 @@ The CoAP protocol is supported as defined in:
 * [IETF rfc 7959](https://tools.ietf.org/html/rfc7959)
 
 ## Dependencies
-* [Californium](https://www.eclipse.org/californium/) 2.6.3
+* [Californium](https://www.eclipse.org/californium/) 2.6.5
 
 ## Installation
 
@@ -35,7 +33,7 @@ add following dependency to your `pom.xml`.
     <dependency>
         <groupId>nl.teslanet.mule.connectors.coap</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.0.0-M6</version>
+        <version>2.0.0-M8</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
