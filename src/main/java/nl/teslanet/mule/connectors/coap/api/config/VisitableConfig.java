@@ -30,7 +30,8 @@ package nl.teslanet.mule.connectors.coap.api.config;
 public interface VisitableConfig
 {
     /**
-     * Accept a configuration visitor
+     * Accept a configuration visitor. 
+     * Let the visitor visit this object and its member objects. 
      * @param visitor the visitor of the configuration object.
      */
     public void accept( ConfigVisitor visitor );

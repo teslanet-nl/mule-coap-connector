@@ -42,11 +42,11 @@ public class DtlsParams implements VisitableConfig
      * The DTLS response matcher defines the algorithm used to correlate responses to requests.
      */
     @Parameter
-    @Optional //TODO does not work: @Optional(defaultValue= "STRICT")
-    @Summary(value= "The DTLS response matcher defines the algorithm used to correlate responses to requests.")
-    @Example(value= "STRICT")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "STRICT" )
+    @Summary( value= "The DTLS response matcher defines the algorithm used to correlate responses to requests." )
+    @Example( value= "RELAXED" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public DtlsResponseMatchingName responseMatching= DtlsResponseMatchingName.STRICT;
 
     /**
@@ -54,10 +54,10 @@ public class DtlsParams implements VisitableConfig
      * exchanged messages, the session is forced to resume.
      */
     @Parameter
-    @Optional(defaultValue= "30000")
-    @Summary(value= "DTLS auto resumption timeout in milliseconds [ms]. After that period without exchanged messages, the session is forced to resume.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "30000" )
+    @Summary( value= "DTLS auto resumption timeout in milliseconds [ms]. After that period without exchanged messages, the session is forced to resume." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer dtlsAutoResumeTimeout= null;
 
     /* (non-Javadoc)

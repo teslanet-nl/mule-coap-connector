@@ -34,6 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
+import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 
 
 /**
@@ -71,7 +72,7 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name )
     {
         super( name );
-        udpParams= new UdpParams();
+        udpParams= new UdpParams( new GroupedMidTracker() );
     }
 
     /**
