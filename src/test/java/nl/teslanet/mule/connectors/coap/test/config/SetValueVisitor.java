@@ -221,9 +221,6 @@ public class SetValueVisitor implements ConfigVisitor
             case nstart:
                 toVisit.nstart= new Integer( value );
                 break;
-            case useRandomMidStart:
-                toVisit.useRandomMidStart= new Boolean( value );
-                break;
             case tokenSizeLimit:
                 toVisit.tokenSizeLimit= new Integer( value );
                 break;
@@ -258,30 +255,6 @@ public class SetValueVisitor implements ConfigVisitor
                 if ( toVisit.deduplicator == null )
                 {
                     toVisit.deduplicator= new MarkAndSweep();
-                }
-                break;
-            case midTracker:
-                if ( value == null )
-                {
-                    toVisit.midTracker= null;
-                }
-                else
-                {
-                    switch ( value )
-                    {
-                        case "GroupedMidTracker":
-                            toVisit.midTracker= new GroupedMidTracker();
-                            break;
-                        case "MapBasedMidTracker":
-                            toVisit.midTracker= new MapBasedMidTracker();
-                            break;
-                        case "NullMidTracker":
-                            toVisit.midTracker= new NullMidTracker();
-                            break;
-                        default:
-                            toVisit.deduplicator= null;
-                            break;
-                    }
                 }
                 break;
             default:
@@ -482,6 +455,9 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( configParamName )
         {
+            case useRandomMidStart:
+                toVisit.useRandomMidStart= new Boolean( value );
+                break;
             case networkStageReceiverThreadCount:
                 toVisit.networkStageReceiverThreadCount= new Integer( value );
                 break;
@@ -496,6 +472,30 @@ public class SetValueVisitor implements ConfigVisitor
                 break;
             case udpConnectorSendBuffer:
                 toVisit.udpConnectorSendBuffer= new Integer( value );
+                break;
+            case midTracker:
+                if ( value == null )
+                {
+                    toVisit.midTracker= null;
+                }
+                else
+                {
+                    switch ( value )
+                    {
+                        case "GroupedMidTracker":
+                            toVisit.midTracker= new GroupedMidTracker();
+                            break;
+                        case "MapBasedMidTracker":
+                            toVisit.midTracker= new MapBasedMidTracker();
+                            break;
+                        case "NullMidTracker":
+                            toVisit.midTracker= new NullMidTracker();
+                            break;
+                        default:
+                            toVisit.midTracker= null;
+                            break;
+                    }
+                }
                 break;
             default:
                 break;
@@ -557,7 +557,7 @@ public class SetValueVisitor implements ConfigVisitor
                 for ( int i= 1; i < values.length; i++ )
                 {
                     String[] fields= values[i].split( "|" );
-                    toVisit.join.add( new MulticastGroupConfig( fields[0], (fields.length > 0 ? fields[1] : null )));
+                    toVisit.join.add( new MulticastGroupConfig( fields[0], ( fields.length > 0 ? fields[1] : null ) ) );
                 }
                 break;
             default:

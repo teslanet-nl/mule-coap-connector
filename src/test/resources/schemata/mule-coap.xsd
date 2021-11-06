@@ -33,54 +33,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" abstract="true" name="abstract-mid-tracker"></xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-null-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-null-mid-tracker" name="null-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" default="16" name="midTrackerGroups"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-grouped-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-grouped-mid-tracker" name="grouped-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-map-based-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-map-based-mid-tracker" name="map-based-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
@@ -122,14 +74,6 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="mid-tracker">
-            <xs:complexType>
-              <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-mid-tracker"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-mid-tracker"></xs:element>
-              </xs:choice>
-            </xs:complexType>
-          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="deduplicator">
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -148,8 +92,6 @@
         <xs:attribute type="mule:substitutableLong" use="optional" default="247000" name="exchangeLifetime"></xs:attribute>
         <xs:attribute type="mule:substitutableLong" use="optional" default="145000" name="nonLifetime"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="1" name="nstart"></xs:attribute>
-        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useRandomMidStart"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="8" name="tokenSizeLimit"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="deduplicator"></xs:attribute>
       </xs:extension>
@@ -313,9 +255,69 @@
   </xs:complexType>
   <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-abstract-endpoint"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" abstract="true" name="abstract-abstract-endpoint"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" abstract="true" name="abstract-mid-tracker"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-null-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-null-mid-tracker" name="null-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" default="16" name="midTrackerGroups"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-grouped-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-grouped-mid-tracker" name="grouped-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-map-based-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-map-based-mid-tracker" name="map-based-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.UdpParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="mid-tracker">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-mid-tracker"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-mid-tracker"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useRandomMidStart"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="networkStageReceiverThreadCount"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="networkStageSenderThreadCount"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="2048" name="udpConnectorDatagramSize"></xs:attribute>
@@ -422,7 +424,7 @@
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.DtlsParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.DtlsResponseMatchingNameEnumType" use="optional" name="responseMatching"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.DtlsResponseMatchingNameEnumType" use="optional" default="STRICT" name="responseMatching"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="30000" name="dtlsAutoResumeTimeout"></xs:attribute>
       </xs:extension>
     </xs:complexContent>

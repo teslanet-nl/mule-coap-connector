@@ -41,7 +41,6 @@ import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl;
-import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 
 
 /**
@@ -59,9 +58,9 @@ public abstract class AbstractEndpoint implements VisitableConfig
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Placement(order= 1)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Placement( order= 1 )
     public SocketParams socketParams;
 
     /**
@@ -70,8 +69,8 @@ public abstract class AbstractEndpoint implements VisitableConfig
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public ExchangeParams exchangeParams= null;
 
     /**
@@ -80,8 +79,8 @@ public abstract class AbstractEndpoint implements VisitableConfig
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public BlockwiseParams blockwiseParams= null;
 
     /**
@@ -90,8 +89,8 @@ public abstract class AbstractEndpoint implements VisitableConfig
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public NotificationParams notificationParams= null;
 
     /**
@@ -99,8 +98,8 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public CongestionControl congestionControl= null;
 
     /**
@@ -108,19 +107,19 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Summary("When activated logHealthStatus is periodically logged.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( "When activated logHealthStatus is periodically logged." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public LogHealthStatus logHealthStatus= null;
 
     /**
      * When activated incoming and outgoing CoAP messages are logged.
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @Summary("When activated incoming and outgoing CoAP messages are logged.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "false" )
+    @Summary( "When activated incoming and outgoing CoAP messages are logged." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public boolean logCoapMessages= false;
 
     /**
@@ -141,7 +140,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
         configName= name;
         //initialise nullsafe params
         socketParams= new SocketParams();
-        exchangeParams= new ExchangeParams( new GroupedMidTracker() );
+        exchangeParams= new ExchangeParams();
         blockwiseParams= new BlockwiseParams();
         notificationParams= new NotificationParams();
     }

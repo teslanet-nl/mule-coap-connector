@@ -40,12 +40,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<description>Mule CoAP connector test application</description>
 
 	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:exchange-params exchangeLifetime="1000">
-			<coap:mid-tracker>
-				<coap:null-mid-tracker />
-			</coap:mid-tracker>
-		</coap:exchange-params>
-		<coap:notification-params
+		<coap:exchange-params exchangeLifetime="1000"/>
+        <coap:notification-params
 			notificationCheckIntervalCount="5"
 			notificationCheckIntervalTime="650" />
 	</coap:udp-endpoint>

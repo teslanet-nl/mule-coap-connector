@@ -143,9 +143,6 @@ public class GetValueVisitor implements ConfigVisitor
             case nstart:
                 result= ( toVisit.nstart != null ? toVisit.nstart.toString() : null );
                 break;
-            case useRandomMidStart:
-                result= ( toVisit.useRandomMidStart != null ? toVisit.useRandomMidStart.toString() : null );
-                break;
             case tokenSizeLimit:
                 result= ( toVisit.tokenSizeLimit != null ? toVisit.tokenSizeLimit.toString() : null );
                 break;
@@ -347,6 +344,9 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( configParamName )
         {
+            case useRandomMidStart:
+                result= ( toVisit.useRandomMidStart != null ? toVisit.useRandomMidStart.toString() : null );
+                break;
             case networkStageReceiverThreadCount:
                 result= ( toVisit.networkStageReceiverThreadCount != null ? toVisit.networkStageReceiverThreadCount.toString() : null );
                 break;
