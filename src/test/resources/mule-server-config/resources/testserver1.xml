@@ -82,7 +82,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			delete="true" pathPattern="/service/add_resource/*"
 			config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
-			<!-- TODO location path -->
+			<!-- TODO RC location path -->
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
@@ -90,7 +90,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
 		<set-variable variableName="uri"
 			value="#[ vars.attr.requestUri ]" doc:name="set method" />
-		<!-- TODO: prepending '/' not needed in the future -->
+		<!-- TODO RC: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
 			value="#['/' ++ vars.attr.options.locationPath!]"
 			doc:name="set resource_path" />
@@ -163,7 +163,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			<coap:response responsePayload="#[ payload as String ]" />
 		</coap:listener>
 		<logger message="#[ attributes.options.locationPath! ]" />
-		<!-- TODO align root resource / -->
+		<!-- TODO RC align root resource / -->
 		<coap:resource-exists config-ref="config"
 			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
 	</flow>

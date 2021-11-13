@@ -53,6 +53,7 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
     @ParameterDsl(allowReferences= false)
     public TlsParams tlsParams= null;
 
+    //TODO RC move to abstract secure endpoint, rename to securityParams.
     /**
      * The encryption parameters.
      */

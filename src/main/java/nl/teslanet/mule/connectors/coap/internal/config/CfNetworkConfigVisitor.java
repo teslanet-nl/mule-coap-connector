@@ -271,7 +271,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( SocketParams toVisit )
     {
-        //TODO does Cf use networkconfig port when explicit endpoint is configured?
+        //TODO RC does Cf use networkconfig port when explicit endpoint is configured?
         //host is configured on endpoint itself
         if ( toVisit.bindToPort != null )
         {

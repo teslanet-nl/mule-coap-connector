@@ -58,6 +58,7 @@ public class DTLSEndpoint extends UDPEndpoint
     @ParameterDsl(allowReferences= false)
     public DtlsParams dtlsParams;
 
+    //TODO RC move to abstract secure endpoint, rename to securityParams.
     /**
      * The encryption parameters.
      */

@@ -233,7 +233,7 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            //TODO log warning
+            //TODO RC log warning
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -243,7 +243,7 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            //TODO log warning
+            //TODO RC log warning
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -253,7 +253,7 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            //TODO log warning
+            //TODO RC log warning
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -263,7 +263,7 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            //TODO log warning
+            //TODO RC log warning
         }
     }
 
@@ -303,7 +303,7 @@ public class ResourceRegistry
     public List< ServedResource > findResources( String uriPattern )
     {
         //TODO regex support
-        //TODO concurrent?
+        //TODO RC concurrent?
         ArrayList< ServedResource > found= new ArrayList<>();
 
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
@@ -330,7 +330,7 @@ public class ResourceRegistry
      */
     public static int matchUri( String uriPattern, String resourceUri )
     {
-        //TODO assure wildcard only occurs at end
+        //TODO RC assure wildcard only occurs at end
         if ( uriHasWildcard( uriPattern ) )
         {
             if ( resourceUri.startsWith( getUriPath( uriPattern ) ) )
@@ -386,7 +386,7 @@ public class ResourceRegistry
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
-            //TODO check uri format .*/x+
+            //TODO RC check uri format .*/x+
             return uri.substring( lastPathSep + 1 );
         }
         else

@@ -71,7 +71,7 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO: add '?' ?
+        //TODO RC add '?' ?
         return new String( "first=1" );
     }
 

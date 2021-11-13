@@ -71,7 +71,7 @@ public class OptLocationPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO: add root / ?
+        //TODO RC add root / ?
         return new String( "test" );
     }
 

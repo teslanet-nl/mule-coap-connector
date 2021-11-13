@@ -73,7 +73,7 @@ public class OptUriPathInbound1mTest extends AbstractInboundPropertyTestCase
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO: add root / ?
+        //TODO RC: add root / ?
         return new String( "test/this/path" );
     }
 

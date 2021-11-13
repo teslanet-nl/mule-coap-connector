@@ -357,7 +357,7 @@ public final class OperationalEndpoint
         MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
         SslContextUtil.configure( streamFactory.getScheme(), streamFactory );
         // Pre-shared secrets
-        //TODO improve security (-> not in memory ) 
+        //TODO improve security (-> not in memory ?) 
         AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
         Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
         verifierBuilder.setTrustAllRPKs();

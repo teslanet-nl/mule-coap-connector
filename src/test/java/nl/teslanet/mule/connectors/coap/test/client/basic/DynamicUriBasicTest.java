@@ -44,76 +44,84 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapServer;
 
 
-//TODO bug Code should be string
-
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class DynamicUriBasicTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "code= {1}, host= {2}, port= {3}, path= {4}")
+    @Parameters( name= "code= {1}, host= {2}, port= {3}, path= {4}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "coap://127.0.0.1:8976/basic/get_me", "GET called on: /basic/get_me".getBytes() },
                 { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", null },
                 { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "coap://127.0.0.1:8976/basic/post_me", "POST called on: /basic/post_me".getBytes() },
                 { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", null },
                 { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "coap://127.0.0.1:8976/basic/put_me", "PUT called on: /basic/put_me".getBytes() },
                 { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", null },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/delete_me", "DELETED", "coap://127.0.0.1:8976/basic/delete_me", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", null } } );
+                {
+                    "do_request",
+                    "DELETE",
+                    "127.0.0.1",
+                    "8976",
+                    "/basic/delete_me",
+                    "DELETED",
+                    "coap://127.0.0.1:8976/basic/delete_me",
+                    "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", null } }
+        );
     }
 
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String requestCode;
 
     /**
      * The server host to call.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String host;
 
     /**
      * The server port to call.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String port;
 
     /**
      * The server path to call.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public String path;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public String expectedResponseCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(6)
+    @Parameter( 6 )
     public String expectedRequestUri;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(7)
+    @Parameter( 7 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -145,15 +153,17 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
         spy.clear();
 
         flowRunner( flowName ).withVariable( "code", requestCode ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", path ).withPayload(
-            "nothing_important" ).run();
-        
+            "nothing_important"
+        ).run();
+
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
         byte[] payload= (byte[]) response.getPayload().getValue();
-        
+
         assertEquals(
             "wrong attributes class",
             new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+            response.getAttributes().getClass()
+        );
         ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

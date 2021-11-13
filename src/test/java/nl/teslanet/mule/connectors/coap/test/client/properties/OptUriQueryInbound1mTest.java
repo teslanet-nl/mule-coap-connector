@@ -73,7 +73,7 @@ public class OptUriQueryInbound1mTest extends AbstractInboundPropertyTestCase
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO: add root / ?
+        //TODO RC: add root / ?
         return new String( "first=1&second=2&third=3" );
     }
 

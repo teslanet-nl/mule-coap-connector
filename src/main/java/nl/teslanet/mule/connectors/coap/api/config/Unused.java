@@ -32,12 +32,12 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of which it is not clear whether it is really used.
+ * Configuration defined by Cf but not really used.
  *
  */
-public class IsItUsed implements VisitableConfig
+public class Unused implements VisitableConfig
 {
-    // TODO: does Cf use this?
+    // TODO RC review for removed and new config items
     /**
      * RFC 7252: MAX_TRANSMIT_WAIT is the maximum time from the first transmission
      * of a Confirmable message to the time when the sender gives up on
@@ -54,7 +54,6 @@ public class IsItUsed implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Long maxTransmitWait= null;
 
-    // TODO: used by Cf?
     /**
      * Period of time (in milliseconds [ms]) of the spreading of responses to a
      * multicast request, for network congestion prevention.
@@ -69,7 +68,6 @@ public class IsItUsed implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Integer leisure= null;
 
-    // TODO: used by Cf?
     /**
      * The probing rate [byte/s] indicates the maximum average data rate of sending to another endpoint that does not respond.
      * @see <a href=
@@ -82,7 +80,6 @@ public class IsItUsed implements VisitableConfig
     @ParameterDsl(allowReferences= false)
     public Float probingRate= null;
 
-    // TODO: used by Cf?
     /**
      * 
      */

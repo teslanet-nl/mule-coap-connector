@@ -289,7 +289,7 @@ public class ClientOperations
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {
-            // TODO change members in resourceinfo to list?
+            // TODO RC change members in resourceinfo to list?
             StringBuilder ifBuilder= new StringBuilder();
             Iterator< String > ifIterator= link.getAttributes().getInterfaceDescriptions().iterator();
             while ( ifIterator.hasNext() )
@@ -380,7 +380,7 @@ public class ClientOperations
     public void observerStop( @Config Client client, @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
     {
         String errorMsg= ": observer stop failed.";
-        // TODO confirmable is not applicable
+        // TODO RC confirmable is not applicable
         try
         {
             client.stopObserver( observerBuilder.getHost(), observerBuilder.getPort(), observerBuilder.getPath(), observerBuilder.getQueryParams() );

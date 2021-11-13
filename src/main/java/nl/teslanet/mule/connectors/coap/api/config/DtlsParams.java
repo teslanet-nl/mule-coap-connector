@@ -33,7 +33,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of which it is not clear whether it is really used.
+ * Configuration items that are DTLS specific.
  *
  */
 public class DtlsParams implements VisitableConfig

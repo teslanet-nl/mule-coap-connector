@@ -71,7 +71,7 @@ public class OptUriQueryInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO: add '?' ?
+        //TODO RC: add '?' ?
         return new String( "first=1" );
     }
 
