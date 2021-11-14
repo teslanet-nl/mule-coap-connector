@@ -365,16 +365,16 @@ public final class OperationalEndpoint
         {
             // load the key store
             SslContextUtil.Credentials serverCredentials= SslContextUtil.loadCredentials(
-                streamFactory.getScheme() + config.encryptionParams.keyStoreLocation,
-                config.encryptionParams.privateKeyAlias,
-                ( config.encryptionParams.keyStorePassword != null ? config.encryptionParams.keyStorePassword.toCharArray() : null ),
-                ( config.encryptionParams.privateKeyPassword != null ? config.encryptionParams.privateKeyPassword.toCharArray() : null )
+                streamFactory.getScheme() + config.securityParams.keyStoreLocation,
+                config.securityParams.privateKeyAlias,
+                ( config.securityParams.keyStorePassword != null ? config.securityParams.keyStorePassword.toCharArray() : null ),
+                ( config.securityParams.privateKeyPassword != null ? config.securityParams.privateKeyPassword.toCharArray() : null )
             );
             //load trust store
             Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
-                streamFactory.getScheme() + config.encryptionParams.trustStoreLocation,
-                config.encryptionParams.trustedRootCertificateAlias,
-                ( config.encryptionParams.trustStorePassword != null ? config.encryptionParams.trustStorePassword.toCharArray() : null )
+                streamFactory.getScheme() + config.securityParams.trustStoreLocation,
+                config.securityParams.trustedRootCertificateAlias,
+                ( config.securityParams.trustStorePassword != null ? config.securityParams.trustStorePassword.toCharArray() : null )
             );
 
             verifierBuilder.setTrustedCertificates( trustedCertificates );

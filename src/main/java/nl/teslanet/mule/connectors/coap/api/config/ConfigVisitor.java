@@ -57,6 +57,7 @@ public interface ConfigVisitor
      */
     public default void visit( BlockwiseParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -65,6 +66,7 @@ public interface ConfigVisitor
      */
     public default void visit( UdpParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -73,14 +75,16 @@ public interface ConfigVisitor
      */
     public default void visit( SocketParams toVisit )
     {
+        //NOOP
     }
 
     /**
-     * Visit EncryptionParams configuration object.
+     * Visit security configuration.
      * @param toVisit the object to visit.
      */
-    public default void visit( EncryptionParams toVisit )
+    public default void visit( SecurityParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -89,6 +93,7 @@ public interface ConfigVisitor
      */
     public default void visit( ExchangeParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -97,6 +102,7 @@ public interface ConfigVisitor
      */
     public default void visit( GroupedMidTracker toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -105,6 +111,7 @@ public interface ConfigVisitor
      */
     public default void visit( MapBasedMidTracker toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -113,6 +120,7 @@ public interface ConfigVisitor
      */
     public default void visit( NullMidTracker toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -121,6 +129,7 @@ public interface ConfigVisitor
      */
     public default void visit( CropRotation toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -129,6 +138,7 @@ public interface ConfigVisitor
      */
     public default void visit( MarkAndSweep toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -137,6 +147,7 @@ public interface ConfigVisitor
      */
     public default void visit( LogHealthStatus toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -145,6 +156,7 @@ public interface ConfigVisitor
      */
     public default void visit( NotificationParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -153,6 +165,7 @@ public interface ConfigVisitor
      */
     public default void visit( BasicRto toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -161,6 +174,7 @@ public interface ConfigVisitor
      */
     public default void visit( Cocoa toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -169,6 +183,7 @@ public interface ConfigVisitor
      */
     public default void visit( CocoaStrong toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -177,6 +192,7 @@ public interface ConfigVisitor
      */
     public default void visit( LinuxRto toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -185,6 +201,7 @@ public interface ConfigVisitor
      */
     public default void visit( PeakhopperRto toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -193,6 +210,7 @@ public interface ConfigVisitor
      */
     public default void visit( AbstractEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -201,6 +219,7 @@ public interface ConfigVisitor
      */
     public default void visit( UDPEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -209,6 +228,7 @@ public interface ConfigVisitor
      */
     public default void visit( MulticastUDPEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -217,6 +237,7 @@ public interface ConfigVisitor
      */
     public default void visit( DTLSEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -225,6 +246,7 @@ public interface ConfigVisitor
      */
     public default void visit( AbstractTCPEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -233,6 +255,7 @@ public interface ConfigVisitor
      */
     public default void visit( TcpParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -241,6 +264,7 @@ public interface ConfigVisitor
      */
     public default void visit( TlsParams toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -249,6 +273,7 @@ public interface ConfigVisitor
      */
     public default void visit( TCPClientEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -257,6 +282,7 @@ public interface ConfigVisitor
      */
     public default void visit( TCPServerEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -265,6 +291,7 @@ public interface ConfigVisitor
      */
     public default void visit( AbstractTLSEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -273,6 +300,7 @@ public interface ConfigVisitor
      */
     public default void visit( TLSClientEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -281,6 +309,7 @@ public interface ConfigVisitor
      */
     public default void visit( TLSServerEndpoint toVisit )
     {
+        //NOOP
     }
 
     /**
@@ -289,6 +318,7 @@ public interface ConfigVisitor
      */
     public default void visit( DtlsParams toVisit )
     {
+        //NOOP
     }
     
     /**
@@ -297,5 +327,6 @@ public interface ConfigVisitor
      */
     public default void visit( MulticastParams toVisit )
     {
+        //NOOP
     }
 }

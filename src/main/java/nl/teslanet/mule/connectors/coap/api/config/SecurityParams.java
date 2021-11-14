@@ -35,10 +35,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of Encryption parameters.
+ * Configuration of security parameters.
  *
  */
-public class EncryptionParams implements VisitableConfig
+public class SecurityParams implements VisitableConfig
 {
     /**
      * The location of the keystore.

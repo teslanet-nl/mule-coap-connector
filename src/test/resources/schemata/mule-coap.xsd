@@ -429,7 +429,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.EncryptionParams">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.SecurityParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:attribute type="xs:string" use="required" name="keyStoreLocation"></xs:attribute>
@@ -453,10 +453,10 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="encryption-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.EncryptionParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -469,7 +469,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="dtlsParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="encryptionParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="securityParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -564,10 +564,10 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="encryption-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.EncryptionParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -580,7 +580,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="tlsParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="encryptionParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="securityParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="tcpParams"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -606,10 +606,10 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="encryption-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.EncryptionParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -622,7 +622,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="tlsParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="encryptionParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="securityParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="tcpParams"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1860,3 +1860,4 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+

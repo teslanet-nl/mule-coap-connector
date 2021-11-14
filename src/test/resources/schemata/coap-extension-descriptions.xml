@@ -659,7 +659,7 @@
                 <parameter name="dtlsParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="encryptionParams">
+                <parameter name="securityParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="udpParams">
@@ -792,7 +792,7 @@
                 <parameter name="tlsParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="encryptionParams">
+                <parameter name="securityParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="tcpParams">
@@ -827,7 +827,7 @@
                 <parameter name="tlsParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="encryptionParams">
+                <parameter name="securityParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="tcpParams">
@@ -909,6 +909,9 @@
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="bytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="empty">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="hexString">

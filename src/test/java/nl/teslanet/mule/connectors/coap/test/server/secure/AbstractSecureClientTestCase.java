@@ -46,7 +46,7 @@ import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
 import org.eclipse.californium.scandium.dtls.CertificateType;
-import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedSinglePskStore;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -131,12 +131,12 @@ public abstract class AbstractSecureClientTestCase extends AbstractTestCase
         trustedCertificates[0]= trustStore.getCertificate( "root" );
 
         //pskStore
-        AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
+        AdvancedSinglePskStore pskStore= new AdvancedSinglePskStore("Client_identity", "secretPSK".getBytes());
 
         //verifier builder
         StaticNewAdvancedCertificateVerifier.Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
-        verifierBuilder.setTrustAllRPKs();
         verifierBuilder.setTrustedCertificates( trustedCertificates );
+        verifierBuilder.setTrustAllRPKs();
 
         //dtls builder
         Builder dtlsBuilder= new DtlsConnectorConfig.Builder();

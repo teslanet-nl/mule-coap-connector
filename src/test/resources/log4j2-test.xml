@@ -46,6 +46,9 @@
 
         <!-- Mule logger -->
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
+        
+        <!-- Cf scandium logger -->
+        <AsyncLogger name="org.eclipse.californium.scandium" level="INFO" additivity="true"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>

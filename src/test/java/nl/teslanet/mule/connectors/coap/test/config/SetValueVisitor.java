@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
+import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
@@ -148,11 +148,12 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.EncryptionParams)
+
+    /**
+     * Visit security configuration.
      */
     @Override
-    public void visit( EncryptionParams toVisit )
+    public void visit( SecurityParams toVisit )
     {
         //            case keyStoreLocation:
         //                result= config.getKeyStoreLocation();

@@ -236,7 +236,7 @@ Contributors:
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>demo-certs</artifactId>
-			<version>${californium.version}</version>
+			<version>3.0.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

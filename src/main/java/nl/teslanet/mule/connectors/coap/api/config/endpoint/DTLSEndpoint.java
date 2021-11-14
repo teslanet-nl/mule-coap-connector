@@ -35,7 +35,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.DtlsParams;
-import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
+import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
 
 
 /**
@@ -58,16 +58,15 @@ public class DTLSEndpoint extends UDPEndpoint
     @ParameterDsl(allowReferences= false)
     public DtlsParams dtlsParams;
 
-    //TODO RC move to abstract secure endpoint, rename to securityParams.
     /**
-     * The encryption parameters.
+     * The security parameters.
      */
     @Parameter
-    @Summary(value= "The encryption parameters.")
+    @Summary(value= "The security parameters.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     @DisplayName("Encryption config")
-    public EncryptionParams encryptionParams= null;
+    public SecurityParams securityParams= null;
 
     /**
      * Default Constructor used by Mule. 
@@ -87,11 +86,11 @@ public class DTLSEndpoint extends UDPEndpoint
     {
         super( name );
         dtlsParams= new DtlsParams();
-        encryptionParams= new EncryptionParams();
+        securityParams= new SecurityParams();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept the visitor.
      */
     @Override
     public void accept( ConfigVisitor visitor )
@@ -99,6 +98,6 @@ public class DTLSEndpoint extends UDPEndpoint
         super.accept( visitor );
         visitor.visit( this );
         dtlsParams.accept( visitor );
-        encryptionParams.accept( visitor );
+        securityParams.accept( visitor );
     }
 }

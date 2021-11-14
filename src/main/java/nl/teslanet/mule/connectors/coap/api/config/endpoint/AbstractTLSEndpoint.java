@@ -32,7 +32,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.EncryptionParams;
+import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.TlsParams;
 
 
@@ -53,15 +53,14 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
     @ParameterDsl(allowReferences= false)
     public TlsParams tlsParams= null;
 
-    //TODO RC move to abstract secure endpoint, rename to securityParams.
     /**
-     * The encryption parameters.
+     * The security parameters.
      */
     @Parameter
-    @Summary(value= "The encryption parameters.")
+    @Summary(value= "The security parameters.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
-    public EncryptionParams encryptionParams= null;
+    public SecurityParams securityParams= null;
 
     /**
      * Default Constructor used by Mule. 
@@ -81,11 +80,11 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
     {
         super( name );
         tlsParams= new TlsParams();
-        encryptionParams= new EncryptionParams();
+        securityParams= new SecurityParams();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept the visitor.
      */
     @Override
     public void accept( ConfigVisitor visitor )
@@ -93,6 +92,6 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
         super.accept( visitor );
         visitor.visit( this );
         tlsParams.accept( visitor );
-        encryptionParams.accept( visitor );
+        securityParams.accept( visitor );
     }
 }
