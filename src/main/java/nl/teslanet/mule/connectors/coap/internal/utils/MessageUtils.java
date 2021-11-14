@@ -95,8 +95,7 @@ public class MessageUtils
             try
             {
                 List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
-                ETag emptEtag= new ETag();
-                boolean emptyPresent= ifMatch.removeIf( etag -> etag.equals( emptEtag ) );
+                boolean emptyPresent= ifMatch.removeIf( etag -> etag.isEmpty() );
                 if ( emptyPresent )
                 {
                     attributes.setifExists( true );
@@ -221,10 +220,10 @@ public class MessageUtils
                 etags= MessageUtils.toEtagList( requestOptions.getifMatch() );
                 for ( ETag etag : etags )
                 {
-                    optionSet.addIfMatch( MessageUtils.optionToBytes( etag ) );
+                    optionSet.addIfMatch( etag.getBytes() );
                 }
             }
-            catch ( IOException | InvalidETagException | InternalInvalidByteArrayValueException e )
+            catch ( IOException | InvalidETagException e )
             {
                 throw new InternalInvalidOptionValueException( "If-Match", "", e );
             }
@@ -237,12 +236,13 @@ public class MessageUtils
                 etags= MessageUtils.toEtagList( requestOptions.getEtags() );
                 for ( ETag etag : etags )
                 {
+                    if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
                     optionSet.addETag( etag.getBytes() );
                 }
             }
             catch ( IOException | InvalidETagException e )
             {
-                throw new InternalInvalidOptionValueException( "ETag", "", e );
+                throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
             }
         }
         if ( requestOptions.getContentFormat() != null )
@@ -282,15 +282,17 @@ public class MessageUtils
      * Copy options from {@link ResponseOptions} to {@link OptionSet}.
      * @param responseOptions to copy from
      * @param optionSet to copy to
-     * @throws InternalInvalidByteArrayValueException 
+     * @throws InternalInvalidOptionValueException 
      * @throws InvalidETagException when an option containes invalid ETag value
      * @throws IOException when an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet ) throws InternalInvalidByteArrayValueException, IOException, InvalidETagException
+    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException, IOException, InvalidETagException
     {
         if ( responseOptions.getEtag() != null )
         {
-            optionSet.addETag( MessageUtils.toETag( responseOptions.getEtag() ).getBytes() );
+            ETag etag= MessageUtils.toETag( responseOptions.getEtag() );
+            if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
+            optionSet.addETag( etag.getBytes() );
         }
         if ( responseOptions.getContentFormat() != null )
         {
@@ -313,7 +315,14 @@ public class MessageUtils
             if ( !otherOption.getKey().isEmpty() )
             {
                 int optionNr= Integer.parseInt( otherOption.getKey() );
-                optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
+                try
+                {
+                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
+                }
+                catch ( InternalInvalidByteArrayValueException e )
+                {
+                    throw new InternalInvalidOptionValueException( otherOption.getKey(), "option value cannot be converted to bytes" );
+                }
             }
         }
     }

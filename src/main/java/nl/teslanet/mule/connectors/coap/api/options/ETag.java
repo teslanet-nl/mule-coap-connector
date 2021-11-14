@@ -42,10 +42,18 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 public final class ETag implements Comparable< ETag >
 {
     /**
+     * Empty byte array.
+     */
+    private static final byte[] empty= new byte [0];
+
+    /**
      * The etag value
      */
     private final byte[] value;
 
+    /**
+     * The hash code of this etag, is initialized lazily.
+     */
     private Integer hashCode= null;
 
     /**
@@ -53,7 +61,7 @@ public final class ETag implements Comparable< ETag >
      */
     public ETag()
     {
-        this.value= null;
+        this.value= empty;
     }
 
     /**
@@ -65,7 +73,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( bytes == null || bytes.length == 0 )
         {
-            this.value= null;
+            this.value= empty;
         }
         else if ( bytes.length > 8 )
         {
@@ -101,14 +109,12 @@ public final class ETag implements Comparable< ETag >
 
     /**
      * Gets the etag value as byte array.
-     * @return Byte array containing the etag value.
+     * Cf does clone the byte array also, however not cloning here would make the class mutable.
+     * This is considered acceptable becaus etags are smaal objects.
+     * @return byte array containing the etag value.
      */
     public byte[] getBytes()
     {
-        if ( value == null )
-        {
-            return null;
-        }
         return value.clone();
     }
 
@@ -118,10 +124,6 @@ public final class ETag implements Comparable< ETag >
      */
     public Long getLong()
     {
-        if ( value == null )
-        {
-            return null;
-        }
         return toLong( value );
     }
 
@@ -132,10 +134,6 @@ public final class ETag implements Comparable< ETag >
      */
     public String getHexString()
     {
-        if ( value == null )
-        {
-            return null;
-        }
         return toHexString( value );
     }
 
@@ -145,10 +143,6 @@ public final class ETag implements Comparable< ETag >
     @Override
     public String toString()
     {
-        if ( value == null )
-        {
-            return "ETag{ null }";
-        }
         return "ETag{ " + toHexString( value ) + " }";
     }
 
@@ -202,7 +196,7 @@ public final class ETag implements Comparable< ETag >
 
     /**
      * Check a collection of etags whether it contains the etag.
-     * When nthe collection is null the etag is considered not found.
+     * When given collection is null the etag is considered not found.
      * @param etags The collection of etags to check.
      * @return True when the etag is found in the collection, otherwise false.
      */
@@ -210,6 +204,15 @@ public final class ETag implements Comparable< ETag >
     {
         if ( etags == null ) return false;
         return etags.contains( this );
+    }
+
+    /**
+     * Check if the etag is empty. etags whether it contains the etag.
+     * @return True when the etag is empty, otherwise false.
+     */
+    public boolean isEmpty()
+    {
+        return( value.length == 0 );
     }
 
     /**
@@ -221,7 +224,6 @@ public final class ETag implements Comparable< ETag >
     @Override
     public boolean equals( Object o )
     {
-        if ( o == null && this.value == null ) return true;
         if ( !( o instanceof ETag ) )
         {
             return false;
@@ -236,21 +238,11 @@ public final class ETag implements Comparable< ETag >
     @Override
     public int compareTo( ETag other )
     {
+        if ( other == null ) return 1;
         if ( this == other ) return 0;
-        if ( other == null || other.value == null )
-        {
-            if ( this.value == null )
-            {
-                return 0;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-        if ( this.value == null || this.value.length < other.value.length ) return -1;
+        if ( this.value.length < other.value.length ) return -1;
         if ( this.value.length > other.value.length ) return 1;
-        for ( int i= 0; i < this.value.length ; i++ )
+        for ( int i= 0; i < this.value.length; i++ )
         {
             if ( this.value[i] < other.value[i] ) return -1;
             if ( this.value[i] > other.value[i] ) return 1;
@@ -278,7 +270,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( bytes == null || bytes.length <= 0 )
         {
-            return null;
+            return new String();
         }
         StringBuilder sb= new StringBuilder();
         for ( byte b : bytes )
@@ -314,7 +306,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( longValue == null )
         {
-            return null;
+            return empty;
         }
         ByteBuffer byteBuffer= ByteBuffer.allocate( Long.BYTES );
         byteBuffer.putLong( longValue );
@@ -333,7 +325,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( hexString == null || hexString.length() <= 0 )
         {
-            return null;
+            return empty;
         }
         else
         {
@@ -347,11 +339,18 @@ public final class ETag implements Comparable< ETag >
                 throw new InvalidETagException( "ETag length invalid, must be between 0..8 bytes. Given length is: " + length );
             }
             byte[] bytes= new byte [length];
-            for ( int i= 0; i < bytes.length; i++ )
+            try
             {
-                int index= i * 2;
-                int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
-                bytes[i]= (byte) v;
+                for ( int i= 0; i < bytes.length; i++ )
+                {
+                    int index= i * 2;
+                    int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
+                    bytes[i]= (byte) v;
+                }
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new InvalidETagException( "ETag value cannot be parsed as hexadecimal: " + hexString );
             }
             return bytes;
         }

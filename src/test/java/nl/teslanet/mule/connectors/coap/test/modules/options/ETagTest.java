@@ -58,13 +58,13 @@ public class ETagTest
         ETag etag5= new ETag( etagValue5 );
         ETag etag6= new ETag( etagValue6 );
 
-        assertNull( "ETag contruction from null String failed", etag0.getHexString() );
-        assertNull( "ETag contruction from null String failed", etag1.getHexString() );
-        assertNull( "ETag contruction from null Byte[] failed", etag2.getHexString() );
-        assertNull( "ETag contruction from null Byte[] failed", etag3.getHexString() );
-        assertNull( "ETag contruction from null Long failed", etag4.getHexString() );
-        assertNull( "ETag contruction from empty Byte[] failed", etag5.getHexString() );
-        assertNull( "ETag contruction from empty String failed", etag6.getHexString() );
+        assertEquals( "ETag contruction from null String failed", "", etag0.getHexString() );
+        assertEquals( "ETag contruction from null String failed", "", etag1.getHexString() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag2.getHexString() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag3.getHexString() );
+        assertEquals( "ETag contruction from null Long failed", "", etag4.getHexString() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getHexString() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getHexString() );
     }
 
     @Test
@@ -103,13 +103,13 @@ public class ETagTest
         ETag etag5= ETag.valueOf( etagValue5 );
         ETag etag6= ETag.valueOf( etagValue6 );
 
-        assertNull( "ETag contruction from null failed", etag1.getHexString() );
-        assertNull( "ETag contruction from String failed", etag1.getHexString() );
-        assertNull( "ETag contruction from Byte[] failed", etag2.getHexString() );
-        assertNull( "ETag contruction from Byte[] failed", etag3.getHexString() );
-        assertNull( "ETag contruction from Long failed", etag4.getHexString() );
-        assertNull( "ETag contruction from empty Byte[] failed", etag5.getHexString() );
-        assertNull( "ETag contruction from empty String failed", etag6.getHexString() );
+        assertEquals( "ETag contruction from null failed", "", etag1.getHexString() );
+        assertEquals( "ETag contruction from String failed", "", etag1.getHexString() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag2.getHexString() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag3.getHexString() );
+        assertEquals( "ETag contruction from Long failed", "", etag4.getHexString() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getHexString() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getHexString() );
     }
 
     @Test
@@ -133,6 +133,44 @@ public class ETagTest
     }
 
     @Test
+    public void testNotEmpty() throws InvalidETagException
+    {
+        String etagValue1= "afb990";
+        byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
+        String etagValue3= "FF";
+        Long etagValue4= 255L;
+
+        ETag etag1= ETag.valueOf( etagValue1 );
+        ETag etag2= ETag.valueOf( etagValue2 );
+        ETag etag3= ETag.valueOf( etagValue3 );
+        ETag etag4= ETag.valueOf( etagValue4 );
+
+        assertFalse( "ETag should evaluate not empty", etag1.isEmpty() );
+        assertFalse( "ETag should evaluate not empty", etag2.isEmpty() );
+        assertFalse( "ETag should evaluate not empty", etag3.isEmpty() );
+        assertFalse( "ETag should evaluate not empty", etag4.isEmpty() );
+    }
+
+    @Test
+    public void testEmpty() throws InvalidETagException
+    {
+        String etagValue1= "";
+        byte[] etagValue2= {};
+        String etagValue3= "";
+        Long etagValue4= null;
+
+        ETag etag1= ETag.valueOf( etagValue1 );
+        ETag etag2= ETag.valueOf( etagValue2 );
+        ETag etag3= ETag.valueOf( etagValue3 );
+        ETag etag4= ETag.valueOf( etagValue4 );
+
+        assertTrue( "ETag should evaluate not empty", etag1.isEmpty() );
+        assertTrue( "ETag should evaluate not empty", etag2.isEmpty() );
+        assertTrue( "ETag should evaluate not empty", etag3.isEmpty() );
+        assertTrue( "ETag should evaluate not empty", etag4.isEmpty() );
+    }
+
+    @Test
     public void testConstructorETagLargeByteArray() throws InvalidETagException
     {
         byte[] etagValue1= new byte [9];
@@ -141,10 +179,21 @@ public class ETagTest
             etagValue1[i]= (byte) i;
         }
         InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
-            @SuppressWarnings("unused")
+            @SuppressWarnings( "unused" )
             ETag etag1= new ETag( etagValue1 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Given length is: 9" ) );
+    }
+
+    @Test
+    public void testConstructorInvalidString() throws InvalidETagException
+    {
+        String etagValue1= "10aaZZ";
+        InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
+            @SuppressWarnings( "unused" )
+            ETag etag1= new ETag( etagValue1 );
+        } );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "ETag value cannot be parsed as hexadecimal: " + etagValue1 ) );
     }
 
     @Test
@@ -152,7 +201,7 @@ public class ETagTest
     {
         String etagValue1= "1";
         InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
-            @SuppressWarnings("unused")
+            @SuppressWarnings( "unused" )
             ETag etag1= new ETag( etagValue1 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "number found: 1" ) );
@@ -163,7 +212,7 @@ public class ETagTest
     {
         String etagValue1= "1122334455667";
         InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
-            @SuppressWarnings("unused")
+            @SuppressWarnings( "unused" )
             ETag etag1= new ETag( etagValue1 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "number found: 13" ) );
@@ -174,7 +223,7 @@ public class ETagTest
     {
         String etagValue1= "112233445566778899";
         InvalidETagException e= assertThrows( InvalidETagException.class, () -> {
-            @SuppressWarnings("unused")
+            @SuppressWarnings( "unused" )
             ETag etag1= new ETag( etagValue1 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Given length is: 9" ) );
@@ -192,12 +241,12 @@ public class ETagTest
         ETag etag2= new ETag( etagValue2 );
         ETag etag3= new ETag( etagValue3 );
 
-        assertNull( "ETag.asBytes gives wrong value", etag0.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etag1.getBytes(), etagValue1 );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etag2.getBytes(), etagValue3 );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etag3.getBytes(), etagValue3 );
-        assertNotEquals( (Object) etag1.getBytes(), (Object) etagValue1 );
-        assertNotEquals( (Object) etag3.getBytes(), (Object) etagValue3 );
+        assertArrayEquals( "ETag.asBytes gives wrong value", new byte [0], etag0.getBytes() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue1, etag1.getBytes() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag2.getBytes() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag3.getBytes() );
+        assertNotEquals( (Object) etagValue1, (Object) etag1.getBytes() );
+        assertNotEquals( (Object) etagValue3, (Object) etag3.getBytes() );
     }
 
     @Test
@@ -212,7 +261,7 @@ public class ETagTest
         ETag etag2= new ETag( etagValue2 );
         ETag etag3= new ETag( etagValue3 );
 
-        assertNull( "ETag.toString gives wrong value", etag0.getHexString() );
+        assertTrue( "ETag.toString gives wrong value", etag0.getHexString().equals( "" ) );
         assertTrue( "ETag.toString gives wrong value", etag1.getHexString().equals( "00" ) );
         assertTrue( "ETag.toString gives wrong value", etag2.getHexString().equals( etagValue2 ) );
         assertTrue( "ETag.toString gives wrong value", etag3.getHexString().equals( etagValue2 ) );
@@ -258,7 +307,7 @@ public class ETagTest
         assertFalse( "ETag.equals failed to compare to unequal etag", etag4.equals( etag1 ) );
         assertFalse( "ETag.equals failed to compare to unequal etag", etag5.equals( etag2 ) );
 
-        assertTrue( "ETag.equals failed to compare to null", etag0.equals( null ) );
+        assertFalse( "ETag.equals failed to compare to null", etag0.equals( null ) );
         assertFalse( "ETag.equals failed to compare to null", etag5.equals( null ) );
 
     }
@@ -300,14 +349,14 @@ public class ETagTest
         assertFalse( "ETag.equals failed to compare to unequal etag", etag1.equals( etag4 ) );
         assertFalse( "ETag.equals failed to compare to unequal etag", etag2.equals( etag4 ) );
 
-        assertTrue( "ETag.equals failed to compare to null", etag0.equals( null ) );
+        assertFalse( "ETag.equals failed to compare to null", etag0.equals( null ) );
         assertFalse( "ETag.equals failed to compare to null", etag1.equals( null ) );
         assertFalse( "ETag.equals failed to compare to null", etag1.equals( new ETag( etagValue4 ) ) );
-        assertTrue( "ETag.equals failed to compare to equal etag", etag4.equals( null ) );
+        assertFalse( "ETag.equals failed to compare to equal etag", etag4.equals( null ) );
         assertTrue( "ETag.equals failed to compare to equal etag", etag4.equals( new ETag( etagValue4 ) ) );
     }
 
-    @SuppressWarnings("unlikely-arg-type")
+    @SuppressWarnings( "unlikely-arg-type" )
     @Test
     public void testEqualsToWrongClass() throws InvalidETagException
     {
@@ -353,7 +402,7 @@ public class ETagTest
         assertEquals( "ETag.compareTo failed to compare", -1, etag4.compareTo( etag5 ) );
         assertEquals( "ETag.compareTo failed to compare", 1, etag5.compareTo( etag0 ) );
 
-        assertEquals( "ETag.compareTo failed to compare to null", 0, etag0.compareTo( null ) );
+        assertEquals( "ETag.compareTo failed to compare to null", 1, etag0.compareTo( null ) );
         assertEquals( "ETag.compareTo failed to compare to null", 1, etag5.compareTo( null ) );
     }
 
@@ -385,7 +434,7 @@ public class ETagTest
         assertEquals( "ETag.compareTo failed to compare to equal etag", 1, etag3.compareTo( etag4 ) );
         assertEquals( "ETag.compareTo failed to compare to equal etag", -1, etag4.compareTo( etag1 ) );
 
-        assertEquals( "ETag.compareTo failed to compare to null", 0, etag4.compareTo( null ) );
+        assertEquals( "ETag.compareTo failed to compare to null", 1, etag4.compareTo( null ) );
     }
 
     @Test
@@ -478,10 +527,10 @@ public class ETagTest
         String hexValue2= "afb990";
         String hexValue3= "1122334455667788";
 
-        assertEquals( "ETag.toHexString gives wrong value", ETag.toHexString( null ), ( null ) );
-        assertEquals( "ETag.toHexString gives wrong value", ETag.toHexString( etagValue1 ), ( hexValue1 ) );
-        assertEquals( "ETag.toHexString gives wrong value", ETag.toHexString( etagValue2 ), ( hexValue2 ) );
-        assertEquals( "ETag.toHexString gives wrong value", ETag.toHexString( etagValue3 ), ( hexValue3 ) );
+        assertEquals( "ETag.toHexString gives wrong value", "", ETag.toHexString( null ) );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue1, ETag.toHexString( etagValue1 ) );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue2, ETag.toHexString( etagValue2 ) );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue3, ETag.toHexString( etagValue3 ) );
     }
 
     @Test
@@ -544,7 +593,7 @@ public class ETagTest
         byte[] etagValue4= { (byte) 0xAF, (byte) 0xB9, (byte) 0x91 };
         byte[] etagValue5= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
 
-        ETag etag0= new ETag( );
+        ETag etag0= new ETag();
         ETag etag1= new ETag( etagValue1 );
         ETag etag2= new ETag( etagValue2 );
         ETag etag3= new ETag( etagValue3 );
@@ -581,7 +630,7 @@ public class ETagTest
         assertTrue( "ETag.getList doesn't contain etag", list.contains( etag4 ) );
         assertFalse( "ETag.getList does contain etag", list.contains( etag5 ) );
 
-        assertTrue( "ETag.getList doesn't contain etag", new ETag( ).isIn( list ) );
+        assertTrue( "ETag.getList doesn't contain etag", new ETag().isIn( list ) );
         assertTrue( "ETag.getList doesn't contain etag", new ETag( etagValue1 ).isIn( list ) );
         assertTrue( "ETag.getList doesn't contain etag", new ETag( etagValue2 ).isIn( list ) );
         assertTrue( "ETag.getList doesn't contain etag", new ETag( etagValue3 ).isIn( list ) );
@@ -590,10 +639,10 @@ public class ETagTest
 
         assertTrue( "ETag.getList doesn't contain etag", new ETag( etagValue4 ).isIn( listofone ) );
         assertFalse( "ETag.getList does contain etag", new ETag( etagValue5 ).isIn( listofone ) );
-        assertFalse( "ETag.getList does contain etag", new ETag( ).isIn( listofone ) );
+        assertFalse( "ETag.getList does contain etag", new ETag().isIn( listofone ) );
 
         assertFalse( "ETag.getList does contain etag", new ETag( etagValue4 ).isIn( emptylist ) );
         assertFalse( "ETag.getList does contain etag", new ETag( etagValue5 ).isIn( emptylist ) );
-        assertFalse( "ETag.getList does contain etag", new ETag( ).isIn( emptylist ) );
+        assertFalse( "ETag.getList does contain etag", new ETag().isIn( emptylist ) );
     }
 }

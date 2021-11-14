@@ -60,6 +60,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
@@ -72,9 +73,9 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
  * When multiple listeners apply the listener with the most specific uri-pattern 
  * will process the requests and deliver it to the flow. When patterns are equally specific, one of the listeners will be selected.  
  */
-@Alias("listener")
+@Alias( "listener" )
 @EmitsResponse
-@MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
+@MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
 public class Listener extends Source< InputStream, ReceivedRequestAttributes >
 {
     private static final Logger logger= LoggerFactory.getLogger( Listener.class.getCanonicalName() );
@@ -88,44 +89,44 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
      * has the most specific pattern that complies to the resources path.
      */
     @Parameter
-    @Optional(defaultValue= "/*")
-    @Summary("The pathPattern defines the resources the listener listens on.")
+    @Optional( defaultValue= "/*" )
+    @Summary( "The pathPattern defines the resources the listener listens on." )
     private String pathPattern;
 
     /**
      * The listener listens out for Get requests.
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @DisplayName("Accept Get requests")
-    @Summary("The listener will only receive GET requests.")
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Get requests" )
+    @Summary( "The listener will only receive GET requests." )
     private boolean get;
 
     /**
      * The listener listens out for Post requests.
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @DisplayName("Accept Post requests")
-    @Summary("The listener will only receive POST requests.")
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Post requests" )
+    @Summary( "The listener will only receive POST requests." )
     private boolean post;
 
     /**
      * The listener listens out for Put requests.
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @DisplayName("Accept Put requests")
-    @Summary("The listener will only receive PUT requests.")
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Put requests" )
+    @Summary( "The listener will only receive PUT requests." )
     private boolean put;
 
     /**
      * The listener listens out for Delete requests.
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @DisplayName("Accept Delete requests")
-    @Summary("The listener will only receive DELETE requests.")
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Delete requests" )
+    @Summary( "The listener will only receive DELETE requests." )
     private boolean delete;
 
     /**
@@ -149,14 +150,26 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     }
 
     @OnSuccess
-    @MediaType(value= "*/*", strict= false)
+    @MediaType( value= "*/*", strict= false )
     public void onSuccess(
-        @Optional @NullSafe @Alias("response") @Placement(tab= "Response", order= 1) ResponseBuilder response,
-        @Optional @NullSafe @Alias("response-options") @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the response.") @Placement(tab= "Response", order= 2) ResponseOptions responseOptions,
-        SourceCallbackContext callbackContext ) throws InternalInvalidByteArrayValueException,
+        @Optional
+        @NullSafe
+        @Alias( "response" )
+        @Placement( tab= "Response", order= 1 )
+        ResponseBuilder response,
+        @Optional
+        @NullSafe
+        @Alias( "response-options" )
+        @Expression( ExpressionSupport.SUPPORTED )
+        @Summary( "The CoAP options to send with the response." )
+        @Placement( tab= "Response", order= 2 )
+        ResponseOptions responseOptions,
+        SourceCallbackContext callbackContext
+    ) throws InternalInvalidByteArrayValueException,
         InternalInvalidResponseCodeException,
         IOException,
-        InvalidETagException
+        InvalidETagException,
+        InternalInvalidOptionValueException
     {
         CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
         Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
