@@ -49,34 +49,36 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "requestCode= {0}")
+    @Parameters( name= "requestCode= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 { CoAPRequestCode.GET, ResponseCode.CONTENT },
                 { CoAPRequestCode.POST, ResponseCode.CHANGED },
                 { CoAPRequestCode.PUT, ResponseCode.CHANGED },
-                { CoAPRequestCode.DELETE, ResponseCode.DELETED } } );
+                { CoAPRequestCode.DELETE, ResponseCode.DELETED } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public CoAPRequestCode requestCode;
 
     /**
      * The expected response code.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public ResponseCode expectedResponseCode;
 
     /* (non-Javadoc)
@@ -188,8 +190,11 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
             Exception e= assertThrows( Exception.class, () -> {
                 runFlow();
             } );
-            assertTrue( "wrong exception message", e.getMessage().contains( getExpectedException().getMessage() ) );
             assertEquals( "wrong exception cause", getExpectedException().getClass(), e.getCause().getClass() );
+            assertTrue(
+                "wrong exception message content, expected frase: <" + getExpectedException().getMessage() + "> but was: <" + e.getMessage() + ">",
+                e.getMessage().contains( getExpectedException().getMessage() )
+            );
         }
         else
         {
@@ -198,7 +203,8 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         }
@@ -208,6 +214,7 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     {
         return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
             "host",
-            "127.0.0.1" ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).run();
+            "127.0.0.1"
+        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).run();
     }
 }

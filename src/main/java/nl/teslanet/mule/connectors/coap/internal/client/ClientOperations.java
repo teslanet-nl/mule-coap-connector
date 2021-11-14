@@ -87,6 +87,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider
  */
 public class ClientOperations
 {
+    //TODO RC review error messages
     /**
      * The Request Processor issues a request on a CoAP server. The processor blocks
      * until a response is received or a timeout occurs.

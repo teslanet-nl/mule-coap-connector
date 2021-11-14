@@ -25,10 +25,11 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 
 
 /**
- * Test outbound Etag list property, signle value
+ * Test outbound Etag list property, single value
  *
  */
 public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
@@ -54,7 +55,7 @@ public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Exception getExpectedException()
     {
-        return new IllegalArgumentException("ETag option must not be null");
+        return new RequestException("request failed");
     }
     
     /* (non-Javadoc)
