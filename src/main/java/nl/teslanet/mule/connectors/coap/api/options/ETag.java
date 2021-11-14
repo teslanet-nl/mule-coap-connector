@@ -350,7 +350,7 @@ public final class ETag implements Comparable< ETag >
             }
             catch ( NumberFormatException e )
             {
-                throw new InvalidETagException( "ETag value cannot be parsed as hexadecimal: " + hexString );
+                throw new InvalidETagException( "Cannot parse ETag value as hexadecimal: " + hexString );
             }
             return bytes;
         }

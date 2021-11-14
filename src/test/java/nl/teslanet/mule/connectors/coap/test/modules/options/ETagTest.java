@@ -193,7 +193,7 @@ public class ETagTest
             @SuppressWarnings( "unused" )
             ETag etag1= new ETag( etagValue1 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "ETag value cannot be parsed as hexadecimal: " + etagValue1 ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot parse ETag value as hexadecimal: " + etagValue1 ) );
     }
 
     @Test
