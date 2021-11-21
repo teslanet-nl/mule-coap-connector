@@ -63,6 +63,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteA
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
@@ -78,7 +79,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
 public class Listener extends Source< InputStream, ReceivedRequestAttributes >
 {
-    private static final Logger logger= LoggerFactory.getLogger( Listener.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( Listener.class );
 
     @Config
     private Server server;
@@ -140,12 +141,12 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         try
         {
             operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete ), sourceCallback );
+            server.addListener( operationalListener );
         }
-        catch ( InternalResourceUriException e )
+        catch ( InternalResourceUriException | InternalUriPatternException e )
         {
             new DefaultMuleException( this + " start failed.", e );
         }
-        server.addListener( operationalListener );
         logger.info( this + " started." );
     }
 

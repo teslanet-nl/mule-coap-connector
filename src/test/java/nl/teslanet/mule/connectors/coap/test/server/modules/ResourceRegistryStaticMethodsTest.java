@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -32,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;
 
 
@@ -52,7 +54,7 @@ public class ResourceRegistryStaticMethodsTest
     }
 
     @Test
-    public void testMatchUri() throws InvalidResourceUriException
+    public void testMatchUri() throws InvalidResourceUriException, InternalUriPatternException
     {
         String uri1= "/resource1";
         String uri2= "/resource1/resource2";
@@ -141,7 +143,7 @@ public class ResourceRegistryStaticMethodsTest
     }
 
     @Test
-    public void testUriHasWildcard() throws InvalidResourceUriException
+    public void testUriHasWildcard() throws InvalidResourceUriException, InternalUriPatternException
     {
         String uri1= "/*";
         String uri2= "/resource1/*";
@@ -156,7 +158,12 @@ public class ResourceRegistryStaticMethodsTest
         assertTrue( "got wrong wildcard flag from uri: " + uri1, ResourceRegistry.uriHasWildcard( uri1 ) );
         assertTrue( "got wrong wildcard flag from uri: " + uri2, ResourceRegistry.uriHasWildcard( uri2 ) );
         assertTrue( "got wrong wildcard flag from uri: " + uri3, ResourceRegistry.uriHasWildcard( uri3 ) );
-        assertFalse( "got wrong wildcard flag from uri: " + uri4, ResourceRegistry.uriHasWildcard( uri4 ) );
+
+        InternalUriPatternException e= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> {
+            ResourceRegistry.uriHasWildcard( uri4 );
+        } );
+
+        assertTrue( "Wrong exceptionmessage from uri: " + uri4, e.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
 
         assertFalse( "got wrong wildcard flag from uri: " + uri5, ResourceRegistry.uriHasWildcard( uri5 ) );
         assertFalse( "got wrong wildcard flag from uri: " + uri6, ResourceRegistry.uriHasWildcard( uri6 ) );
@@ -181,4 +188,23 @@ public class ResourceRegistryStaticMethodsTest
         assertEquals( "got wrong parent from uri: " + uri3, parenturi3, ResourceRegistry.getParentUri( uri3 ) );
         assertEquals( "got wrong parent from uri: " + uri4, parenturi4, ResourceRegistry.getParentUri( uri4 ) );
     }
+
+    @Test
+    public void testInvalidUriPattern() throws InvalidResourceUriException
+    {
+        String uri1= "/resource1";
+        String uri2= "/resource1/resource2";
+        String uri3= "/resource1/resource2/resource3";
+        String uri4= "/resource1/resource4";
+        String parenturi1= "";
+        String parenturi2= "/resource1";
+        String parenturi3= "/resource1/resource2";
+        String parenturi4= "/resource1";
+
+        assertEquals( "got wrong parent from uri: " + uri1, parenturi1, ResourceRegistry.getParentUri( uri1 ) );
+        assertEquals( "got wrong parent from uri: " + uri2, parenturi2, ResourceRegistry.getParentUri( uri2 ) );
+        assertEquals( "got wrong parent from uri: " + uri3, parenturi3, ResourceRegistry.getParentUri( uri3 ) );
+        assertEquals( "got wrong parent from uri: " + uri4, parenturi4, ResourceRegistry.getParentUri( uri4 ) );
+    }
+
 }

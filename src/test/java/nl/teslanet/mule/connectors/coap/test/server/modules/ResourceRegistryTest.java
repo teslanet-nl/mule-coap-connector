@@ -36,10 +36,12 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 import nl.teslanet.mule.connectors.coap.internal.server.ResourceRegistry;
 import nl.teslanet.mule.connectors.coap.internal.server.ServedResource;
+
 
 /**
  * Test resource registry.
@@ -47,7 +49,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.ServedResource;
 public class ResourceRegistryTest
 {
     @Test
-    public void testConstructor() throws InternalResourceRegistryException, InternalResourceUriException 
+    public void testConstructor() throws InternalResourceRegistryException, InternalResourceUriException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry;
@@ -208,7 +210,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testAddOperationalListener() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testAddOperationalListener() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         CoapResource root= new CoapResource( "" );
@@ -238,7 +240,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBack() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBack() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -311,7 +313,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithRequestCodeFlags() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBackWithRequestCodeFlags() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -349,9 +351,9 @@ public class ResourceRegistryTest
         assertEquals( "resource1 has wrong callback", callback3, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong callback", callback4, registry.getResource( uri1 ).getDeleteCallback() );
     }
-    
+
     @Test
-    public void testCallBackWithWildcard1() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBackWithWildcard1() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -401,12 +403,12 @@ public class ResourceRegistryTest
         assertEquals( "resource2 has wrong post callback", callback2, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback2, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback2, registry.getResource( uri2 ).getDeleteCallback() );
-        
+
         assertEquals( "resource3 has wrong get callback", callback1, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback1, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback1, registry.getResource( uri3 ).getPutCallback() );
         assertEquals( "resource3 has wrong delete callback", callback1, registry.getResource( uri3 ).getDeleteCallback() );
-        
+
         assertEquals( "resource4 has wrong get callback", callback1, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback1, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback1, registry.getResource( uri4 ).getPutCallback() );
@@ -414,7 +416,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithWildcardAndRequestCodeFlags1() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBackWithWildcardAndRequestCodeFlags1() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -463,13 +465,13 @@ public class ResourceRegistryTest
 
         listener= new OperationalListener( uri2, flags3, callback3 );
         registry.add( listener );
-        
+
         listener= new OperationalListener( uri2, flags4, callback4 );
         registry.add( listener );
-        
+
         listener= new OperationalListener( uri2, flags5, callback5 );
         registry.add( listener );
-        
+
         assertEquals( "resource1 has wrong get callback", callback1, registry.getResource( uri1 ).getGetCallback() );
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
@@ -479,12 +481,12 @@ public class ResourceRegistryTest
         assertEquals( "resource2 has wrong post callback", callback3, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback4, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback5, registry.getResource( uri2 ).getDeleteCallback() );
-        
+
         assertEquals( "resource3 has wrong get callback", callback1, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback1, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback1, registry.getResource( uri3 ).getPutCallback() );
         assertEquals( "resource3 has wrong delete callback", callback1, registry.getResource( uri3 ).getDeleteCallback() );
-        
+
         assertEquals( "resource4 has wrong get callback", callback1, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback1, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback1, registry.getResource( uri4 ).getPutCallback() );
@@ -492,7 +494,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testCallBackWithWildcard2() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBackWithWildcard2() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -552,20 +554,20 @@ public class ResourceRegistryTest
         assertEquals( "resource2 has wrong post callback", callback1, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback1, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback1, registry.getResource( uri2 ).getDeleteCallback() );
-        
+
         assertEquals( "resource3 has wrong get callback", callback3, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback3, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback2, registry.getResource( uri3 ).getPutCallback() ); //note callback2
         assertEquals( "resource3 has wrong delete callback", callback3, registry.getResource( uri3 ).getDeleteCallback() );
-        
+
         assertEquals( "resource4 has wrong get callback", callback4, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback4, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback4, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong delete callback", callback4, registry.getResource( uri4 ).getDeleteCallback() );
-}
+    }
 
     @Test
-    public void testCallBackWithWildcard3() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testCallBackWithWildcard3() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
@@ -615,7 +617,7 @@ public class ResourceRegistryTest
 
         listener= new OperationalListener( uri4, flags4, callback4 );
         registry.add( listener );
-       
+
         assertEquals( "resource1 has wrong get callback", callback1, registry.getResource( uri1 ).getGetCallback() );
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
@@ -625,12 +627,12 @@ public class ResourceRegistryTest
         assertEquals( "resource2 has wrong post callback", null, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback2, registry.getResource( uri2 ).getPutCallback() ); //note callback2
         assertEquals( "resource2 has wrong delete callback", null, registry.getResource( uri2 ).getDeleteCallback() );
-        
+
         assertEquals( "resource3 has wrong get callback", callback3, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback3, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback2, registry.getResource( uri3 ).getPutCallback() ); //note callback2
         assertEquals( "resource3 has wrong delete callback", callback3, registry.getResource( uri3 ).getDeleteCallback() );
-        
+
         assertEquals( "resource4 has wrong get callback", callback4, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback4, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback4, registry.getResource( uri4 ).getPutCallback() );

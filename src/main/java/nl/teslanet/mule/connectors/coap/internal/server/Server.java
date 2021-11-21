@@ -63,6 +63,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 
 
 /**
@@ -139,7 +140,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Summary( value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @DisplayName(value= "Notify observing clients on shutdown")
+    @DisplayName( value= "Notify observing clients on shutdown" )
     @Placement( order= 1, tab= "Advanced" )
     public boolean notifyOnShutdown= true;
 
@@ -313,8 +314,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     /**
      * Add listener to the server
      * @param operationalListener the listener to add
+     * @throws InternalUriPatternException When listeners uri pattern is invalid.
      */
-    void addListener( OperationalListener operationalListener )
+    void addListener( OperationalListener operationalListener ) throws InternalUriPatternException
     {
         registry.add( operationalListener );
     }

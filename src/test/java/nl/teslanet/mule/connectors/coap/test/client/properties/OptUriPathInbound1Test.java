@@ -72,7 +72,7 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestCase
     protected Object getExpectedInboundPropertyValue()
     {
         //TODO RC: add root / ?
-        return new String( "test" );
+        return new String( "/test" );
     }
 
     /* (non-Javadoc)

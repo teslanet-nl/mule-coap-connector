@@ -30,12 +30,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.californium.core.server.resources.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 
 
 /**
@@ -44,6 +47,8 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriE
  */
 public class ResourceRegistry
 {
+    private static final Logger logger= LoggerFactory.getLogger( ResourceRegistry.class );
+
     //TODO maybe list, depending on validation of duplication of resourcenames
     private ConcurrentHashMap< String, ServedResource > servedResources;
 
@@ -96,7 +101,7 @@ public class ResourceRegistry
      * When parentUri is null the resource will be added to the root. 
      * @param parentUri The uri of the parent of the new resource. 
      * @param resourceDesciption The definition of the resource to create.
-     * @throws InternalResourceUriException when the 
+     * @throws InternalResourceUriException when the parent uri does not resolve to an existing resource.
      */
     public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InternalResourceUriException
     {
@@ -158,9 +163,12 @@ public class ResourceRegistry
     /**
     * Add a listener to the registry.
     * @param operationalListener The listener to add
+     * @throws InternalUriPatternException When the listeners uri pattern is invalid.
     */
-    public void add( OperationalListener operationalListener )
+    public void add( OperationalListener operationalListener ) throws InternalUriPatternException
     {
+        //validate wildcard
+        uriHasWildcard( operationalListener.getUriPattern() );
         listeners.add( operationalListener );
         updateResourceCallBack();
     }
@@ -203,7 +211,17 @@ public class ResourceRegistry
         int maxDeleteMatchlevel= 0;
         for ( OperationalListener listener : listeners )
         {
-            int matchLevel= matchUri( listener.getUriPattern(), resource.getURI() );
+            int matchLevel;
+            try
+            {
+                matchLevel= matchUri( listener.getUriPattern(), resource.getURI() );
+            }
+            catch ( InternalUriPatternException e )
+            {
+                //listeners uriPattern is invalid. Should not occur.
+                logger.error( e.getMessage() );
+                matchLevel= 0;
+            }
             if ( matchLevel > maxGetMatchlevel && listener.requestCodeFlags.isGet() )
             {
                 maxGetMatchlevel= matchLevel;
@@ -306,11 +324,20 @@ public class ResourceRegistry
         //TODO RC concurrent?
         ArrayList< ServedResource > found= new ArrayList<>();
 
-        for ( Entry< String, ServedResource > e : servedResources.entrySet() )
+        for ( Entry< String, ServedResource > entry : servedResources.entrySet() )
         {
-            if ( matchUri( uriPattern, e.getKey() ) > 0 )
+            try
             {
-                found.add( e.getValue() );
+                if ( matchUri( uriPattern, entry.getKey() ) > 0 )
+                {
+                    found.add( entry.getValue() );
+                }
+            }
+            catch ( InternalUriPatternException e )
+            {
+                //uriPattern is invalid. Should not occur, is already validated.
+                logger.error( e.getMessage() );
+                break;
             }
         }
         return found;
@@ -327,10 +354,10 @@ public class ResourceRegistry
      * @param uriPattern The pattern to match to.
      * @param resourceUri The resource uri to do the matching on.
      * @return The degree of matching.
+     * @throws InternalUriPatternException when the pattern given is invalid
      */
-    public static int matchUri( String uriPattern, String resourceUri )
+    public static int matchUri( String uriPattern, String resourceUri ) throws InternalUriPatternException
     {
-        //TODO RC assure wildcard only occurs at end
         if ( uriHasWildcard( uriPattern ) )
         {
             if ( resourceUri.startsWith( getUriPath( uriPattern ) ) )
@@ -346,7 +373,7 @@ public class ResourceRegistry
     }
 
     /**
-     * Get the depth of resource hierachy in an uri.
+     * Get the depth of resource hierarchy in an uri.
      * @param uri the resource uri
      * @return the depth of the uri
      */
@@ -399,10 +426,17 @@ public class ResourceRegistry
      * Establish whether the uri has a wildcard and is in fact a pattern.
      * @param uri The uri of a resource.
      * @return true when a wildcard is found, otherwise false.
+     * @throws InternalUriPatternException 
      */
-    public static boolean uriHasWildcard( String uri )
+    public static boolean uriHasWildcard( String uri ) throws InternalUriPatternException
     {
-        return uri.endsWith( Defs.COAP_URI_WILDCARD );
+        int index= uri.indexOf( Defs.COAP_URI_WILDCARD );
+        if ( index == -1 ) return false;
+        if ( index < ( uri.length() - Defs.COAP_URI_WILDCARD.length() ) )
+        {
+            throw new InternalUriPatternException( "Wildcard is only allowed on pattern ending", uri );
+        }
+        return true;
     }
 
     /**
