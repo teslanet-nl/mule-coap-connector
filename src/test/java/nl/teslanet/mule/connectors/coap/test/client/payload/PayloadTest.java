@@ -44,7 +44,7 @@ import org.mule.runtime.core.api.streaming.bytes.InMemoryCursorStreamProvider;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.tck.core.streaming.SimpleByteBufferManager;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import org.eclipse.californium.core.CoapServer;
@@ -84,7 +84,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         Object responsePayload= TypedValue.unwrap( response.getMessage().getPayload() );
@@ -102,7 +102,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
@@ -126,7 +126,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
@@ -144,7 +144,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
@@ -163,7 +163,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
@@ -181,7 +181,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
@@ -199,7 +199,7 @@ public class PayloadTest extends AbstractClientTestCase
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getMessage().getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );

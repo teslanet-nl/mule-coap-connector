@@ -39,7 +39,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -141,9 +141,9 @@ public class ResponseTest extends AbstractClientTestCase
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
             assertEquals(
                 "wrong attributes class",
-                new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+                new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
                 response.getAttributes().getClass() );
-            ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );

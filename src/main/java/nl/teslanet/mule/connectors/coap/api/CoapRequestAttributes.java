@@ -27,53 +27,59 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
-public class ReceivedRequestAttributes
+/**
+* The attributes of a CoAP request that was received from a client.
+*
+*/
+public class CoapRequestAttributes
 {
+    //TODO RC review address, host uri naming
+
     /**
      * The CoAP request code that was issued.
      */
-    private String requestCode= null;
+    protected String requestCode= null;
 
     /**
      * When true, the request issued was confirmable.
      */
-    private Boolean confirmable= null;
+    protected Boolean confirmable= null;
 
     /**
      * The server address the request was issued on. 
      */
-    private String localAddress= null;
+    protected String localAddress= null;
 
     /**
      * The uri of the resource the request was issued on. 
      */
-    private String requestUri= null;
+    protected String requestUri= null;
 
     /**
      * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
      */
-    private String relation= null;
+    protected String relation= null;
 
     /**
      * The address of the client that issued the request.
      */
-    private String remoteAddress= null;
+    protected String remoteAddress= null;
 
     /**
      * The port that was used by the client ti issue the request.
      */
-    private Integer remotePort= null;
+    protected Integer remotePort= null;
 
     /**
      * The CoAP options that accompanied the request.
      */
-    private OptionAttributes options= new OptionAttributes();
+    protected RequestOptionsAttributes requestOptionAttributes= null;
 
     /**
-     * @return the requestCode
+     * @return The requestCode.
      */
     public String getRequestCode()
     {
@@ -81,15 +87,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param requestCode the requestCode to set
-     */
-    public void setRequestCode( String requestCode )
-    {
-        this.requestCode= requestCode;
-    }
-
-    /**
-     * @return the confirmable
+     * @return The confirmable.
      */
     public Boolean getConfirmable()
     {
@@ -97,15 +95,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param confirmable the confirmable to set
-     */
-    public void setConfirmable( Boolean confirmable )
-    {
-        this.confirmable= confirmable;
-    }
-
-    /**
-     * @return the localAddress
+     * @return The localAddress.
      */
     public String getLocalAddress()
     {
@@ -113,15 +103,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param localAddress the localAddress to set
-     */
-    public void setLocalAddress( String localAddress )
-    {
-        this.localAddress= localAddress;
-    }
-
-    /**
-     * @return the requestUri
+     * @return The requestUri.
      */
     public String getRequestUri()
     {
@@ -129,15 +111,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param requestUri the requestUri to set
-     */
-    public void setRequestUri( String requestUri )
-    {
-        this.requestUri= requestUri;
-    }
-
-    /**
-     * @return the relation
+     * @return The relation
      */
     public String getRelation()
     {
@@ -145,15 +119,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param relation the relation to set
-     */
-    public void setRelation( String relation )
-    {
-        this.relation= relation;
-    }
-
-    /**
-     * @return the remoteAddress
+     * @return The remoteHost.
      */
     public String getRemoteAddress()
     {
@@ -161,15 +127,7 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param remoteAddress the remoteAddress to set
-     */
-    public void setRemoteAddress( String remoteAddress )
-    {
-        this.remoteAddress= remoteAddress;
-    }
-
-    /**
-     * @return the remotePort
+     * @return The remote port number.
      */
     public Integer getRemotePort()
     {
@@ -177,31 +135,15 @@ public class ReceivedRequestAttributes
     }
 
     /**
-     * @param remotePort the remotePort to set
+     * @return The options.
      */
-    public void setRemotePort( Integer remotePort )
+    public RequestOptionsAttributes getRequestOptionAttributes()
     {
-        this.remotePort= remotePort;
+        return requestOptionAttributes;
     }
 
     /**
-     * @return the options
-     */
-    public OptionAttributes getOptions()
-    {
-        return options;
-    }
-
-    /**
-     * @param options the options to set
-     */
-    public void setOptions( OptionAttributes options )
-    {
-        this.options= options;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+     * Get the string representation.
      */
     @Override
     public String toString()

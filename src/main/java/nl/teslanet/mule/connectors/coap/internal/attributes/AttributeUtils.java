@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
@@ -254,4 +255,28 @@ public class AttributeUtils
                 throw new InternalInvalidResponseCodeException( reponseCode );
         }
     }
+
+    /**
+     * Add query parameter string with optional value to multiMap.
+     * @param multiMap The map to add the parameter to.
+     * @param parameterString The string containing the key and optional value.
+     */
+    public static void addQueryParam( MultiMap< String, String > multiMap, String parameterString )
+    {
+        String key;
+        String value;
+        int separatorIndex= parameterString.indexOf( "=" );
+        if ( separatorIndex < 0 )
+        {
+            key= parameterString;
+            value= null;
+        }
+        else
+        {
+            key= parameterString.substring( 0, separatorIndex );
+            value= parameterString.substring( separatorIndex + 1 );
+        }
+        multiMap.put( key, value );
+    }
+
 }

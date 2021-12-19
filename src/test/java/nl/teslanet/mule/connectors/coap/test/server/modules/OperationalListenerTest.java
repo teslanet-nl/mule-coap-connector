@@ -32,7 +32,7 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
@@ -327,7 +327,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, flags, callback );
     }
 
-    private void assertOperationalListener( OperationalListener listener, String uri, RequestCodeFlags flags, SourceCallback< InputStream, ReceivedRequestAttributes > callback )
+    private void assertOperationalListener( OperationalListener listener, String uri, RequestCodeFlags flags, SourceCallback< InputStream, CoapRequestAttributes > callback )
     {
         assertNotNull( "listener construction failed", listener );
         assertEquals( "listener uri has wrong value", uri, listener.getUriPattern() );

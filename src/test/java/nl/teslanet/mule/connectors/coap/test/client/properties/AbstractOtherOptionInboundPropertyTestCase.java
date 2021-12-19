@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import org.eclipse.californium.core.coap.Option;
 
 
@@ -35,10 +35,9 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
 {
     abstract protected  Option getOption();
     
-    @SuppressWarnings("unlikely-arg-type")
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getOtherOptions().get( getOption().getNumber() );
+        return attributes.getResponseOptionAttributes().getOtherOptions().get( getOption().getNumber() );
     }
 }

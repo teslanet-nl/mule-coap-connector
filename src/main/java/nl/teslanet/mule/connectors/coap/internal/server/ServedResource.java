@@ -34,13 +34,14 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
-import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -53,25 +54,25 @@ public class ServedResource extends CoapResource
      * The callback of the messagesource for Get requests.
      * It is used to hand messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< InputStream, ReceivedRequestAttributes > getCallback= null;
+    private SourceCallback< InputStream, CoapRequestAttributes > getCallback= null;
 
     /**
      * The callback of the messagesource for Post requests.
      * It is used to hand messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< InputStream, ReceivedRequestAttributes > postCallback= null;
+    private SourceCallback< InputStream, CoapRequestAttributes > postCallback= null;
 
     /**
      * The callback of the messagesource for Put requests.
      * It is used to hand messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< InputStream, ReceivedRequestAttributes > putCallback= null;
+    private SourceCallback< InputStream, CoapRequestAttributes > putCallback= null;
 
     /**
      * The callback of the messagesource for Delete requests.
      * It is used to hand messages over to the Mule flow that should process the request.
      */
-    private SourceCallback< InputStream, ReceivedRequestAttributes > deleteCallback= null;
+    private SourceCallback< InputStream, CoapRequestAttributes > deleteCallback= null;
 
     /**
      * RequestCode flags indicating which requests the resource accepts.
@@ -290,7 +291,7 @@ public class ServedResource extends CoapResource
      * @param exchange the CoAP exchange context of the request.
      * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
      */
-    private void handleRequest( SourceCallback< InputStream, ReceivedRequestAttributes > callback, CoapExchange exchange, CoAPResponseCode defaultCoAPResponseCode )
+    private void handleRequest( SourceCallback< InputStream, CoapRequestAttributes > callback, CoapExchange exchange, CoAPResponseCode defaultCoAPResponseCode )
     {
         if ( callback == null )
         {
@@ -301,7 +302,7 @@ public class ServedResource extends CoapResource
         {
             exchange.accept();
         }
-        ReceivedRequestAttributes requestAttributes;
+        CoapRequestAttributes requestAttributes;
         try
         {
             requestAttributes= createRequestAttributes( exchange );
@@ -323,7 +324,7 @@ public class ServedResource extends CoapResource
         if ( requestPayload != null )
         {
             callback.handle(
-                Result.< InputStream, ReceivedRequestAttributes > builder().output( new ByteArrayInputStream( requestPayload ) ).length( requestPayload.length ).attributes(
+                Result.< InputStream, CoapRequestAttributes > builder().output( new ByteArrayInputStream( requestPayload ) ).length( requestPayload.length ).attributes(
                     requestAttributes
                 ).mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
                 requestcontext
@@ -332,7 +333,7 @@ public class ServedResource extends CoapResource
         else
         {
             callback.handle(
-                Result.< InputStream, ReceivedRequestAttributes > builder().attributes( requestAttributes ).output( null ).mediaType(
+                Result.< InputStream, CoapRequestAttributes > builder().attributes( requestAttributes ).output( null ).mediaType(
                     MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() )
                 ).build(),
                 requestcontext
@@ -341,25 +342,24 @@ public class ServedResource extends CoapResource
 
     }
 
-    private ReceivedRequestAttributes createRequestAttributes( CoapExchange exchange ) throws InternalInvalidOptionValueException
+    private DefaultRequestAttributes createRequestAttributes( CoapExchange exchange ) throws InternalInvalidOptionValueException
     {
-        ReceivedRequestAttributes attributes= new ReceivedRequestAttributes();
+        DefaultRequestAttributes attributes= new DefaultRequestAttributes();
         attributes.setRequestCode( exchange.getRequestCode().toString() );
         attributes.setConfirmable( exchange.advanced().getRequest().isConfirmable() );
         attributes.setLocalAddress( exchange.advanced().getEndpoint().getAddress().toString() );
         attributes.setRequestUri( this.getURI() );
         attributes.setRelation( ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
-        attributes.setRemoteAddress( exchange.getSourceAddress().toString() );
+        attributes.setRemoteHost( exchange.getSourceAddress().toString() );
         attributes.setRemotePort( exchange.getSourcePort() );
-
-        MessageUtils.copyOptions( exchange.getRequestOptions(), attributes.getOptions() );
+        attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( exchange.getRequestOptions() ) );
         return attributes;
     }
 
     /**
      * set the Mule callback for this resource for Get requests.
      */
-    public void setGetCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    public void setGetCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         getCallback= sourceCallback;
     }
@@ -368,7 +368,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Get requests.
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getGetCallback()
+    public SourceCallback< InputStream, CoapRequestAttributes > getGetCallback()
     {
         return getCallback;
     }
@@ -376,7 +376,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Post requests.
      */
-    public void setPostCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    public void setPostCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         postCallback= sourceCallback;
     }
@@ -385,7 +385,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Post requests.
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getPostCallback()
+    public SourceCallback< InputStream, CoapRequestAttributes > getPostCallback()
     {
         return postCallback;
     }
@@ -393,7 +393,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Put requests.
      */
-    public void setPutCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    public void setPutCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         putCallback= sourceCallback;
     }
@@ -402,7 +402,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Put requests.
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getPutCallback()
+    public SourceCallback< InputStream, CoapRequestAttributes > getPutCallback()
     {
         return putCallback;
     }
@@ -410,7 +410,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Delete requests.
      */
-    public void setDeleteCallback( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback )
+    public void setDeleteCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         deleteCallback= sourceCallback;
     }
@@ -419,7 +419,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Delete requests.
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getDeleteCallback()
+    public SourceCallback< InputStream, CoapRequestAttributes > getDeleteCallback()
     {
         return deleteCallback;
     }

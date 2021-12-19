@@ -42,7 +42,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
@@ -57,7 +57,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  */
 @Alias("observer")
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class Observer extends Source< InputStream, ReceivedResponseAttributes >
+public class Observer extends Source< InputStream, CoapResponseAttributes >
 {
     /**
      * The logger.
@@ -130,7 +130,7 @@ public class Observer extends Source< InputStream, ReceivedResponseAttributes >
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< InputStream, ReceivedResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
     {
         final String uri;
         try

@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 
@@ -89,8 +89,8 @@ public class OptEtagListInbound1mTest extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getEtags();
+        return attributes.getResponseOptionAttributes().getEtag();
     }
 }

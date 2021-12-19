@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import org.eclipse.californium.core.coap.Option;
 
 
@@ -85,8 +85,8 @@ public class OptOtherInbound3Test extends AbstractOtherOptionInboundPropertyTest
      * @see nl.teslanet.mule.connectors.coap.test.client.properties.AbstractOtherOptionInboundPropertyTestCase#fetchInboundProperty(nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes)
      */
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getOtherOptions().get( "65308" );
+        return attributes.getResponseOptionAttributes().getOtherOptions().get( 65308 );
     }
 }

@@ -23,68 +23,69 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+//TODO RC remove dependency
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 
 
 /**
  * The attributes of a CoAP response that was received from a server.
  *
  */
-public class ReceivedResponseAttributes
+public class CoapResponseAttributes
 {
     /**
      * The CoAP request code that was issued.
      */
-    private String requestCode= null;
+    protected String requestCode= null;
 
     /**
      * When true, the request issued was confirmable.
      */
-    private boolean confirmable= false;
+    protected boolean confirmable= false;
 
     /**
      * The client address the request was issued from. 
      */
-    private String localAddress= null;
+    protected String localAddress= null;
 
     /**
      * The uri of the resource the request was issued on. 
      */
-    private String requestUri= null;
+    protected String requestUri= null;
 
     /**
      * The address of the server that issued the response.
      */
-    private String remoteAddress= null;
+    protected String remoteAddress= null;
 
     /**
      * The port that was used by the server that issued the response.
      */
-    private Integer remotePort= null;
+    protected Integer remotePort= null;
 
     /**
      * True when response is received and indicates success.
      */
-    private boolean success;
+    protected boolean success= false;
 
     /**
      * True when response is a notification.
      */
-    private boolean notification;
+    protected boolean notification= false;
 
     /**
      * The CoAP response code of the server response.
      */
-    private String responseCode;
+    protected String responseCode= null;
 
     /**
      * The CoAP options that accompanied the response.
      */
-    private OptionAttributes options= new OptionAttributes();
+    protected ResponseOptionsAttributes responseOptionAttributes= null;
 
     /**
      * @return the requestCode
@@ -92,14 +93,6 @@ public class ReceivedResponseAttributes
     public String getRequestCode()
     {
         return requestCode;
-    }
-
-    /**
-     * @param requestCode the requestCode to set
-     */
-    public void setRequestCode( String requestCode )
-    {
-        this.requestCode= requestCode;
     }
 
     /**
@@ -111,27 +104,11 @@ public class ReceivedResponseAttributes
     }
 
     /**
-     * @param confirmable the confirmable to set
-     */
-    public void setConfirmable( Boolean confirmable )
-    {
-        this.confirmable= confirmable;
-    }
-
-    /**
      * @return the localAddress
      */
     public String getLocalAddress()
     {
         return localAddress;
-    }
-
-    /**
-     * @param localAddress the localAddress to set
-     */
-    public void setLocalAddress( String localAddress )
-    {
-        this.localAddress= localAddress;
     }
 
     /**
@@ -143,14 +120,6 @@ public class ReceivedResponseAttributes
     }
 
     /**
-     * @param requestUri the requestUri to set
-     */
-    public void setRequestUri( String requestUri )
-    {
-        this.requestUri= requestUri;
-    }
-
-    /**
      * @return the remoteAddress
      */
     public String getRemoteAddress()
@@ -159,27 +128,11 @@ public class ReceivedResponseAttributes
     }
 
     /**
-     * @param remoteAddress the remoteAddress to set
-     */
-    public void setRemoteAddress( String remoteAddress )
-    {
-        this.remoteAddress= remoteAddress;
-    }
-
-    /**
      * @return the remotePort
      */
     public Integer getRemotePort()
     {
         return remotePort;
-    }
-
-    /**
-     * @param remotePort the remotePort to set
-     */
-    public void setRemotePort( Integer remotePort )
-    {
-        this.remotePort= remotePort;
     }
 
     /**
@@ -199,14 +152,6 @@ public class ReceivedResponseAttributes
     }
 
     /**
-     * @param notification the notification to set
-     */
-    public void setNotification( boolean notification )
-    {
-        this.notification= notification;
-    }
-
-    /**
      * @param success the success to set
      */
     public void setSuccess( boolean success )
@@ -223,31 +168,15 @@ public class ReceivedResponseAttributes
     }
 
     /**
-     * @param string the responseCode to set
-     */
-    public void setResponseCode( String string )
-    {
-        this.responseCode= string;
-    }
-
-    /**
      * @return the options
      */
-    public OptionAttributes getOptions()
+    public ResponseOptionsAttributes getResponseOptionAttributes()
     {
-        return options;
+        return responseOptionAttributes;
     }
 
     /**
-     * @param options the options to set
-     */
-    public void setOptions( OptionAttributes options )
-    {
-        this.options= options;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+     * Get the string representation.
      */
     @Override
     public String toString()

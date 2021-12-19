@@ -49,7 +49,7 @@ import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ObserverBuilder;
 import nl.teslanet.mule.connectors.coap.api.PingBuilder;
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
@@ -99,7 +99,7 @@ public class ClientOperations
      */
     @MediaType(value= "*/*", strict= false)
     @Throws({ RequestErrorProvider.class })
-    public Result< InputStream, ReceivedResponseAttributes > request(
+    public Result< InputStream, CoapResponseAttributes > request(
         @Config Client client,
         @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
         @Alias("request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )

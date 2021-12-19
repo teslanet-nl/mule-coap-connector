@@ -43,7 +43,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapServer;
@@ -145,9 +145,9 @@ public class AsyncMulticastTest extends AbstractClientTestCase
         response= (Message) spy.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

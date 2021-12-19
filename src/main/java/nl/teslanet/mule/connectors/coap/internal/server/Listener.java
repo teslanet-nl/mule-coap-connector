@@ -53,7 +53,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
@@ -77,7 +77,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @Alias( "listener" )
 @EmitsResponse
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
-public class Listener extends Source< InputStream, ReceivedRequestAttributes >
+public class Listener extends Source< InputStream, CoapRequestAttributes >
 {
     private static final Logger logger= LoggerFactory.getLogger( Listener.class );
 
@@ -136,7 +136,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     OperationalListener operationalListener= null;
 
     @Override
-    public void onStart( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback ) throws MuleException
     {
         try
         {

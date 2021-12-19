@@ -43,7 +43,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -170,9 +170,9 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         response= (Message) spy1.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
@@ -183,9 +183,9 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         response= (Message) response.getPayload().getValue();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
@@ -239,9 +239,9 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         response= (Message) spy3.getEvents().get( 0 ).getContent();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
+            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
