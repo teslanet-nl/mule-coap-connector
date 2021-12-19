@@ -45,11 +45,12 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.ObserverBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverStartBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverStopBuilder;
 import nl.teslanet.mule.connectors.coap.api.PingBuilder;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
@@ -107,19 +108,7 @@ public class ClientOperations
         String errorMsg= ": request failed.";
         try
         {
-            String uri= client.getURI(
-                requestBuilder.getHost(),
-                requestBuilder.getPort(),
-                requestBuilder.getPath(),
-                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
-            return client.doRequest(
-                requestBuilder.isConfirmable(),
-                requestBuilder.getRequestCode(),
-                uri,
-                requestBuilder.getRequestPayload(),
-                requestBuilder.isForcePayload(),
-                requestOptions,
-                null );
+            return client.doRequest( requestBuilder, requestOptions, null );
         }
         catch ( InternalEndpointException e )
         {
@@ -171,19 +160,7 @@ public class ClientOperations
         String errorMsg= ": async request failed.";
         try
         {
-            String uri= client.getURI(
-                requestBuilder.getHost(),
-                requestBuilder.getPort(),
-                requestBuilder.getPath(),
-                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
-            client.doRequest(
-                requestBuilder.isConfirmable(),
-                requestBuilder.getRequestCode(),
-                uri,
-                requestBuilder.getRequestPayload(),
-                requestBuilder.isForcePayload(),
-                requestOptions,
-                responseHandlerBuilder.responseHandler );
+            client.doRequest( requestBuilder, requestOptions, responseHandlerBuilder );
         }
         catch ( InternalEndpointException e )
         {
@@ -228,12 +205,12 @@ public class ClientOperations
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
     @Throws({ PingErrorProvider.class })
-    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping uri") PingBuilder pingBuilder )
+    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping address") PingBuilder pingBuilder )
     {
         String errorMsg= ": ping failed.";
         try
         {
-            return client.ping( pingBuilder.getHost(), pingBuilder.getPort() );
+            return client.ping( pingBuilder );
         }
         catch ( ConnectorException | IOException e )
         {
@@ -254,13 +231,13 @@ public class ClientOperations
      * @return The resources description on the server that have been discovered.
      */
     @Throws({ DiscoverErrorProvider.class })
-    public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
+    public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover address") DiscoverBuilder discoverBuilder )
     {
         String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
         try
         {
-            links= client.discover( discoverBuilder.isConfirmable(), discoverBuilder.getHost(), discoverBuilder.getPort(), discoverBuilder.getQueryParams() );
+            links= client.discover( discoverBuilder );
         }
         catch ( IOException | ConnectorException e )
         {
@@ -338,24 +315,18 @@ public class ClientOperations
     /**
      * @param client
      * @param responseHandlerBuilder Name of the response handler that will process the notification received from server.
-     * @param observerBuilder The observe request parameters.
+     * @param observerStartBuilder The observe request parameters.
      */
     @Throws({ ObserverStartErrorProvider.class })
-    public void observerStart(
-        @Config Client client,
-        @ParameterGroup(name= "Notification handling") ResponseHandlerBuilder responseHandlerBuilder,
-        @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
+    public void observerStart( @Config
+    Client client, @ParameterGroup( name= "Notification handling" )
+    ResponseHandlerBuilder responseHandlerBuilder, @ParameterGroup( name= "Observe uri" )
+    ObserverStartBuilder observerStartBuilder )
     {
         String errorMsg= ": observer start failed.";
         try
         {
-            client.startObserver(
-                responseHandlerBuilder.getResponseHandler(),
-                observerBuilder.isConfirmable(),
-                observerBuilder.getHost(),
-                observerBuilder.getPort(),
-                observerBuilder.getPath(),
-                observerBuilder.getQueryParams() );
+            client.startObserver( observerStartBuilder, responseHandlerBuilder );
         }
         catch ( InternalUriException e )
         {
@@ -373,18 +344,18 @@ public class ClientOperations
 
     /**
      * Stop a running observer.
-     * 
-     * @param client             The client instance that stops the observer.
-     * @param observerBuilder Attributes of the observe request
+     * @param client The client instance that stops the observer.
+     * @param observerStopBuilder Parameters of the observer
      */
     @Throws({ ObserverStopErrorProvider.class })
-    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
+    public void observerStop( @Config
+    Client client, @ParameterGroup( name= "Observe uri" )
+    ObserverStopBuilder observerStopBuilder )
     {
         String errorMsg= ": observer stop failed.";
-        // TODO RC confirmable is not applicable
         try
         {
-            client.stopObserver( observerBuilder.getHost(), observerBuilder.getPort(), observerBuilder.getPath(), observerBuilder.getQueryParams() );
+            client.stopObserver( observerStopBuilder );
         }
         catch ( InternalUriException e )
         {
@@ -403,7 +374,8 @@ public class ClientOperations
      * @param client The client instance of which the observers are listed.
      * @return the list of observed uri's
      */
-    public ConcurrentSkipListSet< String > observerList( @Config Client client )
+    public ConcurrentSkipListSet< String > observerList( @Config
+    Client client )
     {
         ConcurrentSkipListSet< String > list= new ConcurrentSkipListSet< String >();
         list.addAll( client.getRelations().keySet() );

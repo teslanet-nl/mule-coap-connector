@@ -26,9 +26,8 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +38,6 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
-import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
@@ -59,6 +57,7 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -66,6 +65,7 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
@@ -75,13 +75,20 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.api.AbstractAddressBuilder;
+import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverStartBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverStopBuilder;
+import nl.teslanet.mule.connectors.coap.api.PingBuilder;
+import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
-import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
@@ -170,26 +177,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     //TODO add default confirmable, path and query?
 
     /**
-     * The default hostname or ip of the server to address. 
-     * Can be overridden by the host setting on operations.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Summary( "The default hostname or ip of the server to address. Can be overridden by the host setting on operations." )
-    private String host= null;
-
-    /**
-     * The default port the server is listening on.
-     * Can be overridden by the port setting on the operation. 
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Summary( "The default port the server is listening on. Can be overridden by the port setting on operations." )
-    private Integer port= null;
-
-    /**
      * When {@code true} synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. 
      * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
      */
@@ -200,6 +187,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         "When true, synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases, with attribute.success set to false."
     )
     private boolean throwExceptionOnErrorResponse= true;
+
+    @ParameterGroup( name= "Default request uri" )
+    private RequestConfig requestDefaults;
 
     /**
      * The endpoint the client uses.
@@ -408,16 +398,17 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param queryParamList List of query parameters.
      * @return The querystring. 
      */
-    String toQueryString( List< ? extends AbstractQueryParam > queryParamList )
+    /*
+    String toQueryString( List< ? extends QueryParamAttribute > queryParamList )
     {
         if ( queryParamList == null ) return null;
-
+    
         StringBuilder builder= new StringBuilder();
         boolean first;
-        Iterator< ? extends AbstractQueryParam > it;
+        Iterator< ? extends QueryParamAttribute > it;
         for ( first= true, it= queryParamList.iterator(); it.hasNext(); )
         {
-            AbstractQueryParam queryParam= it.next();
+            QueryParamAttribute queryParam= it.next();
             if ( queryParam.hasKey() )
             {
                 if ( first )
@@ -435,7 +426,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         return builder.toString();
     }
-
+    */
     /**
      * Passes asynchronous response to the muleflow  
      * @param response The coap response to process
@@ -507,16 +498,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidResponseCodeException When response indicates other error.
      * @throws InternalClientErrorResponseException When response indicates client error.
      * @throws InternalNoResponseException When timeout has occurred.
+     * @throws InternalUriException When given request uri parameters are invalid.
      */
-    Result< InputStream, CoapResponseAttributes > doRequest(
-        boolean confirmable,
-        CoAPRequestCode requestCode,
-        String uri,
-        TypedValue< Object > requestPayload,
-        boolean forcePayload,
-        RequestOptions options,
-        String handlerName
-    ) throws InternalInvalidHandlerNameException,
+    Result< InputStream, CoapResponseAttributes > doRequest( RequestBuilder builder, RequestOptions options, ResponseHandlerBuilder handlerBuilder )
+        throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
@@ -524,12 +509,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalNoResponseException,
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
-        InternalServerErrorResponseException
+        InternalServerErrorResponseException,
+        InternalUriException
     {
         Result< InputStream, CoapResponseAttributes > result= null;
         CoapHandler handler= null;
-        Request request= new Request( AttributeUtils.toRequestCode( requestCode ), ( confirmable ? Type.CON : Type.NON ) );
+        Request request= new Request( AttributeUtils.toRequestCode( builder.getRequestCode() ), ( builder.isConfirmable() ? Type.CON : Type.NON ) );
+        URI uri= getURI( builder );
         request.setURI( uri );
+        TypedValue< Object > requestPayload= builder.getRequestPayload();
         if ( requestPayload.getValue() != null )
         {
             boolean sendPayload;
@@ -537,7 +525,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 case GET:
                 case DELETE:
-                    if ( forcePayload )
+                    if ( builder.isForcePayload() )
                     {
                         request.setUnintendedPayload();
                         sendPayload= true;
@@ -573,11 +561,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new InternalRequestException( "cannot process request options", e );
         }
-        if ( handlerName != null )
+        if ( handlerBuilder != null )
         {
             SourceCallback< InputStream, CoapResponseAttributes > callback;
-            callback= getHandler( handlerName );
-            handler= createCoapHandler( handlerName, uri, requestCode, callback );
+            callback= getHandler( handlerBuilder.getResponseHandler() );
+            handler= createCoapHandler( handlerBuilder.getResponseHandler(), uri.toString(), builder.getRequestCode(), callback );
         }
         if ( handler == null )
         {
@@ -595,7 +583,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             DefaultResponseAttributes responseAttributes;
             try
             {
-                responseAttributes= createReceivedResponseAttributes( request.getURI(), requestCode, response );
+                responseAttributes= createReceivedResponseAttributes( uri.toString(), builder.getRequestCode(), response );
             }
             catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException e )
             {
@@ -790,66 +778,264 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
+     * Obtain actual host to use for request.
+     * @param host The optional host value.
+     * @return The actual host value to use.
+     * @throws InternalUriException When no host value is obtained.
+     */
+    private String actualHost( String host ) throws InternalUriException
+    {
+        if ( host != null ) return host;
+        String defaultHost= requestDefaults.getHost();
+        if ( defaultHost == null )
+        {
+            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using host { " + defaultHost + " }" );
+        }
+        return defaultHost;
+    }
+
+    /**
+     * Obtain actual port to use for request.
+     * @param port The optional port value.
+     * @return The actual port value to use.
+     */
+    public Integer actualPort( Integer port )
+    {
+        if ( port != null ) return port;
+        Integer defaultPort= requestDefaults.getPort();
+        if ( defaultPort == null )
+        {
+            defaultPort= -1;
+        }
+        return defaultPort;
+    }
+
+    /**
+     * Obtain actual path to use for request.
+     * @param path The optional path value.
+     * @return The actual path value to use.
+     * @throws InternalUriException hen no path value is obtained.
+     */
+    private String actualPath( String path ) throws InternalUriException
+    {
+        if ( path != null ) return path;
+        String defaultPath= requestDefaults.getPath();
+        if ( defaultPath == null )
+        {
+            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using path { null }" );
+        }
+        return defaultPath;
+    }
+
+    /**
+     * Obtain actual query parameters to use for request.
+     * @param query The optional query parameters.
+     * @return The actual query parameters to use.
+     */
+    private MultiMap< String, String > actualQuery( MultiMap< String, String > query )
+    {
+        //TODO merge?
+        if ( query != null )
+        {
+            return query;
+        }
+        else
+        {
+            return requestDefaults.getQueryParamConfigs();
+        }
+    }
+
+    /**
+     * Obtain query parameters from MultiMap
+     * @param query The optional query parameters.
+     * @return The actual query parameters to use.
+     */
+    /*
+    private List< DefaultQueryParamAttribute > getQueryParams( MultiMap< String, String > query )
+    {
+        ArrayList< DefaultQueryParamAttribute > params= new ArrayList<>();
+        if ( query != null )
+        {
+            for ( String key : query.keySet() )
+            {
+                for ( String value : query.getAll( key ) )
+                {
+                    params.add( new DefaultQueryParamAttribute( key, value ) );
+                }
+            }
+        }
+        return params;
+    }
+    */
+
+    /**
      * Get an URI object describing the given CoAP resource.
-     * @param host The host address of the server.
-     * @param port The port the server is listening on.
-     * @param path The path of the resource.
-     * @param query String containing query parameters.
+     * @param builder The provider of uri parameters.
      * @return The URI object. 
      * @throws UriException cannot form valid uri with given parameters
      * @throws InternalUriException 
      */
-    URI getURI( String host, Integer port, String path, String query ) throws InternalUriException
+    private URI getURI( AbstractResourceRequestBuilder builder ) throws InternalUriException
     {
-        String actualHost= ( host != null ? host : this.host );
-        Integer actualPort= ( port != null ? port : this.port );
-        if ( actualHost == null )
-        {
-            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using host { " + actualHost + " }" );
-        }
-        if ( actualPort == null )
-        {
-            switch ( scheme )
-            {
-                //TODO add coap+ws, coaps+ws
-                case CoAP.COAP_TCP_URI_SCHEME:
-                case CoAP.COAP_SECURE_URI_SCHEME:
-                    actualPort= CoAP.DEFAULT_COAP_SECURE_PORT;
-                    break;
-                default:
-                    actualPort= CoAP.DEFAULT_COAP_PORT;
-            }
-        }
+        String host= actualHost( builder.getHost() );
+        Integer port= actualPort( builder.getPort() );
+        String path= actualPath( builder.getPath() );
+        String query= queryString( actualQuery( builder.getQueryParams() ) );
         URI uri;
         try
         {
-            uri= new URI( scheme, null, actualHost, actualPort, path, query, null );
+            uri= new URI( scheme, null, host, port, path, query, null );
         }
         catch ( Exception e )
         {
             throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + actualHost + ", port= " + actualPort + ", path= " + path + ", query= " + query + " }"
+                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
             );
         }
         return uri;
     }
 
     /**
+     * Get an URI object describing the request.
+     * @param builder The provider of request parameters.
+     * @return The URI object. 
+     * @throws InternalUriException When no valid uri could be built with given parameters.
+     */
+    private URI getURI( DiscoverBuilder uriBuilder ) throws InternalUriException
+    {
+        String host= actualHost( uriBuilder.getHost() );
+        Integer port= actualPort( uriBuilder.getPort() );
+        String query= queryString( actualQuery( uriBuilder.getQueryParams() ) );
+        URI uri;
+        try
+        {
+            uri= new URI( scheme, null, host, port, "/.well-known/core", query, null );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalUriException( "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", query= " + query + " }" );
+        }
+        return uri;
+    }
+
+    /**
+     * Get an URI object describing the request.
+     * @param builder The provider of request parameters.
+     * @return The URI object. 
+     * @throws InternalUriException When no valid uri could be built with given parameters.
+     */
+    private URI getURI( ObserverStopBuilder uriBuilder ) throws InternalUriException
+    {
+        String host= actualHost( uriBuilder.getHost() );
+        Integer port= actualPort( uriBuilder.getPort() );
+        String path= actualPath( uriBuilder.getObservePath() );
+        String query= queryString( actualQuery( uriBuilder.getQueryParams() ) );
+        URI uri;
+        try
+        {
+            uri= new URI( scheme, null, host, port, path, query, null );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalUriException(
+                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
+            );
+        }
+        return uri;
+    }
+
+    /**
+     * Get an URI object describing the address to request.
+     * @param uriBuilder The provider of request parameters.
+     * @return The URI object. 
+     * @throws InternalUriException When no valid uri could be built with given parameters.
+     */
+    private URI getURI( AbstractAddressBuilder uriBuilder ) throws InternalUriException
+    {
+        String host= actualHost( uriBuilder.getHost() );
+        Integer port= actualPort( uriBuilder.getPort() );
+        URI uri;
+        try
+        {
+            uri= new URI( scheme, null, host, port, null, null, null );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalUriException( "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + " }" );
+        }
+        return uri;
+    }
+
+    /**
+     * Create URI from request configuration.
+     * @param uriBuilder The builder containing input parameters.
+     * @return The constructed URI
+     * @throws InternalUriException When the URI cannot be constructed using the builder.
+     */
+    public URI getURI( RequestConfig uriBuilder ) throws InternalUriException
+    {
+        String host= actualHost( uriBuilder.getHost() );
+        Integer port= actualPort( uriBuilder.getPort() );
+        String path= actualPath( uriBuilder.getPath() );
+        String query= queryString( actualQuery( uriBuilder.getQueryParamConfigs() ) );
+        URI uri;
+        try
+        {
+            uri= new URI( scheme, null, host, port, path, query, null );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalUriException(
+                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
+            );
+        }
+        return uri;
+    }
+
+    /**
+     * Constuct string representation of query parameters.
+     * @param queryParams The multmap of query parameters.
+     * @return The string representation or null when the list is empty.
+     */
+    private String queryString( MultiMap< String, String > queryParams )
+    {
+        if ( queryParams == null || queryParams.isEmpty() ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        for ( String key : queryParams.keySet() )
+        {
+            for ( String value : queryParams.getAll( key ) )
+            {
+                if ( !first )
+                {
+                    writer.append( "&" );
+                    first= false;
+                }
+                writer.append( key );
+                if ( value != null )
+                {
+                    writer.append( "=" ).append( value );
+                }
+            }
+        }
+        return writer.toString();
+    }
+
+    /**
      * See if server is reachable
-     * @param host hostname or ip of server to ping, when null client configuration is used
-     * @param port portnumber of server to ping, when null client configuration is used
+     * @param pingbuilder The ping request parameters.
      * @return true 
      * @throws ConnectorException
      * @throws IOException
      * @throws InternalUriException
      */
-    Boolean ping( String host, Integer port ) throws ConnectorException, IOException, InternalUriException
+    Boolean ping( PingBuilder pingbuilder ) throws ConnectorException, IOException, InternalUriException
     {
         Request request= new Request( null, Type.CON );
         request.setToken( Token.EMPTY );
         try
         {
-            request.setURI( getURI( host, port, null, null ) );
+            request.setURI( getURI( pingbuilder ) );
         }
         catch ( Exception e )
         {
@@ -877,7 +1063,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalResponseException When response indicates other error.
      */
-    Set< WebLink > discover( boolean confirmable, String host, Integer port, List< ? extends AbstractQueryParam > query ) throws InternalUriException,
+    Set< WebLink > discover( DiscoverBuilder discoverBuilder ) throws InternalUriException,
         InternalNoResponseException,
         InternalUnexpectedResponseException,
         ConnectorException,
@@ -887,8 +1073,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalServerErrorResponseException,
         InternalResponseException
     {
-        Request request= new Request( Code.GET, ( confirmable ? Type.CON : Type.NON ) );
-        request.setURI( getURI( host, port, "/.well-known/core", toQueryString( query ) ) );
+        Request request= new Request( Code.GET, ( discoverBuilder.isConfirmable() ? Type.CON : Type.NON ) );
+        request.setURI( getURI( discoverBuilder ) );
         CoapResponse response= coapClient.advanced( request );
 
         throwExceptionWhenNeeded( response );
@@ -913,51 +1099,47 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException
      * @throws InternalInvalidHandlerNameException
      */
-    synchronized void startObserver( String handlerName, boolean confirmable, String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters )
-        throws InternalInvalidObserverException,
+    synchronized void startObserver( ObserverStartBuilder observerStartBuilder, ResponseHandlerBuilder handlerBuilder ) throws InternalInvalidObserverException,
         InternalUriException,
         InternalInvalidHandlerNameException
     {
-        SourceCallback< InputStream, CoapResponseAttributes > handler= getHandler( handlerName );
-        String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
-
-        ObserveRelation relation= getRelation( uri );
+        SourceCallback< InputStream, CoapResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
+        URI uri= getURI( observerStartBuilder );
+        String uriString= uri.toString();
+        ObserveRelation relation= getRelation( uriString );
         if ( relation != null )
         {
             // only one observe relation allowed per uri
             // TODO proactive or not, configurable?
             relation.stop();
-            removeRelation( uri );
+            removeRelation( uriString );
         }
         relation= new ObserveRelation(
-            "CoAP Observer { " + getClientName() + "::" + uri + " }",
+            "CoAP Observer { " + getClientName() + "::" + uriString + " }",
             coapClient,
-            confirmable,
-            uri,
+            observerStartBuilder.isConfirmable(),
+            uriString,
             ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler )
         );
-        addRelation( uri, relation );
+        addRelation( uriString, relation );
         relation.start();
     }
 
     /**
      * Stop observing a resource of a CoAP server.
-     * @param host hostname or ip of the server, when null client configuration is used
-     * @param port portnumber of the server, when null client configuration is used
-     * @param path path of the resource on the server
-     * @param queryParameters uri-query parameters 
+     * @param builder The parameters identifying the observer to stop.
      * @throws InternalUriException
      * @throws InternalInvalidObserverException
      */
-    synchronized void stopObserver( String host, Integer port, String path, List< ? extends AbstractQueryParam > queryParameters ) throws InternalUriException,
-        InternalInvalidObserverException
+    synchronized void stopObserver( ObserverStopBuilder builder ) throws InternalUriException, InternalInvalidObserverException
     {
-        String uri= getURI( host, port, path, toQueryString( queryParameters ) ).toString();
-        ObserveRelation relation= getRelation( uri );
+        URI uri= getURI( builder );
+        String uriString= uri.toString();
+        ObserveRelation relation= getRelation( uriString );
         if ( relation != null )
         {
             relation.stop();
-            removeRelation( uri );
+            removeRelation( uriString );
         }
         else
         {
@@ -973,4 +1155,5 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         return "CoAP Client { " + getClientName() + " }";
     }
+
 }
