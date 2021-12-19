@@ -24,10 +24,10 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- * The parameters of a CoAP ping.
+ * The attributes of a CoAP observe request.
  *
  */
-public class PingBuilder extends AbstractAddressBuilder
+public class ObserverStartBuilder extends AbstractResourceRequestBuilder
 {
     //NOOP
 }
