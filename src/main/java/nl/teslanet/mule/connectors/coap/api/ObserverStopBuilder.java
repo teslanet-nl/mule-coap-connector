@@ -47,21 +47,21 @@ public class ObserverStopBuilder extends AbstractQueryBuilder
     @Placement(order = 51)
     @Example( value= "/some/resource/path" )
     @Summary( "The path of the resource to access." )
-    private String observePath= null;
+    private String path= null;
 
     /**
      * @return the path
      */
-    public String getObservePath()
+    public String getPath()
     {
-        return observePath;
+        return path;
     }
 
     /**
      * @param path the path to set
      */
-    public void setObservePath( String path )
+    public void setPath( String path )
     {
-        this.observePath= path;
+        this.path= path;
     }
 }

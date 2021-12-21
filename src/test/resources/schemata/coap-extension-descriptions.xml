@@ -24,19 +24,25 @@
 <extension-documentation>
     <configs>
         <config name="client">
-            <description><![CDATA[The Client is used to issue requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default and can be overridden by individual requests.]]></description>
+            <description><![CDATA[The Client configuration defines the endpoint to use and provides for default request parameters.]]></description>
             <parameters>
                 <parameter name="endpoint">
                     <description><![CDATA[The endpoint this client uses.]]></description>
                 </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The default hostname or ip of the server to address. Can be overridden by the host setting on operations.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The default port the server is listening on. Can be overridden by the port setting on the operation.]]></description>
-                </parameter>
                 <parameter name="throwExceptionOnErrorResponse">
                     <description><![CDATA[When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA["The port of the server to access."]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParamConfigs">
+                    <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
             </parameters>
         </config>
@@ -73,17 +79,17 @@
         <operation name="discover">
             <description><![CDATA[The Discover processor retrieves information about CoAP resources of a server.]]></description>
             <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                    <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
                 <parameter name="queryParams">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                    <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -110,40 +116,37 @@
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port of the server to access.]]></description>
+                </parameter>
+                <parameter name="queryParams">
+                    <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
                 </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
                 <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
-                </parameter>
-                <parameter name="queryParams">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                    <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
             </parameters>
         </operation>
         <operation name="observerStop">
             <description><![CDATA[Stop a running observer.]]></description>
             <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
+                    <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
                 <parameter name="queryParams">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
+                    <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
+                <parameter name="observePath">
+                    <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -151,10 +154,10 @@
             <description><![CDATA[The Ping processor checks whether a CoAP server is reachable.]]></description>
             <parameters>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
+                    <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -179,26 +182,26 @@
                 <parameter name="streamingStrategy">
                     <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
                 </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port of the server to access.]]></description>
+                </parameter>
+                <parameter name="queryParams">
+                    <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
                 </parameter>
                 <parameter name="requestPayload">
                     <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
-                </parameter>
-                <parameter name="queryParams">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
                 </parameter>
                 <parameter name="forcePayload">
                     <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
@@ -220,26 +223,26 @@
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port of the server to access.]]></description>
+                </parameter>
+                <parameter name="queryParams">
+                    <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
                 </parameter>
                 <parameter name="requestPayload">
                     <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
-                </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to address. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path of the resource.]]></description>
-                </parameter>
-                <parameter name="queryParams">
-                    <description><![CDATA[The query parameters to send with the request.]]></description>
                 </parameter>
                 <parameter name="forcePayload">
                     <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
@@ -350,18 +353,6 @@
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
                 </parameter>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to observe. This overrides client host configuration.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port the server is listening on. This overrides client port configuration.]]></description>
-                </parameter>
-                <parameter name="path">
-                    <description><![CDATA[The path on the server of the resource to observe.]]></description>
-                </parameter>
-                <parameter name="queryParamConfigs">
-                    <description><![CDATA[The query parameters to send with the observe request.]]></description>
-                </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
                 </parameter>
@@ -376,6 +367,18 @@
                 </parameter>
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
+                </parameter>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA["The port of the server to access."]]></description>
+                </parameter>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource.]]></description>
+                </parameter>
+                <parameter name="queryParamConfigs">
+                    <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
             </parameters>
         </source>
@@ -422,6 +425,70 @@
         </source>
     </sources>
     <types>
+        <type name="nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="relation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remotePort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestOptionAttributes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="confirmable">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notification">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remotePort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseOptionAttributes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="success">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.DiscoveredResource">
             <description><![CDATA[]]></description>
             <parameters>
@@ -444,70 +511,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="title">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="localAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="relation">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remoteAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remotePort">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="localAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="notification">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remoteAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remotePort">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="responseCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="success">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -977,27 +980,6 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="key">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="key">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
     </types>
 </extension-documentation>
+  

@@ -642,7 +642,7 @@
       <xs:complexContent>
         <xs:extension base="mule:abstractExtensionType">
           <xs:annotation>
-            <xs:documentation>The Client is used to issue requests to resources on CoAP servers and/or to observe these. The CoAP server address (host, port) configured here is default and can be overridden by individual requests.</xs:documentation>
+            <xs:documentation>The Client configuration defines the endpoint to use and provides for default request parameters.</xs:documentation>
           </xs:annotation>
           <xs:sequence minOccurs="0" maxOccurs="1">
             <xs:element minOccurs="0" maxOccurs="1" name="endpoint">
@@ -655,21 +655,46 @@
                 </xs:complexContent>
               </xs:complexType>
             </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="query-param-configs">
+              <xs:annotation>
+                <xs:documentation>The query parameters of the request.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param-config">
+                    <xs:complexType>
+                      <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                      <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
           </xs:sequence>
           <xs:attribute type="xs:string" use="required" name="name"></xs:attribute>
+          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="throwExceptionOnErrorResponse">
+            <xs:annotation>
+              <xs:documentation>When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="host">
             <xs:annotation>
-              <xs:documentation>The default hostname or ip of the server to address. Can be overridden by the host setting on operations.</xs:documentation>
+              <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute type="mule:substitutableInt" use="optional" name="port">
             <xs:annotation>
-              <xs:documentation>The default port the server is listening on. Can be overridden by the port setting on the operation.</xs:documentation>
+              <xs:documentation>"The port of the server to access."</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="throwExceptionOnErrorResponse">
+          <xs:attribute type="xs:string" use="optional" name="path">
             <xs:annotation>
-              <xs:documentation>When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.</xs:documentation>
+              <xs:documentation>The path of the resource.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:substitutableName" use="optional" name="queryParamConfigs">
+            <xs:annotation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -796,11 +821,16 @@
           <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-byte-streaming-strategy"></xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="query-param-configs">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the observe request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param-config"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param-config">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -813,26 +843,6 @@
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="confirmable">
           <xs:annotation>
             <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="host">
-          <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to observe. This overrides client host configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="port">
-          <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path on the server of the resource to observe.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:substitutableName" use="optional" name="queryParamConfigs">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the observe request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
@@ -850,25 +860,29 @@
             <xs:documentation>Whether this source should only be executed on the primary node when runnning in Cluster</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="host">
+          <xs:annotation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>"The port of the server to access."</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="path">
+          <xs:annotation>
+            <xs:documentation>The path of the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="queryParamConfigs">
+          <xs:annotation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="xs:string" use="optional" name="key"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="value"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig" abstract="true" name="abstract-query-param-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-query-param-config" name="query-param-config">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="DiscoverType" substitutionGroup="mule:abstract-operator" name="discover">
     <xs:annotation>
       <xs:documentation>The Discover processor retrieves information about CoAP resources of a server.</xs:documentation>
@@ -880,11 +894,16 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="query-params">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -894,24 +913,24 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
-          <xs:annotation>
-            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
           <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
+          <xs:annotation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
@@ -927,22 +946,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:expressionString" use="optional" name="key"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="value"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParam" abstract="true" name="abstract-query-param"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-query-param" name="query-param">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParam"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverListType" substitutionGroup="mule:abstract-operator" name="observer-list">
     <xs:annotation>
       <xs:documentation>This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of the active observers of the CoAP client.</xs:documentation>
@@ -977,11 +980,16 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="query-params">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -992,29 +1000,29 @@
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="required" name="responseHandler"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="host">
+          <xs:annotation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+          <xs:annotation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
           <xs:annotation>
             <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="host">
+        <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="port">
-          <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1031,11 +1039,16 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="query-params">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1045,29 +1058,24 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
-          <xs:annotation>
-            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
+        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
           <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionString" use="optional" name="observePath">
           <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1089,12 +1097,12 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
@@ -1127,17 +1135,22 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="query-params">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
         </xs:sequence>
         <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
@@ -1155,9 +1168,19 @@
             <xs:documentation>The encoding of the payload that this operation outputs.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCodeEnumType" use="required" name="requestCode">
+        <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+          <xs:annotation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
@@ -1165,24 +1188,14 @@
             <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="host">
+        <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+            <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCodeEnumType" use="required" name="requestCode">
           <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="forcePayload">
@@ -1251,17 +1264,22 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="query-params">
             <xs:annotation>
-              <xs:documentation>The query parameters to send with the request.</xs:documentation>
+              <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
         </xs:sequence>
         <xs:attribute type="mule:substitutableName" use="optional" name="config-ref">
           <xs:annotation>
@@ -1274,9 +1292,19 @@
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="required" name="responseHandler"></xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCodeEnumType" use="required" name="requestCode">
+        <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+          <xs:annotation>
+            <xs:documentation>The port of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+          <xs:annotation>
+            <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
@@ -1284,24 +1312,14 @@
             <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="host">
+        <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to address. This overrides client host configuration.</xs:documentation>
+            <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="port">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCodeEnumType" use="required" name="requestCode">
           <xs:annotation>
-            <xs:documentation>The port the server is listening on. This overrides client port configuration.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="required" name="path">
-          <xs:annotation>
-            <xs:documentation>The path of the resource.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
-          <xs:annotation>
-            <xs:documentation>The query parameters to send with the request.</xs:documentation>
+            <xs:documentation>The CoAP request code specifying the requested action on the resource on the server.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="forcePayload">
@@ -1860,4 +1878,5 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+
 

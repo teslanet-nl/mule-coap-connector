@@ -63,9 +63,9 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     {
         return Arrays.asList(
             new Object [] []{
-                { "do_request", Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me?", "Response is: CONTENT".getBytes() },
-                { "do_request", Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me?", "Response is: CREATED".getBytes() },
-                { "do_request", Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me?", "Response is: CHANGED".getBytes() },
+                { "do_request", Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me", "Response is: CONTENT".getBytes() },
+                { "do_request", Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
+                { "do_request", Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me", "Response is: CHANGED".getBytes() },
                 {
                     "do_request",
                     Code.DELETE,
@@ -73,7 +73,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
                     "8976",
                     "/service/delete_me",
                     "DELETED",
-                    "coap://127.0.0.1:8976/service/delete_me?",
+                    "coap://127.0.0.1:8976/service/delete_me",
                     "Response is: DELETED".getBytes() } } );
     }
 

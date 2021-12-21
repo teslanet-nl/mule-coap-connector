@@ -928,7 +928,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         String host= actualHost( uriBuilder.getHost() );
         Integer port= actualPort( uriBuilder.getPort() );
-        String path= actualPath( uriBuilder.getObservePath() );
+        String path= actualPath( uriBuilder.getPath() );
         String query= queryString( actualQuery( uriBuilder.getQueryParams() ) );
         URI uri;
         try

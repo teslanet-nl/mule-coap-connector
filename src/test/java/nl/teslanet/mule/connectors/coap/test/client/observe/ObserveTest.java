@@ -368,7 +368,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
         pauze();
 
         //second observe
@@ -379,8 +379,9 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary2" ) );
+        System.out.println((Set< String >) response.getPayload().getValue());
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary2?test=2&testing=" ) );
         pauze();
 
         //remove second observe
@@ -391,7 +392,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 1, ( (Set< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1:5683/observe/temporary1" ) );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
         pauze();
 
         //remove first observe
