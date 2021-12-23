@@ -381,7 +381,7 @@ public class ObserveTest extends AbstractClientTestCase
         assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
         System.out.println((Set< String >) response.getPayload().getValue());
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
-        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary2?test=2&testing=" ) );
+        assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary2?test1=1&test2=2" ) );
         pauze();
 
         //remove second observe

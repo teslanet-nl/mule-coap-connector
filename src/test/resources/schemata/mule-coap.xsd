@@ -1073,7 +1073,7 @@
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="observePath">
+        <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
             <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
@@ -1878,5 +1878,3 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
-

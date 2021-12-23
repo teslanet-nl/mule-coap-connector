@@ -121,8 +121,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:observer-start config-ref="config"
 			responseHandler="handler_temporary2" path="/observe/temporary2">
 			<coap:query-params>
-                <coap:query-param key="test" value="2" />
-                <coap:query-param key="testing" value="#[[]]"/>
+                <coap:query-param key="test1" value="1" />
+                <coap:query-param key="test2" value="2"/>
 			</coap:query-params>
 		</coap:observer-start>
 	</flow>
@@ -131,8 +131,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:observer-stop config-ref="config"
 			path="/observe/temporary2">
 			<coap:query-params>
-				<coap:query-param key="test" value="2" />
-                <coap:query-param key="testing" value="#[[]]"/>
+				<coap:query-param key="test1" value="1" />
+                <coap:query-param key="test2" value="2"/>
 			</coap:query-params>
 		</coap:observer-stop>
 

@@ -480,24 +480,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     // TODO add custom timeout
     /**
      * Issue a request on a CoAP resource residing on a server.
-     * When throwExceptionOnErrorResponse is {@code true } an appropriate exception is thrown.
-     * @param confirmable indicating the requst must be confirmed
-     * @param requestCode indicating the request type to issue
-     * @param uri addresses the resource of the server for which the request is intended 
-     * @param requestPayload is the contents of the request
-     * @param forcePayload when true given payload will also be sent when not appropriate for the CoAP message, otherwise the payload will be ignored.
-     * @param options the CoAP options to add to the request
-     * @param handlerName when a handler is specified the response will be handled asynchronously
-     * @return The result of the request including payload and options.
-     * @throws InternalInvalidHandlerNameException When the handlerName is not null but does not reference an existing handler. 
+     * @param builder Builder containing request parameters.
+     * @param options The request options.
+     * @param handlerBuilder Builder containing the name of the handle when the response is handled asynchronously
+     * @return The result of the request including payload and attributes.
+     * @throws InternalInvalidHandlerNameException  When the handlerName is not null but does not reference an existing handler. 
      * @throws InternalRequestException When the Request could not be issued.
      * @throws InternalResponseException When the received response appears to be invalid and cannot be processed.
      * @throws InternalEndpointException When CoAP communication failed.
      * @throws InternalInvalidRequestCodeException When the request code has invalid value.
-     * @throws InternalServerErrorResponseException When response indicates server error.
-     * @throws InternalInvalidResponseCodeException When response indicates other error.
-     * @throws InternalClientErrorResponseException When response indicates client error.
      * @throws InternalNoResponseException When timeout has occurred.
+     * @throws InternalClientErrorResponseException When response indicates client error.
+     * @throws InternalInvalidResponseCodeException When response indicates other error.
+     * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalUriException When given request uri parameters are invalid.
      */
     Result< InputStream, CoapResponseAttributes > doRequest( RequestBuilder builder, RequestOptions options, ResponseHandlerBuilder handlerBuilder )
@@ -1006,10 +1001,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             for ( String value : queryParams.getAll( key ) )
             {
-                if ( !first )
+                if ( first )
+                {
+                    first= false;
+                }
+                else
                 {
                     writer.append( "&" );
-                    first= false;
                 }
                 writer.append( key );
                 if ( value != null )
