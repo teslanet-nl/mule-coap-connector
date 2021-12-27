@@ -20,9 +20,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.attributes;
+package nl.teslanet.mule.connectors.coap.internal.options;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.californium.core.coap.OptionSet;
@@ -31,7 +32,9 @@ import org.mule.runtime.api.util.MultiMap;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
 
@@ -44,7 +47,7 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
     /**
      * Constructor that uses options from given optionSet.
      * @param optionSet to copy from.
-     * @throws InvalidOptionValueException when given option value could not be copied succesfully.
+     * @throws InvalidOptionValueException when given option value could not be copied successfully.
      */
     public DefaultResponseOptionsAttributes( OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
@@ -94,10 +97,10 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
         {
             observe= optionSet.getObserve();
         }
-        MultiMap< Integer, byte[] > tmpOther= new MultiMap<>();
+        ArrayList< OtherOptionAttribute > tmpOther= new ArrayList<>();
         optionSet.getOthers().forEach( option -> {
-            tmpOther.put( option.getNumber(), option.getValue() );
+            tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) );
         } );
-        otherOptions= tmpOther.toImmutableMultiMap();
+        otherOptions= Collections.unmodifiableList( tmpOther );
     }
 }

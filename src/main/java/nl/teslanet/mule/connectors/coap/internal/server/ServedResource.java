@@ -39,8 +39,8 @@ import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 
 

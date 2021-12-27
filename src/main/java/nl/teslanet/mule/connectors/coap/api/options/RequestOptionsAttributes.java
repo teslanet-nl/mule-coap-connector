@@ -67,7 +67,7 @@ public class RequestOptionsAttributes
 
     protected Integer observe= null;
 
-    protected MultiMap< Integer, byte[] > otherOptions;
+    protected List< OtherOptionAttribute > otherOptions= null;
 
     /**
      * @return The ifExists option.
@@ -196,7 +196,7 @@ public class RequestOptionsAttributes
     /**
      * @return the other request options.
      */
-    public MultiMap< Integer, byte[] > getOtherOptions()
+    public List< OtherOptionAttribute > getOtherOptions()
     {
         return otherOptions;
     }

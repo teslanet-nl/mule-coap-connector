@@ -51,7 +51,6 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
@@ -80,123 +79,6 @@ public class MessageUtils
     }
 
     /**
-     * Copy options from given optionSet to optionAttributes .
-     * Processing options stops when an exception occurs.
-     * @param optionSet to copy from.
-     * @param attributes to copy to
-     * @throws InvalidOptionValueException when given option value could not be copied
-     */
-    public static void copyOptions( OptionSet optionSet, OptionAttributes attributes ) throws InternalInvalidOptionValueException
-    {
-        String errorMsg= "cannot create attribute";
-
-        if ( !optionSet.getIfMatch().isEmpty() )
-        {
-            try
-            {
-                List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= ifMatch.removeIf( etag -> etag.isEmpty() );
-                if ( emptyPresent )
-                {
-                    attributes.setifExists( true );
-                }
-                if ( !ifMatch.isEmpty() )
-                {
-                    attributes.setifMatch( ifMatch );
-                }
-            }
-            catch ( InvalidETagException e )
-            {
-                throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
-            }
-        }
-        if ( optionSet.hasUriHost() )
-        {
-            attributes.setUriHost( optionSet.getUriHost() );
-        }
-        if ( !optionSet.getETags().isEmpty() )
-        {
-            try
-            {
-                attributes.setEtags( ETag.getList( optionSet.getETags() ) );
-            }
-            catch ( InvalidETagException e )
-            {
-                throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
-            }
-        }
-        attributes.setIfNoneMatch( optionSet.hasIfNoneMatch() );
-        if ( optionSet.hasUriPort() )
-        {
-            attributes.setUriPort( optionSet.getUriPort() );
-        }
-        if ( !optionSet.getLocationPath().isEmpty() )
-        {
-            attributes.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
-            attributes.setLocationPath( optionSet.getLocationPathString() );
-        }
-        if ( !optionSet.getUriPath().isEmpty() )
-        {
-            attributes.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
-            attributes.setUriPath( optionSet.getUriPathString() );
-        }
-        if ( optionSet.hasContentFormat() )
-        {
-            attributes.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
-        }
-        if ( optionSet.hasMaxAge() )
-        {
-            attributes.setMaxAge( optionSet.getMaxAge() );
-        }
-        if ( !optionSet.getUriQuery().isEmpty() )
-        {
-            attributes.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
-            attributes.setUriQuery( optionSet.getUriQueryString() );
-        }
-        if ( optionSet.hasAccept() )
-        {
-            attributes.setAccept( Integer.valueOf( optionSet.getAccept() ) );
-        }
-        if ( !optionSet.getLocationQuery().isEmpty() )
-        {
-            attributes.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
-            attributes.setLocationQuery( optionSet.getLocationQueryString() );
-        }
-        if ( optionSet.hasProxyUri() )
-        {
-            attributes.setProxyUri( optionSet.getProxyUri() );
-        }
-        if ( optionSet.hasProxyScheme() )
-        {
-            attributes.setProxyScheme( optionSet.getProxyScheme() );
-        }
-        if ( optionSet.hasBlock1() )
-        {
-            attributes.setBlock1( toBlockValue( optionSet.getBlock1() ) );
-        }
-        if ( optionSet.hasBlock2() )
-        {
-            attributes.setBlock2( toBlockValue( optionSet.getBlock2() ) );
-        }
-        if ( optionSet.hasSize1() )
-        {
-            attributes.setSize1( optionSet.getSize1() );
-        }
-        if ( optionSet.hasSize2() )
-        {
-            attributes.setSize2( optionSet.getSize2() );
-        }
-        if ( optionSet.hasObserve() )
-        {
-            attributes.setObserve( optionSet.getObserve() );
-        }
-        for ( Option other : optionSet.getOthers() )
-        {
-            attributes.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
-        }
-    }
-
-    /**
      * Copy options from {@link RequestOptions} to {@link OptionSet}.
      * @param requestOptions to copy from
      * @param optionSet to copy to
@@ -204,20 +86,16 @@ public class MessageUtils
      */
     public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
-        if ( requestOptions.isifExists() )
+        if ( requestOptions.isIfExists() )
         {
             optionSet.addIfMatch( new byte [0] );
         }
-        if ( requestOptions.isIfNoneMatch() )
-        {
-            optionSet.setIfNoneMatch( true );
-        }
-        if ( requestOptions.getifMatch() != null )
+        if ( requestOptions.getIfMatch() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getifMatch() );
+                etags= MessageUtils.toEtagList( requestOptions.getIfMatch() );
                 for ( ETag etag : etags )
                 {
                     optionSet.addIfMatch( etag.getBytes() );
@@ -245,6 +123,10 @@ public class MessageUtils
                 throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
             }
         }
+        if ( requestOptions.isIfNoneMatch() )
+        {
+            optionSet.setIfNoneMatch( true );
+        }
         if ( requestOptions.getContentFormat() != null )
         {
             optionSet.setContentFormat( requestOptions.getContentFormat() );
@@ -253,9 +135,17 @@ public class MessageUtils
         {
             optionSet.setAccept( requestOptions.getAccept() );
         }
+        if ( requestOptions.isRequestSize2() )
+        {
+            optionSet.setSize2( 0 );
+        }
         if ( requestOptions.getProxyUri() != null )
         {
             optionSet.setProxyUri( requestOptions.getProxyUri() );
+        }
+        if ( requestOptions.getSize1() != null )
+        {
+            optionSet.setSize1( requestOptions.getSize1() );
         }
         if ( requestOptions.getProxyScheme() != null )
         {
@@ -549,11 +439,11 @@ public class MessageUtils
     }
 
     /**
-     * Creates a BlockValue from a Cf block option 
-     * @param block1 block option to use the values from
-     * @return a BlockValue that corresponds to the block option
+     * Creates a BlockValue from a Cf block option.
+     * @param block The block option to use.
+     * @return BlockValue that corresponds to the block option.
      */
-    private static BlockValue toBlockValue( BlockOption block )
+    public static BlockValue toBlockValue( BlockOption block )
     {
         return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
     }

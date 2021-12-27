@@ -1,5 +1,5 @@
 /*-
-wwwwwwwwdwa * #%L
+ * #%L
  * Mule CoAP Connector
  * %%
  * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
@@ -50,7 +50,7 @@ public class ResponseOptionsAttributes
 
     protected Integer observe= null;
 
-    protected MultiMap< Integer, byte[] > otherOptions= null;
+    protected List< OtherOptionAttribute > otherOptions= null;
 
     /**
      * @return The etag option.
@@ -119,7 +119,7 @@ public class ResponseOptionsAttributes
     /**
      * Get the other options.
      */
-    public MultiMap< Integer, byte[] > getOtherOptions()
+    public List< OtherOptionAttribute > getOtherOptions()
     {
         return otherOptions;
     }

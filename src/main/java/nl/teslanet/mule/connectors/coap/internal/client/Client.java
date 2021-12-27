@@ -93,7 +93,6 @@ import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
@@ -108,6 +107,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 

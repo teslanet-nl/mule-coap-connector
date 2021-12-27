@@ -20,9 +20,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.attributes;
+package nl.teslanet.mule.connectors.coap.internal.options;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,9 @@ import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
 
@@ -50,15 +53,15 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             try
             {
-                List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= ifMatch.removeIf( etag -> etag.isEmpty() );
+                List< ETag > tmpIfMatch= ETag.getList( optionSet.getIfMatch() );
+                boolean emptyPresent= tmpIfMatch.removeIf( etag -> etag.isEmpty() );
                 if ( emptyPresent )
                 {
                     ifExists= true;
                 }
-                if ( !ifMatch.isEmpty() )
+                if ( !tmpIfMatch.isEmpty() )
                 {
-                    ifMatch= Collections.unmodifiableList( ifMatch );
+                    ifMatch= Collections.unmodifiableList( tmpIfMatch );
                 }
             }
             catch ( InvalidETagException e )
@@ -127,10 +130,10 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             observe= optionSet.getObserve();
         }
-        MultiMap< Integer, byte[] > tmpOther= new MultiMap<>();
+        ArrayList< OtherOptionAttribute > tmpOther= new ArrayList<>();
         optionSet.getOthers().forEach( option -> {
-            tmpOther.put( option.getNumber(), option.getValue() );
+            tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) );
         } );
-        otherOptions= tmpOther.toImmutableMultiMap();
+        otherOptions= Collections.unmodifiableList( tmpOther );
     }
 }

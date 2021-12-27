@@ -31,7 +31,8 @@ public class OtherOptionAttribute
      * The number of the other option.
      */
     protected int optionNumber;
-
+    
+//TODO RC to inputstream
     /**
      * The value of the of the option.
      */
