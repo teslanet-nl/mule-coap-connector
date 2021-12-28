@@ -126,5 +126,4 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     {
         return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
     }
-
 }

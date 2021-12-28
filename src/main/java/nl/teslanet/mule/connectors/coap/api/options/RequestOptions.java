@@ -23,9 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -267,7 +268,7 @@ public class RequestOptions
     @NullSafe
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The CoAP options to send with the request." )
-    private MultiMap< String, Object > otherRequestOptions;
+    private List< OtherOption > otherRequestOptions;
     // Mule does not seem to convert multimap key to Integer
 
     /**
@@ -434,7 +435,7 @@ public class RequestOptions
     /**
     * @return the otherRequestOptions
     */
-    public MultiMap< String, Object > getOtherRequestOptions()
+    public List< OtherOption > getOtherRequestOptions()
     {
         return otherRequestOptions;
     }
@@ -442,7 +443,7 @@ public class RequestOptions
     /**
      * @param otherRequestOptions the otherRequestOptions to set
      */
-    public void setOtherRequestOptions( MultiMap< String, Object > otherRequestOptions )
+    public void setOtherRequestOptions( List< OtherOption > otherRequestOptions )
     {
         this.otherRequestOptions= otherRequestOptions;
     }

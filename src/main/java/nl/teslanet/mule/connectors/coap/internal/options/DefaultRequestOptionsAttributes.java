@@ -23,10 +23,13 @@
 package nl.teslanet.mule.connectors.coap.internal.options;
 
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.mule.runtime.api.util.MultiMap;
 
@@ -135,5 +138,14 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
             tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) );
         } );
         otherOptions= Collections.unmodifiableList( tmpOther );
+    }
+
+    /**
+     * Get the string representation.
+     */
+    @Override
+    public String toString()
+    {
+        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
     }
 }

@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.api.options;
 
+
 /**
  * Other option interface.
  */
@@ -30,28 +31,33 @@ public class OtherOptionAttribute
     /**
      * The number of the other option.
      */
-    protected int optionNumber;
-    
-//TODO RC to inputstream
+    protected int number;
+
+    //TODO RC to inputstream
     /**
-     * The value of the of the option.
+     * The value of the other option.
      */
-    protected byte[] optionValue= null;
+    protected byte[] value= null;
 
     /**
      * Get the number of this other option.
      *
      * @return The option number.
      */
-    public int getOptionNumber() { return optionNumber;}
+    public int getNumber()
+    {
+        return number;
+    }
 
     /**
      * Get the value of this other option.
      *
      * @return The option value if any, otherwise null.
      */
-    public byte[] getOptionValue() {
-        return optionValue;};
+    public byte[] getValue()
+    {
+        return value;
+    }
 
     /**
      * Checks if option is critical.
@@ -60,8 +66,8 @@ public class OtherOptionAttribute
      */
     public boolean isCritical()
     {
-        // Critical = (onum & 1);
-        return ( getOptionNumber() & 1 ) != 0;
+        // Critical: onum & 1
+        return ( getNumber() & 1 ) != 0;
     }
 
     /**
@@ -71,8 +77,8 @@ public class OtherOptionAttribute
      */
     public boolean isUnSafe()
     {
-        // UnSafe = (onum & 2);
-        return ( getOptionNumber() & 2 ) != 0;
+        // UnSafe: onum & 2
+        return ( getNumber() & 2 ) != 0;
     }
 
     /**
@@ -82,7 +88,7 @@ public class OtherOptionAttribute
      */
     public boolean isNoCacheKey()
     {
-        // NoCacheKey = ((onum & 0x1e) == 0x1c);
-        return ( getOptionNumber() & 0x1E ) == 0x1C;
+        // NoCacheKey: (onum & 0x1e) == 0x1c
+        return ( getNumber() & 0x1E ) == 0x1C;
     }
 }

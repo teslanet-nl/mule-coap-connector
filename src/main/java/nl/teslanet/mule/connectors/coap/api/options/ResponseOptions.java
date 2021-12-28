@@ -23,9 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -53,8 +54,8 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Content-Format Option indicates the representation format of the message payload.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Content-Format Option indicates the representation format of the message payload." )
     private Integer contentFormat= null;
 
     /**
@@ -71,8 +72,8 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh." )
     private Long maxAge= null;
 
     /**
@@ -100,9 +101,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Content(primary= false)
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource.")
+    @Content( primary= false )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource." )
     private TypedValue< Object > etag= null;
 
     /**
@@ -121,9 +122,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Location-Path specifies the absolute path to a resource that is created.")
-    @Example("/some/location/on/server")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Location-Path specifies the absolute path to a resource that is created." )
+    @Example( "/some/location/on/server" )
     private String locationPath= null;
 
     /**
@@ -143,9 +144,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Location-Query specifies the arguments parameterizing the resource that is created.")
-    @Example("someparam&param1=1&param2=2")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Location-Query specifies the arguments parameterizing the resource that is created." )
+    @Example( "someparam&param1=1&param2=2" )
     private String locationQuery= null;
 
     /**
@@ -171,15 +172,15 @@ public class ResponseOptions
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to send with the request.")
-    private MultiMap< String, Object > otherResponseOptions;
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The CoAP options to send with the request." )
+    private List< OtherOption > otherResponseOptions;
     // Mule does not seem to convert multimap key to Integer
 
     /**
      * @return the otherResponseOptions
      */
-    public MultiMap< String, Object > getOtherResponseOptions()
+    public List< OtherOption > getOtherResponseOptions()
     {
         return otherResponseOptions;
     }
@@ -187,7 +188,7 @@ public class ResponseOptions
     /**
      * @param otherResponseOptions the otherResponseOptions to set
      */
-    public void setOtherResponseOptions( MultiMap< String, Object > otherResponseOptions )
+    public void setOtherResponseOptions( List< OtherOption > otherResponseOptions )
     {
         this.otherResponseOptions= otherResponseOptions;
     }

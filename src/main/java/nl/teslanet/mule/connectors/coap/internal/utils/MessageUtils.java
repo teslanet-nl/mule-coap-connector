@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -51,6 +50,7 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.Defs;
@@ -151,19 +151,15 @@ public class MessageUtils
         {
             optionSet.setProxyScheme( requestOptions.getProxyScheme() );
         }
-        for ( Entry< String, Object > otherOption : requestOptions.getOtherRequestOptions().entryList() )
+        for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
         {
-            if ( !otherOption.getKey().isEmpty() )
+            try
             {
-                int optionNr= Integer.parseInt( otherOption.getKey() );
-                try
-                {
-                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
-                }
-                catch ( InternalInvalidByteArrayValueException e )
-                {
-                    throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + Integer.toString( optionNr ) + " }", e );
-                }
+                optionSet.addOption( new Option( otherOption.getNumber(), optionToBytes( otherOption.getValue() ) ) );
+            }
+            catch ( InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
             }
         }
     }
@@ -200,23 +196,20 @@ public class MessageUtils
         {
             optionSet.setLocationQuery( responseOptions.getLocationQuery() );
         }
-        for ( Entry< String, Object > otherOption : responseOptions.getOtherResponseOptions().entryList() )
+        for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
         {
-            if ( !otherOption.getKey().isEmpty() )
+            try
             {
-                int optionNr= Integer.parseInt( otherOption.getKey() );
-                try
-                {
-                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
-                }
-                catch ( InternalInvalidByteArrayValueException e )
-                {
-                    throw new InternalInvalidOptionValueException( otherOption.getKey(), "option value cannot be converted to bytes" );
-                }
+                optionSet.addOption( new Option( otherOption.getNumber(), optionToBytes( otherOption.getValue() ) ) );
+            }
+            catch ( InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
             }
         }
     }
 
+    //TODO make one toBytes method
     /**
      * Convert option object to bytes.
      * @param optionObject to convert.

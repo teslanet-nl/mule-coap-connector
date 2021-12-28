@@ -23,6 +23,10 @@
 package nl.teslanet.mule.connectors.coap.internal.options;
 
 
+import static org.apache.commons.lang3.builder.ToStringStyle.DEFAULT_STYLE;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 
 
@@ -39,7 +43,16 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
     public DefaultOtherOptionAttribute( int number, byte[] value )
     {
         super();
-        this.optionNumber= number;
-        this.optionValue= value;
+        this.number= number;
+        this.value= value;
+    }
+
+    /**
+     * Get the string representation.
+     */
+    @Override
+    public String toString()
+    {
+        return ReflectionToStringBuilder.toString( this, DEFAULT_STYLE );
     }
 }

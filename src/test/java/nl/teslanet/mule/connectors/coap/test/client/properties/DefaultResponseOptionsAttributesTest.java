@@ -213,8 +213,8 @@ public class DefaultResponseOptionsAttributesTest
         assertEquals( "coap.opt.other has wrong length", expected.size(), options.size() );
         for ( int i= 0; i < 4; i++ )
         {
-            assertEquals( "coap.opt.other has wrong number", expected.get( i ).getOptionNumber(), options.get( i ).getOptionNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", expected.get( i ).getOptionValue(), options.get( i ).getOptionValue() );
+            assertEquals( "coap.opt.other has wrong number", expected.get( i ).getNumber(), options.get( i ).getNumber() );
+            assertArrayEquals( "coap.opt.other has wrong value", expected.get( i ).getValue(), options.get( i ).getValue() );
         }
     }
 }
