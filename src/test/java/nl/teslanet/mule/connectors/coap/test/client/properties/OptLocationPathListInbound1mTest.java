@@ -88,6 +88,6 @@ public class OptLocationPathListInbound1mTest extends AbstractInboundPropertyTes
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getLocationPath();
+        return attributes.getOptions().getLocationPath();
     }
 }

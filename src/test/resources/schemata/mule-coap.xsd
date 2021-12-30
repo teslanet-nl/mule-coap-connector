@@ -1216,6 +1216,22 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.OtherOption">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:expressionInt" use="required" name="number"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="value"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.options.OtherOption" abstract="true" name="abstract-other-option"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-other-option" name="other-option">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.options.OtherOption"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
@@ -1223,25 +1239,22 @@
           <xs:element minOccurs="0" maxOccurs="1" name="other-request-options">
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="other-request-option">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="mule:expressionString" use="optional" name="proxyUri"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="accept"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="etags"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="ifMatch"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="otherRequestOptions"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyUri"></xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="size1"></xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requestSize2"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1612,12 +1625,7 @@
           <xs:element minOccurs="0" maxOccurs="1" name="other-response-options">
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="other-response-option">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1627,7 +1635,7 @@
         <xs:attribute type="xs:string" use="optional" name="etag"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="locationPath"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="locationQuery"></xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="otherResponseOptions"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherResponseOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1878,3 +1886,4 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+

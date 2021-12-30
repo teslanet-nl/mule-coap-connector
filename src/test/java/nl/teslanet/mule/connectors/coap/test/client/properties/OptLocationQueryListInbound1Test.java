@@ -86,6 +86,6 @@ public class OptLocationQueryListInbound1Test extends AbstractInboundPropertyTes
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getLocationQuery();
+        return attributes.getOptions().getLocationQuery();
     }
 }

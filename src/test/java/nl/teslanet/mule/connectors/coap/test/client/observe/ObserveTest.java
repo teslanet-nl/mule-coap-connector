@@ -105,7 +105,7 @@ public class ObserveTest extends AbstractClientTestCase
      * Test permanent observe 
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 100000L)
+    @Test( timeout= 100000L )
     public void testPermanentObserve() throws Exception
     {
         final MuleEventSpy spy= new MuleEventSpy( "permanent" );
@@ -122,7 +122,8 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             assertEquals( "put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -136,13 +137,14 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-            if ( i == 0 ) obsOffset= attributes.getResponseOptionAttributes().getObserve().intValue();
+            if ( i == 0 ) obsOffset= attributes.getOptions().getObserve().intValue();
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
-            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getResponseOptionAttributes().getObserve().intValue() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
 
     }
@@ -172,7 +174,8 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             assertEquals( "1st series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -191,7 +194,8 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             assertEquals( "2nd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -211,7 +215,8 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             assertEquals( "3rd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -226,13 +231,14 @@ public class ObserveTest extends AbstractClientTestCase
             assertEquals(
                 "wrong attributes class",
                 new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
+                response.getAttributes().getClass()
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-            if ( i == 1 ) obsOffset= attributes.getResponseOptionAttributes().getObserve().intValue() - 1;
+            if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
-            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getResponseOptionAttributes().getObserve().intValue() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
     }
 
@@ -245,7 +251,7 @@ public class ObserveTest extends AbstractClientTestCase
     @Test
     public void testObserveNotifications() throws Exception
     {
-        @SuppressWarnings("unused")
+        @SuppressWarnings( "unused" )
         Event result;
 
         MuleEventSpy spy= new MuleEventSpy( "maxage1" );
@@ -279,7 +285,7 @@ public class ObserveTest extends AbstractClientTestCase
     @Test
     public void testObserveReregistration1() throws Exception
     {
-        @SuppressWarnings("unused")
+        @SuppressWarnings( "unused" )
         Event result;
 
         MuleEventSpy spy= new MuleEventSpy( "maxage1_nonotify" );
@@ -315,7 +321,7 @@ public class ObserveTest extends AbstractClientTestCase
     @Test
     public void testObserveReregistration4() throws Exception
     {
-        @SuppressWarnings("unused")
+        @SuppressWarnings( "unused" )
         Event result;
 
         MuleEventSpy spy= new MuleEventSpy( "maxage4_nonotify" );
@@ -347,7 +353,7 @@ public class ObserveTest extends AbstractClientTestCase
      * Test list observe relations
      * @throws Exception should not happen in this test
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     @Test
     public void testListObserve() throws Exception
     {
@@ -379,7 +385,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         assertEquals( "wrong number of observers", 2, ( (Set< String >) response.getPayload().getValue() ).size() );
-        System.out.println((Set< String >) response.getPayload().getValue());
+        System.out.println( (Set< String >) response.getPayload().getValue() );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
         assertTrue( "wrong observer uri", ( (Set< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary2?test1=1&test2=2" ) );
         pauze();
@@ -405,6 +411,5 @@ public class ObserveTest extends AbstractClientTestCase
         assertEquals( "wrong number of observer", 0, ( (Set< String >) response.getPayload().getValue() ).size() );
 
     }
-
 
 }

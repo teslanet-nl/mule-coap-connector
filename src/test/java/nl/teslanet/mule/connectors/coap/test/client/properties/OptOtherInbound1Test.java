@@ -80,13 +80,13 @@ public class OptOtherInbound1Test extends AbstractOtherOptionInboundPropertyTest
     {
         return new OptOtherStrategy( getOption() );
     }
-    
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.test.client.properties.AbstractOtherOptionInboundPropertyTestCase#fetchInboundProperty(nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes)
      */
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getOtherOptions().get( 65012 );
+        return attributes.getOptions().getOtherOptions().get( 65012 );
     }
 }

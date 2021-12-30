@@ -76,7 +76,7 @@ public class CoapRequestAttributes
     /**
      * The CoAP options that accompanied the request.
      */
-    protected RequestOptionsAttributes requestOptionAttributes= null;
+    protected RequestOptionsAttributes options= null;
 
     /**
      * @return The requestCode.
@@ -137,9 +137,9 @@ public class CoapRequestAttributes
     /**
      * @return The options.
      */
-    public RequestOptionsAttributes getRequestOptionAttributes()
+    public RequestOptionsAttributes getOptions()
     {
-        return requestOptionAttributes;
+        return options;
     }
 
     /**

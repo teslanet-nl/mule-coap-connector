@@ -22,7 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+
 
 /**
  * Test inbound max age property, long value
@@ -79,6 +81,6 @@ public class OptMaxAgeInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getMaxAge();
+        return attributes.getOptions().getMaxAge();
     }
 }

@@ -115,7 +115,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     */
     public void setOptions( ResponseOptionsAttributes responseOptions )
     {
-        this.responseOptionAttributes= responseOptions;
+        this.options= responseOptions;
     }
 
     /**

@@ -22,7 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+
 
 /**
  * Test inbound Content Format property 
@@ -62,6 +64,6 @@ public class OptContentFormatInboundTest extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getContentFormat();
+        return attributes.getOptions().getContentFormat();
     }
 }

@@ -90,7 +90,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="#[vars.path]">
 			<coap:request-options>
 				<coap:other-request-options>
-					<coap:other-request-option key="65008"
+					<coap:other-option number="65008"
 						value="#[vars.option]" />
 				</coap:other-request-options>
 			</coap:request-options>

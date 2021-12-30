@@ -85,10 +85,10 @@ public class CoapResponseAttributes
     /**
      * The CoAP options that accompanied the response.
      */
-    protected ResponseOptionsAttributes responseOptionAttributes= null;
+    protected ResponseOptionsAttributes options= null;
 
     /**
-     * @return the requestCode
+     * @return The requestCode
      */
     public String getRequestCode()
     {
@@ -168,11 +168,11 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the options
+     * @return The options
      */
-    public ResponseOptionsAttributes getResponseOptionAttributes()
+    public ResponseOptionsAttributes getOptions()
     {
-        return responseOptionAttributes;
+        return options;
     }
 
     /**

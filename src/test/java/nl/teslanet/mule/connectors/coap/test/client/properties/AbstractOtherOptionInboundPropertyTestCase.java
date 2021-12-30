@@ -33,11 +33,11 @@ import org.eclipse.californium.core.coap.Option;
  */
 public abstract class AbstractOtherOptionInboundPropertyTestCase extends AbstractInboundPropertyTestCase
 {
-    abstract protected  Option getOption();
-    
+    abstract protected Option getOption();
+
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getOtherOptions().get( getOption().getNumber() );
+        return attributes.getOptions().getOtherOptions().get( getOption().getNumber() );
     }
 }

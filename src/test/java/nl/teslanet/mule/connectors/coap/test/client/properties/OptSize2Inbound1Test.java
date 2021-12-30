@@ -22,7 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+
 
 /**
  * Test inbound size2 property, integer value
@@ -79,6 +81,6 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getSize2();
+        return attributes.getOptions().getSize2();
     }
 }

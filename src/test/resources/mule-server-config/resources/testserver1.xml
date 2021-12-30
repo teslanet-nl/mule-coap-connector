@@ -43,27 +43,23 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
-
-
 	<coap:server-config name="config">
-		 
-			<coap:endpoint udpEndpoint="udp" />
-		 
+
+		<coap:endpoint udpEndpoint="udp" />
+
 		<coap:resources>
+			<coap:resource resourceName="add_resource">
+				<coap:sub-resources>
+					<coap:resource resourceName="all_methods" post="true" />
+					<coap:resource resourceName="get_only" post="true" />
+					<coap:resource resourceName="post_only" post="true" />
+					<coap:resource resourceName="put_only" post="true" />
+					<coap:resource resourceName="delete_only" post="true" />
+				</coap:sub-resources>
+			</coap:resource>
+			<coap:resource resourceName="exists" post="true" />
 			<coap:resource resourceName="service">
 				<coap:sub-resources>
-					<coap:resource resourceName="add_resource">
-						<coap:sub-resources>
-							<coap:resource resourceName="all_methods"
-								post="true" />
-							<coap:resource resourceName="get_only" post="true" />
-							<coap:resource resourceName="post_only" post="true" />
-							<coap:resource resourceName="put_only" post="true" />
-							<coap:resource resourceName="delete_only"
-								post="true" />
-						</coap:sub-resources>
-					</coap:resource>
-					<coap:resource resourceName="exists" get="true" />
 					<coap:resource resourceName="resource1" get="true"
 						post="true" put="true" delete="true" observable="true" />
 					<coap:resource resourceName="resource-to-remove"
@@ -79,8 +75,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 	<flow name="listen_add_resource">
 		<coap:listener get="true" post="true" put="true"
-			delete="true" pathPattern="/service/add_resource/*"
-			config-ref="config">
+			delete="true" pathPattern="/add_resource/*" config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<!-- TODO RC location path -->
 		</coap:listener>
@@ -92,12 +87,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			value="#[ vars.attr.requestUri ]" doc:name="set method" />
 		<!-- TODO RC: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
-			value="#['/' ++ vars.attr.options.locationPath!]"
-			doc:name="set resource_path" />
+			value="#[payload]" doc:name="set resource_path" />
 
 		<choice doc:name="by method">
 			<when
-				expression="#[ vars.uri == '/service/add_resource/all_methods' ]">
+				expression="#[ vars.uri == '/add_resource/all_methods' ]">
 				<set-variable variableName="get" value="true" />
 				<set-variable variableName="post" value="true" />
 				<set-variable variableName="put" value="true" />
@@ -105,7 +99,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
 			<when
-				expression="#[ vars.uri == '/service/add_resource/get_only' ]">
+				expression="#[ vars.uri == '/add_resource/get_only' ]">
 				<set-variable variableName="get" value="true" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="false" />
@@ -113,7 +107,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
 			<when
-				expression="#[ vars.uri == '/service/add_resource/post_only' ]">
+				expression="#[ vars.uri == '/add_resource/post_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="true" />
 				<set-variable variableName="put" value="false" />
@@ -121,7 +115,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
 			<when
-				expression="#[ vars.uri == '/service/add_resource/put_only' ]">
+				expression="#[ vars.uri == '/add_resource/put_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="true" />
@@ -129,7 +123,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				<flow-ref name="add_resource" doc:name="add_resource" />
 			</when>
 			<when
-				expression="#[ vars.uri == '/service/add_resource/delete_only' ]">
+				expression="#[ vars.uri == '/add_resource/delete_only' ]">
 				<set-variable variableName="get" value="false" />
 				<set-variable variableName="post" value="false" />
 				<set-variable variableName="put" value="false" />
@@ -159,13 +153,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 	<flow name="listen_exists">
 		<coap:listener get="true" post="true" put="true"
-			delete="true" pathPattern="/service/exists" config-ref="config">
-			<coap:response responsePayload="#[ payload as String ]" />
+			delete="true" pathPattern="/exists" config-ref="config">
+			<coap:response responseCode="CONTENT" responsePayload="#[ payload as String ]" />
 		</coap:listener>
-		<logger message="#[ attributes.options.locationPath! ]" />
-		<!-- TODO RC align root resource / -->
 		<coap:resource-exists config-ref="config"
-			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
+			pathPattern="#[ payload ]" />
 	</flow>
 
 	<flow name="listen_service_resource">

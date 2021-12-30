@@ -87,6 +87,6 @@ public class OptOtherInbound4Test extends AbstractOtherOptionInboundPropertyTest
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getOtherOptions().get( 65008 );
+        return attributes.getOptions().getOtherOptions().get( 65008 );
     }
 }

@@ -89,6 +89,6 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getResponseOptionAttributes().getEtag();
+        return attributes.getOptions().getEtag();
     }
 }

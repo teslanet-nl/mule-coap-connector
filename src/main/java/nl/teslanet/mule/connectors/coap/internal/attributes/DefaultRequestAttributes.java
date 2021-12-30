@@ -102,7 +102,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     */
     public void setRequestOptionAttributes( RequestOptionsAttributes requestOptionAttributes )
     {
-        this.requestOptionAttributes= requestOptionAttributes;
+        this.options= requestOptionAttributes;
     }
 
     /* (non-Javadoc)

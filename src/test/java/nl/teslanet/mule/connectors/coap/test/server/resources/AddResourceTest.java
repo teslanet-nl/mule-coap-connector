@@ -47,62 +47,64 @@ import org.eclipse.californium.core.coap.Request;
  * Test adding a resource 
  *
  */
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class AddResourceTest extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}, path= {1}, addResource= {2}")
+    @Parameters( name= "Request= {0}, path= {1}, addResource= {2}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
-                { Code.GET, "/service/new_get_resource1", "/service/add_resource/all_methods", ResponseCode.CONTENT },
-                { Code.PUT, "/service/new_put_resource1", "/service/add_resource/all_methods", ResponseCode.CHANGED },
-                { Code.POST, "/service/new_post_resource1", "/service/add_resource/all_methods", ResponseCode.CHANGED },
-                { Code.DELETE, "/service/new_delete_resource1", "/service/add_resource/all_methods", ResponseCode.DELETED },
-                { Code.GET, "/service/new_get_resource2", "/service/add_resource/get_only", ResponseCode.CONTENT },
-                { Code.PUT, "/service/new_put_resource2", "/service/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.POST, "/service/new_post_resource2", "/service/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.DELETE, "/service/new_delete_resource2", "/service/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.GET, "/service/new_get_resource3", "/service/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.PUT, "/service/new_put_resource3", "/service/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.POST, "/service/new_post_resource3", "/service/add_resource/post_only", ResponseCode.CHANGED },
-                { Code.DELETE, "/service/new_delete_resource3", "/service/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.GET, "/service/new_get_resource4", "/service/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.PUT, "/service/new_put_resource4", "/service/add_resource/put_only", ResponseCode.CHANGED },
-                { Code.POST, "/service/new_post_resource4", "/service/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.DELETE, "/service/new_delete_resource4", "/service/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.GET, "/service/new_get_resource5", "/service/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.PUT, "/service/new_put_resource5", "/service/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.POST, "/service/new_post_resource5", "/service/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
-                { Code.DELETE, "/service/new_delete_resource5", "/service/add_resource/delete_only", ResponseCode.DELETED } } );
+                { Code.GET, "/service/new_get_resource1", "/add_resource/all_methods", ResponseCode.CONTENT },
+                { Code.PUT, "/service/new_put_resource1", "/add_resource/all_methods", ResponseCode.CHANGED },
+                { Code.POST, "/service/new_post_resource1", "/add_resource/all_methods", ResponseCode.CHANGED },
+                { Code.DELETE, "/service/new_delete_resource1", "/add_resource/all_methods", ResponseCode.DELETED },
+                { Code.GET, "/service/new_get_resource2", "/add_resource/get_only", ResponseCode.CONTENT },
+                { Code.PUT, "/service/new_put_resource2", "/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.POST, "/service/new_post_resource2", "/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.DELETE, "/service/new_delete_resource2", "/add_resource/get_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.GET, "/service/new_get_resource3", "/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.PUT, "/service/new_put_resource3", "/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.POST, "/service/new_post_resource3", "/add_resource/post_only", ResponseCode.CHANGED },
+                { Code.DELETE, "/service/new_delete_resource3", "/add_resource/post_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.GET, "/service/new_get_resource4", "/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.PUT, "/service/new_put_resource4", "/add_resource/put_only", ResponseCode.CHANGED },
+                { Code.POST, "/service/new_post_resource4", "/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.DELETE, "/service/new_delete_resource4", "/add_resource/put_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.GET, "/service/new_get_resource5", "/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.PUT, "/service/new_put_resource5", "/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.POST, "/service/new_post_resource5", "/add_resource/delete_only", ResponseCode.METHOD_NOT_ALLOWED },
+                { Code.DELETE, "/service/new_delete_resource5", "/add_resource/delete_only", ResponseCode.DELETED } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
     * Test resource to call
     */
-    @Parameter(1)
+    @Parameter( 1 )
     public String resourcePath;
 
     /**
     * Resource to call for adding
     */
-    @Parameter(2)
+    @Parameter( 2 )
     public String addResourcePath;
 
     /**
      * Expected response code to test
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public ResponseCode expectedResponseCode;
 
     /* (non-Javadoc)
@@ -118,7 +120,7 @@ public class AddResourceTest extends AbstractServerTestCase
      * Test adding a resource on the server
      * @throws Exception
      */
-    @Test(timeout= 30000L)
+    @Test( timeout= 30000L )
     public void testAddResource() throws Exception
     {
         setClientPath( resourcePath );
@@ -129,8 +131,7 @@ public class AddResourceTest extends AbstractServerTestCase
 
         setClientPath( addResourcePath );
         Request request2= new Request( Code.POST );
-        request2.setPayload( "some content" );
-        request2.getOptions().setLocationPath( resourcePath );
+        request2.setPayload( resourcePath );
         CoapResponse response2= client.advanced( request2 );
         assertNotNull( "post gave no response", response2 );
         assertTrue( "post response indicates failure", response2.isSuccess() );
