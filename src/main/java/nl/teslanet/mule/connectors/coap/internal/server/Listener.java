@@ -184,7 +184,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         //TODO add streaming & blockwise cooperation
         try
         {
-            coapResponse.setPayload( MessageUtils.payloadToByteArray( responsePayload ) );
+            coapResponse.setPayload( MessageUtils.toBytes( responsePayload ) );
         }
         catch ( Exception e )
         {

@@ -96,6 +96,7 @@ import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttri
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -539,9 +540,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 //TODO add streaming & blockwise cooperation
                 try
                 {
-                    request.setPayload( MessageUtils.payloadToByteArray( requestPayload ) );
+                    request.setPayload( MessageUtils.toBytes( requestPayload ) );
                 }
-                catch ( RuntimeException | IOException e )
+                catch ( RuntimeException | InternalInvalidByteArrayValueException e )
                 {
                     throw new InternalRequestException( "cannot convert payload to byte[]", e );
                 }

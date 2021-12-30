@@ -36,9 +36,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.californium.core.coap.BlockOption;
-import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
@@ -155,7 +155,7 @@ public class MessageUtils
         {
             try
             {
-                optionSet.addOption( new Option( otherOption.getNumber(), optionToBytes( otherOption.getValue() ) ) );
+                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue() ) ) );
             }
             catch ( InternalInvalidByteArrayValueException e )
             {
@@ -200,7 +200,7 @@ public class MessageUtils
         {
             try
             {
-                optionSet.addOption( new Option( otherOption.getNumber(), optionToBytes( otherOption.getValue() ) ) );
+                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue() ) ) );
             }
             catch ( InternalInvalidByteArrayValueException e )
             {
@@ -209,67 +209,27 @@ public class MessageUtils
         }
     }
 
-    //TODO make one toBytes method
     /**
-     * Convert option object to bytes.
-     * @param optionObject to convert.
-     * @return Converted object as bytes.
-     * @throws InternalInvalidByteArrayValueException when object cannot be converted to bytes.
+     * Convert an object to byte array.
+     * @param toConvert The object to convert.
+     * @return Converted object as bytes, or null when the input was null.
+     * @throws InternalInvalidByteArrayValueException When object cannot be converted to bytes.
      */
-    private static byte[] optionToBytes( Object optionObject ) throws InternalInvalidByteArrayValueException
+    public static byte[] toBytes( Object toConvert ) throws InternalInvalidByteArrayValueException
     {
-        if ( Object.class.isInstance( optionObject ) )
-        {
-            if ( InputStream.class.isInstance( optionObject ) )
-            {
-                byte[] bytes= null;
-                try
-                {
-                    bytes= IOUtils.toByteArray( (InputStream) optionObject );
-                }
-                catch ( RuntimeException e )
-                {
-                    throw new InternalInvalidByteArrayValueException( "Cannot convert object to byte[]", e );
-                }
-                finally
-                {
-                    IOUtils.closeQuietly( (InputStream) optionObject );
-                }
-                return bytes;
-            }
-            else if ( Byte[].class.isInstance( optionObject ) )
-            {
-                return (byte[]) optionObject;
-            }
-            else if ( byte[].class.isInstance( optionObject ) )
-            {
-                return (byte[]) optionObject;
-            }
-            else if ( ETag.class.isInstance( optionObject ) )
-            {
-                return ( (ETag) optionObject ).getBytes();
-            }
-            else
-            {
-                return optionObject.toString().getBytes( CoAP.UTF8_CHARSET );
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Convert a payload value to byte array.
-     * @param payload is the payload to convert.
-     * @return converted payload as bytes
-     * @throws IOException when the payload is an outputhandler that cannot write.
-     */
-    public static byte[] payloadToByteArray( TypedValue< Object > payload ) throws IOException
-    {
-        Object object= TypedValue.unwrap( payload );
+        Object object= TypedValue.unwrap( toConvert );
 
         if ( object == null )
         {
-            return null;
+            return Bytes.EMPTY;
+        }
+        else if ( object instanceof byte[] )
+        {
+            return (byte[]) object;
+        }
+        else if ( object instanceof Byte[] )
+        {
+            return toPrimitives( (Byte[]) object );
         }
         else if ( object instanceof String )
         {
@@ -281,25 +241,41 @@ public class MessageUtils
         }
         else if ( object instanceof InputStream )
         {
-            return IOUtils.toByteArray( (InputStream) object );
+            byte[] bytes= null;
+            try
+            {
+                bytes= IOUtils.toByteArray( (InputStream) object );
+            }
+            catch ( RuntimeException e )
+            {
+                throw new InternalInvalidByteArrayValueException( "Cannot convert InputStream instance to byte[]", e );
+            }
+            finally
+            {
+                IOUtils.closeQuietly( (InputStream) object );
+            }
+            return bytes;
         }
-        else if ( object instanceof byte[] )
+        else if ( object instanceof ETag )
         {
-            return (byte[]) object;
-        }
-        else if ( object instanceof Byte[] )
-        {
-            return toPrimitives( (Byte[]) object );
+            return ( (ETag) object ).getBytes();
         }
         else if ( object instanceof OutputHandler )
         {
             ByteArrayOutputStream output= new ByteArrayOutputStream();
-            ( (OutputHandler) object ).write( null, output );
+            try
+            {
+                ( (OutputHandler) object ).write( null, output );
+            }
+            catch ( IOException e )
+            {
+                throw new InternalInvalidByteArrayValueException( "Cannot convert OutputHandler instance to byte[]", e );
+            }
             return output.toByteArray();
         }
         else //do transform using Mule's transformers.
         {
-            return (byte[]) transformationService.transform( Message.builder().payload( payload ).build(), BYTE_ARRAY ).getPayload().getValue();
+            return (byte[]) transformationService.transform( Message.builder().payload( TypedValue.of( toConvert ) ).build(), BYTE_ARRAY ).getPayload().getValue();
         }
     }
 
