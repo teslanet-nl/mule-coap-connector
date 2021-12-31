@@ -20,43 +20,42 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.server.properties;
+package nl.teslanet.mule.connectors.coap.test.utils;
 
 
-import org.eclipse.californium.core.coap.OptionSet;
+import java.io.Serializable;
+import java.util.UUID;
 
 
 /**
- * Test inbound size2 option
- *
- */
-public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
+ * Serializable class for testing.
+ * 
+ **/
+public class UniqueObject implements Serializable
 {
-
-    @Override
-    protected void addOption( OptionSet options )
-    {
-        options.setSize2( 0 );
-    }
-
-    @Override
-    protected String getPropertyName()
-    {
-        return "coap.opt.size2";
-    }
-
-    @Override
-    protected Object getExpectedPropertyValue()
-    {
-        return new Boolean( true );
-    }
-    
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+    /**
+     * Version of the class.
      */
-    @Override
-    protected String getConfigResources()
+    private static final long serialVersionUID= -252909363318128439L;
+
+    /**
+     * The object id
+     */
+    private final UUID id;
+
+    /**
+     * Constructor.
+     */
+    public UniqueObject()
     {
-        return "mule-server-config/properties/testserver-options-size2.xml";
-    };
+        id= UUID.randomUUID();
+    }
+
+    /**
+     * @return The id of the object.
+     */
+    public UUID getId()
+    {
+        return id;
+    }
 }

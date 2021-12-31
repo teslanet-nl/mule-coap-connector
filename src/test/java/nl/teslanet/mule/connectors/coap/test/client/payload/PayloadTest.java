@@ -23,18 +23,21 @@
 package nl.teslanet.mule.connectors.coap.test.client.payload;
 
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
 import org.junit.Test;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
@@ -47,8 +50,10 @@ import org.mule.tck.core.streaming.SimpleByteBufferManager;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
+import nl.teslanet.mule.connectors.coap.test.utils.UniqueObject;
 
 
 public class PayloadTest extends AbstractClientTestCase
@@ -149,7 +154,7 @@ public class PayloadTest extends AbstractClientTestCase
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
-        String responseString= IOUtils.toString( responsePayload.openCursor(), StandardCharsets.UTF_8 );
+        String responseString= IOUtils.toString( responsePayload.openCursor(), CoAP.UTF8_CHARSET );
         assertEquals( "wrong response payload contents", requestPayload, responseString );
     }
 
@@ -229,13 +234,12 @@ public class PayloadTest extends AbstractClientTestCase
         assertTrue( "wrong response payload contents", Data.validateContent( responsePayload.openCursor(), PAYLOAD_SIZE ) );
     }
 
-    //TODO testTransformedPayload()
     /** 
-     * Test CoAP request with any object payload
+     * Test CoAP request with Integer payload
      * @throws Exception should not happen in this test
      */
     @Test
-    public void testTransformedPayload() throws Exception
+    public void testIntegerPayload() throws Exception
     {
         Integer requestPayload= 12345;
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
@@ -245,8 +249,48 @@ public class PayloadTest extends AbstractClientTestCase
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
-        String responseString= IOUtils.toString( responsePayload.openCursor(), StandardCharsets.UTF_8 );
-        assertEquals( "wrong response payload contents", requestPayload.toString(), responseString );
+        assertArrayEquals( "wrong response payload contents", OptionUtils.toBytes( requestPayload ), IOUtils.toByteArray( responsePayload.openCursor() ) );
+    }
+
+    /** 
+     * Test CoAP request with Long payload
+     * @throws Exception should not happen in this test
+     */
+    @Test
+    public void testLongPayload() throws Exception
+    {
+        Long requestPayload= 1234554L;
+        CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
+
+        assertNotNull( "no mule event", response );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
+        assertTrue( "request failed", attributes.isSuccess() );
+
+        CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
+        assertArrayEquals( "wrong response payload contents", OptionUtils.toBytes( requestPayload ), IOUtils.toByteArray( responsePayload.openCursor() ) );
+    }
+
+    /** 
+     * Test CoAP request with any object payload
+     * @throws Exception should not happen in this test
+     */
+    @Test
+    public void testTransformedPayload() throws Exception
+    {
+        UniqueObject requestPayload= new UniqueObject();
+        ByteArrayOutputStream bos= new ByteArrayOutputStream();
+        ObjectOutputStream out= new ObjectOutputStream( bos );
+        out.writeObject( requestPayload );
+        out.close();
+
+        CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
+
+        assertNotNull( "no mule event", response );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getMessage().getAttributes().getValue();
+        assertTrue( "request failed", attributes.isSuccess() );
+
+        CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
+        assertArrayEquals( "wrong response payload contents", bos.toByteArray(), IOUtils.toByteArray( responsePayload.openCursor() ) );
     }
 
     /**

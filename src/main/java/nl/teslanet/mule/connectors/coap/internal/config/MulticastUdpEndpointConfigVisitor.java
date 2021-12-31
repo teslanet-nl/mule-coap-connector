@@ -124,7 +124,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             catch ( SocketException e )
             {
                 throw new EndpointConstructionException(
-                    Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
+                    Defs.ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
                     e );
             }
         }
@@ -137,7 +137,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             catch ( UnknownHostException e )
             {
                 throw new EndpointConstructionException(
-                    Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
+                    Defs.ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
                     e );
             }
         }
@@ -159,7 +159,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                     catch ( SocketException e )
                     {
                         throw new EndpointConstructionException(
-                            Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
+                            Defs.ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
                             e );
                     }
                 }
@@ -170,7 +170,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                 }
                 catch ( UnknownHostException e )
                 {
-                    throw new EndpointConstructionException( Defs.endpointMsgPrefix + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.", e );
+                    throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.", e );
                 }
                 connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
             }

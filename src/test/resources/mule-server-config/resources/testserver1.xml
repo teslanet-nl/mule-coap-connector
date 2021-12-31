@@ -85,7 +85,6 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
 		<set-variable variableName="uri"
 			value="#[ vars.attr.requestUri ]" doc:name="set method" />
-		<!-- TODO RC: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
 			value="#[payload]" doc:name="set resource_path" />
 

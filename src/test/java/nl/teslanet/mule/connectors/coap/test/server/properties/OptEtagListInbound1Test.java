@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
@@ -50,7 +51,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
         LinkedList< ETag > list= new LinkedList< ETag >();
         list.add( new ETag( "0011FF" ) );
 
-        return list;
+        return Collections.unmodifiableList( list );
     }
     
     /* (non-Javadoc)

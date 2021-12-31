@@ -134,7 +134,7 @@ public final class OperationalEndpoint
         }
         else
         {
-            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
+            throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
         }
         if ( config.logCoapMessages )
         {
@@ -161,7 +161,7 @@ public final class OperationalEndpoint
             // endpoint must match, multiple server usage of the endpoint is not allowed
             if ( server != null && operationalEndpoint.server != null && server != operationalEndpoint.server )
             {
-                throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: usage by multiple servers not allowed." );
+                throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " }: usage by multiple servers not allowed." );
             }
             operationalEndpoint.server= server;
             return operationalEndpoint;
@@ -185,7 +185,7 @@ public final class OperationalEndpoint
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
         {
-            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " }: no client configured." );
+            throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " }: no client configured." );
         }
         if ( registry.containsKey( config.configName ) )
         {
@@ -395,28 +395,28 @@ public final class OperationalEndpoint
         }
         catch ( Exception e )
         {
-            throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } construction DTLS Endpoint failed.", e );
+            throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " } construction DTLS Endpoint failed.", e );
         }
     }
 
     private OperationalEndpoint( TCPServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TCP Server Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " } TCP Server Endpoint NIY." );
     }
 
     private OperationalEndpoint( TCPClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TCP Client Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " } TCP Client Endpoint NIY." );
     }
 
     private OperationalEndpoint( TLSServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TLS Server Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " } TLS Server Endpoint NIY." );
     }
 
     private OperationalEndpoint( TLSClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( Defs.endpointMsgPrefix + config.configName + " } TLS Client Endpoint NIY." );
+        throw new EndpointConstructionException( Defs.ENDPOINT_MSG_PREFIX + config.configName + " } TLS Client Endpoint NIY." );
     }
 
     /**
@@ -445,6 +445,6 @@ public final class OperationalEndpoint
      */
     public String toString()
     {
-        return Defs.endpointMsgPrefix + configName + " }";
+        return Defs.ENDPOINT_MSG_PREFIX + configName + " }";
     }
 }

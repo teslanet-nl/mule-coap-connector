@@ -57,6 +57,7 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
+import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -130,6 +131,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     @RefName
     private String clientName= null;
+
+    /**
+     * Mule transformation service.
+     */
+    @Inject
+    private TransformationService transformationService;
 
     /**
      * Injected Scheduler service.
@@ -540,7 +547,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 //TODO add streaming & blockwise cooperation
                 try
                 {
-                    request.setPayload( MessageUtils.toBytes( requestPayload ) );
+                    request.setPayload( MessageUtils.toBytes( requestPayload, transformationService ) );
                 }
                 catch ( RuntimeException | InternalInvalidByteArrayValueException e )
                 {
@@ -551,7 +558,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         try
         {
-            MessageUtils.copyOptions( options, request.getOptions() );
+            MessageUtils.copyOptions( options, request.getOptions(), transformationService );
         }
         catch ( InternalInvalidOptionValueException e )
         {

@@ -49,10 +49,12 @@
 	</coap:client-config>
 
 	<flow name="do_test">
+		<logger/>
 		<coap:request doc:name="Request" config-ref="config"
 			requestCode="PUT" path="/echo">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
+		<logger/>
 	</flow>
 
 </mule>

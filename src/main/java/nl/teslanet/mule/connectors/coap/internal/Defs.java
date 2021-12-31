@@ -23,25 +23,20 @@
 package nl.teslanet.mule.connectors.coap.internal;
 
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-
 /**
  * General definitions.
  *
  */
 public class Defs
 {
-    public static final Charset COAP_CHARSET= StandardCharsets.UTF_8;
-
     public static final String COAP_URI_WILDCARD= "*";
 
     public static final String COAP_URI_PATHSEP= "/";
 
     public static final String COAP_URI_ROOTRESOURCE= "";
 
-    public static final String endpointMsgPrefix= "CoAP Endpoint { ";
+    public static final String ENDPOINT_MSG_PREFIX= "CoAP Endpoint { ";
+
     /**
      * No need to instantiate.
      */

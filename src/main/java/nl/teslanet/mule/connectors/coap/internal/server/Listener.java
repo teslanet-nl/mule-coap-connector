@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
@@ -33,6 +35,7 @@ import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
@@ -83,6 +86,12 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
 
     @Config
     private Server server;
+
+    /**
+     * Mule transformation service.
+     */
+    @Inject
+    private TransformationService transformationService;
 
     /**
      * The pathPattern defines the resources the listener listens on.
@@ -179,12 +188,12 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions() );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
         }
         //TODO add streaming & blockwise cooperation
         try
         {
-            coapResponse.setPayload( MessageUtils.toBytes( responsePayload ) );
+            coapResponse.setPayload( MessageUtils.toBytes( responsePayload, transformationService ) );
         }
         catch ( Exception e )
         {

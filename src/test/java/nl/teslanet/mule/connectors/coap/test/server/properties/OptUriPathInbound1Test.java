@@ -23,6 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import java.util.Collections;
+import java.util.LinkedList;
+
 import org.eclipse.californium.core.coap.OptionSet;
 
 
@@ -32,7 +35,7 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options )
     {
-        // nop
+        // NOOP
     }
 
     @Override
@@ -44,9 +47,15 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue()
     {
-        return resourcePath.substring( 1 );
+        String[] resources= resourcePath.substring( 1 ).split( "/" );
+        LinkedList< String > list= new LinkedList<>();
+        for ( String resource : resources )
+        {
+            list.add( resource );
+        }
+        return Collections.unmodifiableList( list );
     }
-    
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
      */

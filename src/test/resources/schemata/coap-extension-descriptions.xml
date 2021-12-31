@@ -434,6 +434,9 @@
                 <parameter name="localAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="options">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="relation">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -444,9 +447,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestOptionAttributes">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestUri">
@@ -466,6 +466,9 @@
                 <parameter name="notification">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="options">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="remoteAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -479,9 +482,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responseCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="responseOptionAttributes">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="success">

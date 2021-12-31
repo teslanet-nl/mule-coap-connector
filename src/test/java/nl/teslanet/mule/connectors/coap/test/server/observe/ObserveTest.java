@@ -155,8 +155,7 @@ public class ObserveTest extends AbstractServerTestCase
 
         setClientPath( "/service" );
         Request request= new Request( Code.POST );
-        request.setPayload( contents.get( 0 ) );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "observe_me_too" );
+        request.setPayload( "/service/observe_me_too" );
         response= client.advanced( request );
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
@@ -167,7 +166,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertNotNull( "get gave no response", response );
         assertTrue( "get response indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
-        assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
+        assertEquals( "get gave wrong content", "/service/observe_me_too", response.getResponseText() );
 
         CoapObserveRelation relation= client.observe( getHandler() );
 
@@ -183,7 +182,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 
-        for ( int i= 0; i < observations.size(); i++ )
+        for ( int i= 1; i < observations.size(); i++ )
         {
             response= observations.get( i );
             assertNotNull( "observation nr: " + i + " is empty", response );
@@ -206,8 +205,7 @@ public class ObserveTest extends AbstractServerTestCase
 
         setClientPath( "/service" );
         Request request= new Request( Code.POST );
-        request.setPayload( contents.get( 0 ) );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "observe_me_too" );
+        request.setPayload( "/service/observe_me_too" );
         response= client.advanced( request );
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
@@ -218,7 +216,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertNotNull( "get gave no response", response );
         assertTrue( "get response indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
-        assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
+        assertEquals( "get gave wrong content", "/service/observe_me_too" , response.getResponseText() );
 
         CoapObserveRelation relation= client.observe( getHandler() );
 
@@ -234,7 +232,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 
-        int i= 0;
+        int i= 1;
         for ( ; i < observations.size(); i++ )
         {
             response= observations.get( i );

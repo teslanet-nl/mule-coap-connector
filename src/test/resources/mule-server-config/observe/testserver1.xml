@@ -79,7 +79,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			value="#[ vars.attr.requestUri ]" doc:name="set method" />
 		<!-- TODO RC: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
-			value="#['/' ++ vars.attr.options.locationPath!]"
+			value="#[ payload ]"
 			doc:name="set resource_path" />
 
 		<set-variable variableName="get" value="true" />
@@ -115,10 +115,9 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<coap:listener get="true" post="true" put="true"
 			delete="true" pathPattern="/service/exists" config-ref="config">
 		</coap:listener>
-		<logger message="#[ attributes.options.locationPath! ]" />
-		<!-- TODO RC align root resource / -->
+		<logger message="#[ payload ]" />
 		<coap:resource-exists config-ref="config"
-			pathPattern="#[ '/' ++ attributes.options.locationPath!]" />
+			pathPattern="#[ payload ]" />
 	</flow>
 
 	<flow name="listen_service_resource">

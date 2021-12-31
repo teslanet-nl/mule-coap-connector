@@ -24,8 +24,9 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
 import org.eclipse.californium.core.coap.OptionSet;
+import org.junit.Ignore;
 
-
+@Ignore
 public class OptLocationQueryInbound2Test extends AbstractInboundPropertyTestcase
 {
     @Override

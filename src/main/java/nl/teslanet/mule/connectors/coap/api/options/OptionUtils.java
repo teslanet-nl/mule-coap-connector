@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.api.options;
 
+
 /**
  * Utilities for handling CoAP options. 
  *
@@ -67,5 +68,53 @@ public class OptionUtils
     {
         // NoCacheKey = ((onum & 0x1e) == 0x1c);
         return ( optionNumber & 0x1E ) == 0x1C;
+    }
+
+    /**
+     * Convert an integer value to byte array. 
+     * The resulting bits conforming to the CoAP defined uint format for integer option values, 
+     * where leading zero bytes should be omitted.
+     * 
+     * @see <a href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-3.2">IETF RFC 7252 -
+     *      3.2. Option Value Formats</a>
+     *      
+     * @param value The integer value to convert.
+     * @return The converted value as bytes. 
+     */
+    public static byte[] toBytes( int value )
+    {
+        int length= 0;
+        for ( ; length < 4 && ( value < 0 || value >= ( 1 << ( length * 8 ) ) ); length++ );
+        byte[] result= new byte [length];
+        for ( int i= 0; i < length; i++ )
+        {
+            result[length - i - 1]= (byte) ( value >> i * 8 );
+        }
+        return result;
+    }
+
+    /**
+     * Convert a long value to byte array. 
+     * The resulting bits conforming to the CoAP defined uint format for integer option values, 
+     * where leading zero bytes should be omitted.
+     * 
+     * @see <a href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-3.2">IETF RFC 7252 -
+     *      3.2. Option Value Formats</a>
+     *      
+     * @param value The long value to convert.
+     * @return The converted value as bytes. 
+     */
+    public static byte[] toBytes( long value )
+    {
+        int length= 0;
+        for ( ; length < 8 && ( value < 0 || value >= ( 1L << ( length * 8 ) ) ); length++ );
+        byte[] result= new byte [length];
+        for ( int i= 0; i < length; i++ )
+        {
+            result[length - i - 1]= (byte) ( value >> i * 8 );
+        }
+        return result;
     }
 }
