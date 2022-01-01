@@ -32,6 +32,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -42,12 +45,8 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.Code;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 /**
@@ -117,9 +116,9 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     /**
      * The property value that is expected to receive in inbound test
      * @return the value to expect
-     * @throws InvalidETagException 
+     * @throws Exception 
      */
-    protected Object getExpectedInboundPropertyValue() throws InvalidETagException
+    protected Object getExpectedInboundPropertyValue() throws Exception
     {
         return new String( getPropertyName() + "_test_value" );
     }
@@ -128,9 +127,9 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
      * Implement this method to specify the strategy the coap test server has to use
      * in the test.
      * @return the Options strategy to use
-     * @throws InvalidETagException 
+     * @throws Exception 
      */
-    protected abstract OptionStrategy getStrategy() throws InvalidETagException;
+    protected abstract OptionStrategy getStrategy() throws Exception;
 
     /**
      * Override this method when a specific flow has to be used. 

@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
@@ -34,27 +35,23 @@ import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
  * Abstract class for testing inbound other options
  *
  */
-public abstract class AbstractOtherOptionInboundPropertyTestCase extends AbstractInboundPropertyTestCase
+public abstract class AbstractOtherOptionInboundPropertyCriticalTestCase extends AbstractOtherOptionInboundPropertyTestCase
 {
-    abstract protected int getOptionNumber();
-
-    abstract protected byte[][] getOptionValues();
-
-    /**
+    abstract protected boolean isCritical();
+   /**
      * Fetch the inbound property from the response attributes.
      */
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        LinkedList< OtherOptionAttribute > found= new LinkedList<>();
-        for ( OtherOptionAttribute otherOption : attributes.getOptions().getOtherOptions() )
+        @SuppressWarnings( "unchecked" )
+        List< OtherOptionAttribute > options= (List< OtherOptionAttribute >) super.fetchInboundProperty( attributes );
+        List< Boolean > criticals= new LinkedList<>();
+        for ( OtherOptionAttribute otherOption : options )
         {
-            if ( otherOption.getNumber() == getOptionNumber() )
-            {
-                found.add( otherOption );
-            }
+            criticals.add( otherOption.isCritical() );
         }
-        return Collections.unmodifiableList( found );
+        return Collections.unmodifiableList( criticals );
     }
 
     /**
@@ -63,32 +60,11 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        LinkedList< OtherOptionAttribute > list= new LinkedList<>();
+        LinkedList< Boolean > criticals= new LinkedList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
-            OtherOptionAttribute otherOption= new OtherOptionAttribute( getOptionNumber(), getOptionValues()[i] );
-            list.add( otherOption );
+            criticals.add( isCritical() );
         }
-        return Collections.unmodifiableList( list );
+        return Collections.unmodifiableList( criticals );
     }
-
-    /**
-     * The assertion is done on collection of objects.
-     * @return The type of the property expected.
-     */
-    @Override
-    protected PropertyType getPropertyType()
-    {
-        return PropertyType.CollectionOfObject;
-    }
-    
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
-    @Override
-    protected OptionStrategy getStrategy()
-    {
-        return new OptOtherStrategy( getOptionNumber(), getOptionValues() );
-    }
-
 }

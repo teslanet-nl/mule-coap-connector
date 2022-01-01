@@ -42,9 +42,7 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
      */
     public DefaultOtherOptionAttribute( int number, byte[] value )
     {
-        super();
-        this.number= number;
-        this.value= value;
+        super( number, value);
     }
 
     /**

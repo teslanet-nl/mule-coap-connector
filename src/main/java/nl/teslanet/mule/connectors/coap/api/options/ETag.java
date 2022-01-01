@@ -42,11 +42,6 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 public final class ETag implements Comparable< ETag >
 {
     /**
-     * Empty byte array.
-     */
-    private static final byte[] empty= new byte [0];
-
-    /**
      * The etag value
      */
     private final byte[] value;
@@ -54,14 +49,14 @@ public final class ETag implements Comparable< ETag >
     /**
      * The hash code of this etag, is initialized lazily.
      */
-    private Integer hashCode= null;
+    //private Integer hashCode= null;
 
     /**
      * Default constructor that create empty etag.
      */
     public ETag()
     {
-        this.value= empty;
+        this.value= OptionUtils.emptyBytes;
     }
 
     /**
@@ -73,7 +68,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( bytes == null || bytes.length == 0 )
         {
-            this.value= empty;
+            this.value= OptionUtils.emptyBytes;
         }
         else if ( bytes.length > 8 )
         {
@@ -221,8 +216,8 @@ public final class ETag implements Comparable< ETag >
      * @param o The etag object to test for equality
      * @return True 
      */
-    @Override
-    public boolean equals( Object o )
+    //@Override
+    public boolean equalsX( Object o )
     {
         if ( !( o instanceof ETag ) )
         {
@@ -232,8 +227,8 @@ public final class ETag implements Comparable< ETag >
         return Arrays.equals( this.value, other.value );
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
+    /**
+     * Compares this object with the specified object for order.
      */
     @Override
     public int compareTo( ETag other )
@@ -250,16 +245,37 @@ public final class ETag implements Comparable< ETag >
         return 0;
     }
 
+    /**
+     * Returns a hash code value for the object.
+     */
     @Override
     public int hashCode()
     {
-        if ( this.hashCode == null )
-        {
-            this.hashCode= Arrays.hashCode( this.value );
-        }
-        return this.hashCode;
+        final int prime= 31;
+        int result= 1;
+        result= prime * result + Arrays.hashCode( value );
+        return result;
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( !( obj instanceof ETag ) )
+        {
+            return false;
+        }
+        ETag other= (ETag) obj;
+        return Arrays.equals( value, other.value );
+    }
+
+    //TODO RC move to OptionUtils
     /**
      * Converts an etag value to a String containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
@@ -280,6 +296,7 @@ public final class ETag implements Comparable< ETag >
         return sb.toString();
     }
 
+    //TODO RC move to OptionUtils
     /**
      * Converts an etag value to a Long containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
@@ -296,6 +313,7 @@ public final class ETag implements Comparable< ETag >
         return Long.valueOf( buffer.getLong() );
     }
 
+    //TODO RC move to OptionUtils
     /**
      * Converts an etag value to a Long containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
@@ -306,7 +324,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( longValue == null )
         {
-            return empty;
+            return OptionUtils.emptyBytes;
         }
         ByteBuffer byteBuffer= ByteBuffer.allocate( Long.BYTES );
         byteBuffer.putLong( longValue );
@@ -315,6 +333,7 @@ public final class ETag implements Comparable< ETag >
 
     }
 
+    //TODO RC move to OptionUtils
     /**
      * Converts a hexadecimal representation of an etag to byte array.
      * @param hexString representing the etag value. When empty a null value is returned. 
@@ -325,7 +344,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( hexString == null || hexString.length() <= 0 )
         {
-            return empty;
+            return OptionUtils.emptyBytes;
         }
         else
         {

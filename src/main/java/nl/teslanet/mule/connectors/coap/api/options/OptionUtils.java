@@ -30,6 +30,11 @@ package nl.teslanet.mule.connectors.coap.api.options;
 public class OptionUtils
 {
     /**
+     * Empty byte array.
+     */
+    public static final byte[] emptyBytes= new byte [0];
+    
+    /**
      * private constructor
      */
     private OptionUtils()
@@ -44,7 +49,6 @@ public class OptionUtils
      */
     public static boolean isCritical( int optionNumber )
     {
-        // Critical = (onum & 1);
         return ( optionNumber & 1 ) != 0;
     }
 
@@ -55,7 +59,6 @@ public class OptionUtils
      */
     public static boolean isUnSafe( int optionNumber )
     {
-        // UnSafe = (onum & 2);
         return ( optionNumber & 2 ) != 0;
     }
 
@@ -66,7 +69,6 @@ public class OptionUtils
      */
     public static boolean isNoCacheKey( int optionNumber )
     {
-        // NoCacheKey = ((onum & 0x1e) == 0x1c);
         return ( optionNumber & 0x1E ) == 0x1C;
     }
 

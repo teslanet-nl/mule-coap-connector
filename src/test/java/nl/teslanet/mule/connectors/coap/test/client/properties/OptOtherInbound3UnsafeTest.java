@@ -23,64 +23,36 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import org.junit.Ignore;
-
-import org.eclipse.californium.core.coap.Option;
-
-
 /**
  * Test inbound other option unsafe property
  *
  */
-//TODO implement operation
-@Ignore
-public class OptOtherInbound3UnsafeTest extends AbstractOtherOptionInboundPropertyTestCase
+public class OptOtherInbound3UnsafeTest extends AbstractOtherOptionInboundPropertyUnsafeTestCase
 {
+    byte[][] values= { { (byte) 0x12, (byte) 0x23, (byte) 0x45, (byte) 0x44 } };
 
-    /**
-     * Test other option
-     * @return the option to use in test
-     */
-    @Override
-    protected Option getOption()
-    {
-        byte[] value= { (byte) 0x12, (byte) 0x23, (byte) 0x45, (byte) 0x44 };
-        return new Option( 65308, value );
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
-     */
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other." + getOption().getNumber() + ".unsafe";
+        return "coap.opt.other." + getOptionNumber() + ".unsafe";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
     @Override
-    protected PropertyType getPropertyType()
+    protected int getOptionNumber()
     {
-        return PropertyType.Object;
+        return 65308;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected byte[][] getOptionValues()
     {
-        return new Boolean( false );
+        return values;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
     @Override
-    protected OptionStrategy getStrategy()
+    protected boolean isUnSafe()
     {
-        return new OptOtherStrategy( getOption() );
+        // TODO Auto-generated method stub
+        return false;
     }
 }

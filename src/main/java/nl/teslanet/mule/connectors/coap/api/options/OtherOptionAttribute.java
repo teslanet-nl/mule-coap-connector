@@ -23,6 +23,11 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.util.Arrays;
+import java.util.Objects;
+
+
+//TODO RC unittests
 /**
  * Other option interface.
  */
@@ -31,13 +36,35 @@ public class OtherOptionAttribute
     /**
      * The number of the other option.
      */
-    protected int number;
+    protected final int number;
 
     //TODO RC to inputstream
     /**
      * The value of the other option.
      */
-    protected byte[] value= null;
+    protected final byte[] value;
+
+    /**
+     * Default constructor.
+     */
+    public OtherOptionAttribute()
+    {
+        super();
+        this.number= 0;
+        this.value= OptionUtils.emptyBytes;
+    }
+
+    /**
+     * Constructor setting members.
+     * @param number The number of the option.
+     * @param value The value of the option.
+     */
+    public OtherOptionAttribute( int number, byte[] value )
+    {
+        super();
+        this.number= number;
+        this.value= value;
+    }
 
     /**
      * Get the number of this other option.
@@ -66,8 +93,7 @@ public class OtherOptionAttribute
      */
     public boolean isCritical()
     {
-        // Critical: onum & 1
-        return ( getNumber() & 1 ) != 0;
+        return OptionUtils.isCritical( getNumber() );
     }
 
     /**
@@ -77,8 +103,7 @@ public class OtherOptionAttribute
      */
     public boolean isUnSafe()
     {
-        // UnSafe: onum & 2
-        return ( getNumber() & 2 ) != 0;
+        return OptionUtils.isUnSafe( getNumber() );
     }
 
     /**
@@ -88,7 +113,46 @@ public class OtherOptionAttribute
      */
     public boolean isNoCacheKey()
     {
-        // NoCacheKey: (onum & 0x1e) == 0x1c
-        return ( getNumber() & 0x1E ) == 0x1C;
+        return OptionUtils.isNoCacheKey( getNumber() );
+    }
+
+    /**
+     * Check if the etag is empty. etags whether it contains the etag.
+     * @return True when the etag is empty, otherwise false.
+     */
+    public boolean isEmpty()
+    {
+        return( getValue().length == 0 );
+    }
+
+    /**
+     * Returns a hash code value for the object.
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime= 31;
+        int result= 1;
+        result= prime * result + Arrays.hashCode( getValue() );
+        result= prime * result + Objects.hash( getNumber() );
+        return result;
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( !( obj instanceof OtherOptionAttribute ) )
+        {
+            return false;
+        }
+        OtherOptionAttribute other= (OtherOptionAttribute) obj;
+        return getNumber() == other.getNumber() && Arrays.equals( getValue(), other.getValue() );
     }
 }
