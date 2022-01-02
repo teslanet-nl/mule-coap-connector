@@ -56,28 +56,18 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
         return "coap.opt.location_query";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
     @Override
     protected PropertyType getPropertyType()
     {
-        return PropertyType.Object;
+        return PropertyType.CollectionOfObject;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO RC add '?' ?
-        return new String( "first=1" );
+        return getValue();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
     @Override
     protected OptionStrategy getStrategy()
     {

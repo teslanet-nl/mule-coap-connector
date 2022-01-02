@@ -62,7 +62,7 @@ public class OptLocationPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected PropertyType getPropertyType()
     {
-        return PropertyType.Object;
+        return PropertyType.CollectionOfObject;
     }
 
     /* (non-Javadoc)
@@ -71,8 +71,7 @@ public class OptLocationPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO RC add root / ?
-        return new String( "test" );
+        return getValue();
     }
 
     /* (non-Javadoc)

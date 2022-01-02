@@ -68,7 +68,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			delete="true" pathPattern="/service" config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<coap:response-options
-				locationPath="#[vars.location_path]" />
+				locationPath="#[vars.resource_path]" />
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
@@ -77,7 +77,6 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
 		<set-variable variableName="uri"
 			value="#[ vars.attr.requestUri ]" doc:name="set method" />
-		<!-- TODO RC: prepending '/' not needed in the future -->
 		<set-variable variableName="resource_path"
 			value="#[ payload ]"
 			doc:name="set resource_path" />

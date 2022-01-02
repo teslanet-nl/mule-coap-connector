@@ -77,7 +77,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<coap:listener get="true" post="true" put="true"
 			delete="true" pathPattern="/add_resource/*" config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
-			<!-- TODO RC location path -->
+			<coap:response-options locationPath="#[vars.resource_path]">
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />

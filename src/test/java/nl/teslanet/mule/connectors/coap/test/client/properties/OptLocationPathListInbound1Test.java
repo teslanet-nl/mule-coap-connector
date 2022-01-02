@@ -34,7 +34,6 @@ import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
  */
 public class OptLocationPathListInbound1Test extends AbstractInboundPropertyTestCase
 {
-
     /**
      * Test value
      * @return the value to use in test
