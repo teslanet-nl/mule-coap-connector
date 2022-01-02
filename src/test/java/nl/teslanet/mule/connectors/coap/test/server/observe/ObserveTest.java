@@ -160,7 +160,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
-        assertEquals( "wrong location path in response",  "/service/observe_me_too", response.getOptions().getLocationPathString() );
+        assertEquals( "wrong location path in response",  "service/observe_me_too", response.getOptions().getLocationPathString() );
 
         setClientPath( "/service/observe_me_too" );
         response= client.get();
@@ -211,7 +211,7 @@ public class ObserveTest extends AbstractServerTestCase
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
-        assertEquals( "wrong location path in response",  "/service/observe_me_too", response.getOptions().getLocationPathString() );
+        assertEquals( "wrong location path in response", "service/observe_me_too", response.getOptions().getLocationPathString() );
 
         setClientPath( "/service/observe_me_too" );
         response= client.get();
