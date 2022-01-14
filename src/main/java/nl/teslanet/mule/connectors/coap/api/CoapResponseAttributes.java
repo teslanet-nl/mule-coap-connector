@@ -63,11 +63,6 @@ public class CoapResponseAttributes
     protected String remoteAddress= null;
 
     /**
-     * The port that was used by the server that issued the response.
-     */
-    protected Integer remotePort= null;
-
-    /**
      * True when response is received and indicates success.
      */
     protected boolean success= false;
@@ -81,6 +76,11 @@ public class CoapResponseAttributes
      * The CoAP response code of the server response.
      */
     protected String responseCode= null;
+
+    /**
+     * The uri of the resource that has been created. 
+     */
+    protected String locationUri= null;
 
     /**
      * The CoAP options that accompanied the response.
@@ -128,14 +128,6 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the remotePort
-     */
-    public Integer getRemotePort()
-    {
-        return remotePort;
-    }
-
-    /**
      * @return the success
      */
     public boolean isSuccess()
@@ -152,19 +144,20 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @param success the success to set
-     */
-    public void setSuccess( boolean success )
-    {
-        this.success= success;
-    }
-
-    /**
      * @return the responseCode
      */
     public String getResponseCode()
     {
         return responseCode;
+    }
+    
+    /**
+     * The location of a created resource.
+     * @return the location Uri derived from the location options.
+     */
+    public String getLocationUri()
+    {
+        return locationUri;
     }
 
     /**
@@ -183,5 +176,4 @@ public class CoapResponseAttributes
     {
         return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
     }
-
 }

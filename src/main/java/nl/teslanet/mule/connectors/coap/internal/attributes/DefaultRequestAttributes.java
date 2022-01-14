@@ -82,19 +82,11 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     }
 
     /**
-     * @param remoteHost The remoteHost to set.
+     * @param remoteAddress The remoteHost to set.
      */
-    public void setRemoteHost( String remoteHost )
+    public void setRemoteAddress( String remoteAddress )
     {
-        this.remoteAddress= remoteHost;
-    }
-
-    /**
-     * @param remotePort The remote port number to set.
-     */
-    public void setRemotePort( Integer remotePort )
-    {
-        this.remotePort= remotePort;
+        this.remoteAddress= remoteAddress;
     }
 
     /**

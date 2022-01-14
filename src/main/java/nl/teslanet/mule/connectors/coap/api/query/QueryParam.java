@@ -34,16 +34,15 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * CoAP URI Query Parameter with expression support. 
  */
-public class QueryParam extends AbstractQueryParam
+public class QueryParam
 {
     /**
      * The key of the query parmeter.
      */
     @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The key of query parameter. When empty the parameter is ignored.")
-    @Example("some_key")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The key of query parameter. When empty the parameter is ignored." )
+    @Example( "some_key" )
     private String key= null;
 
     /**
@@ -51,26 +50,76 @@ public class QueryParam extends AbstractQueryParam
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The value of the query parameter. When empty only the key will be added to the request.")
-    @Example("some_value_if_any")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The value of the query parameter. When empty only the key will be added." )
+    @Example( "some_value_if_any" )
     private String value= null;
+
+    /**
+     * Default constructor.
+     */
+    public QueryParam()
+    {
+        //NOOP
+    }
+
+    /**
+     * Constructor withe member values.
+     * @param key
+     * @param value
+     */
+    public QueryParam( String key, String value )
+    {
+        this.key= key;
+        this.value= value;
+    }
 
     /**
      * @return the key of the query parameter.
      */
-    @Override
     public String getKey()
     {
         return key;
     }
 
     /**
+     * @param key the key to set
+     */
+    public void setKey( String key )
+    {
+        this.key= key;
+    }
+
+    /**
      * @return the value of the query parameter.
      */
-    @Override
     public String getValue()
     {
         return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue( String value )
+    {
+        this.value= value;
+    }
+
+    /**
+     * Get the string representation of the query parameter.
+     */
+    @Override
+    public String toString()
+    {
+        String actualValue= getValue();
+        if ( actualValue != null )
+        {
+            return getKey() + "=" + actualValue;
+        }
+        else
+        {
+            return getKey();
+        }
     }
 }

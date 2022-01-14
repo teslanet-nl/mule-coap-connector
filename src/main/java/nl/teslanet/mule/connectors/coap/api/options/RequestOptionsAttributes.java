@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import org.mule.runtime.api.util.MultiMap;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -53,7 +53,7 @@ public class RequestOptionsAttributes
 
     protected Integer contentFormat= null;
 
-    protected MultiMap< String, String > uriQuery;
+    protected List< QueryParamAttribute > uriQuery;
 
     protected Integer accept= null;
 
@@ -140,7 +140,7 @@ public class RequestOptionsAttributes
     /**
      * @return The uri query.
      */
-    public MultiMap< String, String > getUriQuery()
+    public List< QueryParamAttribute > getUriQuery()
     {
         return uriQuery;
     }
@@ -200,5 +200,4 @@ public class RequestOptionsAttributes
     {
         return otherOptions;
     }
-
 }

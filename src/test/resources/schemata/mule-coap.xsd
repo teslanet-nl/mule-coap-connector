@@ -661,12 +661,7 @@
               </xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param-config">
-                    <xs:complexType>
-                      <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                      <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                    </xs:complexType>
-                  </xs:element>
+                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param-config"></xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -768,6 +763,22 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="key"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="value"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig" abstract="true" name="abstract-query-param-config"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-query-param-config" name="query-param-config">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResponseHandlerType" substitutionGroup="mule:abstract-message-source" name="response-handler">
     <xs:annotation>
       <xs:documentation>The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.</xs:documentation>
@@ -825,12 +836,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param-config">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param-config"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -898,12 +904,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -923,7 +924,7 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
@@ -946,6 +947,22 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="value"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParam" abstract="true" name="abstract-query-param"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-query-param" name="query-param">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.query.QueryParam"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverListType" substitutionGroup="mule:abstract-operator" name="observer-list">
     <xs:annotation>
       <xs:documentation>This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of the active observers of the CoAP client.</xs:documentation>
@@ -984,12 +1001,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1010,7 +1022,7 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
@@ -1043,12 +1055,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1068,7 +1075,7 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
@@ -1141,12 +1148,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1178,7 +1180,7 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
@@ -1283,12 +1285,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="query-param">
-                  <xs:complexType>
-                    <xs:attribute type="mule:expressionString" use="required" name="key"></xs:attribute>
-                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1315,7 +1312,7 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="mule:expressionMap" use="optional" name="queryParams">
+        <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
           </xs:annotation>
@@ -1622,6 +1619,13 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="location-query">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-query-param"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="other-response-options">
             <xs:complexType>
               <xs:sequence>
@@ -1634,7 +1638,7 @@
         <xs:attribute type="mule:expressionLong" use="optional" name="maxAge"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="etag"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="locationPath"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="locationQuery"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="locationQuery"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherResponseOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>

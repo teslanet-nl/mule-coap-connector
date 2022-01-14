@@ -151,6 +151,15 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
     }
 
     /**
+     * Override to specify whether the option is an collection of objects of which string representations are to compare
+     * @return {@code true} when option is a collection of ByteArray
+     */
+    protected boolean optionValueIsCollectionOfStringable()
+    {
+        return false;
+    }
+
+    /**
      * Override to specify whether the option is an ByteArray
      * @return {@code true} when option is a ByteArray
      */
@@ -207,7 +216,25 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
                 assertArrayEquals( "value in collection not equal", expectedValue, optionValue );
             } ;
         }
-        else if ( optionValueIsByteArray() )
+        else if ( optionValueIsCollectionOfStringable() )
+        {
+            @SuppressWarnings("unchecked")
+            Collection< Object > option= (Collection< Object >) fetchOption( response.getOptions() );
+
+            @SuppressWarnings("unchecked")
+            Collection< Object > expected= (Collection< Object >) getExpectedOptionValue();
+            assertEquals( "option value list length differ", expected.size(), option.size() );
+
+            Iterator< Object > optionIt= option.iterator();
+            Iterator< Object > expectedIt= expected.iterator();
+            while ( optionIt.hasNext() && expectedIt.hasNext() )
+            {
+                Object optionValue= optionIt.next();
+                Object expectedValue= expectedIt.next();
+                assertEquals( "value in collection not equal", expectedValue.toString(), optionValue.toString() );
+            } ;
+        }
+       else if ( optionValueIsByteArray() )
         {
             assertArrayEquals( "option has wrong value", (byte[]) getExpectedOptionValue(), (byte[]) fetchOption( response.getOptions() ) );
         }

@@ -30,19 +30,19 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+
 /**
  * CoAP URI Query Parameter without expression support. 
  */
-public class QueryParamConfig extends AbstractQueryParam
+public class QueryParamConfig
 {
     /**
      * The key of the query parameter.
      */
     @Parameter
-    @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The key of query parameter. When empty the parameter is ignored.")
-    @Example("some_key")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The key of query parameter. When empty the parameter is ignored." )
+    @Example( "some_key" )
     private String key= null;
 
     /**
@@ -50,26 +50,57 @@ public class QueryParamConfig extends AbstractQueryParam
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @Summary("The value of the query parameter. When empty only the key will be added to request.")
-    @Example("some_value_if_any")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The value of the query parameter. When empty only the key will be added." )
+    @Example( "some_value_if_any" )
     private String value= null;
 
     /**
      * @return the key of the query parameter.
      */
-    @Override
     public String getKey()
     {
         return key;
     }
 
     /**
+     * @param key the key to set
+     */
+    public void setKey( String key )
+    {
+        this.key= key;
+    }
+
+    /**
      * @return the value of the query parameter.
      */
-    @Override
     public String getValue()
     {
         return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue( String value )
+    {
+        this.value= value;
+    }
+
+    /**
+     * Get the string representation of the query parameter.
+     */
+    @Override
+    public String toString()
+    {
+        String actualValue= getValue();
+        if ( actualValue != null )
+        {
+            return getKey() + "=" + actualValue;
+        }
+        else
+        {
+            return getKey();
+        }
     }
 }

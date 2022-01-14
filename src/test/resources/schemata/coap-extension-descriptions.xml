@@ -443,9 +443,6 @@
                 <parameter name="remoteAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="remotePort">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -463,6 +460,9 @@
                 <parameter name="localAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="locationUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="notification">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -470,9 +470,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="remoteAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remotePort">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
@@ -986,5 +983,29 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="key">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="key">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
     </types>
 </extension-documentation>
+
+

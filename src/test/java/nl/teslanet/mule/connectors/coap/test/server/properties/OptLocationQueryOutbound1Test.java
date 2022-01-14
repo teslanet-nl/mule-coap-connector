@@ -27,6 +27,9 @@ import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+
 
 public class OptLocationQueryOutbound1Test extends AbstractOutboundPropertyTestcase
 {
@@ -34,6 +37,12 @@ public class OptLocationQueryOutbound1Test extends AbstractOutboundPropertyTestc
     protected String getPropertyName()
     {
         return "coap.opt.location_query";
+    }
+
+    @Override
+    protected boolean optionValueIsCollectionOfStringable()
+    {
+        return true;
     }
 
     @Override
@@ -45,19 +54,23 @@ public class OptLocationQueryOutbound1Test extends AbstractOutboundPropertyTestc
     @Override
     protected Object getPropertyValue()
     {
-        return new String( "?first=1&second=2" );
+        LinkedList< QueryParam > list= new LinkedList<>();
+        list.add( new QueryParam( "first", "1" ) );
+        list.add( new QueryParam( "second", "2" ) );
+
+        return list;
     }
 
     @Override
     protected Object getExpectedOptionValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "first=1" );
-        list.add( "second=2" );
+        LinkedList< QueryParamAttribute > list= new LinkedList<>();
+        list.add( new QueryParamAttribute( "first", "1" ) );
+        list.add( new QueryParamAttribute( "second", "2" ) );
 
         return list;
     }
-    
+
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */

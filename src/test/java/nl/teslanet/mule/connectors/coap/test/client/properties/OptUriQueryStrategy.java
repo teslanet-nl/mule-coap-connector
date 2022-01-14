@@ -24,11 +24,12 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
+
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -36,13 +37,13 @@ import org.eclipse.californium.core.coap.Response;
  */
 public class OptUriQueryStrategy implements OptionStrategy
 {
-    private LinkedList< String > value;
+    private List< QueryParamAttribute > value;
 
     /**
      * Constructor 
      * @param value the test value
      */
-    public OptUriQueryStrategy( LinkedList< String > value )
+    public OptUriQueryStrategy( List< QueryParamAttribute > value )
     {
         this.value= value;
     }
@@ -53,9 +54,9 @@ public class OptUriQueryStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-        for ( String segment : value )
+        for ( QueryParamAttribute segment : value )
         {
-            response.getOptions().addUriQuery( segment );
+            response.getOptions().addUriQuery( segment.toString() );
         }
     }
 
@@ -70,11 +71,11 @@ public class OptUriQueryStrategy implements OptionStrategy
         {
             return false;
         }
-        Iterator< String > it1= value.iterator();
+        Iterator< QueryParamAttribute > it1= value.iterator();
         Iterator< String > it2= uriQuery.iterator();
         while ( it1.hasNext() )
         {
-            if ( !it1.next().equals( it2.next() ) ) return false;
+            if ( !it1.next().toString().equals( it2.next() ) ) return false;
         }
         return true;
     }

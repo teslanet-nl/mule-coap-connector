@@ -23,8 +23,9 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -32,6 +33,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
 
 
 /**
@@ -46,7 +49,7 @@ public class RequestConfig
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Summary("The hostname or ip of the server to access.")
+    @Summary( "The hostname or ip of the server to access." )
     private String host= null;
 
     /**
@@ -55,7 +58,7 @@ public class RequestConfig
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Summary("The port of the server to access.")
+    @Summary( "The port of the server to access." )
     private Integer port= null;
 
     /**
@@ -77,7 +80,7 @@ public class RequestConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @Summary( "The query parameters of the request." )
     @DisplayName( "Query Parameters" )
-    private MultiMap< String, String > queryParamConfigs= null;
+    private List< QueryParamConfig > queryParamConfigs= null;
 
     /**
      * @return the host
@@ -130,7 +133,7 @@ public class RequestConfig
     /**
      * @return The queryParameters.
      */
-    public MultiMap< String, String > getQueryParamConfigs()
+    public List< QueryParamConfig > getQueryParamConfigs()
     {
         return queryParamConfigs;
     }
@@ -138,7 +141,7 @@ public class RequestConfig
     /**
      * @param queryParamConfigs The query parameters to set.
      */
-    public void setQueryParamConfigs( MultiMap< String, String > queryParamConfigs )
+    public void setQueryParamConfigs( List< QueryParamConfig > queryParamConfigs )
     {
         this.queryParamConfigs= queryParamConfigs;
     }

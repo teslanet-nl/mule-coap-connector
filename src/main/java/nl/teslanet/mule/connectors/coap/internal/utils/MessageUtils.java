@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.internal.utils;
 import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -47,6 +48,9 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
@@ -183,7 +187,10 @@ public class MessageUtils
         }
         if ( responseOptions.getLocationQuery() != null )
         {
-            optionSet.setLocationQuery( responseOptions.getLocationQuery() );
+            for ( QueryParam param : responseOptions.getLocationQuery() )
+            {
+                optionSet.addLocationQuery( param.toString() );
+            }
         }
         for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
         {
@@ -420,5 +427,130 @@ public class MessageUtils
             result[i]= bytes[i].byteValue();
         }
         return result;
+    }
+
+    /**
+     * Construct string representation of query parameters, merged with default parameters.
+     * The string conforms to URI format,
+     * @param defaultQueryParams The default parameters.
+     * @param queryParams The query parameters.
+     * @return The string representation for usage in an URI.
+     */
+    public static String queryString( List< QueryParamConfig > defaultQueryParams, List< QueryParam > queryParams )
+    {
+        if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        for ( QueryParamConfig param : defaultQueryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        for ( QueryParam param : queryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        return writer.toString();
+    }
+
+    /**
+     * Construct string representation of query parameters, merged with default parameters.
+     * The string conforms to URI format,
+     * @param defaultQueryParams The default parameters.
+     * @param queryParams The query parameters.
+     * @return The string representation for usage in an URI.
+     */
+    public static String queryString2( List< QueryParamConfig > defaultQueryParams, List< QueryParamConfig > queryParams )
+    {
+        if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        for ( QueryParamConfig param : defaultQueryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        for ( QueryParamConfig param : queryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        return writer.toString();
+    }
+
+    /**
+     * Create UriString from path and query.
+     * @param path The optional list of path segements.
+     * @param locationQuery The optional list of query parameters.
+     * @return The Uri string.
+     */
+    public static String uriString( List< String > path, List< QueryParamAttribute > query )
+    {
+        if ( ( path == null || path.isEmpty() ) && ( query == null || query.isEmpty() ) ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        writer.append( "/" );
+        if ( path != null )
+        {
+            for ( String pathsegment : path )
+            {
+                if ( first )
+                {
+                    first= false;
+                }
+                else
+                {
+                    writer.append( "/" );
+                }
+                writer.append( pathsegment );
+            }
+        }
+        first= true;
+        if ( query != null )
+        {
+            for ( QueryParamAttribute param : query )
+            {
+                if ( first )
+                {
+                    writer.append( "?" );
+                    first= false;
+                }
+                else
+                {
+                    writer.append( "&" );
+                }
+                writer.append( param.toString() );
+            }
+        }
+        return writer.toString();
     }
 }

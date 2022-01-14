@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import org.mule.runtime.api.util.MultiMap;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -42,7 +42,7 @@ public class ResponseOptionsAttributes
 
     protected List< String > locationPath= null;
 
-    protected MultiMap< String, String > locationQuery= null;
+    protected List< QueryParamAttribute > locationQuery= null;
 
     protected Integer size2= null;
 
@@ -87,7 +87,7 @@ public class ResponseOptionsAttributes
     /**
      * Get the location query options as list.
      */
-    public MultiMap< String, String > getLocationQuery()
+    public List< QueryParamAttribute > getLocationQuery()
     {
         return locationQuery;
     }

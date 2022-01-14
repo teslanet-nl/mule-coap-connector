@@ -27,16 +27,17 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
-import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
@@ -82,11 +83,11 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
         }
         if ( !optionSet.getLocationQuery().isEmpty() )
         {
-            MultiMap< String, String > queryParams= new MultiMap<>();
+            LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
             optionSet.getLocationQuery().forEach( queryParamString -> {
                 AttributeUtils.addQueryParam( queryParams, queryParamString );
             } );
-            locationQuery= queryParams.toImmutableMultiMap();
+            locationQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasSize1() )
         {

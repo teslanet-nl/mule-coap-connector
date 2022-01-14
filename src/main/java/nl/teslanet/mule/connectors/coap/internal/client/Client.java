@@ -26,7 +26,6 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +57,6 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.api.transformation.TransformationService;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -707,11 +705,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             attributes.setSuccess( response.isSuccess() );
             attributes.setResponseCode( AttributeUtils.toResponseCodeAttribute( response.getCode() ).name() );
             attributes.setConfirmable( response.advanced().isConfirmable() );
+            attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().toString() );
             attributes.setNotification( response.advanced().isNotification() );
-            attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().getHostString() );
-            attributes.setRemotePort( response.advanced().getSourceContext().getPeerAddress().getPort() );
             attributes.setOptions( new DefaultResponseOptionsAttributes( response.getOptions() ) );
         }
+        attributes.setLocationUri( MessageUtils.uriString( attributes.getOptions().getLocationPath(), attributes.getOptions().getLocationQuery() ) );
+
         return attributes;
     }
 
@@ -835,18 +834,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param query The optional query parameters.
      * @return The actual query parameters to use.
      */
-    private MultiMap< String, String > actualQuery( MultiMap< String, String > query )
-    {
-        //TODO merge?
-        if ( query != null )
-        {
-            return query;
-        }
-        else
-        {
-            return requestDefaults.getQueryParamConfigs();
-        }
-    }
+    //TODO RC remove
+    //    private MultiMap< String, String > actualQuery( MultiMap< String, String > query )
+    //    {
+    //        //TODO merge?
+    //        if ( query != null )
+    //        {
+    //            return query;
+    //        }
+    //        else
+    //        {
+    //            return requestDefaults.getQueryParamConfigs();
+    //        }
+    //    }
 
     /**
      * Obtain query parameters from MultiMap
@@ -883,7 +883,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         String host= actualHost( builder.getHost() );
         Integer port= actualPort( builder.getPort() );
         String path= actualPath( builder.getPath() );
-        String query= queryString( actualQuery( builder.getQueryParams() ) );
+        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), builder.getQueryParams() );
         URI uri;
         try
         {
@@ -908,7 +908,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         String host= actualHost( uriBuilder.getHost() );
         Integer port= actualPort( uriBuilder.getPort() );
-        String query= queryString( actualQuery( uriBuilder.getQueryParams() ) );
+        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParams() );
         URI uri;
         try
         {
@@ -932,7 +932,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         String host= actualHost( uriBuilder.getHost() );
         Integer port= actualPort( uriBuilder.getPort() );
         String path= actualPath( uriBuilder.getPath() );
-        String query= queryString( actualQuery( uriBuilder.getQueryParams() ) );
+        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParams() );
         URI uri;
         try
         {
@@ -980,7 +980,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         String host= actualHost( uriBuilder.getHost() );
         Integer port= actualPort( uriBuilder.getPort() );
         String path= actualPath( uriBuilder.getPath() );
-        String query= queryString( actualQuery( uriBuilder.getQueryParamConfigs() ) );
+        String query= MessageUtils.queryString2( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParamConfigs() );
         URI uri;
         try
         {
@@ -993,38 +993,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             );
         }
         return uri;
-    }
-
-    /**
-     * Constuct string representation of query parameters.
-     * @param queryParams The multmap of query parameters.
-     * @return The string representation or null when the list is empty.
-     */
-    private String queryString( MultiMap< String, String > queryParams )
-    {
-        if ( queryParams == null || queryParams.isEmpty() ) return null;
-        StringWriter writer= new StringWriter();
-        boolean first= true;
-        for ( String key : queryParams.keySet() )
-        {
-            for ( String value : queryParams.getAll( key ) )
-            {
-                if ( first )
-                {
-                    first= false;
-                }
-                else
-                {
-                    writer.append( "&" );
-                }
-                writer.append( key );
-                if ( value != null )
-                {
-                    writer.append( "=" ).append( value );
-                }
-            }
-        }
-        return writer.toString();
     }
 
     /**

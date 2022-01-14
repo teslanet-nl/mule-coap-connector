@@ -69,11 +69,6 @@ public class CoapRequestAttributes
     protected String remoteAddress= null;
 
     /**
-     * The port that was used by the client ti issue the request.
-     */
-    protected Integer remotePort= null;
-
-    /**
      * The CoAP options that accompanied the request.
      */
     protected RequestOptionsAttributes options= null;
@@ -124,14 +119,6 @@ public class CoapRequestAttributes
     public String getRemoteAddress()
     {
         return remoteAddress;
-    }
-
-    /**
-     * @return The remote port number.
-     */
-    public Integer getRemotePort()
-    {
-        return remotePort;
     }
 
     /**

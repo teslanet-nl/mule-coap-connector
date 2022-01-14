@@ -23,13 +23,12 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
-//TODO RC remove dependency
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 
 
 /**
@@ -79,14 +78,6 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param remotePort the remotePort to set
-     */
-    public void setRemotePort( Integer remotePort )
-    {
-        this.remotePort= remotePort;
-    }
-
-    /**
      * @param notification the notification to set
      */
     public void setNotification( boolean notification )
@@ -111,9 +102,17 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
+     * Set the location of a created resource.
+     */
+    public void setLocationUri( String locationUri )
+    {
+        this.locationUri= locationUri;
+    }
+
+    /**
     * @param responseOptions the options to set
     */
-    public void setOptions( ResponseOptionsAttributes responseOptions )
+    public void setOptions( DefaultResponseOptionsAttributes responseOptions )
     {
         this.options= responseOptions;
     }

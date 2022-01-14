@@ -23,12 +23,14 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
+import java.util.LinkedList;
+
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -261,7 +263,7 @@ public class AttributeUtils
      * @param multiMap The map to add the parameter to.
      * @param parameterString The string containing the key and optional value.
      */
-    public static void addQueryParam( MultiMap< String, String > multiMap, String parameterString )
+    public static void addQueryParam( LinkedList< QueryParamAttribute > list, String parameterString )
     {
         String key;
         String value;
@@ -276,7 +278,6 @@ public class AttributeUtils
             key= parameterString.substring( 0, separatorIndex );
             value= parameterString.substring( separatorIndex + 1 );
         }
-        multiMap.put( key, value );
+        list.add( new QueryParamAttribute( key, value ));
     }
-
 }

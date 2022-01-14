@@ -23,8 +23,9 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -32,6 +33,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
 /**
@@ -47,15 +50,15 @@ public abstract class AbstractQueryBuilder extends AbstractAddressBuilder
     @Optional
     @NullSafe
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement(order = 61)
+    @Placement( order= 61 )
     @DisplayName( "Query Parameters" )
     @Summary( "The query parameters of the request." )
-    private MultiMap< String, String> queryParams= null;
+    private List< QueryParam > queryParams= null;
 
     /**
      * @return the queryParameters
      */
-    public MultiMap< String, String> getQueryParams()
+    public List< QueryParam > getQueryParams()
     {
         return queryParams;
     }
@@ -63,7 +66,7 @@ public abstract class AbstractQueryBuilder extends AbstractAddressBuilder
     /**
      * @param queryParameters the queryParameters to set
      */
-    public void setQueryParams( MultiMap< String, String> queryParameters )
+    public void setQueryParams( List< QueryParam > queryParameters )
     {
         this.queryParams= queryParameters;
     }

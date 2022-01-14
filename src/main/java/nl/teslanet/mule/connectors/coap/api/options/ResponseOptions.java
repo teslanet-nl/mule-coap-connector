@@ -35,6 +35,8 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
+
 
 /**
  * The option parameters of a CoAP response.
@@ -146,8 +148,7 @@ public class ResponseOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The Location-Query specifies the arguments parameterizing the resource that is created." )
-    @Example( "someparam&param1=1&param2=2" )
-    private String locationQuery= null;
+    private List< QueryParam > locationQuery= null;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
@@ -260,7 +261,7 @@ public class ResponseOptions
     /**
      * @return the locationQuery
      */
-    public String getLocationQuery()
+    public List< QueryParam > getLocationQuery()
     {
         return locationQuery;
     }
@@ -268,7 +269,7 @@ public class ResponseOptions
     /**
      * @param locationQuery the locationQuery to set
      */
-    public void setLocationQuery( String locationQuery )
+    public void setLocationQuery( List< QueryParam > locationQuery )
     {
         this.locationQuery= locationQuery;
     }

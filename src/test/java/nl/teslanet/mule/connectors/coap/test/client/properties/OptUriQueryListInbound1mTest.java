@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -39,13 +40,12 @@ public class OptUriQueryListInbound1mTest extends AbstractInboundPropertyTestCas
      * Test value
      * @return the value to use in test
      */
-    private LinkedList< String > getValue()
+    private LinkedList< QueryParamAttribute > getValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "first=1" );
-        list.add( "second=2" );
-        list.add( "third=3" );
-
+        LinkedList< QueryParamAttribute > list= new LinkedList<>();
+        list.add( new QueryParamAttribute( "first", "1" ) );
+        list.add( new QueryParamAttribute( "second", "2" ) );
+        list.add( new QueryParamAttribute( "third", "3" ) );
         return list;
     }
 
