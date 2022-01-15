@@ -50,16 +50,16 @@ public class RequestUriTest extends AbstractServerTestCase
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}, path= {1}")
+    @Parameters(name= "Request= {0}, uri= {1}")
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
             new Object [] []{
                 //default maxResourceBodySize on server
-                { Code.GET, "/requesturi/get_me" },
-                { Code.PUT, "/requesturi/put_me" },
-                { Code.POST, "/requesturi/post_me" },
-                { Code.DELETE, "/requesturi/delete_me" }, } );
+                { Code.GET, "coap://localhost/requesturi/get_me?op=get" },
+                { Code.PUT, "coap://localhost/requesturi/put_me?op=put" },
+                { Code.POST, "coap://localhost/requesturi/post_me?op=post" },
+                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete" }, } );
     }
 
     /**
@@ -69,10 +69,10 @@ public class RequestUriTest extends AbstractServerTestCase
     public Code requestCode;
 
     /**
-    * Test resource to call
+    * Test uri to call
     */
     @Parameter(1)
-    public String resourcePath;
+    public String requestUri;
 
     /* (non-Javadoc)
      * @see org.mule.functional.junit4.FunctionalTestCase#getConfigResources()
@@ -86,12 +86,12 @@ public class RequestUriTest extends AbstractServerTestCase
     @Test
     public void testRequestUri() throws ConnectorException, IOException
     {
-        setClientPath( resourcePath );
+        setClientUri( requestUri );
         Request request= new Request( requestCode );
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", resourcePath, response.getResponseText() );
+        assertEquals( "echoed request code has wrong value", requestUri, response.getResponseText() );
     }
 }

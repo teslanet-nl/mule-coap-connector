@@ -52,7 +52,7 @@ public class DynamicResourcesTest extends AbstractServerTestCase
     @Before
     public void additionalSetUp()
     {
-        setClientPath( "/service/add_resources" );
+        setClientUri( "/service/add_resources" );
         try
         {
             //post to create resource on server

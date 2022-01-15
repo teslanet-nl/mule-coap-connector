@@ -123,13 +123,13 @@ public class AddResourceTest extends AbstractServerTestCase
     @Test( timeout= 30000L )
     public void testAddResource() throws Exception
     {
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         CoapResponse response1= client.advanced( request );
         assertNotNull( "request gave no response", response1 );
         assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response1.getCode() );
 
-        setClientPath( addResourcePath );
+        setClientUri( addResourcePath );
         Request request2= new Request( Code.POST );
         request2.setPayload( resourcePath );
         CoapResponse response2= client.advanced( request2 );
@@ -137,7 +137,7 @@ public class AddResourceTest extends AbstractServerTestCase
         assertTrue( "post response indicates failure", response2.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response2.getCode() );
 
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request3= new Request( requestCode );
         CoapResponse response3= client.advanced( request3 );
         assertNotNull( "got no response", response3 );

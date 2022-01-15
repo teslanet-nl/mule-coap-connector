@@ -83,7 +83,7 @@ public class RequestRelationTest extends AbstractServerTestCase
     @Test
     public void testRelation() throws ConnectorException, IOException
     {
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         CoapResponse response= client.advanced( request );
 

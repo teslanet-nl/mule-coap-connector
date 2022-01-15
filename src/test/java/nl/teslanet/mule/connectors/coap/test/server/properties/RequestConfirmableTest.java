@@ -85,7 +85,7 @@ public class RequestConfirmableTest extends AbstractServerTestCase
     public void testCON() throws ConnectorException, IOException
     {
         String expected= "true";
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode, Type.CON );
         CoapResponse response= client.advanced( request );
 
@@ -98,7 +98,7 @@ public class RequestConfirmableTest extends AbstractServerTestCase
     public void testNon() throws ConnectorException, IOException
     {
         String expected= "false";
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode, Type.NON );
         CoapResponse response= client.advanced( request );
 

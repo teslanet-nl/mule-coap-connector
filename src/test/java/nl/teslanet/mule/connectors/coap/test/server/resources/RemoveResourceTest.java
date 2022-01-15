@@ -81,7 +81,7 @@ public class RemoveResourceTest extends AbstractServerTestCase
     @Test( timeout= 20000L )
     public void testRemoveResource() throws Exception
     {
-        setClientPath( "/service/resource-to-remove" );
+        setClientUri( "/service/resource-to-remove" );
         CoapResponse response= client.put( "some content", 0 );
         assertNotNull( "put resource gave no response", response );
         assertEquals( "put gave wrong response", ResponseCode.CHANGED, response.getCode() );
@@ -99,18 +99,18 @@ public class RemoveResourceTest extends AbstractServerTestCase
     @Test( timeout= 20000L )
     public void testRemoveAddedResource() throws Exception
     {
-        setClientPath( "/service/resource1" );
+        setClientUri( "/service/resource1" );
         CoapResponse response= client.get();
         assertNotNull( "get resoure1 gave no response", response );
         assertTrue( "response get resoure1 indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         response= client.get();
         assertNotNull( "get resoure2 gave no response", response );
         assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
 
-        setClientPath( "/add_resource/all_methods" );
+        setClientUri( "/add_resource/all_methods" );
         Request request= new Request( Code.POST );
         request.setPayload( "/service/resource-to-remove2" );
         response= client.advanced( request );
@@ -118,12 +118,12 @@ public class RemoveResourceTest extends AbstractServerTestCase
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         request= new Request( requestCode );
         response= client.advanced( request );
         assertNotNull( "got no response", response );

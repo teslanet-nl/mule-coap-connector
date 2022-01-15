@@ -349,7 +349,7 @@ public class ServedResource extends CoapResource
         attributes.setConfirmable( exchange.advanced().getRequest().isConfirmable() );
         attributes.setLocalAddress( exchange.advanced().getEndpoint().getAddress().toString() );
         attributes.setRemoteAddress( exchange.getSourceAddress().toString() + ":" + exchange.getSourcePort() );
-        attributes.setRequestUri( this.getURI() );
+        attributes.setRequestUri( exchange.advanced().getCurrentRequest().getURI() );
         attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( exchange.getRequestOptions() ) );
         attributes.setRelation( ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
         return attributes;

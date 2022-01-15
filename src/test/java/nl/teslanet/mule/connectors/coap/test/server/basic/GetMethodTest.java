@@ -52,7 +52,7 @@ public class GetMethodTest extends AbstractServerTestCase
     public void testSuccess() throws ConnectorException, IOException
     {
         String path= "/basic/get_me";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -66,7 +66,7 @@ public class GetMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_get_me";
 
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -80,7 +80,7 @@ public class GetMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_get_me2";
 
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -94,7 +94,7 @@ public class GetMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_get_me3";
 
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 

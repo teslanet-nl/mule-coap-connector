@@ -98,7 +98,7 @@ public class RequestAddressTest2 extends AbstractServerTestCase
     @Test
     public void testRequestAdress() throws ConnectorException, IOException
     {
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         CoapResponse response= client.advanced( request );
 

@@ -104,7 +104,7 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
     @Before
     public void additionalSetUp()
     {
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
     }
 
     /**

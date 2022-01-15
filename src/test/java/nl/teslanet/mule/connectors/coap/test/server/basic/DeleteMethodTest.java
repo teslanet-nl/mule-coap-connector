@@ -48,7 +48,7 @@ public class DeleteMethodTest extends AbstractServerTestCase
     public void testSuccess() throws ConnectorException, IOException
     {
         String path= "/basic/delete_me";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.delete();
 
@@ -61,7 +61,7 @@ public class DeleteMethodTest extends AbstractServerTestCase
     public void testNoDeleteAllowed() throws ConnectorException, IOException
     {
         String path= "/basic/do_not_delete_me";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.delete();
 
@@ -74,7 +74,7 @@ public class DeleteMethodTest extends AbstractServerTestCase
     public void testNoDeleteAllowedDefault() throws ConnectorException, IOException
     {
         String path= "/basic/do_not_delete_me2";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.delete();
 
@@ -87,7 +87,7 @@ public class DeleteMethodTest extends AbstractServerTestCase
     public void testNoResource() throws ConnectorException, IOException
     {
         String path= "/basic/do_not_delete_me3";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.delete();
 

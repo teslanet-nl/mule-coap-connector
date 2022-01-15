@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -43,9 +44,8 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.elements.exception.ConnectorException;
 
 
-//TODO set client endpoint on specific port
 @RunnerDelegateTo(Parameterized.class)
-public class RequestSourcePortTest extends AbstractServerTestCase
+public class RequestRemoteAddressTest extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
@@ -56,10 +56,10 @@ public class RequestSourcePortTest extends AbstractServerTestCase
         return Arrays.asList(
             new Object [] []{
                 //default maxResourceBodySize on server
-                { Code.GET, "/remote_port/get_me" },
-                { Code.PUT, "/remote_port/put_me" },
-                { Code.POST, "/remote_port/post_me" },
-                { Code.DELETE, "/remote_port/delete_me" }, } );
+                { Code.GET, "/service/get_me" },
+                { Code.PUT, "/service/put_me" },
+                { Code.POST, "/service/post_me" },
+                { Code.DELETE, "/service/delete_me" }, } );
     }
 
     /**
@@ -77,19 +77,19 @@ public class RequestSourcePortTest extends AbstractServerTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-RequestSourcePort.xml";
+        return "mule-server-config/properties/testserver-RequestRemoteAddress.xml";
     };
 
     @Test
-    public void testSourcePort() throws ConnectorException, IOException
+    public void testRemoteAddress() throws ConnectorException, IOException
     {
-        int expectMinimal= 10000;
-        setClientPath( resourcePath );
+        String expected= "/127.0.0.1:";
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertTrue( "property value unexpected", Integer.parseInt( response.getResponseText() ) >= expectMinimal );
+        assertEquals( "echoed request code has wrong value", expected + client.getEndpoint().getAddress().getPort(), response.getResponseText() );
     }
 }

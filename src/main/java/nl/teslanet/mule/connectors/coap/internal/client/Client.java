@@ -708,9 +708,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().toString() );
             attributes.setNotification( response.advanced().isNotification() );
             attributes.setOptions( new DefaultResponseOptionsAttributes( response.getOptions() ) );
+            attributes.setLocationUri( MessageUtils.uriString( attributes.getOptions().getLocationPath(), attributes.getOptions().getLocationQuery() ) );
         }
-        attributes.setLocationUri( MessageUtils.uriString( attributes.getOptions().getLocationPath(), attributes.getOptions().getLocationQuery() ) );
-
         return attributes;
     }
 

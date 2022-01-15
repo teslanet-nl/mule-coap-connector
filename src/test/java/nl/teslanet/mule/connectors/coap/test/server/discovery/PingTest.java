@@ -50,7 +50,7 @@ public class PingTest extends AbstractServerTestCase
     public void testPing()
     {
         String path= "/service";
-        setClientPath( path );
+        setClientUri( path );
         boolean reachable= client.ping( 1000 );
         assertTrue( "service is not reachable", reachable );
     }

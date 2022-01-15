@@ -47,7 +47,7 @@ public class ResourceExistsTest extends AbstractServerTestCase
     @Test( timeout= 20000L )
     public void testResourceExists() throws Exception
     {
-        setClientPath( "/exists" );
+        setClientUri( "/exists" );
         Request request= new Request( Code.POST );
         request.setPayload( "/service/resource-to-remove" );
         CoapResponse response= client.advanced( request );
@@ -56,12 +56,12 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.TRUE.toString(), response.getResponseText() );
 
-        setClientPath( "/service/resource-to-remove" );
+        setClientUri( "/service/resource-to-remove" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/exists" );
+        setClientUri( "/exists" );
         request= new Request( Code.POST );
         request.setPayload( "/service/resource-to-remove" );
         response= client.advanced( request );
@@ -74,7 +74,7 @@ public class ResourceExistsTest extends AbstractServerTestCase
     @Test( timeout= 20000L )
     public void testAddedResourceExists() throws Exception
     {
-        setClientPath( "/exists" );
+        setClientUri( "/exists" );
         Request request= new Request( Code.POST );
         request.setPayload( "/service/temporary-resource" );
         CoapResponse response= client.advanced( request );
@@ -83,7 +83,7 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.FALSE.toString(), response.getResponseText() );
 
-        setClientPath( "/add_resource/all_methods" );
+        setClientUri( "/add_resource/all_methods" );
         request= new Request( Code.POST );
         request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );
@@ -91,7 +91,7 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
 
-        setClientPath( "/exists" );
+        setClientUri( "/exists" );
         request= new Request( Code.POST );
         request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );
@@ -100,12 +100,12 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.TRUE.toString(), response.getResponseText() );
 
-        setClientPath( "/service/temporary-resource" );
+        setClientUri( "/service/temporary-resource" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/exists" );
+        setClientUri( "/exists" );
         request= new Request( Code.POST );
         request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );

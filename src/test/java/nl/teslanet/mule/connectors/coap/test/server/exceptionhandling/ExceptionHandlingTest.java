@@ -126,7 +126,7 @@ public class ExceptionHandlingTest extends AbstractServerTestCase
     public void testException() throws Exception
     {
         client.setTimeout( 5000L );
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         if ( unintendedPayload ) request.setUnintendedPayload();
         request.setPayload( "nothing important" );

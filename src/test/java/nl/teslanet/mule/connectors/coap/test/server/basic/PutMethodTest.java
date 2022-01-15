@@ -49,7 +49,7 @@ public class PutMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/put_me";
         String payload= ":payload_put_me";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -63,7 +63,7 @@ public class PutMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_put_me";
         String payload= ":payload_do_not_put_me";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -77,7 +77,7 @@ public class PutMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_put_me2";
         String payload= ":payload_do_not_put_me2";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -91,7 +91,7 @@ public class PutMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/do_not_put_me3";
         String payload= ":payload_do_not_put_me3";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.put( payload, 0 );
 

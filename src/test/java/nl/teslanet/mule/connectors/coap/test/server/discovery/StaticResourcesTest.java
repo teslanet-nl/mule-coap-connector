@@ -53,7 +53,7 @@ public class StaticResourcesTest extends AbstractServerTestCase
     public void additionalSetUp()
     {
         links= new HashMap< String, WebLink >();
-        setClientPath( "/basic" );
+        setClientUri( "/basic" );
 
         Set< WebLink > response;
         try
