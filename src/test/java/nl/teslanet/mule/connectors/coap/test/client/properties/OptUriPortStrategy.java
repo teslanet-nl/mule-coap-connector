@@ -32,13 +32,13 @@ import org.eclipse.californium.core.coap.Response;
  */
 public class OptUriPortStrategy implements OptionStrategy
 {
-    private int value;
+    private Integer value;
 
     /**
      * Constructor 
      * @param value the test value
      */
-    public OptUriPortStrategy( int value )
+    public OptUriPortStrategy( Integer value )
     {
         this.value= value;
     }

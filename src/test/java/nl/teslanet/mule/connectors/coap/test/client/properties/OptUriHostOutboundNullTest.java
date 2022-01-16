@@ -22,22 +22,20 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-
 /**
- * Test inbound uri port property
+ * Test inbound uri host property
  *
  */
-public class OptUriPortInbound1Test extends AbstractInboundPropertyTestCase
+public class OptUriHostOutboundNullTest extends AbstractOutboundPropertiesTestCase
 {
 
     /**
      * Test value
      * @return the value to use in test
      */
-    private Integer getValue()
+    private String getValue()
     {
-        return new Integer( 5899 );
+        return null;
     }
 
     /* (non-Javadoc)
@@ -46,23 +44,14 @@ public class OptUriPortInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.uri_port";
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
-    @Override
-    protected PropertyType getPropertyType()
-    {
-        return PropertyType.Object;
+        return "coap.opt.uri_host";
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
      */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected Object getOutboundPropertyValue()
     {
         return getValue();
     }
@@ -73,12 +62,6 @@ public class OptUriPortInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptUriPortStrategy( getValue() );
-    }
-
-    @Override
-    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
-    {
-        return "XXX";
+        return new OptUriHostStrategy( getValue() );
     }
 }

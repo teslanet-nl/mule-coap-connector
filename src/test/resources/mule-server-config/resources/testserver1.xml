@@ -84,7 +84,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable variableName="method"
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
 		<set-variable variableName="uri"
-			value="#[ vars.attr.requestUri ]" doc:name="set method" />
+			value="#[ vars.attr.requestPath ]" doc:name="set method" />
 		<set-variable variableName="resource_path"
 			value="#[payload]" doc:name="set resource_path" />
 
@@ -168,7 +168,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable variableName="method"
 			value="#[ attributes.requestCode ]" doc:name="set method" />
 		<set-variable variableName="uri"
-			value="#[ attributes.requestUri ]" doc:name="set method" />
+			value="#[ attributes.requestPath ]" doc:name="set method" />
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
 

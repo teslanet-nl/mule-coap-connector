@@ -22,31 +22,20 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-
-import java.util.LinkedList;
-
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
-
-
 /**
- * Test inbound uri query property, multiple values
+ * Test inbound uri host property
  *
  */
-public class OptUriQueryListInbound1mTest extends AbstractInboundPropertyTestCase
+public class OptUriPortOutboundNullTest extends AbstractOutboundPropertiesTestCase
 {
 
     /**
      * Test value
      * @return the value to use in test
      */
-    private LinkedList< QueryParamAttribute > getValue()
+    private Integer getValue()
     {
-        LinkedList< QueryParamAttribute > list= new LinkedList<>();
-        list.add( new QueryParamAttribute( "first", "1" ) );
-        list.add( new QueryParamAttribute( "second", "2" ) );
-        list.add( new QueryParamAttribute( "third", "3" ) );
-        return list;
+        return null;
     }
 
     /* (non-Javadoc)
@@ -55,23 +44,14 @@ public class OptUriQueryListInbound1mTest extends AbstractInboundPropertyTestCas
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.uri_query";
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
-    @Override
-    protected PropertyType getPropertyType()
-    {
-        return PropertyType.Object;
+        return "coap.opt.uri_port";
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
      */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected Object getOutboundPropertyValue()
     {
         return getValue();
     }
@@ -82,12 +62,6 @@ public class OptUriQueryListInbound1mTest extends AbstractInboundPropertyTestCas
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptUriQueryStrategy( getValue() );
-    }
-
-    @Override
-    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
-    {
-        return "XXX";
+        return new OptUriPortStrategy( getValue() );
     }
 }

@@ -22,29 +22,20 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-
-import java.util.LinkedList;
-
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-
-
 /**
- * Test inbound uri path property, single value
+ * Test inbound uri host property
  *
  */
-public class OptUriPathInbound1Test extends AbstractInboundPropertyTestCase
+public class OptUriPortOutbound1Test extends AbstractOutboundPropertiesTestCase
 {
 
     /**
      * Test value
      * @return the value to use in test
      */
-    private LinkedList< String > getValue()
+    private Integer getValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "test" );
-
-        return list;
+        return new Integer( 5555 );
     }
 
     /* (non-Javadoc)
@@ -53,26 +44,16 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.uri_path";
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
-    @Override
-    protected PropertyType getPropertyType()
-    {
-        return PropertyType.Object;
+        return "coap.opt.uri_port";
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
      */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected Object getOutboundPropertyValue()
     {
-        //TODO RC: add root / ?
-        return new String( "/test" );
+        return getValue();
     }
 
     /* (non-Javadoc)
@@ -81,12 +62,6 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptUriPathStrategy( getValue() );
-    }
-
-    @Override
-    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
-    {
-        return "XXX";
+        return new OptUriPortStrategy( getValue() );
     }
 }

@@ -51,7 +51,7 @@ public class OptUriHostOutbound1Test extends AbstractOutboundPropertiesTestCase
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
      */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected Object getOutboundPropertyValue()
     {
         return getValue();
     }

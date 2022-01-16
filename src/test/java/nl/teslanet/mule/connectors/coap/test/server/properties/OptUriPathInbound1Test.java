@@ -47,7 +47,7 @@ public class OptUriPathInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue()
     {
-        String[] resources= resourcePath.substring( 1 ).split( "/" );
+        String[] resources= resourcePath.substring( 1 ).split("\\?")[0].split( "/" );
         LinkedList< String > list= new LinkedList<>();
         for ( String resource : resources )
         {
