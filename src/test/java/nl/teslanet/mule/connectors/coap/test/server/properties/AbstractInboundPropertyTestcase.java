@@ -62,10 +62,10 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         return Arrays.asList(
             new Object [] []{
                 //default maxResourceBodySize on server
-                { Code.GET, 5683, "/service/get_me", true },
-                { Code.PUT, 5683, "/service/put_me", false },
-                { Code.POST, 5683, "/service/post_me", false },
-                { Code.DELETE, 5683, "/service/delete_me", true }, } );
+                { Code.GET, 5683, "/service/get_me?first=1&second=2", true },
+                { Code.PUT, 5683, "/service/put_me?first=1&second=2", false },
+                { Code.POST, 5683, "/service/post_me?first=1&second=2", false },
+                { Code.DELETE, 5683, "/service/delete_me?first=1&second=2", true }, } );
     }
 
     /**
@@ -173,7 +173,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test( timeout=2000000L)
+    @Test( timeout=20000L)
     public void testInbound() throws Exception
     {
         MuleEventSpy spy= spyMessage( getPropertyName() );

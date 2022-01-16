@@ -68,19 +68,18 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			delete="true" pathPattern="/service" config-ref="config">
 			<coap:response responseCode="#[vars.response_code]" />
 			<coap:response-options
-				locationPath="#[vars.resource_path]" />
+				locationPath="#[vars.location_path]" />
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
 
 		<set-variable variableName="method"
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
-		<set-variable variableName="uri"
-			value="#[ vars.attr.requestUri ]" doc:name="set method" />
+		<set-variable variableName="path"
+			value="#[ vars.attr.requestPath ]" doc:name="set path" />
 		<set-variable variableName="resource_path"
-			value="#[ payload ]"
+			value="#[  payload ]"
 			doc:name="set resource_path" />
-
 		<set-variable variableName="get" value="true" />
 		<set-variable variableName="post" value="false" />
 		<set-variable variableName="put" value="true" />
@@ -95,10 +94,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			resourcePath="#[vars.resource_path]" get="#[vars.get]"
 			put="#[vars.put]" post="#[vars.post]" delete="#[vars.delete]"
 			doc:name="add resource" observable="true" />
-		<set-variable variableName="location_path"
-			value="#[ vars.resource_path ]" />
 		<set-variable variableName="response_code"
 			value="CREATED" />
+		<set-variable variableName="location_path"
+			value="#[ vars.resource_path ]" />
 	</sub-flow>
 
 	<flow name="remove_resource">
@@ -127,14 +126,14 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 		<set-variable variableName="method"
 			value="#[ attributes.requestCode ]" doc:name="set method" />
-		<set-variable variableName="uri"
-			value="#[ attributes.requestUri ]" doc:name="set method" />
+		<set-variable variableName="path"
+			value="#[ attributes.requestPath ]" doc:name="set path" />
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
 
 		<choice doc:name="by method">
 			<when expression="#[vars.method == 'GET']">
-				<os:retrieve doc:name="Retrieve" key="#[ vars.uri ]"
+				<os:retrieve doc:name="Retrieve" key="#[ vars.path ]"
 					objectStore="Object_store">
 					<os:default-value><![CDATA[#['']]]></os:default-value>
 				</os:retrieve>
@@ -142,10 +141,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					value="CONTENT" />
 			</when>
 			<when expression="#[ vars.method == 'PUT']">
-				<os:store doc:name="Store" key="#[ vars.uri ]"
+				<os:store doc:name="Store" key="#[ vars.path ]"
 					failOnNullValue="false" objectStore="Object_store" />
 				<coap:notify config-ref="config"
-					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
+					pathPattern="#[ vars.path ]" doc:name="resource changed" />
 				<set-variable variableName="response_code"
 					value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK"
@@ -153,26 +152,27 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 			</when>
 			<when expression="#[vars.method == 'POST']">
-				<os:store doc:name="Store" key="#[ vars.uri ]"
+				<os:store doc:name="Store" key="#[ vars.path ]"
 					failOnNullValue="false" objectStore="Object_store" />
 				<coap:notify config-ref="config"
-					pathPattern="#[ vars.uri ]" doc:name="resource changed" />
+					pathPattern="#[ vars.path ]" doc:name="resource changed" />
 				<set-variable variableName="response_code"
 					value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK"
 					doc:id="a7df4f99-f0c7-48a0-9539-da562bc7402c" />
 			</when>
 			<when expression="#[vars.method == 'DELETE']">
-				<os:contains doc:name="Contains" key="#[ vars.uri ]"
+				<os:contains doc:name="Contains" key="#[ vars.path ]"
 					objectStore="Object_store" target="exists" />
 				<choice doc:name="Choice">
 					<when expression="#[vars.exists]">
-						<os:remove doc:name="Remove" key="#[ vars.uri ]"
+						<os:remove doc:name="Remove" key="#[ vars.path ]"
 							objectStore="Object_store" />
 					</when>
 				</choice>
 				<set-variable variableName="resource_path"
-					value="#[ vars.uri ]" />
+					value="#[ vars.path ]"
+					doc:name="set resource_path" />
 				<flow-ref name="remove_resource" doc:name="remove_resource" />
 				<set-payload value="OK" doc:name="return OK"
 					doc:id="cbe2e932-f189-4cda-b6df-9de782e6bf93" />

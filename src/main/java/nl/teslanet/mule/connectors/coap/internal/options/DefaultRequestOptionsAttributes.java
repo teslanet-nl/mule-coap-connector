@@ -105,7 +105,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         if ( !optionSet.getUriQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet.getLocationQuery().forEach( queryParamString -> {
+            optionSet.getUriQuery().forEach( queryParamString -> {
                 AttributeUtils.addQueryParam( queryParams, queryParamString );
             } );
             uriQuery= Collections.unmodifiableList( queryParams );

@@ -49,7 +49,7 @@ public class OptUriHostStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-        response.getOptions().setUriHost( value );
+        //response.getOptions().setUriHost( value );
     }
 
     /* (non-Javadoc)
@@ -58,6 +58,14 @@ public class OptUriHostStrategy implements OptionStrategy
     @Override
     public boolean validateOption( Request request )
     {
-        return value.equals( request.getOptions().getUriHost() );
+        String actual= request.getOptions().getUriHost();
+        if ( value != null )
+        {
+            return value.equals( actual );
+        }
+        else
+        {
+            return null == actual;
+        }
     }
 }

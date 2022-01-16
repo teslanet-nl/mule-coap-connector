@@ -210,7 +210,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * observe relations contains the active observers.
      */
-    private ConcurrentHashMap< String, ObserveRelation > observeRelations= new ConcurrentHashMap<>();
+    private ConcurrentHashMap< URI, ObserveRelation > observeRelations= new ConcurrentHashMap<>();
 
     /**
      * The list of response handlers
@@ -352,9 +352,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidObserverException when uri is already observed
      * @throws InternalUriException when uri is not valid
      */
-    synchronized void addRelation( String uri, ObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
+    synchronized void addRelation( URI uri, ObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
     {
-        if ( uri == null || uri.isEmpty() )
+        if ( uri == null )
         {
             throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
@@ -371,9 +371,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return The relation of the observer, null when no observer is found.
      * @throws InternalUriException when uri is not valid
      */
-    ObserveRelation getRelation( String uri ) throws InternalUriException
+    ObserveRelation getRelation( URI uri ) throws InternalUriException
     {
-        if ( uri == null || uri.isEmpty() )
+        if ( uri == null )
         {
             throw new InternalUriException( "empty uri is invalid: { " + uri + " }" );
         }
@@ -384,7 +384,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Remove an observe entry.
      * @param uri The observed uri.
      */
-    synchronized void removeRelation( String uri )
+    synchronized void removeRelation( URI uri )
     {
         observeRelations.remove( uri );
     }
@@ -394,7 +394,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param uri The observed uri.
      * @return 
      */
-    Map< String, ObserveRelation > getRelations()
+    Map< URI, ObserveRelation > getRelations()
     {
         return observeRelations;
     }
@@ -434,13 +434,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
     */
     /**
-     * Passes asynchronous response to the muleflow  
-     * @param response The coap response to process
+     * Passes asynchronous response to the muleflow.
+     * @param requestUri The Uri of the request that caused the response.
+     * @param requestCode The code of the request that caused the response.
+     * @param response The coap response to process.
      * @param callback The callback method of the muleflow.
-     * @param requestAttributes The attributes of the originating request.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
-    void processMuleFlow( String requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
+    void processMuleFlow( URI requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
         throws InternalResponseException
 
     {
@@ -566,7 +567,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             SourceCallback< InputStream, CoapResponseAttributes > callback;
             callback= getHandler( handlerBuilder.getResponseHandler() );
-            handler= createCoapHandler( handlerBuilder.getResponseHandler(), uri.toString(), builder.getRequestCode(), callback );
+            handler= createCoapHandler( handlerBuilder.getResponseHandler(), uri, builder.getRequestCode(), callback );
         }
         if ( handler == null )
         {
@@ -584,7 +585,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             DefaultResponseAttributes responseAttributes;
             try
             {
-                responseAttributes= createReceivedResponseAttributes( uri.toString(), builder.getRequestCode(), response );
+                responseAttributes= createReceivedResponseAttributes( uri, builder.getRequestCode(), response );
             }
             catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException e )
             {
@@ -688,14 +689,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidOptionValueException 
      * @throws InternalInvalidResponseCodeException When responseCode is unknown.
      */
-    private DefaultResponseAttributes createReceivedResponseAttributes( String requestUri, CoAPRequestCode requestCode, CoapResponse response )
+    private DefaultResponseAttributes createReceivedResponseAttributes( URI requestUri, CoAPRequestCode requestCode, CoapResponse response )
         throws InternalInvalidOptionValueException,
         InternalInvalidResponseCodeException
     {
         DefaultResponseAttributes attributes= new DefaultResponseAttributes();
         attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( operationalEndpoint.getCoapEndpoint().getAddress().toString() );
-        attributes.setRequestUri( requestUri );
+        attributes.setRequestPath( requestUri.getPath() );
+        attributes.setRequestQuery( requestUri.getQuery() );
         if ( response == null )
         {
             attributes.setSuccess( false );
@@ -723,7 +725,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private CoapHandler createCoapHandler(
         final String handlerName,
-        final String requestUri,
+        final URI requestUri,
         final CoAPRequestCode requestCode,
         final SourceCallback< InputStream, CoapResponseAttributes > callback
     )
@@ -1078,23 +1080,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         SourceCallback< InputStream, CoapResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
         URI uri= getURI( observerStartBuilder );
-        String uriString= uri.toString();
-        ObserveRelation relation= getRelation( uriString );
+        ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
             // only one observe relation allowed per uri
             // TODO proactive or not, configurable?
             relation.stop();
-            removeRelation( uriString );
+            removeRelation( uri );
         }
         relation= new ObserveRelation(
-            "CoAP Observer { " + getClientName() + "::" + uriString + " }",
+            "CoAP Observer { " + getClientName() + "::" + uri + " }",
             coapClient,
             observerStartBuilder.isConfirmable(),
-            uriString,
+            uri,
             ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler )
         );
-        addRelation( uriString, relation );
+        addRelation( uri, relation );
         relation.start();
     }
 
@@ -1107,12 +1108,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     synchronized void stopObserver( ObserverStopBuilder builder ) throws InternalUriException, InternalInvalidObserverException
     {
         URI uri= getURI( builder );
-        String uriString= uri.toString();
-        ObserveRelation relation= getRelation( uriString );
+        ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
             relation.stop();
-            removeRelation( uriString );
+            removeRelation( uri );
         }
         else
         {

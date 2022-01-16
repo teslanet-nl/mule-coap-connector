@@ -23,35 +23,45 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import java.util.Collections;
 import java.util.LinkedList;
-
-import org.junit.Ignore;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-//TODO add list support
-@Ignore
-public class OptLocationQueryListInbound1Test extends AbstractInboundPropertyTestcase
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+
+
+public class OptUriQueryInbound1Test extends AbstractInboundPropertyTestcase
 {
+
     @Override
     protected void addOption( OptionSet options )
     {
-        options.setLocationQuery( "?first=1&second=2" );
+        //NOOP set in testparams
     }
 
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.location_query.list";
+        return "coap.opt.uri_query";
     }
 
     @Override
     protected Object getExpectedPropertyValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "first=1" );
-        list.add( "second=2" );
+        LinkedList< QueryParamAttribute > list= new LinkedList<>();
+        list.add( new QueryParamAttribute( "first", "1" ) );
+        list.add( new QueryParamAttribute( "second", "2" ) );
 
-        return list;
+        return Collections.unmodifiableList( list );
     }
+
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     */
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-uriQuery.xml";
+    };
 }

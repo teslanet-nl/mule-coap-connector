@@ -130,6 +130,14 @@ public class MessageUtils
         {
             optionSet.setSize2( 0 );
         }
+        if ( requestOptions.getUriHost() != null )
+        {
+            optionSet.setUriHost( requestOptions.getUriHost() );
+        }
+        if ( requestOptions.getUriPort() != null )
+        {
+            optionSet.setUriPort( requestOptions.getUriPort() );
+        }
         if ( requestOptions.getProxyUri() != null )
         {
             optionSet.setProxyUri( requestOptions.getProxyUri() );

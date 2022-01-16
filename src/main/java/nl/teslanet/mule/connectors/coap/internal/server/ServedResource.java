@@ -29,6 +29,7 @@ import java.io.InputStream;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.network.Exchange;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
@@ -342,16 +343,24 @@ public class ServedResource extends CoapResource
 
     }
 
-    private DefaultRequestAttributes createRequestAttributes( CoapExchange exchange ) throws InternalInvalidOptionValueException
+    private DefaultRequestAttributes createRequestAttributes( CoapExchange coapExchange ) throws InternalInvalidOptionValueException
     {
+        Exchange exchange= coapExchange.advanced();
         DefaultRequestAttributes attributes= new DefaultRequestAttributes();
-        attributes.setRequestCode( exchange.getRequestCode().toString() );
-        attributes.setConfirmable( exchange.advanced().getRequest().isConfirmable() );
-        attributes.setLocalAddress( exchange.advanced().getEndpoint().getAddress().toString() );
-        attributes.setRemoteAddress( exchange.getSourceAddress().toString() + ":" + exchange.getSourcePort() );
-        attributes.setRequestUri( exchange.advanced().getCurrentRequest().getURI() );
-        attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( exchange.getRequestOptions() ) );
-        attributes.setRelation( ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
+        attributes.setRequestCode( coapExchange.getRequestCode().toString() );
+        attributes.setConfirmable( exchange.getRequest().isConfirmable() );
+        attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
+        attributes.setRemoteAddress( coapExchange.getSourceAddress().toString() + ":" + coapExchange.getSourcePort() );
+        if ( coapExchange.getRequestOptions().getURIPathCount() > 0 )
+        {
+            attributes.setRequestPath( "/" + coapExchange.getRequestOptions().getUriPathString() );
+        }
+        if ( coapExchange.getRequestOptions().getURIQueryCount() > 0 )
+        {
+            attributes.setRequestQuery( "?" + coapExchange.getRequestOptions().getUriQueryString() );
+        }
+        attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
+        attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKey() : null ) );
         return attributes;
     }
 

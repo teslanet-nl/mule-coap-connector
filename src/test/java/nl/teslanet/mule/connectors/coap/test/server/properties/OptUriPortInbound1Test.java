@@ -24,36 +24,36 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
 import org.eclipse.californium.core.coap.OptionSet;
-import org.junit.Ignore;
 
-@Ignore
-public class OptLocationPathInbound1Test extends AbstractInboundPropertyTestcase
+
+//TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
+public class OptUriPortInbound1Test extends AbstractInboundPropertyTestcase
 {
+
     @Override
     protected void addOption( OptionSet options )
     {
-        options.setLocationPath( "/test/this/path" );
+        options.setUriPort( 4556 );
     }
 
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.location_path";
+        return "coap.opt.uri_port";
     }
 
     @Override
     protected Object getExpectedPropertyValue()
     {
-        //TODO make this coherent with other paths with prepending / => /test/this/path
-        return new String( "test/this/path" );
+        return new Integer( 4556 );
     }
     
     /* (non-Javadoc)
-     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
      */
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-locationPath.xml";
+        return "mule-server-config/properties/testserver-options-uriPort.xml";
     };
 }

@@ -198,6 +198,32 @@ public class RequestOptions
     private String proxyUri= null;
 
     /**
+     * RFC 7252: The Uri-Host Option specifies the Internet host of the resource
+      being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7252/#section-5.10.1">IETF RFC 7252 - 5.10.2. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Uri-Host Option specifies the Internet host of the resource being requested." )
+    private String uriHost= null;
+
+    /**
+     * RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource.
+     * Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7252/#section-5.10.1">IETF RFC 7252 - 5.10.2. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Uri-Port Option specifies the transport-layer port number of the resource" )
+    private Integer uriPort= null;
+
+    /**
      * RFC 7959: In a request carrying a Block1 Option, to indicate the current
       estimate the client has of the total size of the resource
       representation, measured in bytes ("size indication")
@@ -208,7 +234,7 @@ public class RequestOptions
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Size 1 option indicates the request payload size in [Bytes]." )
+    @Summary( "Estimate of the request payload size in [Bytes]." )
     @DisplayName( value= "Payload size" )
     private Integer size1= null;
 
@@ -282,7 +308,7 @@ public class RequestOptions
     /**
      * @param ifExists The ifExists option to set.
      */
-    public void setifExists( boolean ifExists )
+    public void setIfExists( boolean ifExists )
     {
         this.ifExists= ifExists;
     }
@@ -417,6 +443,38 @@ public class RequestOptions
     }
 
     /**
+     * @return the uriHost
+     */
+    public String getUriHost()
+    {
+        return uriHost;
+    }
+
+    /**
+     * @param uriHost the uriHost to set
+     */
+    public void setUriHost( String uriHost )
+    {
+        this.uriHost= uriHost;
+    }
+
+    /**
+     * @return the uriPort
+     */
+    public Integer getUriPort()
+    {
+        return uriPort;
+    }
+
+    /**
+     * @param uriPort the uriPort to set
+     */
+    public void setUriPort( Integer uriPort )
+    {
+        this.uriPort= uriPort;
+    }
+
+    /**
      * @return The Size1 option if present, otherwise null.
      */
     public Integer getSize1()
@@ -427,7 +485,7 @@ public class RequestOptions
     /**
      * @param size1 The size1 option to set.
      */
-    public void setiSize1( Integer size1 )
+    public void setSize1( Integer size1 )
     {
         this.size1= size1;
     }

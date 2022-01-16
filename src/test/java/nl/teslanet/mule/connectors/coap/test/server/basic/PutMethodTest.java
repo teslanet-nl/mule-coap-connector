@@ -49,13 +49,14 @@ public class PutMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/put_me";
         String payload= ":payload_put_me";
+        String expected= path + payload;
         setClientUri( path );
 
         CoapResponse response= client.put( payload, 0 );
 
         assertNotNull( "put gave no response", response );
         assertEquals( "response code should be CREATED", ResponseCode.CHANGED, response.getCode() );
-        assertEquals( "response payload has wrong value", path + payload, response.getResponseText() );
+        assertEquals( "response payload has wrong value", expected, response.getResponseText() );
     }
 
     @Test

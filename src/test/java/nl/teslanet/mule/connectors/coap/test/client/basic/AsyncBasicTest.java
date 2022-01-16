@@ -52,6 +52,7 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 @RunnerDelegateTo(Parameterized.class)
 public class AsyncBasicTest extends AbstractClientTestCase
 {
+    //TODO RC add query
     /**
      * The list of tests with their parameters
      * @return Test parameters.
@@ -61,14 +62,14 @@ public class AsyncBasicTest extends AbstractClientTestCase
     {
         return Arrays.asList(
             new Object [] []{
-                { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
+                { "get_me", Code.GET, "/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
+                { "do_not_get_me", Code.GET, "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "post_me", Code.POST, "/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
+                { "do_not_post_me", Code.POST, "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "put_me", Code.PUT, "/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
+                { "do_not_put_me", Code.PUT, "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", Code.DELETE, "/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_not_delete_me", Code.DELETE, "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
     }
 
     /**
@@ -87,7 +88,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
      * The request uri that is expected.
      */
     @Parameter(2)
-    public String expectedRequestUri;
+    public String expectedRequestPath;
 
     /**
      * The response code that is expected.
@@ -147,7 +148,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong request path", expectedRequestPath, attributes.getRequestPath() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
     }

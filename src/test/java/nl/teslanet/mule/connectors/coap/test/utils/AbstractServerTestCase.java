@@ -53,7 +53,7 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     {
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );
-        client.setTimeout( 10000L );
+        client.setTimeout( 1000000L );
         client.setEndpoint( EndpointManager.getEndpointManager().getDefaultEndpoint() );
     }
 

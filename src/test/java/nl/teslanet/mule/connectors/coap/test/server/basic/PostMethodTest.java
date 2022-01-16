@@ -49,13 +49,14 @@ public class PostMethodTest extends AbstractServerTestCase
     {
         String path= "/basic/post_me";
         String payload= ":payload_post_me";
+        String expected= path + payload;
         setClientUri( path );
 
         CoapResponse response= client.post( payload, 0 );
 
         assertNotNull( "post gave no response", response );
         assertEquals( "response code should be CHANGED", ResponseCode.CHANGED, response.getCode() );
-        assertEquals( "response payload has wrong value", path + payload, response.getResponseText() );
+        assertEquals( "response payload has wrong value", expected, response.getResponseText() );
     }
 
     @Test

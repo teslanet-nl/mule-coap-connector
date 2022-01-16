@@ -45,7 +45,7 @@ public class OptLocationPathOutbound2Test extends AbstractOutboundPropertyTestca
     @Override
     protected Object getPropertyValue()
     {
-        return new String( "test/this/path" );
+        return new String( "/test/this/path" );
     }
 
     @Override

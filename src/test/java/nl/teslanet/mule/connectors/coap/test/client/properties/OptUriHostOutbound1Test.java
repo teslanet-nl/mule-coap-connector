@@ -20,41 +20,48 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.server.properties;
+package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-
-import org.eclipse.californium.core.coap.OptionSet;
-
-
-//TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
-public class OptUriHost1Test extends AbstractInboundPropertyTestcase
+/**
+ * Test inbound uri host property
+ *
+ */
+public class OptUriHostOutbound1Test extends AbstractOutboundPropertiesTestCase
 {
 
-    @Override
-    protected void addOption( OptionSet options )
+    /**
+     * Test value
+     * @return the value to use in test
+     */
+    private String getValue()
     {
-        options.setUriHost( "some.server.org" );
+        return new String( "some.server.org" );
     }
 
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
+     */
     @Override
     protected String getPropertyName()
     {
         return "coap.opt.uri_host";
     }
 
-    @Override
-    protected Object getExpectedPropertyValue()
-    {
-        return new String( "some.server.org" );
-    }
-    
     /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
      */
     @Override
-    protected String getConfigResources()
+    protected Object getExpectedInboundPropertyValue()
     {
-        return "mule-server-config/properties/testserver-options-uriHost.xml";
-    };
+        return getValue();
+    }
 
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
+     */
+    @Override
+    protected OptionStrategy getStrategy()
+    {
+        return new OptUriHostStrategy( getValue() );
+    }
 }

@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
-//TODO RC remove dependency
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -53,9 +52,14 @@ public class CoapResponseAttributes
     protected String localAddress= null;
 
     /**
-     * The uri of the resource the request was issued on. 
+     * The path of the resource the request was issued on. 
      */
-    protected String requestUri= null;
+    protected String requestPath= null;
+
+    /**
+     * The query parameters of the request.
+     */
+    protected String requestQuery= null;
 
     /**
      * The address of the server that issued the response.
@@ -68,14 +72,14 @@ public class CoapResponseAttributes
     protected boolean success= false;
 
     /**
-     * True when response is a notification.
-     */
-    protected boolean notification= false;
-
-    /**
      * The CoAP response code of the server response.
      */
     protected String responseCode= null;
+
+    /**
+     * True when response is a notification.
+     */
+    protected boolean notification= false;
 
     /**
      * The uri of the resource that has been created. 
@@ -112,11 +116,19 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the requestUri
+     * @return The request path.
      */
-    public String getRequestUri()
+    public String getRequestPath()
     {
-        return requestUri;
+        return requestPath;
+    }
+
+    /**
+     * @return The request query.
+     */
+    public String getRequestQuery()
+    {
+        return requestQuery;
     }
 
     /**
@@ -150,7 +162,7 @@ public class CoapResponseAttributes
     {
         return responseCode;
     }
-    
+
     /**
      * The location of a created resource.
      * @return the location Uri derived from the location options.

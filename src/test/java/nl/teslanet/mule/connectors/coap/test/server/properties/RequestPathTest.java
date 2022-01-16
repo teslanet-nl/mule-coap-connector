@@ -45,7 +45,7 @@ import org.eclipse.californium.elements.exception.ConnectorException;
 
 
 @RunnerDelegateTo(Parameterized.class)
-public class RequestUriTest extends AbstractServerTestCase
+public class RequestPathTest extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
@@ -56,10 +56,10 @@ public class RequestUriTest extends AbstractServerTestCase
         return Arrays.asList(
             new Object [] []{
                 //default maxResourceBodySize on server
-                { Code.GET, "coap://localhost/requesturi/get_me?op=get" },
-                { Code.PUT, "coap://localhost/requesturi/put_me?op=put" },
-                { Code.POST, "coap://localhost/requesturi/post_me?op=post" },
-                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete" }, } );
+                { Code.GET, "coap://localhost/requesturi/get_me?op=get", "/requesturi/get_me" },
+                { Code.PUT, "coap://localhost/requesturi/put_me?op=put", "/requesturi/put_me" },
+                { Code.POST, "coap://localhost/requesturi/post_me?op=post", "/requesturi/post_me" },
+                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete", "/requesturi/delete_me" } } );
     }
 
     /**
@@ -73,6 +73,11 @@ public class RequestUriTest extends AbstractServerTestCase
     */
     @Parameter(1)
     public String requestUri;
+    /**
+    * Test uri to call
+    */
+    @Parameter(2)
+    public String expect;
 
     /* (non-Javadoc)
      * @see org.mule.functional.junit4.FunctionalTestCase#getConfigResources()
@@ -80,7 +85,7 @@ public class RequestUriTest extends AbstractServerTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-RequestUri.xml";
+        return "mule-server-config/properties/testserver-RequestPath.xml";
     };
 
     @Test
@@ -92,6 +97,6 @@ public class RequestUriTest extends AbstractServerTestCase
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", requestUri, response.getResponseText() );
+        assertEquals( "echoed request code has wrong value", expect, response.getResponseText() );
     }
 }

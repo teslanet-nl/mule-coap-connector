@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
+import java.net.URI;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
@@ -61,7 +63,7 @@ public class ObserveRelation implements CoapHandler
     /**
      * The uri of the resource that is observed.
      */
-    private final String uri;
+    private final URI uri;
 
     /**
      * The uri of the resource that is observed.
@@ -117,7 +119,7 @@ public class ObserveRelation implements CoapHandler
      * Constructor
      * @param sourceCallback
      */
-    ObserveRelation( String observerName, CoapClient coapClient, boolean confirmable, String uri, ResponseProcessingStrategy processor )
+    ObserveRelation( String observerName, CoapClient coapClient, boolean confirmable, URI uri, ResponseProcessingStrategy processor )
     {
         super();
         this.observerName= observerName;

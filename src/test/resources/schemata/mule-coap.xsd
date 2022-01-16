@@ -965,7 +965,7 @@
   </xs:element>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ObserverListType" substitutionGroup="mule:abstract-operator" name="observer-list">
     <xs:annotation>
-      <xs:documentation>This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of the active observers of the CoAP client.</xs:documentation>
+      <xs:documentation>This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="ObserverListType">
@@ -1254,6 +1254,8 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="proxyUri"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="uriHost"></xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="uriPort"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="size1"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requestSize2"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
@@ -1890,4 +1892,5 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
+
 

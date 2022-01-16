@@ -25,10 +25,13 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
@@ -98,12 +101,20 @@ public class ClientOperations
      * @param requestOptions The CoAP options to send with the request.
      * @return The result of the request which contains the received server response, if any.
      */
-    @MediaType(value= "*/*", strict= false)
-    @Throws({ RequestErrorProvider.class })
-    public Result< InputStream, CoapResponseAttributes > request(
-        @Config Client client,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Alias("request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
+    @MediaType( value= "*/*", strict= false )
+    @Throws(
+        { RequestErrorProvider.class }
+    )
+    public Result< InputStream, CoapResponseAttributes > request( @Config
+    Client client, @ParameterGroup( name= "Request" )
+    RequestBuilder requestBuilder,
+        @Alias( "request-options" )
+        @Optional
+        @NullSafe
+        @Summary( "The CoAP options to send with the request." )
+        @Placement( tab= "Options", order= 1 )
+        RequestOptions requestOptions
+    )
     {
         String errorMsg= ": request failed.";
         try
@@ -150,12 +161,18 @@ public class ClientOperations
      * @param requestBuilder Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
      */
-    @Throws({ RequestAsyncErrorProvider.class })
-    public void requestAsync(
-        @Config Client client,
-        @ParameterGroup(name= "Response handling") ResponseHandlerBuilder responseHandlerBuilder,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
+    @Throws( { RequestAsyncErrorProvider.class } )
+    public void requestAsync( @Config
+    Client client, @ParameterGroup( name= "Response handling" )
+    ResponseHandlerBuilder responseHandlerBuilder, @ParameterGroup( name= "Request" )
+    RequestBuilder requestBuilder,
+        @Optional
+        @NullSafe
+        @Expression( ExpressionSupport.SUPPORTED )
+        @Summary( "The CoAP options to send with the request." )
+        @Placement( tab= "Options", order= 1 )
+        RequestOptions requestOptions
+    )
     {
         String errorMsg= ": async request failed.";
         try
@@ -204,8 +221,10 @@ public class ClientOperations
      * @param pingBuilder The request attributes to use.
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
-    @Throws({ PingErrorProvider.class })
-    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping address") PingBuilder pingBuilder )
+    @Throws( { PingErrorProvider.class } )
+    public Boolean ping( @Config
+    Client client, @ParameterGroup( name= "Ping address" )
+    PingBuilder pingBuilder )
     {
         String errorMsg= ": ping failed.";
         try
@@ -230,8 +249,10 @@ public class ClientOperations
      * @param discoverBuilder The attributes of the discover request
      * @return The resources description on the server that have been discovered.
      */
-    @Throws({ DiscoverErrorProvider.class })
-    public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover address") DiscoverBuilder discoverBuilder )
+    @Throws( { DiscoverErrorProvider.class } )
+    public Set< DiscoveredResource > discover( @Config
+    Client client, @ParameterGroup( name= "Discover address" )
+    DiscoverBuilder discoverBuilder )
     {
         String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
@@ -247,7 +268,7 @@ public class ClientOperations
         {
             throw new UriException( client + errorMsg, e );
         }
-        catch ( InternalUnexpectedResponseException  | InternalInvalidResponseCodeException | InternalResponseException e  )
+        catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
         {
             throw new ResponseException( client + errorMsg, e );
         }
@@ -298,7 +319,9 @@ public class ClientOperations
                     ifBuilder.toString(),
                     rtBuilder.toString(),
                     link.getAttributes().getMaximumSizeEstimate(),
-                    ctBuilder.toString() ) );
+                    ctBuilder.toString()
+                )
+            );
         }
         return resultSet;
     }
@@ -317,7 +340,7 @@ public class ClientOperations
      * @param responseHandlerBuilder Name of the response handler that will process the notification received from server.
      * @param observerStartBuilder The observe request parameters.
      */
-    @Throws({ ObserverStartErrorProvider.class })
+    @Throws( { ObserverStartErrorProvider.class } )
     public void observerStart( @Config
     Client client, @ParameterGroup( name= "Notification handling" )
     ResponseHandlerBuilder responseHandlerBuilder, @ParameterGroup( name= "Observe uri" )
@@ -347,7 +370,7 @@ public class ClientOperations
      * @param client The client instance that stops the observer.
      * @param observerStopBuilder Parameters of the observer
      */
-    @Throws({ ObserverStopErrorProvider.class })
+    @Throws( { ObserverStopErrorProvider.class } )
     public void observerStop( @Config
     Client client, @ParameterGroup( name= "Observe uri" )
     ObserverStopBuilder observerStopBuilder )
@@ -368,18 +391,17 @@ public class ClientOperations
     }
 
     /**
-     * This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of
+     * This processor returns a list of observers. The list contains the uri's of
      * the active observers of the CoAP client.
      * 
      * @param client The client instance of which the observers are listed.
      * @return the list of observed uri's
      */
-    public ConcurrentSkipListSet< String > observerList( @Config
+    public List< String > observerList( @Config
     Client client )
     {
-        ConcurrentSkipListSet< String > list= new ConcurrentSkipListSet< String >();
-        list.addAll( client.getRelations().keySet() );
-        return list;
+        List< String > list= client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toList() );
+        return Collections.unmodifiableList( list );
     }
 
 }

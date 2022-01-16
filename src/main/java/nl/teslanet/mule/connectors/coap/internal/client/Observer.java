@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 
 import java.io.InputStream;
+import java.net.URI;
 
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -87,7 +88,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
      */
     private ObserveRelation relation= null;
 
-    private String uri= null;
+    private URI uri= null;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
@@ -97,7 +98,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     {
         try
         {
-            uri= client.getURI( requestConfig ).toString();
+            uri= client.getURI( requestConfig );
         }
         catch ( InternalUriException e )
         {

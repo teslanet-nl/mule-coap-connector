@@ -36,8 +36,6 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 */
 public class CoapRequestAttributes
 {
-    //TODO RC review address, host uri naming
-
     /**
      * The CoAP request code that was issued.
      */
@@ -54,19 +52,24 @@ public class CoapRequestAttributes
     protected String localAddress= null;
 
     /**
-     * The uri of the resource the request was issued on. 
+     * The path of the resource the request was issued on. 
      */
-    protected String requestUri= null;
+    protected String requestPath= null;
 
     /**
-     * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
+     * The query parameters of the request.
      */
-    protected String relation= null;
+    protected String requestQuery= null;
 
     /**
      * The address of the client that issued the request.
      */
     protected String remoteAddress= null;
+
+    /**
+     * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
+     */
+    protected String relation= null;
 
     /**
      * The CoAP options that accompanied the request.
@@ -98,11 +101,19 @@ public class CoapRequestAttributes
     }
 
     /**
-     * @return The requestUri.
+     * @return The request path.
      */
-    public String getRequestUri()
+    public String getRequestPath()
     {
-        return requestUri;
+        return requestPath;
+    }
+
+    /**
+     * @return The request query.
+     */
+    public String getRequestQuery()
+    {
+        return requestQuery;
     }
 
     /**

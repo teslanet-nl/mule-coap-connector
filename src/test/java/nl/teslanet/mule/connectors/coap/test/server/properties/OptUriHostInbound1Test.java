@@ -27,25 +27,25 @@ import org.eclipse.californium.core.coap.OptionSet;
 
 
 //TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
-public class OptUriPort1Test extends AbstractInboundPropertyTestcase
+public class OptUriHostInbound1Test extends AbstractInboundPropertyTestcase
 {
 
     @Override
     protected void addOption( OptionSet options )
     {
-        options.setUriPort( 4556 );
+        options.setUriHost( "some.server.org" );
     }
 
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.uri_port";
+        return "coap.opt.uri_host";
     }
 
     @Override
     protected Object getExpectedPropertyValue()
     {
-        return new Integer( 4556 );
+        return new String( "some.server.org" );
     }
     
     /* (non-Javadoc)
@@ -54,6 +54,7 @@ public class OptUriPort1Test extends AbstractInboundPropertyTestcase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-uriPort.xml";
+        return "mule-server-config/properties/testserver-options-uriHost.xml";
     };
+
 }

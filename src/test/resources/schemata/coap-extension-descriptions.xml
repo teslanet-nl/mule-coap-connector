@@ -100,7 +100,7 @@
             </parameters>
         </operation>
         <operation name="observerList">
-            <description><![CDATA[This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
+            <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
             <parameters>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -446,7 +446,10 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestUri">
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -475,7 +478,10 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestUri">
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responseCode">
@@ -949,6 +955,12 @@
                 <parameter name="proxyUri">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="uriHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="uriPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="size1">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -1007,5 +1019,3 @@
         </type>
     </types>
 </extension-documentation>
-
-
