@@ -22,17 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.api.query;
 
-
-import static java.util.Objects.hash;
-
-import java.util.Objects;
-
-
 /**
  * CoAP Query Parameter as attribute. 
  * This class is immutable.
  */
-public class QueryParamAttribute
+public class QueryParamAttribute extends AbstractQueryParam
 {
     /**
      * The key of the query parmeter.
@@ -52,7 +46,6 @@ public class QueryParamAttribute
     public QueryParamAttribute( String key, String value )
     {
         super();
-        //TODO add valiation
         this.key= key;
         this.value= value;
     }
@@ -60,7 +53,7 @@ public class QueryParamAttribute
     /**
      * @return the key of the query parameter.
      */
-    public String getKey()
+    @Override    public String getKey()
     {
         return key;
     }
@@ -68,65 +61,8 @@ public class QueryParamAttribute
     /**
      * @return the value of the query parameter.
      */
-    public String getValue()
+    @Override    public String getValue()
     {
         return value;
-    }
-
-    /**
-     * @return {@code true} when parameter has a key that is not empty, otherwise {@code false}.
-     */
-
-    public boolean hasKey()
-    {
-        return( getKey() != null && !getKey().isEmpty() );
-    }
-
-    /**
-     * @return {@code true} when parameter has a value that is not empty, otherwise {@code false}.
-     */
-    public boolean hasValue()
-    {
-        return( getValue() != null && !getValue().isEmpty() );
-    }
-
-    /**
-     * Check equality.
-     */
-    @Override
-    public boolean equals( Object object )
-    {
-        if ( object instanceof QueryParamAttribute )
-        {
-            QueryParamAttribute other= (QueryParamAttribute) object;
-            return Objects.equals( getKey(), other.getKey() ) && Objects.equals( getValue(), other.getValue() );
-        }
-        return false;
-    }
-
-    /**
-     * Get the hash code of this object.
-     */
-    @Override
-    public int hashCode()
-    {
-        return hash( getKey(), getValue() );
-    }
-
-    /**
-     * Get the string representation of the query parameter.
-     */
-    @Override
-    public String toString()
-    {
-        String actualValue= getValue();
-        if ( actualValue != null )
-        {
-            return getKey() + "=" + actualValue;
-        }
-        else
-        {
-            return getKey();
-        }
     }
 }

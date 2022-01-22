@@ -34,7 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * CoAP URI Query Parameter without expression support. 
  */
-public class QueryParamConfig
+public class QueryParamConfig extends AbstractQueryParam 
 {
     /**
      * The key of the query parameter.
@@ -58,6 +58,7 @@ public class QueryParamConfig
     /**
      * @return the key of the query parameter.
      */
+    @Override
     public String getKey()
     {
         return key;
@@ -74,6 +75,7 @@ public class QueryParamConfig
     /**
      * @return the value of the query parameter.
      */
+    @Override
     public String getValue()
     {
         return value;
@@ -85,22 +87,5 @@ public class QueryParamConfig
     public void setValue( String value )
     {
         this.value= value;
-    }
-
-    /**
-     * Get the string representation of the query parameter.
-     */
-    @Override
-    public String toString()
-    {
-        String actualValue= getValue();
-        if ( actualValue != null )
-        {
-            return getKey() + "=" + actualValue;
-        }
-        else
-        {
-            return getKey();
-        }
     }
 }
