@@ -831,48 +831,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
-     * Obtain actual query parameters to use for request.
-     * @param query The optional query parameters.
-     * @return The actual query parameters to use.
-     */
-    //TODO RC remove
-    //    private MultiMap< String, String > actualQuery( MultiMap< String, String > query )
-    //    {
-    //        //TODO merge?
-    //        if ( query != null )
-    //        {
-    //            return query;
-    //        }
-    //        else
-    //        {
-    //            return requestDefaults.getQueryParamConfigs();
-    //        }
-    //    }
-
-    /**
-     * Obtain query parameters from MultiMap
-     * @param query The optional query parameters.
-     * @return The actual query parameters to use.
-     */
-    /*
-    private List< DefaultQueryParamAttribute > getQueryParams( MultiMap< String, String > query )
-    {
-        ArrayList< DefaultQueryParamAttribute > params= new ArrayList<>();
-        if ( query != null )
-        {
-            for ( String key : query.keySet() )
-            {
-                for ( String value : query.getAll( key ) )
-                {
-                    params.add( new DefaultQueryParamAttribute( key, value ) );
-                }
-            }
-        }
-        return params;
-    }
-    */
-
-    /**
      * Get an URI object describing the given CoAP resource.
      * @param builder The provider of uri parameters.
      * @return The URI object. 

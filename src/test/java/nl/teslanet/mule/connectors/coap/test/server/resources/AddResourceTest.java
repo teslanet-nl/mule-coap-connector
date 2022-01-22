@@ -120,7 +120,7 @@ public class AddResourceTest extends AbstractServerTestCase
      * Test adding a resource on the server
      * @throws Exception
      */
-    @Test( timeout= 30000L )
+    @Test( timeout= 3000000L )
     public void testAddResource() throws Exception
     {
         setClientUri( resourcePath );
@@ -136,6 +136,7 @@ public class AddResourceTest extends AbstractServerTestCase
         assertNotNull( "post gave no response", response2 );
         assertTrue( "post response indicates failure", response2.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response2.getCode() );
+        assertEquals( "post gave wrong location", resourcePath.substring( 1 ), response2.getOptions().getLocationPathString() );
 
         setClientUri( resourcePath );
         Request request3= new Request( requestCode );

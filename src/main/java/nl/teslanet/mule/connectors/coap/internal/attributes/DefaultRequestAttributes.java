@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
-//TODO RC rename to CoapResponseAttributes
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -32,15 +31,12 @@ import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
-//TODO RC rename to CoapRequestAttributes
 /**
 * The attributes of a CoAP request that was received from a client.
 *
 */
 public class DefaultRequestAttributes extends CoapRequestAttributes
 {
-    //TODO RC review address, host uri naming
-
     /**
      * @param requestCode The requestCode to set.
      */

@@ -413,7 +413,6 @@ public class ResourceRegistry
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
-            //TODO RC check uri format .*/x+
             return uri.substring( lastPathSep + 1 );
         }
         else
