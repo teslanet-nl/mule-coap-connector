@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 /**
  * Test inbound uri host property
  *
@@ -53,7 +54,7 @@ public class OptUriPortOutbound1Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return getValue();
+        return getValue().toString();
     }
 
     /* (non-Javadoc)

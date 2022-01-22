@@ -58,6 +58,7 @@ public class OptUriPortStrategy implements OptionStrategy
     @Override
     public boolean validateOption( Request request )
     {
-        return value == request.getOptions().getUriPort();
+        if ( value == null ) return null == request.getOptions().getUriPort();
+        return value.equals( request.getOptions().getUriPort() );
     }
 }

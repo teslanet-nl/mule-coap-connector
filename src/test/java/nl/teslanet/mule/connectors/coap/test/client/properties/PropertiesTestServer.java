@@ -110,48 +110,32 @@ public class PropertiesTestServer extends CoapServer
         @Override
         public void handleGET( CoapExchange exchange )
         {
-            if ( strategy.validateOption( exchange.advanced().getRequest() ) )
-            {
-                exchange.respond( ResponseCode.CONTENT );
-            }
-            else
-            {
-                exchange.respond( ResponseCode.BAD_OPTION );
-            }
+            proces( exchange, ResponseCode.CONTENT );
         }
 
         @Override
         public void handlePOST( CoapExchange exchange )
         {
-            if ( strategy.validateOption( exchange.advanced().getRequest() ) )
-            {
-                exchange.respond( ResponseCode.CHANGED );
-            }
-            else
-            {
-                exchange.respond( ResponseCode.BAD_OPTION );
-            }
+            proces( exchange, ResponseCode.CHANGED );
         }
 
         @Override
         public void handlePUT( CoapExchange exchange )
         {
-            if ( strategy.validateOption( exchange.advanced().getRequest() ) )
-            {
-                exchange.respond( ResponseCode.CHANGED );
-            }
-            else
-            {
-                exchange.respond( ResponseCode.BAD_OPTION );
-            }
+            proces( exchange, ResponseCode.CHANGED );
         }
 
         @Override
         public void handleDELETE( CoapExchange exchange )
         {
+            proces( exchange, ResponseCode.DELETED );
+        }
+
+        void proces( CoapExchange exchange, ResponseCode okResponse )
+        {
             if ( strategy.validateOption( exchange.advanced().getRequest() ) )
             {
-                exchange.respond( ResponseCode.DELETED );
+                exchange.respond( okResponse );
             }
             else
             {

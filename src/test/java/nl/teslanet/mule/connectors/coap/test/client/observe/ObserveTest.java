@@ -31,9 +31,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +45,6 @@ import org.mule.runtime.api.metadata.TypedValue;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 /**
