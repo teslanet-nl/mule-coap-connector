@@ -52,6 +52,11 @@ import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 public class ServedResource extends CoapResource
 {
     /**
+     * Regular expression for splitting comma separated values.
+     */
+    private static final String CSV_REGEX= "\\s*,\\s*";
+
+    /**
      * The callback of the messagesource for Get requests.
      * It is used to hand messages over to the Mule flow that should process the request.
      */
@@ -121,21 +126,21 @@ public class ServedResource extends CoapResource
             }
             if ( resource.getCoreInfoConfig().getRt() != null )
             {
-                for ( String rt : resource.getCoreInfoConfig().getRt().split( "\\s*,\\s*" ) )
+                for ( String rt : resource.getCoreInfoConfig().getRt().split(CSV_REGEX) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             }
             if ( resource.getCoreInfoConfig().getIfdesc() != null )
             {
-                for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( "\\s*,\\s*" ) )
+                for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( CSV_REGEX ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             }
             if ( resource.getCoreInfoConfig().getCt() != null )
             {
-                for ( String ct : resource.getCoreInfoConfig().getCt().split( "\\s*,\\s*" ) )
+                for ( String ct : resource.getCoreInfoConfig().getCt().split( CSV_REGEX ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }
@@ -193,21 +198,21 @@ public class ServedResource extends CoapResource
             }
             if ( resource.getInfo().getRt() != null )
             {
-                for ( String rt : resource.getInfo().getRt().split( "\\s*,\\s*" ) )
+                for ( String rt : resource.getInfo().getRt().split( CSV_REGEX ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             }
             if ( resource.getInfo().getIfdesc() != null )
             {
-                for ( String ifdesc : resource.getInfo().getIfdesc().split( "\\s*,\\s*" ) )
+                for ( String ifdesc : resource.getInfo().getIfdesc().split( CSV_REGEX ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             }
             if ( resource.getInfo().getCt() != null )
             {
-                for ( String ct : resource.getInfo().getCt().split( "\\s*,\\s*" ) )
+                for ( String ct : resource.getInfo().getCt().split( CSV_REGEX ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }

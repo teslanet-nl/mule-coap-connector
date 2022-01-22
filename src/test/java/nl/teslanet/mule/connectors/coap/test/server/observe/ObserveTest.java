@@ -128,7 +128,7 @@ public class ObserveTest extends AbstractServerTestCase
             assertTrue( "response nr: " + i + " indicates failure", response.isSuccess() );
         }
 
-        Thread.sleep( 100 );
+        Timing.pauze( 100 );
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 

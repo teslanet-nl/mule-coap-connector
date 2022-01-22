@@ -84,9 +84,7 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
         if ( !optionSet.getLocationQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet.getLocationQuery().forEach( queryParamString -> {
-                AttributeUtils.addQueryParam( queryParams, queryParamString );
-            } );
+            optionSet.getLocationQuery().forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
             locationQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasSize1() )
@@ -102,9 +100,7 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
             observe= optionSet.getObserve();
         }
         ArrayList< OtherOptionAttribute > tmpOther= new ArrayList<>();
-        optionSet.getOthers().forEach( option -> {
-            tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) );
-        } );
+        optionSet.getOthers().forEach( option -> tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) ) );
         otherOptions= Collections.unmodifiableList( tmpOther );
     }
 

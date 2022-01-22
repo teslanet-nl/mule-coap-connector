@@ -286,11 +286,12 @@ public class MessageUtils
         //            return output.toByteArray();
         //        }
         //        else
-        {
-            //do transform using Mule's transformers.
-            TypedValue< Object > value= TypedValue.of( toConvert );
-            return (byte[]) transformationService.transform( value.getValue(), value.getDataType(), BYTE_ARRAY );
-        }
+        //        {
+        
+        //do transform using Mule's transformers.
+        TypedValue< Object > value= TypedValue.of( toConvert );
+        return (byte[]) transformationService.transform( value.getValue(), value.getDataType(), BYTE_ARRAY );
+
     }
 
     /* TODO needed in future release

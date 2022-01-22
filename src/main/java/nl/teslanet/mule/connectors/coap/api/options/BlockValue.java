@@ -22,6 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.api.options;
 
+
 /**
  * Implementation of a block option value for convenience.
  * It eases the handling of CoAP block option values in Mule flows. 
@@ -144,21 +145,11 @@ public final class BlockValue implements Comparable< BlockValue >
             return false;
         }
         BlockValue other= (BlockValue) o;
-        if ( num == other.num && szx == other.szx && m == other.m )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return( num == other.num && szx == other.szx && m == other.m );
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
+    /**
+     * Compare to other blockvalue object.
      */
     @Override
     public int compareTo( BlockValue other )
@@ -177,6 +168,9 @@ public final class BlockValue implements Comparable< BlockValue >
         return compared;
     }
 
+    /**
+     * Return the hash code of this object.
+     */
     @Override
     public int hashCode()
     {

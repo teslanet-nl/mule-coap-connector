@@ -29,13 +29,13 @@ package nl.teslanet.mule.connectors.coap.internal.server;
  */
 public class RequestCodeFlags implements Comparable< RequestCodeFlags >
 {
-    private static final int getFlag= 0x1;
+    private static final int GET_FLAG= 0x1;
 
-    private static final int postFlag= 0x2;
+    private static final int POST_FLAG= 0x2;
 
-    private static final int putFlag= 0x4;
+    private static final int PUT_FLAG= 0x4;
 
-    private static final int deleteFlag= 0x8;
+    private static final int DELETE_FLAG= 0x8;
 
     /**
      * Bitflags indicating which request codes are active.
@@ -89,11 +89,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= getFlag;
+            flags|= GET_FLAG;
         }
         else
         {
-            flags&= ~getFlag;
+            flags&= ~GET_FLAG;
         }
     }
 
@@ -102,7 +102,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isGet()
     {
-        return ( flags & getFlag ) != 0;
+        return ( flags & GET_FLAG ) != 0;
     }
 
     /**
@@ -110,7 +110,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotGet()
     {
-        return ( flags & getFlag ) == 0;
+        return ( flags & GET_FLAG ) == 0;
     }
 
     /**
@@ -121,11 +121,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= postFlag;
+            flags|= POST_FLAG;
         }
         else
         {
-            flags&= ~postFlag;
+            flags&= ~POST_FLAG;
         }
     }
 
@@ -134,7 +134,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isPost()
     {
-        return ( flags & postFlag ) != 0;
+        return ( flags & POST_FLAG ) != 0;
     }
 
     /**
@@ -142,7 +142,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotPost()
     {
-        return ( flags & postFlag ) == 0;
+        return ( flags & POST_FLAG ) == 0;
     }
 
     /**
@@ -153,11 +153,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= putFlag;
+            flags|= PUT_FLAG;
         }
         else
         {
-            flags&= ~putFlag;
+            flags&= ~PUT_FLAG;
         }
     }
 
@@ -166,7 +166,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isPut()
     {
-        return ( flags & putFlag ) != 0;
+        return ( flags & PUT_FLAG ) != 0;
     }
 
     /**
@@ -174,7 +174,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotPut()
     {
-        return ( flags & putFlag ) == 0;
+        return ( flags & PUT_FLAG ) == 0;
     }
     
     /**
@@ -185,11 +185,11 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     {
         if ( flag )
         {
-            flags|= deleteFlag;
+            flags|= DELETE_FLAG;
         }
         else
         {
-            flags&= ~deleteFlag;
+            flags&= ~DELETE_FLAG;
         }
     }
 
@@ -198,7 +198,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isDelete()
     {
-        return ( flags & deleteFlag ) != 0;
+        return ( flags & DELETE_FLAG ) != 0;
     }
 
     /**
@@ -206,7 +206,7 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      */
     public boolean isNotDelete()
     {
-        return ( flags & deleteFlag ) == 0;
+        return ( flags & DELETE_FLAG ) == 0;
     }
     
     /**

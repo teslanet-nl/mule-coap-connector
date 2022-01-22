@@ -37,12 +37,12 @@ public class InternalInvalidResponseCodeException extends Exception
     /**
      * Exception message prefix.
      */
-    private static final String msgPrefix= "Invalid response code { ";
+    private static final String MSG_PREFIX= "Invalid response code { ";
 
     /**
      * Exception message postfix.
      */
-    private static final String msgPostfix= " }";
+    private static final String MSG_POSTFIX= " }";
 
     /**
      * serial version id.
@@ -55,7 +55,7 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( String responseCodeString )
     {
-        super( msgPrefix + responseCodeString + msgPostfix );
+        super( MSG_PREFIX + responseCodeString + MSG_POSTFIX );
     }
 
     /**
@@ -64,7 +64,7 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( ResponseCode responseCode )
     {
-        super( msgPrefix + responseCode.name() + " / " + responseCode.text + msgPostfix );
+        super( MSG_PREFIX + responseCode.name() + " / " + responseCode.text + MSG_POSTFIX );
     }
 
     /**
@@ -73,6 +73,6 @@ public class InternalInvalidResponseCodeException extends Exception
      */
     public InternalInvalidResponseCodeException( CoAPResponseCode reponseCodeAttribute )
     {
-        super( msgPrefix + reponseCodeAttribute.name() + msgPostfix );
+        super( MSG_PREFIX + reponseCodeAttribute.name() + MSG_POSTFIX );
     }
 }

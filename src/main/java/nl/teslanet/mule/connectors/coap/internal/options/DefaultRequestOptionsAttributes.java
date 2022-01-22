@@ -58,7 +58,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
             try
             {
                 List< ETag > tmpIfMatch= ETag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= tmpIfMatch.removeIf( etag -> etag.isEmpty() );
+                boolean emptyPresent= tmpIfMatch.removeIf( ETag::isEmpty );
                 if ( emptyPresent )
                 {
                     ifExists= true;
@@ -105,9 +105,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         if ( !optionSet.getUriQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet.getUriQuery().forEach( queryParamString -> {
-                AttributeUtils.addQueryParam( queryParams, queryParamString );
-            } );
+            optionSet.getUriQuery().forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
             uriQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasAccept() )
@@ -135,9 +133,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
             observe= optionSet.getObserve();
         }
         ArrayList< OtherOptionAttribute > tmpOther= new ArrayList<>();
-        optionSet.getOthers().forEach( option -> {
-            tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) );
-        } );
+        optionSet.getOthers().forEach( option -> tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) ) );
         otherOptions= Collections.unmodifiableList( tmpOther );
     }
 

@@ -91,7 +91,7 @@ public final class OperationalEndpoint
     /**
      * The clients using the endpoint
      */
-    private HashSet< Client > clients= new HashSet< Client >();
+    private HashSet< Client > clients= new HashSet<>();
 
     /**
      * Create an endpoint not attached to a server or return existing when already created
