@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -90,7 +89,7 @@ public final class ETag implements Comparable< ETag >
      */
     public ETag( String hexString ) throws InvalidETagException
     {
-        this.value= toBytes( hexString );
+        this.value= OptionUtils.toBytes( hexString );
     }
 
     /**
@@ -99,7 +98,7 @@ public final class ETag implements Comparable< ETag >
      */
     public ETag( Long longValue )
     {
-        this.value= toBytes( longValue );
+        this.value= OptionUtils.toBytes( longValue );
     }
 
     /**
@@ -114,22 +113,22 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
-     * Gets the etag value as Long.
+     * Gets the etag value as long.
      * @return Long containing the etag value.
      */
-    public Long getLong()
+    public long getLong()
     {
-        return toLong( value );
+        return OptionUtils.toLong( value );
     }
 
     /**
      * Gets the string with containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
-     * @return The string containing the hexadecimal representation or {@code null} when etag has no value.
+     * @return The string containing the hexadecimal representation or empty string when etag has no value.
      */
     public String getHexString()
     {
-        return toHexString( value );
+        return OptionUtils.toHexString( value );
     }
 
     /* (non-Javadoc)
@@ -138,7 +137,7 @@ public final class ETag implements Comparable< ETag >
     @Override
     public String toString()
     {
-        return "ETag{ " + toHexString( value ) + " }";
+        return "ETag { " + getHexString() + " }";
     }
 
     /**
@@ -211,23 +210,6 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
-     * Check etag on equality to another etag. 
-     * Etags are equal when there byte arrays contain the same sequence of bytes. 
-     * @param o The etag object to test for equality
-     * @return True 
-     */
-    //@Override
-    public boolean equalsX( Object o )
-    {
-        if ( !( o instanceof ETag ) )
-        {
-            return false;
-        }
-        ETag other= (ETag) o;
-        return Arrays.equals( this.value, other.value );
-    }
-
-    /**
      * Compares this object with the specified object for order.
      */
     @Override
@@ -273,105 +255,5 @@ public final class ETag implements Comparable< ETag >
         }
         ETag other= (ETag) obj;
         return Arrays.equals( value, other.value );
-    }
-
-    //TODO RC move to OptionUtils
-    /**
-     * Converts an etag value to a String containing the hexadecimal representation.
-     * Hexadecimal values a-f will be lower case.
-     * @param bytes The etag value.
-     * @return The string containing the hexadecimal representation.
-     */
-    public static String toHexString( byte[] bytes )
-    {
-        if ( bytes == null || bytes.length <= 0 )
-        {
-            return new String();
-        }
-        StringBuilder sb= new StringBuilder();
-        for ( byte b : bytes )
-        {
-            sb.append( String.format( "%02x", b & 0xFF ) );
-        }
-        return sb.toString();
-    }
-
-    //TODO RC move to OptionUtils
-    /**
-     * Converts an etag value to a Long containing the hexadecimal representation.
-     * Hexadecimal values a-f will be lower case.
-     * @param bytes The etag value.
-     * @return The string containing the hexadecimal representation.
-     */
-    public static Long toLong( byte[] bytes )
-    {
-        if ( bytes == null || bytes.length <= 0 )
-        {
-            return null;
-        }
-        ByteBuffer buffer= ByteBuffer.wrap( bytes );
-        return Long.valueOf( buffer.getLong() );
-    }
-
-    //TODO RC move to OptionUtils
-    /**
-     * Converts an etag value to a Long containing the hexadecimal representation.
-     * Hexadecimal values a-f will be lower case.
-     * @param longValue The etag value.
-     * @return The string containing the hexadecimal representation.
-     */
-    public static byte[] toBytes( Long longValue )
-    {
-        if ( longValue == null )
-        {
-            return OptionUtils.emptyBytes;
-        }
-        ByteBuffer byteBuffer= ByteBuffer.allocate( Long.BYTES );
-        byteBuffer.putLong( longValue );
-        byteBuffer.flip();
-        return byteBuffer.array();
-
-    }
-
-    //TODO RC move to OptionUtils
-    /**
-     * Converts a hexadecimal representation of an etag to byte array.
-     * @param hexString representing the etag value. When empty a null value is returned. 
-     * @return the byte array or null when given String is null.
-     * @throws InvalidETagException when String does not contain a convertible etag value.
-     */
-    public static byte[] toBytes( String hexString ) throws InvalidETagException
-    {
-        if ( hexString == null || hexString.length() <= 0 )
-        {
-            return OptionUtils.emptyBytes;
-        }
-        else
-        {
-            int length= hexString.length() / 2;
-            if ( length * 2 != hexString.length() )
-            {
-                throw new InvalidETagException( "Given hexString must have even number of characters. The number found: " + hexString.length() );
-            }
-            if ( length > 8 )
-            {
-                throw new InvalidETagException( "ETag length invalid, must be between 0..8 bytes. Given length is: " + length );
-            }
-            byte[] bytes= new byte [length];
-            try
-            {
-                for ( int i= 0; i < bytes.length; i++ )
-                {
-                    int index= i * 2;
-                    int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
-                    bytes[i]= (byte) v;
-                }
-            }
-            catch ( NumberFormatException e )
-            {
-                throw new InvalidETagException( "Cannot parse ETag value as hexadecimal: " + hexString );
-            }
-            return bytes;
-        }
     }
 }

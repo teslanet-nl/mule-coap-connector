@@ -87,6 +87,25 @@ public class OtherOptionAttribute
     }
 
     /**
+     * Gets the value as long.
+     * @return long containing the value.
+     */
+    public long getLong()
+    {
+        return OptionUtils.toLong( value );
+    }
+
+    /**
+     * Gets the string with containing the hexadecimal representation of the value.
+     * Hexadecimal values a-f will be lower case.
+     * @return The string containing the hexadecimal representation or empty string when the value is empty.
+     */
+    public String getHexString()
+    {
+        return OptionUtils.toHexString( value );
+    }
+
+    /**
      * Checks if option is critical.
      *
      * @return {@code true} if is option critical, otherwise {@code false}.
