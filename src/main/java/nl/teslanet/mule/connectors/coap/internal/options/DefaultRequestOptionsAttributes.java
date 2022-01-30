@@ -122,11 +122,11 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         }
         if ( optionSet.hasSize1() )
         {
-            size1= optionSet.getSize1();
+            requestSize= optionSet.getSize1();
         }
         if ( optionSet.hasSize2() && optionSet.getSize2() == 0 )
         {
-            requestSize2= true;
+            provideResponseSize= true;
         }
         if ( optionSet.hasObserve() )
         {

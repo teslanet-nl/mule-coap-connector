@@ -151,6 +151,33 @@ public class ResponseOptions
     private List< QueryParam > locationQuery= null;
 
     /**
+     * RFC 7959: In a response carrying a Block2 Option, to indicate the current
+     *  estimate the server has of the total size of the resource
+     * representation, measured in bytes ("size indication").
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "Indication of the response payload size in [Bytes]." )
+    private Integer responseSize= null;
+
+    /**
+     * RFC 7959: The Size1 Option may be used: In a 4.13 response, to indicate the maximum size that would have
+     * been acceptable, measured in bytes.
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "To indicate (in a 4.13 response) the maximum payload size that would have been acceptable, in [Bytes]." )
+    private Integer acceptableRequestSize= null;
+
+    /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
      * message and that it contains a compressed COSE object.
      * 
@@ -272,5 +299,37 @@ public class ResponseOptions
     public void setLocationQuery( List< QueryParam > locationQuery )
     {
         this.locationQuery= locationQuery;
+    }
+
+    /**
+     * @return the responseSize
+     */
+    public Integer getResponseSize()
+    {
+        return responseSize;
+    }
+
+    /**
+     * @param responseSize the responseSize to set
+     */
+    public void setResponseSize( Integer responseSize )
+    {
+        this.responseSize= responseSize;
+    }
+
+    /**
+     * @return the acceptableRequestSize
+     */
+    public Integer getAcceptableRequestSize()
+    {
+        return acceptableRequestSize;
+    }
+
+    /**
+     * @param acceptableRequestSize the acceptableRequestSize to set
+     */
+    public void setAcceptableRequestSize( Integer acceptableRequestSize )
+    {
+        this.acceptableRequestSize= acceptableRequestSize;
     }
 }

@@ -32,7 +32,6 @@ import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
@@ -234,9 +233,8 @@ public class RequestOptions
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "Estimate of the request payload size in [Bytes]." )
-    @DisplayName( value= "Payload size" )
-    private Integer size1= null;
+    @Summary( "Indication of the request payload size in [Bytes]." )
+    private Integer requestSize= null;
 
     /**
      * RFC 7959: In a request, to ask the server to provide a size estimate along
@@ -249,25 +247,8 @@ public class RequestOptions
     @Parameter
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "Request for Size 2 option in the response,\nindicating response payload size in [Bytes]." )
-    @DisplayName( value= "Request response payload size" )
-    private boolean requestSize2= false;
-
-    /**
-     * RFC 7641: When included in a GET request, the Observe Option extends the GET
-     * method so it does not only retrieve a current representation of the
-     * target resource, but also requests the server to add or remove an
-     * entry in the list of observers of the resource depending on the
-     * option value.  
-     * 
-     * @see <a href=
-     *      "https://datatracker.ietf.org/doc/html/rfc7641#section-2">IETF RFC 7641 - 2. The Observe Option</a>
-     */
-    //  inactive, is handled by Californium
-    //    @Parameter
-    //    @Optional
-    //    @Expression(ExpressionSupport.SUPPORTED)
-    //    private Integer observe= null;
+    @Summary( "Ask server to provide for a Size2 option in the response,\nindicating the response payload size." )
+    private boolean provideResponseSize= false;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
@@ -397,17 +378,17 @@ public class RequestOptions
     /**
      * @return True when Size2 option is requested, otherwise false.
      */
-    public boolean isRequestSize2()
+    public boolean isProvideResponseSize()
     {
-        return requestSize2;
+        return provideResponseSize;
     }
 
     /**
-     * @param requestSize2 The requestSize2 option to set.
+     * @param provideResponseSize The provideResponseSize option to set.
      */
-    public void setRequestSize2( boolean requestSize2 )
+    public void setProvideResponseSize( boolean provideResponseSize )
     {
-        this.requestSize2= requestSize2;
+        this.provideResponseSize= provideResponseSize;
     }
 
     /**
@@ -477,17 +458,17 @@ public class RequestOptions
     /**
      * @return The Size1 option if present, otherwise null.
      */
-    public Integer getSize1()
+    public Integer getRequestSize()
     {
-        return size1;
+        return requestSize;
     }
 
     /**
      * @param size1 The size1 option to set.
      */
-    public void setSize1( Integer size1 )
+    public void setRequestSize( Integer size1 )
     {
-        this.size1= size1;
+        this.requestSize= size1;
     }
 
     /**

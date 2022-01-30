@@ -57,13 +57,13 @@ public class RequestOptionsAttributes
 
     protected Integer accept= null;
 
-    protected boolean requestSize2= false;
+    protected boolean provideResponseSize= false;
 
     protected String proxyUri= null;
 
     protected String proxyScheme= null;
 
-    protected Integer size1= null;
+    protected Integer requestSize= null;
 
     protected Integer observe= null;
 
@@ -156,9 +156,9 @@ public class RequestOptionsAttributes
     /**
      * @return The true when Size2 option is requested, otherwise null.
      */
-    public boolean isRequestSize2()
+    public boolean isProvideResponseSize()
     {
-        return requestSize2;
+        return provideResponseSize;
     }
 
     /**
@@ -180,9 +180,9 @@ public class RequestOptionsAttributes
     /**
      * @return The Size1 option if present, otherwise null.
      */
-    public Integer getSize1()
+    public Integer getRquestSize()
     {
-        return size1;
+        return requestSize;
     }
 
     /**

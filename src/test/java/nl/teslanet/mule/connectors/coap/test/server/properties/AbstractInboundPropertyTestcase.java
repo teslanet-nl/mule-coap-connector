@@ -50,46 +50,48 @@ import org.eclipse.californium.core.coap.Request;
  * Test for inbound properties
  *
  */
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public abstract class AbstractInboundPropertyTestcase extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}, path= {2}")
+    @Parameters( name= "Request= {0}, path= {2}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
                 { Code.GET, 5683, "/service/get_me?first=1&second=2", true },
                 { Code.PUT, 5683, "/service/put_me?first=1&second=2", false },
                 { Code.POST, 5683, "/service/post_me?first=1&second=2", false },
-                { Code.DELETE, 5683, "/service/delete_me?first=1&second=2", true }, } );
+                { Code.DELETE, 5683, "/service/delete_me?first=1&second=2", true }, }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
      * Test server port
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public int port;
 
     /**
     * Test resource to call
     */
-    @Parameter(2)
+    @Parameter( 2 )
     public String resourcePath;
 
     /**
      * True when request is not supposed to have a payload, but does
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public boolean unintendedPayload;
 
     /* (non-Javadoc)
@@ -131,6 +133,16 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     abstract protected Object getExpectedPropertyValue() throws Exception;
 
     /**
+     * Replacement option value needed for the test.
+     * @return the replacement option value
+     * @throws Exception 
+     */
+    protected Object getReplacementValue() throws Exception
+    {
+        return null;
+    }
+
+    /**
      * Override to specify whether the option value is a byte array
      * @return {@code true} when the option value is a byte array
      */
@@ -142,10 +154,11 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     /**
      * Create spy to assert the inbound property 
      * @param propertyName name of the property to inspect
+     * @throws Exception 
      */
-    private MuleEventSpy spyMessage( final String propertyName )
+    private MuleEventSpy spyMessage() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( propertyName, propertyName, null );
+        MuleEventSpy spy= new MuleEventSpy( getPropertyName(), getPropertyName(), getReplacementValue() );
         spy.clear();
         return spy;
     }
@@ -173,22 +186,22 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test( timeout=20000L)
+    @Test( timeout= 20000L )
     public void testInbound() throws Exception
     {
-        MuleEventSpy spy= spyMessage( getPropertyName() );
+        MuleEventSpy spy= spyMessage();
 
         Request request= new Request( requestCode );
         //set URI explicitly otherwise uri-options could get overwritten
         request.setURI( client.getURI() );
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
-        
-        client.setTimeout( 200000L );
-        
+
+        client.setTimeout( 20000L );
+
         CoapResponse response= client.advanced( request );
 
-        assertNotNull( "get gave no response", response );
+        assertNotNull( "no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
         assertSpy( spy, getExpectedPropertyValue() );
     }

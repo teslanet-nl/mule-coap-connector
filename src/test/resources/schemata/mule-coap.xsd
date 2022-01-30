@@ -1256,8 +1256,8 @@
         <xs:attribute type="mule:expressionString" use="optional" name="proxyUri"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="uriHost"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="uriPort"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="size1"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requestSize2"></xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize"></xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="provideResponseSize"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1641,6 +1641,8 @@
         <xs:attribute type="xs:string" use="optional" name="etag"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="locationPath"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="locationQuery"></xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="responseSize"></xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="acceptableRequestSize"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherResponseOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1892,5 +1894,3 @@
     </xs:union>
   </xs:simpleType>
 </xs:schema>
-
-

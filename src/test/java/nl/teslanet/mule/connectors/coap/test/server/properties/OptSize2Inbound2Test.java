@@ -51,7 +51,13 @@ public class OptSize2Inbound2Test extends AbstractInboundPropertyTestcase
         return new Boolean( false );
     }
     
-    /* (non-Javadoc)
+    @Override
+    protected Object getReplacementValue() throws Exception
+    {
+        return Integer.valueOf( 1024 );
+    }
+
+   /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
      */
     @Override

@@ -961,10 +961,10 @@
                 <parameter name="uriPort">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="size1">
+                <parameter name="requestSize">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestSize2">
+                <parameter name="provideResponseSize">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="otherRequestOptions">
@@ -988,6 +988,12 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="locationQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseSize">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="acceptableRequestSize">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="otherResponseOptions">

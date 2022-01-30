@@ -22,18 +22,13 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-import org.junit.Ignore;
 
 /**
- * Test outbound size2 property, as Stringable
+ * Test outbound size2 property, as String
  *
  */
-//TODO manual size1 needed?
-@Ignore
 public class OptSize2Outbound3Test extends AbstractOutboundPropertiesTestCase
 {
-    private final int value= 133;
-
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
      */
@@ -49,7 +44,7 @@ public class OptSize2Outbound3Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return new Stringable( new Integer( value ) );
+        return Boolean.FALSE;
     }
 
     /* (non-Javadoc)
@@ -58,6 +53,6 @@ public class OptSize2Outbound3Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptSize2Strategy( value );
+        return new OptSize2Strategy( null );
     }
 }

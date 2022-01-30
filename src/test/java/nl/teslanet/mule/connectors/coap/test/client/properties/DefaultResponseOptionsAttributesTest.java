@@ -38,6 +38,7 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
@@ -49,6 +50,33 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsA
  */
 public class DefaultResponseOptionsAttributesTest
 {
+    @Test
+    public void testOptionContentFormat() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        Integer format= 41;
+        set.setContentFormat( format );
+
+        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+
+        Integer attr= attributes.getContentFormat();
+
+        assertEquals( "coap.opt.content_format: wrong value", format, attr );
+    }
+
+    @Test
+    public void testOptionMaxAge() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        Long maxage= new Long( 120 );
+        set.setMaxAge( maxage );
+
+        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+
+        Long attr= attributes.getMaxAge();
+
+        assertEquals( "coap.opt.max_age: wrong value", maxage, attr );
+    }
 
     @Test
     public void testOptionSetETag() throws InvalidETagException, InternalInvalidOptionValueException
@@ -91,73 +119,28 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionContentFormat() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionLocationQuery() throws InvalidETagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer format= 41;
-        set.setContentFormat( format );
+        String[] keys= { "this", "is", "some", "some" };
+        String[] values= { null, "really", "locationquery", "also" };
+        for ( int i= 0; i < keys.length; i++ )
+        {
+            set.addLocationQuery( keys[i] + ( values[i] == null ? "" : "=" + values[i] ) );
+        }
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
 
-        Integer attr= attributes.getContentFormat();
+        List< QueryParamAttribute > query= attributes.getLocationQuery();
 
-        assertEquals( "coap.opt.content_format: wrong value", format, attr );
-    }
-
-    @Test
-    public void testOptionMaxAge() throws InvalidETagException, InternalInvalidOptionValueException
-    {
-        OptionSet set= new OptionSet();
-        Long maxage= new Long( 120 );
-        set.setMaxAge( maxage );
-
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
-
-        Long attr= attributes.getMaxAge();
-
-        assertEquals( "coap.opt.max_age: wrong value", maxage, attr );
-    }
-
-    //TODO RC
-//    @Test
-//    public void testOptionLocationQuery() throws InvalidETagException, InternalInvalidOptionValueException
-//    {
-//        //TODO RC add multiple values
-//        OptionSet set= new OptionSet();
-//        String[] values= { "this", "is", "some=locationquery" };
-//        ArrayList< DefaultQueryParamAttribute > expected= new ArrayList<>();
-//        for ( String param : values )
-//        {
-//            expected.add( new DefaultQueryParamAttribute( param ) );
-//            set.addLocationQuery( param );
-//
-//        }
-//
-//        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
-//
-//        MultiMap< String, String > query= attributes.getLocationQuery();
-//
-//        int index= 0;
-//        for ( DefaultQueryParamAttribute expect : expected )
-//        {
-//            assertTrue( "coap.opt.location_query.list: wrong query", query.containsKey( expect.getKey() ));
-//            assertEquals( "coap.opt.location_query.list: wrong value", expect.getValue(), query.get( expected.get( index ).getValue()  ));
-//            index++;
-//        }
-//    }
-
-    @Test
-    public void testOptionSize1() throws InvalidETagException, InternalInvalidOptionValueException
-    {
-        OptionSet set= new OptionSet();
-        Integer size= new Integer( 120 );
-        set.setSize1( size );
-
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
-
-        Integer attr= attributes.getSize1();
-
-        assertEquals( "coap.opt.size1: wrong value", size, attr );
+        int index= 0;
+        assertEquals( "coap.opt.location_query.list: wrong size", keys.length, query.size() );
+        for ( QueryParamAttribute param : query )
+        {
+            assertEquals( "coap.opt.location_query.list: wrong key", keys[index], param.getKey() );
+            assertEquals( "coap.opt.location_query.list: wrong key", values[index], param.getValue() );
+            index++;
+        }
     }
 
     @Test
@@ -169,9 +152,23 @@ public class DefaultResponseOptionsAttributesTest
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
 
-        Integer attr= attributes.getSize2();
+        Integer attr= attributes.getResponseSize();
 
         assertEquals( "coap.opt.size2: wrong value", size, attr );
+    }
+
+    @Test
+    public void testOptionSize1() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        Integer size= new Integer( 120 );
+        set.setSize1( size );
+
+        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+
+        Integer attr= attributes.getAcceptableRequestSize();
+
+        assertEquals( "coap.opt.size1: wrong value", size, attr );
     }
 
     @Test

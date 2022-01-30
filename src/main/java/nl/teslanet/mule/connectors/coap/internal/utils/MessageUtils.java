@@ -126,7 +126,7 @@ public class MessageUtils
         {
             optionSet.setAccept( requestOptions.getAccept() );
         }
-        if ( requestOptions.isRequestSize2() )
+        if ( requestOptions.isProvideResponseSize() )
         {
             optionSet.setSize2( 0 );
         }
@@ -142,9 +142,9 @@ public class MessageUtils
         {
             optionSet.setProxyUri( requestOptions.getProxyUri() );
         }
-        if ( requestOptions.getSize1() != null )
+        if ( requestOptions.getRequestSize() != null )
         {
-            optionSet.setSize1( requestOptions.getSize1() );
+            optionSet.setSize1( requestOptions.getRequestSize() );
         }
         if ( requestOptions.getProxyScheme() != null )
         {
@@ -199,6 +199,14 @@ public class MessageUtils
             {
                 optionSet.addLocationQuery( param.toString() );
             }
+        }
+        if ( responseOptions.getResponseSize() != null )
+        {
+            optionSet.setSize2( responseOptions.getResponseSize() );
+        }
+        if ( responseOptions.getAcceptableRequestSize() != null )
+        {
+            optionSet.setSize1( responseOptions.getAcceptableRequestSize() );
         }
         for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
         {
@@ -287,7 +295,7 @@ public class MessageUtils
         //        }
         //        else
         //        {
-        
+
         //do transform using Mule's transformers.
         TypedValue< Object > value= TypedValue.of( toConvert );
         return (byte[]) transformationService.transform( value.getValue(), value.getDataType(), BYTE_ARRAY );

@@ -89,11 +89,11 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
         }
         if ( optionSet.hasSize1() )
         {
-            size1= optionSet.getSize1();
+            acceptableRequestSize= optionSet.getSize1();
         }
         if ( optionSet.hasSize2() )
         {
-            size2= optionSet.getSize2();
+            responseSize= optionSet.getSize2();
         }
         if ( optionSet.hasObserve() )
         {

@@ -79,6 +79,6 @@ public class OptSize1Inbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getSize1();
+        return attributes.getOptions().getAcceptableRequestSize();
     }
 }

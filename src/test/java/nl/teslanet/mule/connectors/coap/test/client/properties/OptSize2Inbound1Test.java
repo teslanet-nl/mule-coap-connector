@@ -75,12 +75,12 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptSize2Strategy( getValue() );
+        return new OptSize2Strategy( 0 );
     }
 
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getSize2();
+        return attributes.getOptions().getResponseSize();
     }
 }

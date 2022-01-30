@@ -44,9 +44,9 @@ public class ResponseOptionsAttributes
 
     protected List< QueryParamAttribute > locationQuery= null;
 
-    protected Integer size2= null;
+    protected Integer responseSize= null;
 
-    protected Integer size1= null;
+    protected Integer acceptableRequestSize= null;
 
     protected Integer observe= null;
 
@@ -95,17 +95,17 @@ public class ResponseOptionsAttributes
     /**
      * @return The size2 if present, otherwise null.
      */
-    public Integer getSize2()
+    public Integer getResponseSize()
     {
-        return size2;
+        return responseSize;
     }
 
     /**
      * @return The size1 option if present, otherwise null.
      */
-    public Integer getSize1()
+    public Integer getAcceptableRequestSize()
     {
-        return size1;
+        return acceptableRequestSize;
     }
 
     /**

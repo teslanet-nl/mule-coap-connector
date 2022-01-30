@@ -40,6 +40,7 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
@@ -147,7 +148,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetETagMultiple() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionETagMultiple() throws InvalidETagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -208,7 +209,6 @@ public class DefaultRequestOptionsAttributesTest
         String value1= "this";
         String value2= "is";
         String value3= "some path";
-        //String total= "this/is";
 
         set.addUriPath( value1 );
         set.addUriPath( value2 );
@@ -239,31 +239,30 @@ public class DefaultRequestOptionsAttributesTest
         assertEquals( "coap.opt.content_format: wrong value", format, attr );
     }
 
-//    @Test
-//    public void testOptionSetUriQuery() throws InvalidETagException, InternalInvalidOptionValueException
-//    {
-//        //TODO RC add multiple values
-//        OptionSet set= new OptionSet();
-//        String[] values= { "this", "is", "some=locationquery" };
-//        ArrayList< DefaultQueryParamAttribute > expected= new ArrayList<>();
-//        for ( String param : values )
-//        {
-//            expected.add( new DefaultQueryParamAttribute( param ) );
-//            set.addUriQuery( param );
-//        }
-//
-//        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
-//
-//        MultiMap< String, String > query= attributes.getUriQuery();
-//
-//        int index= 0;
-//        for ( DefaultQueryParamAttribute expect : expected )
-//        {
-//            assertTrue( "coap.opt.location_query.list: wrong query", query.containsKey( expect.getKey() ));
-//            assertEquals( "coap.opt.location_query.list: wrong value", expect.getValue(), query.get( expected.get( index ).getValue()  ));
-//            index++;
-//        }
-//    }
+    @Test
+    public void testOptionSetUriQuery() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        String[] keys= { "this", "is", "some", "some" };
+        String[] values= { null, "really", "locationquery", "also" };
+        for ( int i= 0; i < keys.length; i++ )
+        {
+            set.addUriQuery( keys[i] + ( values[i] == null ? "" : "=" + values[i] ) );
+        }
+
+        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+
+        List< QueryParamAttribute > query= attributes.getUriQuery();
+
+        int index= 0;
+        assertEquals( "coap.opt.uri_query.list: wrong size", keys.length, query.size() );
+        for ( QueryParamAttribute param : query )
+        {
+            assertEquals( "coap.opt.uri_query.list: wrong key", keys[index], param.getKey() );
+            assertEquals( "coap.opt.uri_query.list: wrong key", values[index], param.getValue() );
+            index++;
+        }
+    }
 
     @Test
     public void testOptionAccept() throws InvalidETagException, InternalInvalidOptionValueException
@@ -277,6 +276,20 @@ public class DefaultRequestOptionsAttributesTest
         Integer attr= attributes.getAccept();
 
         assertEquals( "coap.opt.accept: wrong value", format, attr );
+    }
+
+    @Test
+    public void testOptionSize2() throws InvalidETagException, InternalInvalidOptionValueException
+    {
+        OptionSet set= new OptionSet();
+        Integer size= new Integer( 0 );
+        set.setSize2( size );
+
+        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+
+        boolean attr= attributes.isProvideResponseSize();
+
+        assertTrue( "coap.opt.size2: wrong value", attr );
     }
 
     @Test
@@ -316,23 +329,9 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        Integer attr= attributes.getSize1();
+        Integer attr= attributes.getRquestSize();
 
         assertEquals( "coap.opt.size1: wrong value", size, attr );
-    }
-
-    @Test
-    public void testOptionSize2() throws InvalidETagException, InternalInvalidOptionValueException
-    {
-        OptionSet set= new OptionSet();
-        Integer size= new Integer( 0 );
-        set.setSize2( size );
-
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
-
-        boolean attr= attributes.isRequestSize2();
-
-        assertTrue( "coap.opt.size2: wrong value", attr );
     }
 
     @Test

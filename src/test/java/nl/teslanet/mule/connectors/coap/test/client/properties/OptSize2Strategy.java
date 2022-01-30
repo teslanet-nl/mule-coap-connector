@@ -32,7 +32,7 @@ import org.eclipse.californium.core.coap.Response;
  */
 public class OptSize2Strategy implements OptionStrategy
 {
-    private int value;
+    private Integer value;
 
     /**
      * Constructor 
