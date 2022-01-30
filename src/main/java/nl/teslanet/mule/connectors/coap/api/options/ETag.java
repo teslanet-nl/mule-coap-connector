@@ -174,9 +174,9 @@ public final class ETag implements Comparable< ETag >
 
     /**
      * Convenience method to create a list of etags form a list of byte arrays.
-     * @param bytesList The List of Byte array to make a list of etags from.
+     * @param bytesList The List of Byte arrays to make a list of etags from.
      * @return The list of etags. 
-     * @throws InvalidETagException when etag could not be created from bytes
+     * @throws InvalidETagException when the etag could not be created from bytes
      */
     public static List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
     {

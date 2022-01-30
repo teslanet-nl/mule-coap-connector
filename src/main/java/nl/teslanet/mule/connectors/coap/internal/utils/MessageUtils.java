@@ -48,9 +48,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
-import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
-import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
-import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
+import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
@@ -195,7 +193,7 @@ public class MessageUtils
         }
         if ( responseOptions.getLocationQuery() != null )
         {
-            for ( QueryParam param : responseOptions.getLocationQuery() )
+            for ( AbstractQueryParam param : responseOptions.getLocationQuery() )
             {
                 optionSet.addLocationQuery( param.toString() );
             }
@@ -453,12 +451,12 @@ public class MessageUtils
      * @param queryParams The query parameters.
      * @return The string representation for usage in an URI.
      */
-    public static String queryString( List< QueryParamConfig > defaultQueryParams, List< QueryParam > queryParams )
+    public static String queryString( List< ? extends AbstractQueryParam > defaultQueryParams, List< ? extends AbstractQueryParam > queryParams )
     {
         if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
         StringWriter writer= new StringWriter();
         boolean first= true;
-        for ( QueryParamConfig param : defaultQueryParams )
+        for ( AbstractQueryParam param : defaultQueryParams )
         {
             if ( first )
             {
@@ -470,46 +468,7 @@ public class MessageUtils
             }
             writer.append( param.toString() );
         }
-        for ( QueryParam param : queryParams )
-        {
-            if ( first )
-            {
-                first= false;
-            }
-            else
-            {
-                writer.append( "&" );
-            }
-            writer.append( param.toString() );
-        }
-        return writer.toString();
-    }
-
-    /**
-     * Construct string representation of query parameters, merged with default parameters.
-     * The string conforms to URI format,
-     * @param defaultQueryParams The default parameters.
-     * @param queryParams The query parameters.
-     * @return The string representation for usage in an URI.
-     */
-    public static String queryString2( List< QueryParamConfig > defaultQueryParams, List< QueryParamConfig > queryParams )
-    {
-        if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
-        StringWriter writer= new StringWriter();
-        boolean first= true;
-        for ( QueryParamConfig param : defaultQueryParams )
-        {
-            if ( first )
-            {
-                first= false;
-            }
-            else
-            {
-                writer.append( "&" );
-            }
-            writer.append( param.toString() );
-        }
-        for ( QueryParamConfig param : queryParams )
+        for ( AbstractQueryParam param : queryParams )
         {
             if ( first )
             {
@@ -530,7 +489,7 @@ public class MessageUtils
      * @param locationQuery The optional list of query parameters.
      * @return The Uri string.
      */
-    public static String uriString( List< String > path, List< QueryParamAttribute > query )
+    public static String uriString( List< String > path, List< ? extends AbstractQueryParam > query )
     {
         if ( ( path == null || path.isEmpty() ) && ( query == null || query.isEmpty() ) ) return null;
         StringWriter writer= new StringWriter();
@@ -554,7 +513,7 @@ public class MessageUtils
         first= true;
         if ( query != null )
         {
-            for ( QueryParamAttribute param : query )
+            for ( AbstractQueryParam param : query )
             {
                 if ( first )
                 {

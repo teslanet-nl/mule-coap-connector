@@ -103,7 +103,7 @@ public class RequestOptions
     @Content( primary= false )
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary(
-        "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values be set."
+        "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values can be set."
     )
     private TypedValue< Object > etags= null;
 

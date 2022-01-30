@@ -939,7 +939,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         String host= actualHost( uriBuilder.getHost() );
         Integer port= actualPort( uriBuilder.getPort() );
         String path= actualPath( uriBuilder.getPath() );
-        String query= MessageUtils.queryString2( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParamConfigs() );
+        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParamConfigs() );
         URI uri;
         try
         {
