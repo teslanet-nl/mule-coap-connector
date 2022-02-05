@@ -168,61 +168,6 @@ public class RequestOptions
     private boolean ifNoneMatch= false;
 
     /**
-     * RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is
-     * constructed as follows: a CoAP URI is constructed from the Uri-* options as
-     * defined in Section 6.5. In the resulting URI, the initial scheme up to, but
-     * not including, the following colon is then replaced by the content of the
-     * Proxy-Scheme Option.
-     * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Proxy-Scheme Option is used to make a request to a forward-proxy." )
-    private String proxyScheme= null;
-
-    /**
-     * RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.
-     * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 -
-     *      5.10.2. Proxy-Uri and Proxy-Scheme</a>
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Proxy-Uri Option is used to make a request to a forward-proxy." )
-    private String proxyUri= null;
-
-    /**
-     * RFC 7252: The Uri-Host Option specifies the Internet host of the resource
-      being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.
-     * 
-     * @see <a href=
-     *      "https://datatracker.ietf.org/doc/html/rfc7252/#section-5.10.1">IETF RFC 7252 - 5.10.2. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Uri-Host Option specifies the Internet host of the resource being requested." )
-    private String uriHost= null;
-
-    /**
-     * RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource.
-     * Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.
-     * 
-     * @see <a href=
-     *      "https://datatracker.ietf.org/doc/html/rfc7252/#section-5.10.1">IETF RFC 7252 - 5.10.2. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Uri-Port Option specifies the transport-layer port number of the resource" )
-    private Integer uriPort= null;
-
-    /**
      * RFC 7959: In a request carrying a Block1 Option, to indicate the current
       estimate the client has of the total size of the resource
       representation, measured in bytes ("size indication")
@@ -389,70 +334,6 @@ public class RequestOptions
     public void setProvideResponseSize( boolean provideResponseSize )
     {
         this.provideResponseSize= provideResponseSize;
-    }
-
-    /**
-     * @return the proxyUri
-     */
-    public String getProxyUri()
-    {
-        return proxyUri;
-    }
-
-    /**
-     * @param proxyUri the proxyUri to set
-     */
-    public void setProxyUri( String proxyUri )
-    {
-        this.proxyUri= proxyUri;
-    }
-
-    /**
-     * @return the proxyScheme
-     */
-    public String getProxyScheme()
-    {
-        return proxyScheme;
-    }
-
-    /**
-     * @param proxyScheme the proxyScheme to set
-     */
-    public void setProxyScheme( String proxyScheme )
-    {
-        this.proxyScheme= proxyScheme;
-    }
-
-    /**
-     * @return the uriHost
-     */
-    public String getUriHost()
-    {
-        return uriHost;
-    }
-
-    /**
-     * @param uriHost the uriHost to set
-     */
-    public void setUriHost( String uriHost )
-    {
-        this.uriHost= uriHost;
-    }
-
-    /**
-     * @return the uriPort
-     */
-    public Integer getUriPort()
-    {
-        return uriPort;
-    }
-
-    /**
-     * @param uriPort the uriPort to set
-     */
-    public void setUriPort( Integer uriPort )
-    {
-        this.uriPort= uriPort;
     }
 
     /**

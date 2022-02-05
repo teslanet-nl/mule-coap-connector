@@ -42,9 +42,9 @@ public abstract class AbstractResourceRequestBuilder extends AbstractRequestBuil
     * The path of the resource to access.
     */
     @Parameter
-    @Placement(order = 51)
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
+    @Placement( order= 51 )
     @Example( value= "/some/resource/path" )
     @Summary( "The path of the resource to access." )
     private String path= null;

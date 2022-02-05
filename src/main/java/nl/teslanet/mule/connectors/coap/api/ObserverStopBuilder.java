@@ -22,46 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
-
-import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-
 /**
  * The request parameters for stopping an CoAP observer.
  *
  */
-public class ObserverStopBuilder extends AbstractQueryBuilder
+public class ObserverStopBuilder extends AbstractResourceRequestBuilder
 {
-    /**
-    * The path of the resource to access.
-    */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Placement(order = 51)
-    @Example( value= "/some/resource/path" )
-    @Summary( "The path of the resource to access." )
-    private String path= null;
-
-    /**
-     * @return the path
-     */
-    public String getPath()
-    {
-        return path;
-    }
-
-    /**
-     * @param path the path to set
-     */
-    public void setPath( String path )
-    {
-        this.path= path;
-    }
+    //TODO RC check confirmable processing
 }

@@ -68,7 +68,7 @@ public class OptEtagListOutbound2mTest extends AbstractOutboundPropertiesTestCas
         LinkedList< byte[] > propertyValue= new LinkedList< byte[] >();
         for ( ETag value : getValue() )
         {
-            propertyValue.add( value.getBytes() );
+            propertyValue.add( value.getValue() );
         }
         return propertyValue;
     }

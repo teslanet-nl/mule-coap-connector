@@ -71,7 +71,7 @@ public class RequestBuilder extends AbstractResourceRequestBuilder
     @Parameter
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( tab= Placement.ADVANCED_TAB )
+    @Placement( order = 100, tab= Placement.ADVANCED_TAB )
     @Summary( "When true the payload will also be added to the request, when not appropriate for the CoAP message-type (i.e. GET, DELETE)." )
     private boolean forcePayload= false;
 

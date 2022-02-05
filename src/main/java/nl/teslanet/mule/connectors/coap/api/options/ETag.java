@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 
 
 /**
@@ -55,7 +56,7 @@ public final class ETag implements Comparable< ETag >
      */
     public ETag()
     {
-        this.value= OptionUtils.emptyBytes;
+        this.value= OptionUtils.EMPTY_BYTES;
     }
 
     /**
@@ -67,7 +68,7 @@ public final class ETag implements Comparable< ETag >
     {
         if ( bytes == null || bytes.length == 0 )
         {
-            this.value= OptionUtils.emptyBytes;
+            this.value= OptionUtils.EMPTY_BYTES;
         }
         else if ( bytes.length > 8 )
         {
@@ -89,7 +90,14 @@ public final class ETag implements Comparable< ETag >
      */
     public ETag( String hexString ) throws InvalidETagException
     {
-        this.value= OptionUtils.toBytes( hexString );
+        try
+        {
+            this.value= OptionUtils.toBytes( hexString, 8 );
+        }
+        catch ( InvalidOptionValueException e )
+        {
+            throw new InvalidETagException( "Cannot parse hexadecimal etag value: " + hexString );
+        }
     }
 
     /**
@@ -102,31 +110,40 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
-     * Gets the etag value as byte array.
+     * Get the etag value as byte array.
      * Cf does clone the byte array also, however not cloning here would make the class mutable.
      * This is considered acceptable becaus etags are smaal objects.
      * @return byte array containing the etag value.
      */
-    public byte[] getBytes()
+    public byte[] getValue()
     {
         return value.clone();
     }
 
     /**
-     * Gets the etag value as long.
+     * Get the etag value as long.
      * @return Long containing the etag value.
      */
-    public long getLong()
+    public long getValueAsNumber()
     {
         return OptionUtils.toLong( value );
     }
 
     /**
-     * Gets the string with containing the hexadecimal representation.
+     * Get etag value as UTF-8 string.
+     * @return The UTF-8 string interpretation.
+     */
+    public String getValueAsString()
+    {
+        return OptionUtils.toString( value );
+    }
+
+    /**
+     * Get the etag value as hexadecimal string.
      * Hexadecimal values a-f will be lower case.
      * @return The string containing the hexadecimal representation or empty string when etag has no value.
      */
-    public String getHexString()
+    public String getValueAsHexString()
     {
         return OptionUtils.toHexString( value );
     }
@@ -137,7 +154,7 @@ public final class ETag implements Comparable< ETag >
     @Override
     public String toString()
     {
-        return "ETag { " + getHexString() + " }";
+        return "ETag { " + getValueAsHexString() + " }";
     }
 
     /**

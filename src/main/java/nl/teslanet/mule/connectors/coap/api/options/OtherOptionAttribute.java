@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -38,7 +39,6 @@ public class OtherOptionAttribute
      */
     protected final int number;
 
-    //TODO RC to inputstream
     /**
      * The value of the other option.
      */
@@ -51,7 +51,7 @@ public class OtherOptionAttribute
     {
         super();
         this.number= 0;
-        this.value= OptionUtils.emptyBytes;
+        this.value= OptionUtils.EMPTY_BYTES;
     }
 
     /**
@@ -81,28 +81,37 @@ public class OtherOptionAttribute
      *
      * @return The option value if any, otherwise null.
      */
-    public byte[] getValue()
+    public InputStream getValue()
     {
-        return value;
+        return OptionUtils.toInputStream( value );
     }
 
     /**
-     * Gets the value as long.
+     * Get the value as number.
      * @return long containing the value.
      */
-    public long getLong()
+    public long getValueAsNumber()
     {
         return OptionUtils.toLong( value );
     }
 
     /**
-     * Gets the string with containing the hexadecimal representation of the value.
+     * Get the option value as hexadecimal string.
      * Hexadecimal values a-f will be lower case.
      * @return The string containing the hexadecimal representation or empty string when the value is empty.
      */
-    public String getHexString()
+    public String getValueAsHexString()
     {
         return OptionUtils.toHexString( value );
+    }
+
+    /**
+     * Get value as UTF-8 string.
+     * @return The UTF-8 string interpretation.
+     */
+    public String getValueAsString()
+    {
+        return OptionUtils.toString( value );
     }
 
     /**
@@ -141,7 +150,7 @@ public class OtherOptionAttribute
      */
     public boolean isEmpty()
     {
-        return( getValue().length == 0 );
+        return( value.length == 0 );
     }
 
     /**
@@ -152,8 +161,8 @@ public class OtherOptionAttribute
     {
         final int prime= 31;
         int result= 1;
-        result= prime * result + Arrays.hashCode( getValue() );
-        result= prime * result + Objects.hash( getNumber() );
+        result= prime * result + Arrays.hashCode( value );
+        result= prime * result + Objects.hash( number );
         return result;
     }
 
@@ -172,6 +181,6 @@ public class OtherOptionAttribute
             return false;
         }
         OtherOptionAttribute other= (OtherOptionAttribute) obj;
-        return getNumber() == other.getNumber() && Arrays.equals( getValue(), other.getValue() );
+        return getNumber() == other.getNumber() && Arrays.equals( value, other.value );
     }
 }

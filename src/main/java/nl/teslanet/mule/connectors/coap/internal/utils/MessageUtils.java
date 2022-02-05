@@ -87,7 +87,7 @@ public class MessageUtils
                 etags= MessageUtils.toEtagList( requestOptions.getIfMatch(), transformationService );
                 for ( ETag etag : etags )
                 {
-                    optionSet.addIfMatch( etag.getBytes() );
+                    optionSet.addIfMatch( etag.getValue() );
                 }
             }
             catch ( IOException | InvalidETagException e )
@@ -104,7 +104,7 @@ public class MessageUtils
                 for ( ETag etag : etags )
                 {
                     if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
-                    optionSet.addETag( etag.getBytes() );
+                    optionSet.addETag( etag.getValue() );
                 }
             }
             catch ( IOException | InvalidETagException e )
@@ -128,26 +128,28 @@ public class MessageUtils
         {
             optionSet.setSize2( 0 );
         }
-        if ( requestOptions.getUriHost() != null )
-        {
-            optionSet.setUriHost( requestOptions.getUriHost() );
-        }
-        if ( requestOptions.getUriPort() != null )
-        {
-            optionSet.setUriPort( requestOptions.getUriPort() );
-        }
-        if ( requestOptions.getProxyUri() != null )
-        {
-            optionSet.setProxyUri( requestOptions.getProxyUri() );
-        }
+        //TODO RC
+//        if ( requestOptions.getUriHost() != null )
+//        {
+//            optionSet.setUriHost( requestOptions.getUriHost() );
+//        }
+//        if ( requestOptions.getUriPort() != null )
+//        {
+//            optionSet.setUriPort( requestOptions.getUriPort() );
+//        }
+//        if ( requestOptions.getProxyUri() != null )
+//        {
+//            optionSet.setProxyUri( requestOptions.getProxyUri() );
+//        }
         if ( requestOptions.getRequestSize() != null )
         {
             optionSet.setSize1( requestOptions.getRequestSize() );
         }
-        if ( requestOptions.getProxyScheme() != null )
-        {
-            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
-        }
+        //TODO RC
+//        if ( requestOptions.getProxyScheme() != null )
+//        {
+//            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
+//        }
         for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
         {
             try
@@ -177,7 +179,7 @@ public class MessageUtils
         {
             ETag etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
             if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
-            optionSet.addETag( etag.getBytes() );
+            optionSet.addETag( etag.getValue() );
         }
         if ( responseOptions.getContentFormat() != null )
         {
@@ -247,7 +249,7 @@ public class MessageUtils
         }
         else if ( object instanceof ETag )
         {
-            return ( (ETag) object ).getBytes();
+            return ( (ETag) object ).getValue();
         }
         else if ( object instanceof Integer )
         {
@@ -486,8 +488,8 @@ public class MessageUtils
     /**
      * Create UriString from path and query.
      * @param path The optional list of path segements.
-     * @param locationQuery The optional list of query parameters.
-     * @return The Uri string.
+     * @param query The optional list of query parameters.
+     * @return The uri string.
      */
     public static String uriString( List< String > path, List< ? extends AbstractQueryParam > query )
     {

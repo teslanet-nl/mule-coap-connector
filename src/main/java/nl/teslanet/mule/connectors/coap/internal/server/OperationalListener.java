@@ -28,7 +28,7 @@ import java.io.InputStream;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
-import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 
 

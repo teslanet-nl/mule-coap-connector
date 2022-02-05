@@ -65,14 +65,14 @@ public class ETagTest
         ETag etag6= new ETag( etagValue6 );
         ETag etag7= new ETag( etagValue7 );
 
-        assertEquals( "ETag contruction from null String failed", "", etag0.getHexString() );
-        assertEquals( "ETag contruction from null String failed", "", etag1.getHexString() );
-        assertEquals( "ETag contruction from null Byte[] failed", "", etag2.getHexString() );
-        assertEquals( "ETag contruction from null Byte[] failed", "", etag3.getHexString() );
-        assertEquals( "ETag contruction from null Long failed", "", etag4.getHexString() );
-        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag6.getHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag7.getHexString() );
+        assertEquals( "ETag contruction from null String failed", "", etag0.getValueAsHexString() );
+        assertEquals( "ETag contruction from null String failed", "", etag1.getValueAsHexString() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag2.getValueAsHexString() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag3.getValueAsHexString() );
+        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHexString() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHexString() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHexString() );
+        assertEquals( "ETag contruction from empty String failed", "", etag7.getValueAsHexString() );
     }
 
     @Test
@@ -88,10 +88,10 @@ public class ETagTest
         ETag etag3= new ETag( etagValue3 );
         ETag etag4= new ETag( etagValue4 );
 
-        assertTrue( "ETag contruction from String failed", etag1.getHexString().equals( etagValue1 ) );
-        assertTrue( "ETag contruction from Byte[] failed", etag2.getHexString().equals( etagValue1 ) );
-        assertTrue( "ETag contruction from Byte[] failed", etag3.getHexString().equals( "ff" ) );
-        assertTrue( "ETag contruction from Long failed", etag4.getHexString().equals( "ff" ) );
+        assertTrue( "ETag contruction from String failed", etag1.getValueAsHexString().equals( etagValue1 ) );
+        assertTrue( "ETag contruction from Byte[] failed", etag2.getValueAsHexString().equals( etagValue1 ) );
+        assertTrue( "ETag contruction from Byte[] failed", etag3.getValueAsHexString().equals( "ff" ) );
+        assertTrue( "ETag contruction from Long failed", etag4.getValueAsHexString().equals( "ff" ) );
     }
 
     @Test
@@ -170,14 +170,14 @@ public class ETagTest
         ETag etag3= new ETag( etagValue3 );
         ETag etag4= new ETag( etagValue4 );
 
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue0, etag0.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue00, etag00.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue1, etag1.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag2.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag3.getBytes() );
-        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue1, etag4.getBytes() );
-        assertNotEquals( (Object) etagValue1, (Object) etag1.getBytes() );
-        assertNotEquals( (Object) etagValue3, (Object) etag3.getBytes() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue0, etag0.getValue() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue00, etag00.getValue() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue1, etag1.getValue() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag2.getValue() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue3, etag3.getValue() );
+        assertArrayEquals( "ETag.asBytes gives wrong value", etagValue1, etag4.getValue() );
+        assertNotEquals( (Object) etagValue1, (Object) etag1.getValue() );
+        assertNotEquals( (Object) etagValue3, (Object) etag3.getValue() );
     }
 
     @Test
@@ -192,10 +192,10 @@ public class ETagTest
         long hexValue2= 0xafb990L;
         long hexValue3= 0x1122334455667788L;
 
-        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new ETag( etagValue0 ).getLong() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new ETag( etagValue1 ).getLong() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new ETag( etagValue2 ).getLong() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new ETag( etagValue3 ).getLong() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new ETag( etagValue0 ).getValueAsNumber() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new ETag( etagValue1 ).getValueAsNumber() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new ETag( etagValue2 ).getValueAsNumber() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new ETag( etagValue3 ).getValueAsNumber() );
     }
 
     @Test
@@ -210,10 +210,10 @@ public class ETagTest
         String hexValue2= "afb990";
         String hexValue3= "1122334455667788";
 
-        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new ETag( etagValue0 ).getHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new ETag( etagValue1 ).getHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new ETag( etagValue2 ).getHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new ETag( etagValue3 ).getHexString() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new ETag( etagValue0 ).getValueAsHexString() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new ETag( etagValue1 ).getValueAsHexString() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new ETag( etagValue2 ).getValueAsHexString() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new ETag( etagValue3 ).getValueAsHexString() );
     }
 
     @Test
@@ -247,11 +247,11 @@ public class ETagTest
         ETag etag3= ETag.valueOf( etagValue3 );
         ETag etag4= ETag.valueOf( etagValue4 );
 
-        assertTrue( "ETag contruction from null failed", etag1.getHexString().equals( etagValue1 ) );
-        assertTrue( "ETag contruction from String failed", etag1.getHexString().equals( etagValue1 ) );
-        assertTrue( "ETag contruction from Byte[] failed", etag2.getHexString().equals( etagValue1 ) );
-        assertTrue( "ETag contruction from Byte[] failed", etag3.getHexString().equals( "ff" ) );
-        assertTrue( "ETag contruction from Long failed", etag4.getHexString().equals( "ff" ) );
+        assertTrue( "ETag contruction from null failed", etag1.getValueAsHexString().equals( etagValue1 ) );
+        assertTrue( "ETag contruction from String failed", etag1.getValueAsHexString().equals( etagValue1 ) );
+        assertTrue( "ETag contruction from Byte[] failed", etag2.getValueAsHexString().equals( etagValue1 ) );
+        assertTrue( "ETag contruction from Byte[] failed", etag3.getValueAsHexString().equals( "ff" ) );
+        assertTrue( "ETag contruction from Long failed", etag4.getValueAsHexString().equals( "ff" ) );
     }
 
     @Test
@@ -273,14 +273,14 @@ public class ETagTest
         ETag etag6= ETag.valueOf( etagValue6 );
         ETag etag7= ETag.valueOf( etagValue7 );
 
-        assertEquals( "ETag contruction from null failed", "", etag1.getHexString() );
-        assertEquals( "ETag contruction from String failed", "", etag1.getHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", "", etag2.getHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", "", etag3.getHexString() );
-        assertEquals( "ETag contruction from null Long failed", "", etag4.getHexString() );
-        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag6.getHexString() );
-        assertEquals( "ETag contruction from 0 long failed", "", etag7.getHexString() );
+        assertEquals( "ETag contruction from null failed", "", etag1.getValueAsHexString() );
+        assertEquals( "ETag contruction from String failed", "", etag1.getValueAsHexString() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag2.getValueAsHexString() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag3.getValueAsHexString() );
+        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHexString() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHexString() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHexString() );
+        assertEquals( "ETag contruction from 0 long failed", "", etag7.getValueAsHexString() );
     }
 
     @Test

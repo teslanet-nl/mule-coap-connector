@@ -53,7 +53,7 @@ public class OptIfMatchListOutbound2Test extends AbstractOutboundPropertiesTestC
     @Override
     protected Object getOutboundPropertyValue() throws InvalidETagException
     {
-        return getValue().getBytes();
+        return getValue().getValue();
     }
 
     /* (non-Javadoc)

@@ -43,7 +43,7 @@ public abstract class AbstractAddressBuilder
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement(order = 41)
+    @Placement( order= 41 )
     @Summary( "The hostname or ip of the server to access." )
     private String host= null;
 
@@ -53,7 +53,7 @@ public abstract class AbstractAddressBuilder
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement(order = 42)
+    @Placement( order= 42 )
     @Summary( "The port of the server to access." )
     private Integer port= null;
 

@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
-import nl.teslanet.mule.connectors.coap.internal.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
@@ -417,7 +417,7 @@ public class ResourceRegistry
         }
         else
         {
-            return Defs.COAP_URI_ROOTRESOURCE;
+            return Defs.COAP_URI_ROOTRESOURCE_NAME;
         }
     }
 

@@ -20,7 +20,11 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal;
+package nl.teslanet.mule.connectors.coap.api;
+
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -29,13 +33,18 @@ package nl.teslanet.mule.connectors.coap.internal;
  */
 public class Defs
 {
+    /**
+     * CoAP defined character set.
+     */
+    public static final Charset COAP_CHARSET= StandardCharsets.UTF_8;
+
     public static final String COAP_URI_WILDCARD= "*";
 
     public static final String COAP_URI_PATHSEP= "/";
 
-    public static final String COAP_URI_ROOTRESOURCE= "";
+    public static final String COAP_URI_ROOTRESOURCE= COAP_URI_PATHSEP;
 
-    public static final String ENDPOINT_MSG_PREFIX= "CoAP Endpoint { ";
+    public static final String COAP_URI_ROOTRESOURCE_NAME= "";
 
     /**
      * No need to instantiate.

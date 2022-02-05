@@ -68,7 +68,7 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
         LinkedList< String > propertyValue= new LinkedList< String >();
         for ( ETag value : getValue() )
         {
-            propertyValue.add( value.getHexString() );
+            propertyValue.add( value.getValueAsHexString() );
         }
         return propertyValue;
     }

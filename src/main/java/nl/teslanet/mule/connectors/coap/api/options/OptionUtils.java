@@ -23,7 +23,12 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 
 
 /**
@@ -35,7 +40,7 @@ public class OptionUtils
     /**
      * Empty byte array.
      */
-    public static final byte[] emptyBytes= new byte [0];
+    public static final byte[] EMPTY_BYTES= new byte [0];
 
     /**
      * private constructor
@@ -126,7 +131,7 @@ public class OptionUtils
     /**
      * Converts an etag value to a String containing the hexadecimal representation.
      * Hexadecimal values a-f will be lower case.
-     * @param bytes The etag value.
+     * @param bytes The option value.
      * @return The string containing the hexadecimal representation.
      */
     public static String toHexString( byte[] bytes )
@@ -141,6 +146,33 @@ public class OptionUtils
             sb.append( String.format( "%02x", b & 0xFF ) );
         }
         return sb.toString();
+    }
+    
+    /**
+     * Converts an option value interpreted as UTF-8 string.
+     * @param bytes The option value.
+     * @return The UTF-8 string interpretation.
+     */
+    public static String toString( byte[] bytes )
+    {
+        return new String( bytes, Defs.COAP_CHARSET );
+    }
+
+    /**
+     * Warps bytes into an InputStream.
+     * @param bytes The bytes to expose as inputstream.
+     * @return The inputStream.
+     */
+    public static InputStream toInputStream( byte[] bytes )
+    {
+        if ( bytes == null || bytes.length <= 0 )
+        {
+            return new ByteArrayInputStream( EMPTY_BYTES );
+        }
+        else
+        {
+            return new ByteArrayInputStream( bytes );
+        }
     }
 
     /**
@@ -172,33 +204,34 @@ public class OptionUtils
     {
         if ( longValue == null )
         {
-            return OptionUtils.emptyBytes;
+            return OptionUtils.EMPTY_BYTES;
         }
         return toBytes( (long) longValue );
     }
 
     /**
-     * Converts a hexadecimal representation of an etag to byte array.
-     * @param hexString representing the etag value. When empty a null value is returned. 
-     * @return the byte array or null when given String is null.
-     * @throws InvalidETagException when String does not contain a convertible etag value.
+     * Converts a hexadecimal representation of an option to byte array.
+     * @param hexString The string representing the bytes value.
+     * @param maxLength The maximum allowed length of the resulting byte array.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
      */
-    public static byte[] toBytes( String hexString ) throws InvalidETagException
+    public static byte[] toBytes( String hexString, int maxLength ) throws InvalidOptionValueException
     {
         if ( hexString == null || hexString.length() <= 0 )
         {
-            return OptionUtils.emptyBytes;
+            return OptionUtils.EMPTY_BYTES;
         }
         else
         {
             int length= hexString.length() / 2;
             if ( length * 2 != hexString.length() )
             {
-                throw new InvalidETagException( "Given hexString must have even number of characters. The number found: " + hexString.length() );
+                throw new InvalidOptionValueException( "Given hexString must have even number of characters. Actual number is: " + hexString.length() );
             }
-            if ( length > 8 )
+            if ( length > maxLength )
             {
-                throw new InvalidETagException( "ETag length invalid, must be between 0..8 bytes. Given length is: " + length );
+                throw new InvalidOptionValueException( "Given hexString length is invalid, must be between 0.." + maxLength + " bytes. Given length is: {}" + length );
             }
             byte[] bytes= new byte [length];
             try
@@ -212,9 +245,20 @@ public class OptionUtils
             }
             catch ( NumberFormatException e )
             {
-                throw new InvalidETagException( "Cannot parse ETag value as hexadecimal: " + hexString );
+                throw new InvalidOptionValueException( "Cannot parse option value as hexadecimal: " + hexString );
             }
             return bytes;
         }
+    }
+
+    /**
+     * Converts a hexadecimal representation of an option to byte array.
+     * @param hexString The string representing the bytes value.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     */
+    public static byte[] toBytes( String hexString ) throws InvalidOptionValueException
+    {
+        return toBytes( hexString, Integer.MAX_VALUE);
     }
 }

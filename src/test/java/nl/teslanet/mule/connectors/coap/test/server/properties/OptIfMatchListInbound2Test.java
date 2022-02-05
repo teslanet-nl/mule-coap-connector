@@ -36,9 +36,9 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "A0" ).getBytes() );
-        options.addIfMatch( new ETag( "0011FF" ).getBytes() );
-        options.addIfMatch( new ETag( "0011223344556677" ).getBytes() );
+        options.addIfMatch( new ETag( "A0" ).getValue() );
+        options.addIfMatch( new ETag( "0011FF" ).getValue() );
+        options.addIfMatch( new ETag( "0011223344556677" ).getValue() );
     }
 
     @Override

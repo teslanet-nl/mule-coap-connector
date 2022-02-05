@@ -51,7 +51,7 @@ public class OptEtagStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-            response.getOptions().addETag( value.getBytes() );
+            response.getOptions().addETag( value.getValue() );
         
     }
 
@@ -62,7 +62,7 @@ public class OptEtagStrategy implements OptionStrategy
         if ( etags.size() != 1 ) return false;
         for ( int i= 0; i < etags.size(); i++ )
         {
-            if ( !Arrays.equals( etags.get( i ), value.getBytes() ) )
+            if ( !Arrays.equals( etags.get( i ), value.getValue() ) )
             {
                 return false;
             }

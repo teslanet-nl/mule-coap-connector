@@ -53,7 +53,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
     @Override
     protected Object getOutboundPropertyValue() throws InvalidETagException
     {
-        return new String( getValue().getHexString() );
+        return new String( getValue().getValueAsHexString() );
     }
 
     /* (non-Javadoc)

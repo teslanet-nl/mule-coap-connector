@@ -51,7 +51,7 @@ public class OptEtagOutbound3Test extends AbstractOutboundPropertyTestcase
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {
-        return new ETag( "68656C6C6F" ).getBytes();
+        return new ETag( "68656C6C6F" ).getValue();
     }
 
     @Override

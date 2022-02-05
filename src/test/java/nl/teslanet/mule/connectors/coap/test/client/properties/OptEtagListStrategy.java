@@ -67,7 +67,7 @@ public class OptEtagListStrategy implements OptionStrategy
     {
         for ( ETag etag : values )
         {
-            response.getOptions().addETag( etag.getBytes() );
+            response.getOptions().addETag( etag.getValue() );
         }
     }
 
@@ -81,7 +81,7 @@ public class OptEtagListStrategy implements OptionStrategy
         if ( etags.size() != values.size() ) return false;
         for ( int i= 0; i < etags.size(); i++ )
         {
-            if ( !Arrays.equals( etags.get( i ), values.get( i ).getBytes() ) )
+            if ( !Arrays.equals( etags.get( i ), values.get( i ).getValue() ) )
             {
                 return false;
             }

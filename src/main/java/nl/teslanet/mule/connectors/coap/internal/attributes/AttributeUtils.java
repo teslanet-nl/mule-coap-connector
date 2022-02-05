@@ -260,7 +260,7 @@ public class AttributeUtils
 
     /**
      * Add query parameter string with optional value to multiMap.
-     * @param multiMap The map to add the parameter to.
+     * @param list The list to add the parameter to.
      * @param parameterString The string containing the key and optional value.
      */
     public static void addQueryParam( List< QueryParamAttribute > list, String parameterString )

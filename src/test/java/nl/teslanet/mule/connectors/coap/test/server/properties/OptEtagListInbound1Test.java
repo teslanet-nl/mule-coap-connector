@@ -36,7 +36,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addETag( new ETag( "0011FF" ).getBytes() );
+        options.addETag( new ETag( "0011FF" ).getValue() );
     }
 
     @Override

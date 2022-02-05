@@ -34,7 +34,7 @@ public class OptifExistsInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "0011FF" ).getBytes() );
+        options.addIfMatch( new ETag( "0011FF" ).getValue() );
         options.addIfMatch( new byte[0] );
     }
 

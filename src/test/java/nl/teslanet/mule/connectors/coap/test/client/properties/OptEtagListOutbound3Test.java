@@ -63,7 +63,7 @@ public class OptEtagListOutbound3Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return value.getHexString();
+        return value.getValueAsHexString();
     }
 
     /* (non-Javadoc)

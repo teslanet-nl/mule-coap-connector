@@ -180,8 +180,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private String scheme;
 
-    //TODO add default confirmable, path and query?
-
     /**
      * When {@code true} synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. 
      * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
@@ -194,8 +192,23 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     )
     private boolean throwExceptionOnErrorResponse= true;
 
-    @ParameterGroup( name= "Default request uri" )
+    /**
+     * Configuration of request defaults.
+     */
+    @ParameterGroup( name= "Request defaults" )
     private RequestConfig requestDefaults;
+
+    /**
+     * Configuration of virtual hosting defaults.
+     */
+    @ParameterGroup( name= "Virtual hosting defaults")
+    private VirtualHostingConfig virtualHostingDefaults;
+
+    /**
+     * Configuration of proxy defaults.
+     */
+    @ParameterGroup( name= "Proxy defaults" )
+    private ProxyConfig proxyDefaults;
 
     /**
      * The endpoint the client uses.

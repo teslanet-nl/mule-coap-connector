@@ -34,6 +34,7 @@ import java.util.List;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Test;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
@@ -211,7 +212,7 @@ public class DefaultResponseOptionsAttributesTest
         for ( int i= 0; i < 4; i++ )
         {
             assertEquals( "coap.opt.other has wrong number", expected.get( i ).getNumber(), options.get( i ).getNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", expected.get( i ).getValue(), options.get( i ).getValue() );
+            assertArrayEquals( "coap.opt.other has wrong value", IOUtils.toByteArray( expected.get( i ).getValue() ), IOUtils.toByteArray( options.get( i ).getValue() ) );
         }
     }
 }
