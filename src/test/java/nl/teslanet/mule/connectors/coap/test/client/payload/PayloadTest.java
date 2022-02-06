@@ -146,7 +146,7 @@ public class PayloadTest extends AbstractClientTestCase
     @Test
     public void testStringPayload() throws Exception
     {
-        String requestPayload= "test123€¤€½¼¾¥×";
+        String requestPayload= "test123 \u20AC \u20AD \u20AE \u20AF ";
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );

@@ -799,8 +799,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return The actual host value to use.
      * @throws InternalUriException When no host value is obtained.
      */
-    private String actualHost( String host ) throws InternalUriException
+    private String actualHost( String host, String endpointHost, String proxyHost ) throws InternalUriException
     {
+        if ( proxyHost != null ) return proxyHost;
+        if ( endpointHost != null ) return endpointHost;
         if ( host != null ) return host;
         String defaultHost= requestDefaults.getHost();
         if ( defaultHost == null )
@@ -852,7 +854,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private URI getURI( AbstractResourceRequestBuilder builder ) throws InternalUriException
     {
-        String host= actualHost( builder.getHost() );
+        String host= actualHost( builder.getHost(), builder.getEndpointHost(), builder.getProxyHost() );
         Integer port= actualPort( builder.getPort() );
         String path= actualPath( builder.getPath() );
         String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), builder.getQueryParams() );

@@ -44,6 +44,21 @@
                 <parameter name="queryParamConfigs">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
             </parameters>
         </config>
         <config name="server">
@@ -85,6 +100,21 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
@@ -122,6 +152,21 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
@@ -142,8 +187,26 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
@@ -188,6 +251,21 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
@@ -228,6 +306,21 @@
                 </parameter>
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
+                </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
+                </parameter>
+                <parameter name="proxyScheme">
+                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
+                </parameter>
+                <parameter name="proxyHost">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                </parameter>
+                <parameter name="proxyPort">
+                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
@@ -914,16 +1007,19 @@
         <type name="nl.teslanet.mule.connectors.coap.api.options.ETag">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="bytes">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="empty">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="hexString">
+                <parameter name="value">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="long">
+                <parameter name="valueAsHexString">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="valueAsNumber">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="valueAsString">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -947,18 +1043,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="ifNoneMatch">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="proxyUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="uriHost">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="uriPort">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestSize">

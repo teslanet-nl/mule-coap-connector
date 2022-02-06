@@ -81,22 +81,45 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
-     * Constructs an etag from a string containing the hexadecimal representation
-     * where two characters convert to one byte containing the indicated byte value.
-     * For instance the string '11FF' will result in an etag value of two bytes containing
-     * the decimal values of 17 and 255. Only the first 16 characters will be regarded.
-     * @param hexString contains the hexadecimal representation of the etag value.
+     * Constructs an etag from a string using UTF-8 encoding.
+     * @param string contains the string representation of the etag value.
      * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
      */
-    public ETag( String hexString ) throws InvalidETagException
+    public ETag( String string ) throws InvalidETagException
     {
         try
         {
-            this.value= OptionUtils.toBytes( hexString, 8 );
+            this.value= OptionUtils.toBytes( string, 8 );
         }
         catch ( InvalidOptionValueException e )
         {
-            throw new InvalidETagException( "Cannot parse hexadecimal etag value: " + hexString );
+            throw new InvalidETagException( "Cannot construct etag value of: " + string );
+        }
+    }
+
+    /**
+     * Constructs an etag from string interpreted as number using given radix.
+     * @param string contains the string representation of the etag value.
+     * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
+     */
+    public ETag( String string, int radix ) throws InvalidETagException
+    {
+        if ( string == null || string.length() <= 0 )
+        {
+            this.value= OptionUtils.EMPTY_BYTES;
+        }
+        else
+        {
+            long longValue;
+            try
+            {
+                longValue= Long.parseLong( string, radix );
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new InvalidETagException( "Cannot construct etag value of { " + string + " } using radix {" + radix + " }" );
+            }
+            this.value= OptionUtils.toBytes( longValue );
         }
     }
 
@@ -179,14 +202,25 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
-     * Static function that creates etag from hexadecimal string.
-     * @param hexString the hexadecimal string to create etag from.
+     * Static function that creates etag from string using utf-8 representation.
+     * @param string the  string to create etag from.
      * @return The etag object created.
-     * @throws InvalidETagException when given 
+     * @throws InvalidETagException when given string cannot be converted. 
      */
-    public static ETag valueOf( String hexString ) throws InvalidETagException
+    public static ETag valueOf( String string ) throws InvalidETagException
     {
-        return new ETag( hexString );
+        return new ETag( string );
+    }
+
+    /**
+     * Static function that creates etag from string interpreted as number using given radix.
+     * @param string the string to create etag from.
+     * @return The etag object created.
+     * @throws InvalidETagException when given string cannot be converted. 
+     */
+    public static ETag valueOf( String string, int radix ) throws InvalidETagException
+    {
+        return new ETag( string, radix );
     }
 
     /**

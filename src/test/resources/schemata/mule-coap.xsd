@@ -692,6 +692,31 @@
               <xs:documentation>The query parameters of the request.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
+          <xs:attribute type="xs:string" use="optional" name="endpointHost">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:substitutableInt" use="optional" name="endpointPort">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="xs:string" use="optional" name="proxyScheme">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="xs:string" use="optional" name="proxyHost">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="xs:string" use="optional" name="proxyPort">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -924,6 +949,31 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="endpointHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="endpointPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
@@ -1022,6 +1072,31 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="endpointHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="endpointPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
@@ -1075,9 +1150,39 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="endpointHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="endpointPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="true" name="confirmable">
+          <xs:annotation>
+            <xs:documentation>When true the server is expected to acknowledge reception of the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="path">
@@ -1180,6 +1285,31 @@
             <xs:documentation>The port of the server to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="endpointHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="endpointPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
           <xs:annotation>
             <xs:documentation>The query parameters of the request.</xs:documentation>
@@ -1252,10 +1382,6 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="ifMatch"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="proxyUri"></xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="uriHost"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="uriPort"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="requestSize"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="provideResponseSize"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
@@ -1312,6 +1438,31 @@
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
             <xs:documentation>The port of the server to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="endpointHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="endpointPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyScheme">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="proxyPort">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
