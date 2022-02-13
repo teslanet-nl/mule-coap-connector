@@ -38,7 +38,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
 
 
 @RunnerDelegateTo(Parameterized.class)

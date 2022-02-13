@@ -35,10 +35,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The attributes of a CoAP response that is received or that will be returned.
+ * The parameters of a CoAP response that will be returned.
  *
  */
-public class ResponseBuilder
+public class ResponseParams
 {
 
     // Mule seems to need this to be an inner enum.

@@ -41,7 +41,7 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
  * The parameters for a CoAP query request.
  *
  */
-public abstract class AbstractQueryBuilder extends AbstractProxyBuilder
+public abstract class AbstractQueryParams extends AbstractAddressParams
 {
     /**
      * The query parameters of the request.

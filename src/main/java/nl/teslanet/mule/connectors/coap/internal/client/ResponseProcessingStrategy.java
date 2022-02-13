@@ -24,11 +24,9 @@
 package nl.teslanet.mule.connectors.coap.internal.client;
 
 
-import java.net.URI;
-
 import org.eclipse.californium.core.CoapResponse;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 
 
@@ -39,10 +37,10 @@ interface ResponseProcessingStrategy
 {
     /**
      * Process a CoAP response.
-     * @param uri The uri of the originating request.
+     * @param requestUri The uri of the originating request.
      * @param requestCode The CoAP code of the originating request.
      * @param response The response received, or null when no response was be received.
      * @throws InternalResponseException When the response could not be interpreted correctly. 
      */
-    void process( URI uri, CoAPRequestCode requestCode, CoapResponse response ) throws InternalResponseException;
+    void process( String requestUri, CoAPRequestCode requestCode, CoapResponse response ) throws InternalResponseException;
 }

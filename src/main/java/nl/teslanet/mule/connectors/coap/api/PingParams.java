@@ -22,44 +22,38 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
-
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
 
 /**
- * The parameters of a CoAP request.
- *
+ * The parameters of a CoAP ping.
  */
-public abstract class AbstractRequestBuilder extends AbstractQueryBuilder
+public class PingParams
 {
     /**
-     * When true the server is expected to acknowledge reception of the request.
+     * The address of the remote endpoint to ping.
+     * When empty the client request defaults are used.
      */
     @Parameter
-    @Optional( defaultValue= "true" )
+    @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement(order = 1)
-    @Summary( "When true the server is expected to acknowledge reception of the request." )
-    private boolean confirmable= true;
+    private PingAddress pingAddress= null;
 
     /**
-     * @return the confirmable
+     * @return The pingAddress.
      */
-    public boolean isConfirmable()
+    public PingAddress getPingAddress()
     {
-        return confirmable;
+        return pingAddress;
     }
 
     /**
-     * @param confirmable the confirmable to set
+     * @param pingAddress The pingAddress to set.
      */
-    public void setConfirmable( boolean confirmable )
+    public void setPingAddress( PingAddress pingAddress )
     {
-        this.confirmable= confirmable;
+        this.pingAddress= pingAddress;
     }
 }

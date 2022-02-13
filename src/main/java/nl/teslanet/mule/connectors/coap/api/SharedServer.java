@@ -22,11 +22,12 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
+
 /**
- * The request parameters for stopping an CoAP observer.
+ * Parameters of a shared server that will handle requests on behalf of a virtual server.
  *
  */
-public class ObserverStopBuilder extends AbstractResourceRequestBuilder
+public class SharedServer extends RemoteEndpointParams
 {
-    //TODO RC check confirmable processing
+    //NOOP
 }

@@ -124,7 +124,7 @@ public class MessageUtils
         {
             optionSet.setAccept( requestOptions.getAccept() );
         }
-        if ( requestOptions.isProvideResponseSize() )
+        if ( requestOptions.isRequireResponseSize() )
         {
             optionSet.setSize2( 0 );
         }

@@ -27,15 +27,10 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.source.Source;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
@@ -68,15 +63,6 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     @Config
     private Client client;
 
-    /**
-     * When true the server is expected to acknowledge reception of the observe request.
-     */
-    @Parameter
-    @Optional( defaultValue= "true" )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Summary( "When true the server is expected to acknowledge reception of the observe request." )
-    private boolean confirmable= true;
-
     @ParameterGroup( name= "Observe uri" )
     private RequestConfig requestConfig;
 
@@ -96,15 +82,16 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     @Override
     public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
     {
+        CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( requestConfig );;
         try
         {
-            uri= client.getURI( requestConfig );
+            uri= requestBuilder.buildResourceUri();
         }
         catch ( InternalUriException e )
         {
             throw new StartException( this + " failed to start, invalid uri. ", e );
         }
-        relation= new ObserveRelation( this.toString(), client.getCoapClient(), confirmable, uri, ( requestUri, requestCode, response ) -> {
+        relation= new ObserveRelation( this.toString(), client.getCoapClient(), requestBuilder, ( requestUri, requestCode, response ) -> {
             client.processMuleFlow( requestUri, requestCode, response, sourceCallback );
         } );
         relation.start();

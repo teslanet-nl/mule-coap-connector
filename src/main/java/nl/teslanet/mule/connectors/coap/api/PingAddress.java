@@ -22,12 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
-
 /**
- * The parameters of a CoAP discover request.
+ * The address to ping
  *
  */
-public class DiscoverBuilder extends AbstractRequestBuilder
+public class PingAddress extends RemoteEndpointParams
 {
     //NOOP
 }

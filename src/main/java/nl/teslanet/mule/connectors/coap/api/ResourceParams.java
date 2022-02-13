@@ -34,9 +34,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Builder of a CoAP resource.
+ * Parameters of a CoAP resource.
  */
-public class ResourceBuilder
+public class ResourceParams
 {
     /**
     * The absolute path of the resource that will be used to identify it in CoAP uri's.
@@ -103,7 +103,7 @@ public class ResourceBuilder
     @ParameterDsl(allowReferences= true)
     @Summary("The CoRE information describing the contrained resource for discovery.")
     @DisplayName("Discovery CoRE Info")
-    private ResourceInfoBuilder coreInfo;
+    private ResourceInfoParams coreInfo;
 
     /**
     * @return the absolute path of the resource.
@@ -220,7 +220,7 @@ public class ResourceBuilder
     /**
      * @return the discovery coreInfo of the resource
      */
-    public ResourceInfoBuilder getInfo()
+    public ResourceInfoParams getInfo()
     {
         return coreInfo;
     }
@@ -228,7 +228,7 @@ public class ResourceBuilder
     /**
      * @param coreInfo The discovery coreInfo to add to the resource
      */
-    public void setAddInfo( ResourceInfoBuilder coreInfo )
+    public void setAddInfo( ResourceInfoParams coreInfo )
     {
         this.coreInfo= coreInfo;
     }

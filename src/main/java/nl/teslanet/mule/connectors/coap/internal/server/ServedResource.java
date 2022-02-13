@@ -36,9 +36,9 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseParams.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
@@ -167,7 +167,7 @@ public class ServedResource extends CoapResource
      * The ServedResource and its child resources will be constructed.
      * @param resource the builder of the resource to create. 
      */
-    public ServedResource( ResourceBuilder resource )
+    public ServedResource( ResourceParams resource )
     {
         super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ) );
 

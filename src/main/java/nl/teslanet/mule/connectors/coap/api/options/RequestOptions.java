@@ -193,7 +193,7 @@ public class RequestOptions
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "Ask server to provide for a Size2 option in the response,\nindicating the response payload size." )
-    private boolean provideResponseSize= false;
+    private boolean requireResponseSize= false;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
@@ -321,19 +321,19 @@ public class RequestOptions
     }
 
     /**
-     * @return True when Size2 option is requested, otherwise false.
+     * @return True when Size2 option is required in the server response, otherwise false.
      */
-    public boolean isProvideResponseSize()
+    public boolean isRequireResponseSize()
     {
-        return provideResponseSize;
+        return requireResponseSize;
     }
 
     /**
-     * @param provideResponseSize The provideResponseSize option to set.
+     * @param requireResponseSize The requireResponseSize option to set.
      */
-    public void setProvideResponseSize( boolean provideResponseSize )
+    public void setRequireResponseSize( boolean requireResponseSize )
     {
-        this.provideResponseSize= provideResponseSize;
+        this.requireResponseSize= requireResponseSize;
     }
 
     /**

@@ -49,17 +49,18 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
+import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.ObserverStartBuilder;
-import nl.teslanet.mule.connectors.coap.api.ObserverStopBuilder;
-import nl.teslanet.mule.connectors.coap.api.PingBuilder;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
-import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
+import nl.teslanet.mule.connectors.coap.api.PingParams;
+import nl.teslanet.mule.connectors.coap.api.RequestParams;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
@@ -97,7 +98,7 @@ public class ClientOperations
      * until a response is received or a timeout occurs.
      * 
      * @param client         The client used for issuing the request.
-     * @param requestBuilder Builder that delivers the request parameters.
+     * @param requestParams Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
      * @return The result of the request which contains the received server response, if any.
      */
@@ -107,7 +108,7 @@ public class ClientOperations
     )
     public Result< InputStream, CoapResponseAttributes > request( @Config
     Client client, @ParameterGroup( name= "Request" )
-    RequestBuilder requestBuilder,
+    RequestParams requestParams,
         @Alias( "request-options" )
         @Optional
         @NullSafe
@@ -119,7 +120,7 @@ public class ClientOperations
         String errorMsg= ": request failed.";
         try
         {
-            return client.doRequest( requestBuilder, requestOptions, null );
+            return client.doRequest( requestParams, requestOptions, null );
         }
         catch ( InternalEndpointException e )
         {
@@ -157,15 +158,15 @@ public class ClientOperations
      * of a response (if any) is delegated to the response handler.
      * 
      * @param client          The client used for issuing the request.
-     * @param responseHandlerBuilder Builder that delivers the response handler parameters.
-     * @param requestBuilder Builder that delivers the request parameters.
+     * @param responseHandlerParams Builder that delivers the response handler parameters.
+     * @param requestParams Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
      */
     @Throws( { RequestAsyncErrorProvider.class } )
     public void requestAsync( @Config
     Client client, @ParameterGroup( name= "Response handling" )
-    ResponseHandlerBuilder responseHandlerBuilder, @ParameterGroup( name= "Request" )
-    RequestBuilder requestBuilder,
+    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Request" )
+    RequestParams requestParams,
         @Optional
         @NullSafe
         @Expression( ExpressionSupport.SUPPORTED )
@@ -177,7 +178,7 @@ public class ClientOperations
         String errorMsg= ": async request failed.";
         try
         {
-            client.doRequest( requestBuilder, requestOptions, responseHandlerBuilder );
+            client.doRequest( requestParams, requestOptions, responseHandlerParams );
         }
         catch ( InternalEndpointException e )
         {
@@ -218,18 +219,18 @@ public class ClientOperations
      * The Ping processor checks whether a CoAP server is reachable.
      * 
      * @param client         The client to use to issue the request.
-     * @param pingBuilder The request attributes to use.
+     * @param pingParams The request attributes to use.
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
     @Throws( { PingErrorProvider.class } )
     public Boolean ping( @Config
     Client client, @ParameterGroup( name= "Ping address" )
-    PingBuilder pingBuilder )
+    PingParams pingParams )
     {
         String errorMsg= ": ping failed.";
         try
         {
-            return client.ping( pingBuilder );
+            return client.ping( pingParams );
         }
         catch ( ConnectorException | IOException e )
         {
@@ -246,19 +247,19 @@ public class ClientOperations
      * server.
      * 
      * @param client             The client to use to issue the request.
-     * @param discoverBuilder The attributes of the discover request
+     * @param discoverParams The attributes of the discover request
      * @return The resources description on the server that have been discovered.
      */
     @Throws( { DiscoverErrorProvider.class } )
     public Set< DiscoveredResource > discover( @Config
     Client client, @ParameterGroup( name= "Discover address" )
-    DiscoverBuilder discoverBuilder )
+    DiscoverParams discoverParams )
     {
         String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
         try
         {
-            links= client.discover( discoverBuilder );
+            links= client.discover( discoverParams );
         }
         catch ( IOException | ConnectorException e )
         {
@@ -279,11 +280,18 @@ public class ClientOperations
         catch ( InternalClientErrorResponseException e )
         {
             throw new ResponseException( client + errorMsg, e );
-
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + errorMsg, e );
+        }
+        catch ( InternalInvalidRequestCodeException e )
+        {
+            throw new InvalidRequestCodeException( client + errorMsg, e );
+        }
+        catch ( InternalRequestException e )
+        {
+            throw new RequestException( client + errorMsg, e );
         }
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
@@ -337,19 +345,19 @@ public class ClientOperations
      */
     /**
      * @param client
-     * @param responseHandlerBuilder Name of the response handler that will process the notification received from server.
+     * @param responseHandlerParams Name of the response handler that will process the notification received from server.
      * @param observerStartBuilder The observe request parameters.
      */
     @Throws( { ObserverStartErrorProvider.class } )
     public void observerStart( @Config
     Client client, @ParameterGroup( name= "Notification handling" )
-    ResponseHandlerBuilder responseHandlerBuilder, @ParameterGroup( name= "Observe uri" )
-    ObserverStartBuilder observerStartBuilder )
+    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Observe uri" )
+    ObserverAddParams observerStartBuilder )
     {
         String errorMsg= ": observer start failed.";
         try
         {
-            client.startObserver( observerStartBuilder, responseHandlerBuilder );
+            client.startObserver( observerStartBuilder, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
@@ -373,7 +381,7 @@ public class ClientOperations
     @Throws( { ObserverStopErrorProvider.class } )
     public void observerStop( @Config
     Client client, @ParameterGroup( name= "Observe uri" )
-    ObserverStopBuilder observerStopBuilder )
+    ObserverRemoveParams observerStopBuilder )
     {
         String errorMsg= ": observer stop failed.";
         try

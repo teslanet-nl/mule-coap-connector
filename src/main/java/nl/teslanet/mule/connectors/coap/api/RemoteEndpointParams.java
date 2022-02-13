@@ -27,15 +27,14 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The parameters describing an address of an server to access.
+ * The configured defaults of a CoAP endpoint hosting virtual servers.
  *
  */
-public abstract class AbstractVirtualHostingBuilder extends AbstractAddressBuilder
+public abstract class RemoteEndpointParams
 {
     /**
      * RFC 7252: The Uri-Host Option specifies the Internet host of the resource
@@ -45,10 +44,8 @@ public abstract class AbstractVirtualHostingBuilder extends AbstractAddressBuild
      *      "https://datatracker.ietf.org/doc/html/rfc7252/#section-5.10.1">IETF RFC 7252 - 5.10.2. Uri-Host, Uri-Port, Uri-Path, and Uri-Query</a>
      */
     @Parameter
-    @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 111, tab= Placement.ADVANCED_TAB )
-    @Summary( "Hostname or ip-address of the endpoint that is hosting the virtual server." )
+    @Summary( "Hostname or ip-address of the remote endpoint." )
     private String endpointHost= null;
 
     /**
@@ -61,8 +58,7 @@ public abstract class AbstractVirtualHostingBuilder extends AbstractAddressBuild
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 112, tab= Placement.ADVANCED_TAB )
-    @Summary( "Port number of the endpoint that is hosting the virtual server." )
+    @Summary( "Port number of the remote endpoint." )
     private Integer endpointPort= null;
 
     /**

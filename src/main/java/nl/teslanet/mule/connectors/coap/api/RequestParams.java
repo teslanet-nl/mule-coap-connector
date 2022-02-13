@@ -38,7 +38,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * The parameters of a CoAP request.
  *
  */
-public class RequestBuilder extends AbstractResourceRequestBuilder
+public class RequestParams extends AbstractResourceRequestParams
 {
     // Mule seems to need this to be an inner enum.
     /**
@@ -57,13 +57,13 @@ public class RequestBuilder extends AbstractResourceRequestBuilder
     @Placement(order = 11)
     @Example( value= "GET" )
     @Summary( "The CoAP request code specifying the requested action on the resource on the server." )
-    private CoAPRequestCode requestCode;
+    private CoAPRequestCode requestCode= null;
 
     @Parameter
     @Content( primary= true )
     @Placement(order = 12)
     @Summary( "The CoAP request payload. Note: when not appropriate for the CoAP message-type (i.e. GET, DELETE) the payload is ignored, unless 'Force Payload' is set." )
-    private TypedValue< Object > requestPayload;
+    private TypedValue< Object > requestPayload= null;
 
     /**
      * When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).

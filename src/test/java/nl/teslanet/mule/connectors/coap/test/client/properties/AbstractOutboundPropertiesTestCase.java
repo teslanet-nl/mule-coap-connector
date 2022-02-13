@@ -41,8 +41,8 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.RequestParams;
+import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import org.eclipse.californium.core.CoapServer;
@@ -179,7 +179,7 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     @Test
     public void testOutboundProperty() throws Exception
     {
-        RequestBuilder requestAttibutes= new RequestBuilder();
+        RequestParams requestAttibutes= new RequestParams();
         requestAttibutes.setRequestCode( requestCode );
         requestAttibutes.setHost( "127.0.0.1" );
         requestAttibutes.setPath( getResourcePath() );

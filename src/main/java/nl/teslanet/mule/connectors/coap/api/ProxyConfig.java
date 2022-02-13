@@ -25,36 +25,46 @@ package nl.teslanet.mule.connectors.coap.api;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The response handling attributes.
+ * The configured defaults of a CoAP proxy.
  *
  */
-public class ResponseHandlerBuilder
+public class ProxyConfig extends RemoteEndpointConfig
 {
+    /**
+     * RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is
+     * constructed as follows: a CoAP URI is constructed from the Uri-* options as
+     * defined in Section 6.5. In the resulting URI, the initial scheme up to, but
+     * not including, the following colon is then replaced by the content of the
+     * Proxy-Scheme Option.
+     * 
+     * @see <a href=
+     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
+     */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Example(value= "my_response_handler")
-    @Summary("The handler that will receive the response. This response handler must exist.")
-    public String responseHandler;
+    @Optional
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "The scheme to use for the request that is forwarded." )
+    private String forwardToScheme= null;
 
     /**
-     * @return the responseHandler
+     * @return the forwardToScheme
      */
-    public String getResponseHandler()
+    public String getForwardToScheme()
     {
-        return responseHandler;
+        return forwardToScheme;
     }
 
     /**
-     * @param responseHandler the responseHandler to set
+     * @param forwardToScheme the forwardToScheme to set
      */
-    public void setResponseHandler( String responseHandler )
+    public void setForwardToScheme( String forwardToScheme )
     {
-        this.responseHandler= responseHandler;
+        this.forwardToScheme= forwardToScheme;
     }
 }

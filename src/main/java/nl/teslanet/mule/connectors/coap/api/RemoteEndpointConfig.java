@@ -20,14 +20,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.client;
+package nl.teslanet.mule.connectors.coap.api;
 
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
@@ -35,7 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * The configured defaults of a CoAP endpoint hosting virtual servers.
  *
  */
-public class VirtualHostingConfig
+public abstract class RemoteEndpointConfig
 {
     /**
      * RFC 7252: The Uri-Host Option specifies the Internet host of the resource
@@ -47,8 +46,7 @@ public class VirtualHostingConfig
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Placement( tab= "Advanced" )
-    @Summary( "Hostname or ip-address of the endpoint that is hosting the virtual server." )
+    @Summary( "Hostname or ip-address of the remote endpoint." )
     private String endpointHost= null;
 
     /**
@@ -61,8 +59,7 @@ public class VirtualHostingConfig
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @Placement( tab= "Advanced" )
-    @Summary( "Port number of the endpoint that is hosting the virtual server." )
+    @Summary( "Port number of the remote endpoint." )
     private Integer endpointPort= null;
 
     /**

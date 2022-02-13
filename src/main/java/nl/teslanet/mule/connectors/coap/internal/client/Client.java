@@ -37,7 +37,6 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
-import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.LinkFormat;
@@ -74,19 +73,23 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.AbstractAddressBuilder;
-import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestBuilder;
+import nl.teslanet.mule.connectors.coap.api.AbstractRequestParams;
+import nl.teslanet.mule.connectors.coap.api.AbstractRequestParams.CoAPRequestType;
+import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestParams;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
-import nl.teslanet.mule.connectors.coap.api.ObserverStartBuilder;
-import nl.teslanet.mule.connectors.coap.api.ObserverStopBuilder;
-import nl.teslanet.mule.connectors.coap.api.PingBuilder;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
+import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
+import nl.teslanet.mule.connectors.coap.api.PingParams;
+import nl.teslanet.mule.connectors.coap.api.Proxy;
+import nl.teslanet.mule.connectors.coap.api.ProxyConfig;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpointParams;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
+import nl.teslanet.mule.connectors.coap.api.RequestParams;
+import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
@@ -160,27 +163,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private Endpoint endpoint;
 
     /**
-     * @return the endpoint
-     */
-    public Endpoint getEndpoint()
-    {
-        return endpoint;
-    }
-
-    /**
-     * @param endpoint the endpoint to set
-     */
-    public void setEndpoint( Endpoint endpoint )
-    {
-        this.endpoint= endpoint;
-    }
-
-    /**
-     * The actual URI scheme
-     */
-    private String scheme;
-
-    /**
      * When {@code true} synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. 
      * Otherwise a result is returned in these cases with attribute.success set to {@code False}.
      */
@@ -196,19 +178,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Configuration of request defaults.
      */
     @ParameterGroup( name= "Request defaults" )
-    private RequestConfig requestDefaults;
+    private RequestConfig requestConfig;
 
     /**
-     * Configuration of virtual hosting defaults.
+     * The actual URI scheme
      */
-    @ParameterGroup( name= "Virtual hosting defaults")
-    private VirtualHostingConfig virtualHostingDefaults;
-
-    /**
-     * Configuration of proxy defaults.
-     */
-    @ParameterGroup( name= "Proxy defaults" )
-    private ProxyConfig proxyDefaults;
+    private String scheme;
 
     /**
      * The endpoint the client uses.
@@ -320,6 +295,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     CoapClient getCoapClient()
     {
         return coapClient;
+    }
+
+    /**
+     * @return the endpoint
+     */
+    public Endpoint getEndpoint()
+    {
+        return endpoint;
+    }
+
+    /**
+     * @param endpoint the endpoint to set
+     */
+    public void setEndpoint( Endpoint endpoint )
+    {
+        this.endpoint= endpoint;
     }
 
     /**
@@ -454,7 +445,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param callback The callback method of the muleflow.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
-    void processMuleFlow( URI requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
+    void processMuleFlow( String requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
         throws InternalResponseException
 
     {
@@ -515,7 +506,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalUriException When given request uri parameters are invalid.
      */
-    Result< InputStream, CoapResponseAttributes > doRequest( RequestBuilder builder, RequestOptions options, ResponseHandlerBuilder handlerBuilder )
+    Result< InputStream, CoapResponseAttributes > doRequest( RequestParams builder, RequestOptions options, ResponseHandlerParams handlerBuilder )
         throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
@@ -529,45 +520,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         Result< InputStream, CoapResponseAttributes > result= null;
         CoapHandler handler= null;
-        Request request= new Request( AttributeUtils.toRequestCode( builder.getRequestCode() ), ( builder.isConfirmable() ? Type.CON : Type.NON ) );
-        URI uri= getURI( builder );
-        request.setURI( uri );
-        TypedValue< Object > requestPayload= builder.getRequestPayload();
-        if ( requestPayload.getValue() != null )
-        {
-            boolean sendPayload;
-            switch ( request.getCode() )
-            {
-                case GET:
-                case DELETE:
-                    if ( builder.isForcePayload() )
-                    {
-                        request.setUnintendedPayload();
-                        sendPayload= true;
-                    }
-                    else
-                    {
-                        sendPayload= false;
-                    }
-                    break;
-                default:
-                    sendPayload= true;
-                    break;
-            }
-            if ( sendPayload )
-            {
-                //TODO add streaming & blockwise cooperation
-                try
-                {
-                    request.setPayload( MessageUtils.toBytes( requestPayload, transformationService ) );
-                }
-                catch ( RuntimeException | InternalInvalidByteArrayValueException e )
-                {
-                    throw new InternalRequestException( "cannot convert payload to byte[]", e );
-                }
-                request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
-            }
-        }
+        Request request= new CoapRequestBuilderImpl( builder ).build();
         try
         {
             MessageUtils.copyOptions( options, request.getOptions(), transformationService );
@@ -578,58 +531,78 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         if ( handlerBuilder != null )
         {
+            // asynchronous request
             SourceCallback< InputStream, CoapResponseAttributes > callback;
             callback= getHandler( handlerBuilder.getResponseHandler() );
-            handler= createCoapHandler( handlerBuilder.getResponseHandler(), uri, builder.getRequestCode(), callback );
-        }
-        if ( handler == null )
-        {
-            // send out synchronous request
-            CoapResponse response= null;
-            try
-            {
-                response= coapClient.advanced( request );
-            }
-            catch ( ConnectorException | IOException e )
-            {
-                throw new InternalEndpointException( "CoAP request failed", e );
-            }
-            throwExceptionWhenNeeded( throwExceptionOnErrorResponse, response );
-            DefaultResponseAttributes responseAttributes;
-            try
-            {
-                responseAttributes= createReceivedResponseAttributes( uri, builder.getRequestCode(), response );
-            }
-            catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException e )
-            {
-                throw new InternalResponseException( "CoAP response cannot be processed", e );
-            }
-            if ( response == null )
-            {
-                result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
-            }
-            else
-            {
-                byte[] payload= response.getPayload();
-                if ( payload != null )
-                {
-                    result= Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length(
-                        payload.length
-                    ).attributes( responseAttributes ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
-                }
-                else
-                {
-                    result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                    ).build();
-                }
-            }
+            handler= createCoapHandler( handlerBuilder.getResponseHandler(), request.getURI(), builder.getRequestCode(), callback );
+            coapClient.advanced( handler, request );
+            // nothing to return
         }
         else
         {
-            // asynchronous request
-            coapClient.advanced( handler, request );
-            // nothing to return
+            // send out synchronous request
+            result= executeSynchronous( builder.getRequestCode(), request );
+        }
+        return result;
+    }
+
+    /**
+     * Execute the request synchronously.
+     * @param request The request to execute.
+     * @return The result.
+     * @throws InternalEndpointException The Endpoint cannot execute the request.
+     * @throws InternalResponseException  The response could not be interpreted.
+     * @throws InternalServerErrorResponseException The response received indicates server error.
+     * @throws InternalInvalidResponseCodeException The response contained an invalid response code.
+     * @throws InternalClientErrorResponseException The response received indicates client error.
+     * @throws InternalNoResponseException No response was received within exchange lifetime.
+     */
+    private Result< InputStream, CoapResponseAttributes > executeSynchronous( CoAPRequestCode code, Request request ) throws InternalEndpointException,
+        InternalNoResponseException,
+        InternalClientErrorResponseException,
+        InternalInvalidResponseCodeException,
+        InternalServerErrorResponseException,
+        InternalResponseException
+    {
+        CoapResponse response;
+        try
+        {
+            response= coapClient.advanced( request );
+        }
+        catch ( ConnectorException | IOException e )
+        {
+            throw new InternalEndpointException( "CoAP request failed", e );
+        }
+        throwExceptionWhenNeeded( throwExceptionOnErrorResponse, response );
+        DefaultResponseAttributes responseAttributes;
+        try
+        {
+            responseAttributes= createReceivedResponseAttributes( request.getURI(), code, response );
+        }
+        catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException e )
+        {
+            throw new InternalResponseException( "CoAP response cannot be processed", e );
+        }
+        Result< InputStream, CoapResponseAttributes > result;
+        if ( response == null )
+        {
+            result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
+        }
+        else
+        {
+            byte[] payload= response.getPayload();
+            if ( payload != null )
+            {
+                result= Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length( payload.length ).attributes(
+                    responseAttributes
+                ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+            }
+            else
+            {
+                result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
+                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                ).build();
+            }
         }
         return result;
     }
@@ -702,15 +675,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidOptionValueException 
      * @throws InternalInvalidResponseCodeException When responseCode is unknown.
      */
-    private DefaultResponseAttributes createReceivedResponseAttributes( URI requestUri, CoAPRequestCode requestCode, CoapResponse response )
+    private DefaultResponseAttributes createReceivedResponseAttributes( String requestUri, CoAPRequestCode requestCode, CoapResponse response )
         throws InternalInvalidOptionValueException,
         InternalInvalidResponseCodeException
     {
         DefaultResponseAttributes attributes= new DefaultResponseAttributes();
         attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( operationalEndpoint.getCoapEndpoint().getAddress().toString() );
-        attributes.setRequestPath( requestUri.getPath() );
-        attributes.setRequestQuery( requestUri.getQuery() );
+        //TODO RC change to requestUri attribute
+        attributes.setRequestPath( requestUri );
+        attributes.setRequestQuery( requestUri );
         if ( response == null )
         {
             attributes.setSuccess( false );
@@ -738,7 +712,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private CoapHandler createCoapHandler(
         final String handlerName,
-        final URI requestUri,
+        final String requestUri,
         final CoAPRequestCode requestCode,
         final SourceCallback< InputStream, CoapResponseAttributes > callback
     )
@@ -794,182 +768,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
-     * Obtain actual host to use for request.
-     * @param host The optional host value.
-     * @return The actual host value to use.
-     * @throws InternalUriException When no host value is obtained.
-     */
-    private String actualHost( String host, String endpointHost, String proxyHost ) throws InternalUriException
-    {
-        if ( proxyHost != null ) return proxyHost;
-        if ( endpointHost != null ) return endpointHost;
-        if ( host != null ) return host;
-        String defaultHost= requestDefaults.getHost();
-        if ( defaultHost == null )
-        {
-            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using host { " + defaultHost + " }" );
-        }
-        return defaultHost;
-    }
-
-    /**
-     * Obtain actual port to use for request.
-     * @param port The optional port value.
-     * @return The actual port value to use.
-     */
-    public Integer actualPort( Integer port )
-    {
-        if ( port != null ) return port;
-        Integer defaultPort= requestDefaults.getPort();
-        if ( defaultPort == null )
-        {
-            defaultPort= -1;
-        }
-        return defaultPort;
-    }
-
-    /**
-     * Obtain actual path to use for request.
-     * @param path The optional path value.
-     * @return The actual path value to use.
-     * @throws InternalUriException hen no path value is obtained.
-     */
-    private String actualPath( String path ) throws InternalUriException
-    {
-        if ( path != null ) return path;
-        String defaultPath= requestDefaults.getPath();
-        if ( defaultPath == null )
-        {
-            throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using path { null }" );
-        }
-        return defaultPath;
-    }
-
-    /**
-     * Get an URI object describing the given CoAP resource.
-     * @param builder The provider of uri parameters.
-     * @return The URI object. 
-     * @throws UriException cannot form valid uri with given parameters
-     * @throws InternalUriException 
-     */
-    private URI getURI( AbstractResourceRequestBuilder builder ) throws InternalUriException
-    {
-        String host= actualHost( builder.getHost(), builder.getEndpointHost(), builder.getProxyHost() );
-        Integer port= actualPort( builder.getPort() );
-        String path= actualPath( builder.getPath() );
-        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), builder.getQueryParams() );
-        URI uri;
-        try
-        {
-            uri= new URI( scheme, null, host, port, path, query, null );
-        }
-        catch ( Exception e )
-        {
-            throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
-            );
-        }
-        return uri;
-    }
-
-    /**
-     * Get an URI object describing the request.
-     * @param builder The provider of request parameters.
-     * @return The URI object. 
-     * @throws InternalUriException When no valid uri could be built with given parameters.
-     */
-    private URI getURI( DiscoverBuilder uriBuilder ) throws InternalUriException
-    {
-        String host= actualHost( uriBuilder.getHost() );
-        Integer port= actualPort( uriBuilder.getPort() );
-        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParams() );
-        URI uri;
-        try
-        {
-            uri= new URI( scheme, null, host, port, "/.well-known/core", query, null );
-        }
-        catch ( Exception e )
-        {
-            throw new InternalUriException( "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", query= " + query + " }" );
-        }
-        return uri;
-    }
-
-    /**
-     * Get an URI object describing the request.
-     * @param builder The provider of request parameters.
-     * @return The URI object. 
-     * @throws InternalUriException When no valid uri could be built with given parameters.
-     */
-    private URI getURI( ObserverStopBuilder uriBuilder ) throws InternalUriException
-    {
-        String host= actualHost( uriBuilder.getHost() );
-        Integer port= actualPort( uriBuilder.getPort() );
-        String path= actualPath( uriBuilder.getPath() );
-        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParams() );
-        URI uri;
-        try
-        {
-            uri= new URI( scheme, null, host, port, path, query, null );
-        }
-        catch ( Exception e )
-        {
-            throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
-            );
-        }
-        return uri;
-    }
-
-    /**
-     * Get an URI object describing the address to request.
-     * @param uriBuilder The provider of request parameters.
-     * @return The URI object. 
-     * @throws InternalUriException When no valid uri could be built with given parameters.
-     */
-    private URI getURI( AbstractAddressBuilder uriBuilder ) throws InternalUriException
-    {
-        String host= actualHost( uriBuilder.getHost() );
-        Integer port= actualPort( uriBuilder.getPort() );
-        URI uri;
-        try
-        {
-            uri= new URI( scheme, null, host, port, null, null, null );
-        }
-        catch ( Exception e )
-        {
-            throw new InternalUriException( "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + " }" );
-        }
-        return uri;
-    }
-
-    /**
-     * Create URI from request configuration.
-     * @param uriBuilder The builder containing input parameters.
-     * @return The constructed URI
-     * @throws InternalUriException When the URI cannot be constructed using the builder.
-     */
-    public URI getURI( RequestConfig uriBuilder ) throws InternalUriException
-    {
-        String host= actualHost( uriBuilder.getHost() );
-        Integer port= actualPort( uriBuilder.getPort() );
-        String path= actualPath( uriBuilder.getPath() );
-        String query= MessageUtils.queryString( requestDefaults.getQueryParamConfigs(), uriBuilder.getQueryParamConfigs() );
-        URI uri;
-        try
-        {
-            uri= new URI( scheme, null, host, port, path, query, null );
-        }
-        catch ( Exception e )
-        {
-            throw new InternalUriException(
-                "cannot form valid uri using: { scheme= " + scheme + ", host= " + host + ", port= " + port + ", path= " + path + ", query= " + query + " }"
-            );
-        }
-        return uri;
-    }
-
-    /**
      * See if server is reachable
      * @param pingbuilder The ping request parameters.
      * @return true 
@@ -977,13 +775,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws IOException
      * @throws InternalUriException
      */
-    Boolean ping( PingBuilder pingbuilder ) throws ConnectorException, IOException, InternalUriException
+    Boolean ping( PingParams pingbuilder ) throws ConnectorException, IOException, InternalUriException
     {
-        Request request= new Request( null, Type.CON );
-        request.setToken( Token.EMPTY );
+        Request request;
         try
         {
-            request.setURI( getURI( pingbuilder ) );
+            request= new CoapRequestBuilderImpl( pingbuilder ).build();
+            request.setToken( Token.EMPTY );
         }
         catch ( Exception e )
         {
@@ -1010,8 +808,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidResponseCodeException When response has invalid code.
      * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalResponseException When response indicates other error.
+     * @throws InternalRequestException When request parameters are invalid.
+     * @throws InternalInvalidRequestCodeException When request code is invalid.
      */
-    Set< WebLink > discover( DiscoverBuilder discoverBuilder ) throws InternalUriException,
+    Set< WebLink > discover( DiscoverParams discoverParams ) throws InternalUriException,
         InternalNoResponseException,
         InternalUnexpectedResponseException,
         ConnectorException,
@@ -1019,10 +819,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
         InternalServerErrorResponseException,
-        InternalResponseException
+        InternalResponseException,
+        InternalInvalidRequestCodeException,
+        InternalRequestException
     {
-        Request request= new Request( Code.GET, ( discoverBuilder.isConfirmable() ? Type.CON : Type.NON ) );
-        request.setURI( getURI( discoverBuilder ) );
+        Request request= new CoapRequestBuilderImpl( discoverParams ).build();
         CoapResponse response= coapClient.advanced( request );
 
         throwExceptionWhenNeeded( response );
@@ -1036,23 +837,20 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
-     * Start observing a resource of a CoAP server.
-     * @param handlerName the name of the response-handler that will process responses
-     * @param confirmable when true the 
-     * @param host hostname or ip of the server, when null client configuration is used
-     * @param port portnumber of the server, when null client configuration is used
-     * @param path path of the resource on the server
-     * @param queryParameters uri-query parameters 
-     * @throws InternalInvalidObserverException
-     * @throws InternalUriException
-     * @throws InternalInvalidHandlerNameException
+     * Start observing a resource on a CoAP server.
+     * @param params The observer parameters.
+     * @param handlerBuilder The response handler parameters.
+     * @throws InternalInvalidObserverException When the observer parameters are invalid.
+     * @throws InternalUriException When the uri parameters of the resource to observe are invalid.
+     * @throws InternalInvalidHandlerNameException When the handler parameters are invalid.
      */
-    synchronized void startObserver( ObserverStartBuilder observerStartBuilder, ResponseHandlerBuilder handlerBuilder ) throws InternalInvalidObserverException,
+    synchronized void startObserver( ObserverAddParams params, ResponseHandlerParams handlerBuilder ) throws InternalInvalidObserverException,
         InternalUriException,
         InternalInvalidHandlerNameException
     {
         SourceCallback< InputStream, CoapResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
-        URI uri= getURI( observerStartBuilder );
+        CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
+        URI uri= requestBuilder.buildResourceUri();
         ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
@@ -1064,8 +862,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         relation= new ObserveRelation(
             "CoAP Observer { " + getClientName() + "::" + uri + " }",
             coapClient,
-            observerStartBuilder.isConfirmable(),
-            uri,
+            requestBuilder,
             ( requestUri, requestCode, response ) -> this.processMuleFlow( requestUri, requestCode, response, handler )
         );
         addRelation( uri, relation );
@@ -1074,13 +871,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     /**
      * Stop observing a resource of a CoAP server.
-     * @param builder The parameters identifying the observer to stop.
+     * @param params The parameters identifying the observer to stop.
      * @throws InternalUriException
      * @throws InternalInvalidObserverException
      */
-    synchronized void stopObserver( ObserverStopBuilder builder ) throws InternalUriException, InternalInvalidObserverException
+    synchronized void stopObserver( ObserverRemoveParams params ) throws InternalUriException, InternalInvalidObserverException
     {
-        URI uri= getURI( builder );
+        CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
+        URI uri= requestBuilder.buildResourceUri();
         ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
@@ -1102,4 +900,458 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         return "CoAP Client { " + getClientName() + " }";
     }
 
+    /**
+     * Builder for constructing requests on services that can be virtual or reside behind a proxy.
+     * In latter cases the eindpoint address will differ from the service address.
+     */
+    class CoapRequestBuilderImpl implements CoapRequestBuilder
+    {
+        /**
+         * The Observe flag;
+         */
+        Boolean observe= null;
+
+        /**
+         * The Confirmable flag;
+         */
+        boolean confirmable= true;
+
+        /**
+        * The request code.
+        */
+        CoAPRequestCode requestCode= null;
+
+        /**
+         * Scheme part of the uri to use by a forwarding proxy.
+         */
+        String proxyScheme= null;
+
+        /**
+         * Host part of the endpoint uri.
+         */
+        String endpointHost= null;
+
+        /**
+         * Port part of the endpoint uri.
+         */
+        int endpointPort= -1;
+
+        /**
+         * Host part of the resource uri.
+         */
+        String resourceHost= null;
+
+        /**
+         * Port part of the service uri.
+         */
+        int resourcePort= -1;
+
+        /**
+         * Path part of the service uri.
+         */
+        String resourcePath= null;
+
+        /**
+         * Query part of the service uri.
+         */
+        String resourceQuery= null;
+
+        /**
+         * Flag to always add the given payload to the request, 
+         * even when request code indicates it should not have one.
+         */
+        boolean forcePayload= false;
+
+        /**
+         * The request payload
+         */
+        TypedValue< Object > requestPayload= null;
+
+        /**
+         * Set the optional payload of the CoAP request.
+         * @param request The request to set the payload on.
+         * @throws InternalRequestException When the payload could not be added to the request.
+         */
+        private void setPayload( Request request ) throws InternalRequestException
+        {
+            if ( requestPayload != null && requestPayload.getValue() != null )
+            {
+                boolean sendPayload;
+                switch ( request.getCode() )
+                {
+                    case GET:
+                    case DELETE:
+                        if ( forcePayload )
+                        {
+                            request.setUnintendedPayload();
+                            sendPayload= true;
+                        }
+                        else
+                        {
+                            sendPayload= false;
+                        }
+                        break;
+                    default:
+                        sendPayload= true;
+                        break;
+                }
+                if ( sendPayload )
+                {
+                    //TODO add streaming & blockwise cooperation
+                    try
+                    {
+                        request.setPayload( MessageUtils.toBytes( requestPayload, transformationService ) );
+                    }
+                    catch ( RuntimeException | InternalInvalidByteArrayValueException e )
+                    {
+                        throw new InternalRequestException( "cannot convert payload to byte[]", e );
+                    }
+                    request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
+                }
+            }
+        }
+
+        /**
+        * Set the endpoint address.
+        * @param host Host to use.
+        * @param port Optional port to use.
+        */
+        private void setEndpointAddress( String host, Integer port )
+        {
+            endpointHost= host;
+            if ( port != null ) endpointPort= port;
+        }
+
+        /**
+         * Set proxyScheme if provided.
+         * @param remoteEndpoint The candidate provider of the proxyScheme.
+         */
+        private void setProxyScheme( RemoteEndpointConfig remoteEndpoint )
+        {
+            if ( remoteEndpoint instanceof ProxyConfig )
+            {
+                ProxyConfig proxy= (ProxyConfig) remoteEndpoint;
+                if ( proxy.getForwardToScheme() != null ) proxyScheme= proxy.getForwardToScheme();
+            }
+        }
+
+        /**
+         * Set proxyScheme if provided.
+         * @param remoteEndpoint The candidate provider of the proxyScheme.
+         */
+        private void setProxyScheme( RemoteEndpointParams remoteEndpoint )
+        {
+            if ( remoteEndpoint instanceof Proxy )
+            {
+                Proxy proxy= (Proxy) remoteEndpoint;
+                if ( proxy.getForwardToScheme() != null ) proxyScheme= proxy.getForwardToScheme();
+            }
+        }
+
+        /**
+         * Constructor using PingBuilder and client defaults.
+         * @param params Provides URI components.
+         * @return The constructed UriBuilder object.
+         */
+        public CoapRequestBuilderImpl( PingParams params )
+        {
+            if ( params.getPingAddress() != null )
+            {
+                setEndpointAddress( params.getPingAddress().getEndpointHost(), params.getPingAddress().getEndpointPort() );
+            }
+            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            {
+                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+            }
+            else
+            {
+                setEndpointAddress( requestConfig.getHost(), requestConfig.getPort() );
+            }
+        }
+
+        /**
+         * Constructor using DiscoverBuilder and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        public CoapRequestBuilderImpl( DiscoverParams params )
+        {
+            this( (AbstractRequestParams) params );
+            requestCode= CoAPRequestCode.GET;
+            resourcePath= "/.well-known/core";
+        }
+
+        /**
+         * Constructor using RequestBuilder and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        public CoapRequestBuilderImpl( RequestParams params )
+        {
+            this( (AbstractResourceRequestParams) params );
+            requestCode= params.getRequestCode();
+            forcePayload= params.isForcePayload();
+            requestPayload= params.getRequestPayload();
+        }
+
+        /**
+         * Constructor using AbstractRequestBuilder and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        private CoapRequestBuilderImpl( AbstractRequestParams params )
+        {
+            //get request type
+            if ( params.getType() == CoAPRequestType.CONFIRMABLE )
+            {
+                confirmable= true;
+            }
+            else if ( params.getType() == CoAPRequestType.NON_CONFIRMABLE )
+            {
+                confirmable= false;
+            }
+            else
+            {
+                confirmable= requestConfig.isConfirmable();
+            }
+            //get the endpoint address
+            if ( params.getRemoteEndpoint() != null )
+            {
+                setEndpointAddress( params.getRemoteEndpoint().getEndpointHost(), params.getRemoteEndpoint().getEndpointPort() );
+            }
+            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            {
+                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+            }
+            else
+            {
+                if ( params.getHost() != null )
+                {
+                    endpointHost= params.getHost();
+                }
+                else
+                {
+                    endpointHost= requestConfig.getHost();
+                }
+                if ( params.getPort() != null )
+                {
+                    endpointPort= params.getPort();
+                }
+                else if ( requestConfig.getPort() != null )
+                {
+                    endpointPort= requestConfig.getPort();
+                }
+            }
+            if ( params.getRemoteEndpoint() != null )
+            {
+                setProxyScheme( params.getRemoteEndpoint() );
+            }
+            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            {
+                setProxyScheme( requestConfig.getRemoteEndpointConfig() );
+            }
+            if ( params.getHost() != null )
+            {
+                resourceHost= params.getHost();
+            }
+            else
+            {
+                resourceHost= requestConfig.getHost();
+            }
+            if ( params.getPort() != null )
+            {
+                resourcePort= params.getPort();
+            }
+            else if ( requestConfig.getPort() != null )
+            {
+                resourcePort= requestConfig.getPort();
+            }
+            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryParams() );
+        }
+
+        /**
+         * Constructor using AbstractResourceRequestBuilder and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        private CoapRequestBuilderImpl( AbstractResourceRequestParams params )
+        {
+            this( (AbstractRequestParams) params );
+            if ( params.getPath() != null )
+            {
+                resourcePath= params.getPath();
+            }
+            else if ( requestConfig.getPath() != null )
+            {
+                resourcePath= requestConfig.getPath();
+            }
+        }
+
+        /**
+         * Constructor using ObserverAddParams and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        public CoapRequestBuilderImpl( ObserverAddParams params )
+        {
+            this( (AbstractResourceRequestParams) params );
+            observe= Boolean.TRUE;
+            requestCode= CoAPRequestCode.GET;
+        }
+
+        /**
+         * Constructor using ObserverRemoveParams and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed UriBuilder object.
+         */
+        public CoapRequestBuilderImpl( ObserverRemoveParams params )
+        {
+            this( (AbstractResourceRequestParams) params );
+            observe= Boolean.FALSE;
+            requestCode= CoAPRequestCode.GET;
+        }
+
+        public CoapRequestBuilderImpl( RequestConfig params )
+        {
+            confirmable= params.isConfirmable();
+            //get the endpoint address
+            if ( params.getRemoteEndpointConfig() != null )
+            {
+                setEndpointAddress( params.getRemoteEndpointConfig().getEndpointHost(), params.getRemoteEndpointConfig().getEndpointPort() );
+            }
+            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            {
+                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+            }
+            else
+            {
+                if ( params.getHost() != null )
+                {
+                    endpointHost= params.getHost();
+                }
+                else
+                {
+                    endpointHost= requestConfig.getHost();
+                }
+                if ( params.getPort() != null )
+                {
+                    endpointPort= params.getPort();
+                }
+                else if ( requestConfig.getPort() != null )
+                {
+                    endpointPort= requestConfig.getPort();
+                }
+            }
+            if ( params.getRemoteEndpointConfig() != null )
+            {
+                setProxyScheme( params.getRemoteEndpointConfig() );
+            }
+            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            {
+                setProxyScheme( requestConfig.getRemoteEndpointConfig() );
+            }
+            if ( params.getHost() != null )
+            {
+                resourceHost= params.getHost();
+            }
+            else
+            {
+                resourceHost= requestConfig.getHost();
+            }
+            if ( params.getPort() != null )
+            {
+                resourcePort= params.getPort();
+            }
+            else if ( requestConfig.getPort() != null )
+            {
+                resourcePort= requestConfig.getPort();
+            }
+            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryConfigs() );
+            if ( params.getPath() != null )
+            {
+                resourcePath= params.getPath();
+            }
+            else if ( requestConfig.getPath() != null )
+            {
+                resourcePath= requestConfig.getPath();
+            }
+        }
+
+        /**
+         * Build the URI of the endpoint to address the request.
+         * @return The endpoint URI.
+         * @throws InternalUriException When URI components cannot be assembled to a valid URI.
+         */
+        @Override
+
+        public URI buildEndpointUri() throws InternalUriException
+        {
+            URI uri;
+            try
+            {
+                uri= new URI( scheme, null, endpointHost, endpointPort, null, null, null );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalUriException( "cannot form valid uri using: { scheme= " + scheme + ", host= " + endpointHost + ", port= " + endpointPort + " }" );
+            }
+            return uri;
+        }
+
+        /**
+         * Build the URI of the resource to request.
+         * @return The resource URI.
+         * @throws InternalUriException When URI components cannot be assembled to a valid URI.
+         */
+        @Override
+        public URI buildResourceUri() throws InternalUriException
+        {
+            if ( resourcePath == null )
+            {
+                throw new InternalUriException( "client { " + getClientName() + " } cannot form valid uri using path { null }" );
+            }
+            URI uri;
+            try
+            {
+                uri= new URI( proxyScheme, null, resourceHost, resourcePort, resourcePath, resourceQuery, null );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalUriException(
+                    "cannot form valid uri using: { scheme= " + proxyScheme + ", host= " + resourceHost + ", port= " + resourcePort + ", path= " + resourcePath + ", query= "
+                        + resourceQuery + " }"
+                );
+            }
+            return uri;
+        }
+
+        /**
+         * Build the CoAP request based on given parameters.
+         * @return The CoAP request.
+         * @throws InternalInvalidRequestCodeException When given requestCode is invalid.
+         * @throws InternalUriException When parameters do not assemble to valid URI.
+         * @throws InternalRequestException When given payload could not be added the request.
+         */
+        @Override
+        public Request build() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
+        {
+            Request request= new Request( AttributeUtils.toRequestCode( requestCode ), ( confirmable ? Type.CON : Type.NON ) );
+            request.setURI( buildEndpointUri() );
+            request.setOptions( buildResourceUri() );
+            if ( observe != null )
+            {
+                if ( observe )
+                {
+                    request.setObserve();
+                }
+                else
+                {
+                    request.setObserveCancel();
+                }
+            }
+            if ( proxyScheme != null ) request.getOptions().setProxyScheme( proxyScheme );
+            setPayload( request );
+            return request;
+        }
+    }
 }

@@ -35,10 +35,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Information for discovering the resource 
+ * CoRE Information of the resource 
  *
  */
-public class ResourceInfoBuilder
+public class ResourceInfoParams
 {
     /**
      * Human readable title of the resource. 
@@ -99,14 +99,14 @@ public class ResourceInfoBuilder
     /**
      * Default constructor of ResourceInfo.
      */
-    public ResourceInfoBuilder()
+    public ResourceInfoParams()
     {
     }
 
     /**
      * Copy constructor of ResourceInfo.
      */
-    public ResourceInfoBuilder( ResourceInfoBuilder info )
+    public ResourceInfoParams( ResourceInfoParams info )
     {
         this.title= info.getTitle();
         this.ifdesc= info.getIfdesc();

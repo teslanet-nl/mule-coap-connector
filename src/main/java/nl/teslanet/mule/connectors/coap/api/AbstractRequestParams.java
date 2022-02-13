@@ -27,41 +27,49 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The uri parameters for a CoAP request.
+ * The parameters of a CoAP request.
  *
  */
-public abstract class AbstractResourceRequestBuilder extends AbstractRequestBuilder
+public abstract class AbstractRequestParams extends AbstractQueryParams
 {
+    // Mule seems to need this to be an inner enum.
     /**
-    * The path of the resource to access.
-    */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 51 )
-    @Example( value= "/some/resource/path" )
-    @Summary( "The path of the resource to access." )
-    private String path= null;
-
-    /**
-     * @return the path
+     * Available request codes.
      */
-    public String getPath()
+    public enum CoAPRequestType
     {
-        return path;
+        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
     }
 
     /**
-     * @param path the path to set
+     * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.
+     * When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.
+     * When DEFAULT the client default is used.
      */
-    public void setPath( String path )
+    @Parameter
+    @Optional( defaultValue= "DEFAULT" )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Placement( order= 1 )
+    //@Summary( "When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.\nWhen Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.\nWhen DEFAULT the client default is used." )
+    private CoAPRequestType type= CoAPRequestType.DEFAULT;
+
+    /**
+     * @return the confirmable
+     */
+    public CoAPRequestType getType()
     {
-        this.path= path;
+        return type;
+    }
+
+    /**
+     * @param type the message type to set
+     */
+    public void setType( CoAPRequestType type )
+    {
+        this.type= type;
     }
 }

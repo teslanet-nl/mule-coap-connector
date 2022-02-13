@@ -24,10 +24,10 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- * The attributes of a CoAP observe request.
+ * The parameters of a CoAP observer.
  *
  */
-public class ObserverStartBuilder extends AbstractResourceRequestBuilder
+public class ObserverAddParams extends AbstractResourceRequestParams
 {
     //NOOP
 }

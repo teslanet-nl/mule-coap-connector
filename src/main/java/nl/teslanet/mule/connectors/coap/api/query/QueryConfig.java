@@ -34,7 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * CoAP URI Query Parameter without expression support. 
  */
-public class QueryParamConfig extends AbstractQueryParam 
+public class QueryConfig extends AbstractQueryParam 
 {
     /**
      * The key of the query parameter.

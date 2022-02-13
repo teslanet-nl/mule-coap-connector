@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.Defs;
-import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
@@ -103,7 +103,7 @@ public class ResourceRegistry
      * @param resourceDesciption The definition of the resource to create.
      * @throws InternalResourceUriException when the parent uri does not resolve to an existing resource.
      */
-    public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InternalResourceUriException
+    public void add( String parentUri, ResourceParams resourceDesciption ) throws InternalResourceUriException
     {
         ServedResource parent= getResource( parentUri );
         ServedResource resource= new ServedResource( resourceDesciption );

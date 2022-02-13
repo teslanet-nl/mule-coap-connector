@@ -32,60 +32,41 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The parameters describing an address of an server to access.
+ * Parameters of a shared server that will handle requests on behalf of a virtual server.
  *
  */
-public abstract class AbstractAddressBuilder
+public class Proxy extends RemoteEndpointParams
 {
     /**
-     * The hostname or ip of the server to access. 
+     * RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is
+     * constructed as follows: a CoAP URI is constructed from the Uri-* options as
+     * defined in Section 6.5. In the resulting URI, the initial scheme up to, but
+     * not including, the following colon is then replaced by the content of the
+     * Proxy-Scheme Option.
+     * 
+     * @see <a href=
+     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 - 5.10.2. Proxy-Uri and Proxy-Scheme</a>
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 41 )
-    @Summary( "The hostname or ip of the server to access." )
-    private String host= null;
+    @Placement( order= 121, tab= Placement.ADVANCED_TAB )
+    @Summary( "The scheme to use for the request that is forwarded." )
+    private String forwardToScheme= null;
 
     /**
-     * The port of the server to access.
+     * @return the forwardToScheme
      */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 42 )
-    @Summary( "The port of the server to access." )
-    private Integer port= null;
-
-    /**
-     * @return the host
-     */
-    public String getHost()
+    public String getForwardToScheme()
     {
-        return host;
+        return forwardToScheme;
     }
 
     /**
-     * @param host the host to set
+     * @param forwardToScheme the forwardToScheme to set
      */
-    public void setHost( String host )
+    public void setForwardToScheme( String forwardToScheme )
     {
-        this.host= host;
-    }
-
-    /**
-     * @return the port
-     */
-    public Integer getPort()
-    {
-        return port;
-    }
-
-    /**
-     * @param port the port to set
-     */
-    public void setPort( Integer port )
-    {
-        this.port= port;
+        this.forwardToScheme= forwardToScheme;
     }
 }

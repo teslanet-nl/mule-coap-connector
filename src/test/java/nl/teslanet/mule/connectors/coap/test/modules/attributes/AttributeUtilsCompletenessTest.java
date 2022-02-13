@@ -30,8 +30,8 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 import org.junit.Test;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseParams.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;

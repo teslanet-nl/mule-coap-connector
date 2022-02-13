@@ -27,14 +27,17 @@ import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
+import nl.teslanet.mule.connectors.coap.api.query.QueryConfig;
 
 
 /**
@@ -43,6 +46,15 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig;
  */
 public class RequestConfig
 {
+    /**
+     * When true the server is expected to acknowledge reception of the observe request.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "When true the server is expected to acknowledge reception of the observe request." )
+    private boolean confirmable= true;
+
     /**
      * The hostname or ip of the server to access.
      */
@@ -72,7 +84,7 @@ public class RequestConfig
     private String path= null;
 
     /**
-     * The query parameters of the request.
+     * The default query parameters of requests.
      */
     @Parameter
     @Optional
@@ -80,7 +92,34 @@ public class RequestConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @Summary( "The query parameters of the request." )
     @DisplayName( "Query Parameters" )
-    private List< QueryParamConfig > queryParamConfigs= null;
+    private List< QueryConfig > queryConfigs= null;
+
+    /**
+     * Configuration of virtual hosting defaults.
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
+    @Placement( order= 1, tab= "Advanced" )
+    @Summary( "The virtual server or proxy to address the request to." )
+    private RemoteEndpointConfig remoteEndpointConfig= null;
+
+    /**
+     * @return the confirmable
+     */
+    public boolean isConfirmable()
+    {
+        return confirmable;
+    }
+
+    /**
+     * @param confirmable the confirmable to set
+     */
+    public void setConfirmable( boolean confirmable )
+    {
+        this.confirmable= confirmable;
+    }
 
     /**
      * @return the host
@@ -133,16 +172,32 @@ public class RequestConfig
     /**
      * @return The queryParameters.
      */
-    public List< QueryParamConfig > getQueryParamConfigs()
+    public List< QueryConfig > getQueryConfigs()
     {
-        return queryParamConfigs;
+        return queryConfigs;
     }
 
     /**
-     * @param queryParamConfigs The query parameters to set.
+     * @param queryConfigs The query parameters to set.
      */
-    public void setQueryParamConfigs( List< QueryParamConfig > queryParamConfigs )
+    public void setQueryConfigs( List< QueryConfig > queryConfigs )
     {
-        this.queryParamConfigs= queryParamConfigs;
+        this.queryConfigs= queryConfigs;
+    }
+
+    /**
+     * @return the remoteEndpointConfig
+     */
+    public RemoteEndpointConfig getRemoteEndpointConfig()
+    {
+        return remoteEndpointConfig;
+    }
+
+    /**
+     * @param remoteEndpointConfig the remoteEndpointConfig to set
+     */
+    public void setRemoteEndpointConfig( RemoteEndpointConfig remoteEndpointConfig )
+    {
+        this.remoteEndpointConfig= remoteEndpointConfig;
     }
 }

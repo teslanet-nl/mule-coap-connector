@@ -57,8 +57,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseParams;
+import nl.teslanet.mule.connectors.coap.api.ResponseParams.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
@@ -166,7 +166,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         @NullSafe
         @Alias( "response" )
         @Placement( tab= "Response", order= 1 )
-        ResponseBuilder response,
+        ResponseParams response,
         @Optional
         @NullSafe
         @Alias( "response-options" )
