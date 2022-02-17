@@ -885,6 +885,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         */
         Code requestCode= null;
 
+        //TODO add proxyUri
         /**
          * Scheme part of the uri to use by a forwarding proxy.
          */

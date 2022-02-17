@@ -128,28 +128,10 @@ public class MessageUtils
         {
             optionSet.setSize2( 0 );
         }
-        //TODO RC
-//        if ( requestOptions.getUriHost() != null )
-//        {
-//            optionSet.setUriHost( requestOptions.getUriHost() );
-//        }
-//        if ( requestOptions.getUriPort() != null )
-//        {
-//            optionSet.setUriPort( requestOptions.getUriPort() );
-//        }
-//        if ( requestOptions.getProxyUri() != null )
-//        {
-//            optionSet.setProxyUri( requestOptions.getProxyUri() );
-//        }
         if ( requestOptions.getRequestSize() != null )
         {
             optionSet.setSize1( requestOptions.getRequestSize() );
         }
-        //TODO RC
-//        if ( requestOptions.getProxyScheme() != null )
-//        {
-//            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
-//        }
         for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
         {
             try
