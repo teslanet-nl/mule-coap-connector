@@ -55,15 +55,17 @@ public class InSecureTest extends AbstractClientTestCase
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { "get_me", CoAPRequestCode.GET.name(), "/secure/get_me", null, null },
-                { "do_not_get_me", CoAPRequestCode.GET.name(), "/secure/do_not_get_me", null, null },
-                { "post_me", CoAPRequestCode.POST.name(), "/secure/post_me", null, null },
-                { "do_not_post_me", CoAPRequestCode.POST.name(), "/secure/do_not_post_me", null, null },
-                { "put_me", CoAPRequestCode.PUT.name(), "/secure/put_me", null, null },
-                { "do_not_put_me", CoAPRequestCode.PUT.name(), "/secure/do_not_put_me", null, null },
-                { "delete_me", CoAPRequestCode.DELETE.name(), "/secure/delete_me", null, null },
-                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "/secure/do_not_delete_me", null, null } } );
+            new Object [] []
+            {
+                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null },
+                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
+                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/post_me", null, null },
+                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
+                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/put_me", null, null },
+                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
+                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/delete_me", null, null },
+                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } }
+        );
     }
 
     /**
@@ -82,7 +84,7 @@ public class InSecureTest extends AbstractClientTestCase
      * The request uri that is expected.
      */
     @Parameter(2)
-    public String expectedRequestPath;
+    public String expectedRequestUri;
 
     /**
      * The response code that is expected.
@@ -131,7 +133,7 @@ public class InSecureTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
-        assertEquals( "wrong request path", expectedRequestPath, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         byte[] payload= (byte[]) response.getPayload().getValue();
         assertEquals( "wrong response payload", expectedPayload, payload );

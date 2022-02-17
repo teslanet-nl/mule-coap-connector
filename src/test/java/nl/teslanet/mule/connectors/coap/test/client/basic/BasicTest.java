@@ -57,15 +57,17 @@ public class BasicTest extends AbstractClientTestCase
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { "get_me", CoAPRequestCode.GET.name(), "/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", CoAPRequestCode.GET.name(), "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", CoAPRequestCode.POST.name(), "/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", CoAPRequestCode.POST.name(), "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", CoAPRequestCode.PUT.name(), "/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", CoAPRequestCode.PUT.name(), "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", CoAPRequestCode.DELETE.name(), "/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
+            new Object [] []
+            {
+                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
+                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
+                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
+                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
+        );
     }
 
     /**
@@ -81,10 +83,10 @@ public class BasicTest extends AbstractClientTestCase
     public String expectedRequestCode;
 
     /**
-     * The request path that is expected.
+     * The request uri that is expected.
      */
     @Parameter(2)
-    public String expectedRequestPath;
+    public String expectedRequestUri;
 
     /**
      * The response code that is expected.
@@ -137,7 +139,7 @@ public class BasicTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
-        assertEquals( "wrong request uri", expectedRequestPath, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, payload );
 

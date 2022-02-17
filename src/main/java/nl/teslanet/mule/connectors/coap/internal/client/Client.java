@@ -37,6 +37,7 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.WebLink;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.LinkFormat;
@@ -404,40 +405,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
-     * Get a querystring containing containing query parameters that can be use as part of a an Uri-string.
-     * @param queryParamList List of query parameters.
-     * @return The querystring. 
-     */
-    /*
-    String toQueryString( List< ? extends QueryParamAttribute > queryParamList )
-    {
-        if ( queryParamList == null ) return null;
-    
-        StringBuilder builder= new StringBuilder();
-        boolean first;
-        Iterator< ? extends QueryParamAttribute > it;
-        for ( first= true, it= queryParamList.iterator(); it.hasNext(); )
-        {
-            QueryParamAttribute queryParam= it.next();
-            if ( queryParam.hasKey() )
-            {
-                if ( first )
-                {
-                    builder.append( "&" );
-                    first= false;
-                }
-                builder.append( queryParam.getKey() );
-                if ( queryParam.hasValue() )
-                {
-                    builder.append( "=" );
-                    builder.append( queryParam.getValue() );
-                }
-            }
-        }
-        return builder.toString();
-    }
-    */
-    /**
      * Passes asynchronous response to the muleflow.
      * @param requestUri The Uri of the request that caused the response.
      * @param requestCode The code of the request that caused the response.
@@ -682,9 +649,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         DefaultResponseAttributes attributes= new DefaultResponseAttributes();
         attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( operationalEndpoint.getCoapEndpoint().getAddress().toString() );
-        //TODO RC change to requestUri attribute
-        attributes.setRequestPath( requestUri );
-        attributes.setRequestQuery( requestUri );
+        attributes.setRequestUri( requestUri );
         if ( response == null )
         {
             attributes.setSuccess( false );
@@ -780,8 +745,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Request request;
         try
         {
-            request= new CoapRequestBuilderImpl( pingbuilder ).build();
-            request.setToken( Token.EMPTY );
+            request= new CoapRequestBuilderImpl( pingbuilder ).buildEmpty();
         }
         catch ( Exception e )
         {
@@ -917,9 +881,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         boolean confirmable= true;
 
         /**
-        * The request code.
+        * The CoAP request code.
         */
-        CoAPRequestCode requestCode= null;
+        Code requestCode= null;
 
         /**
          * Scheme part of the uri to use by a forwarding proxy.
@@ -1077,7 +1041,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         public CoapRequestBuilderImpl( DiscoverParams params )
         {
             this( (AbstractRequestParams) params );
-            requestCode= CoAPRequestCode.GET;
+            requestCode= Code.GET;
             resourcePath= "/.well-known/core";
         }
 
@@ -1085,11 +1049,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * Constructor using RequestBuilder and client defaults.
          * @param params Provides request parameters.
          * @return The constructed UriBuilder object.
+         * @throws InternalInvalidRequestCodeException 
          */
-        public CoapRequestBuilderImpl( RequestParams params )
+        public CoapRequestBuilderImpl( RequestParams params ) throws InternalInvalidRequestCodeException
         {
             this( (AbstractResourceRequestParams) params );
-            requestCode= params.getRequestCode();
+            requestCode= AttributeUtils.toRequestCode( params.getRequestCode() );
             forcePayload= params.isForcePayload();
             requestPayload= params.getRequestPayload();
         }
@@ -1196,7 +1161,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             this( (AbstractResourceRequestParams) params );
             observe= Boolean.TRUE;
-            requestCode= CoAPRequestCode.GET;
+            requestCode= Code.GET;
         }
 
         /**
@@ -1208,12 +1173,26 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             this( (AbstractResourceRequestParams) params );
             observe= Boolean.FALSE;
-            requestCode= CoAPRequestCode.GET;
+            requestCode= Code.GET;
         }
 
-        public CoapRequestBuilderImpl( RequestConfig params )
+        public CoapRequestBuilderImpl( ObserverConfig params )
         {
-            confirmable= params.isConfirmable();
+            observe= Boolean.TRUE;
+            requestCode= Code.GET;
+            //get request type
+            if ( params.getType() == ObserverConfig.CoAPRequestType.CONFIRMABLE )
+            {
+                confirmable= true;
+            }
+            else if ( params.getType() == ObserverConfig.CoAPRequestType.NON_CONFIRMABLE )
+            {
+                confirmable= false;
+            }
+            else
+            {
+                confirmable= requestConfig.isConfirmable();
+            }
             //get the endpoint address
             if ( params.getRemoteEndpointConfig() != null )
             {
@@ -1313,7 +1292,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             URI uri;
             try
             {
-                uri= new URI( proxyScheme, null, resourceHost, resourcePort, resourcePath, resourceQuery, null );
+                uri= new URI( ( proxyScheme != null ? proxyScheme : scheme ), null, resourceHost, resourcePort, resourcePath, resourceQuery, null );
             }
             catch ( Exception e )
             {
@@ -1326,6 +1305,20 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
 
         /**
+         * Build an empty CoAP request based on given parameters.
+         * @return The CoAP request.
+         * @throws InternalUriException When parameters do not assemble to valid URI.
+         */
+        @Override
+        public Request buildEmpty() throws InternalUriException
+        {
+            Request request= new Request( null, ( confirmable ? Type.CON : Type.NON ) );
+            request.setURI( buildEndpointUri() );
+            request.setToken( Token.EMPTY );
+            return request;
+        }
+
+        /**
          * Build the CoAP request based on given parameters.
          * @return The CoAP request.
          * @throws InternalInvalidRequestCodeException When given requestCode is invalid.
@@ -1335,7 +1328,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         @Override
         public Request build() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
         {
-            Request request= new Request( AttributeUtils.toRequestCode( requestCode ), ( confirmable ? Type.CON : Type.NON ) );
+            Request request= new Request( requestCode, ( confirmable ? Type.CON : Type.NON ) );
             request.setURI( buildEndpointUri() );
             request.setOptions( buildResourceUri() );
             if ( observe != null )

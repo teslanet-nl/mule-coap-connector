@@ -60,4 +60,11 @@ public interface CoapRequestBuilder
      * @throws InternalRequestException When given payload could not be added the request.
      */
     public Request build() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException;
+
+    /**
+     * Build an empty CoAP request based on given parameters.
+     * @return The CoAP request.
+     * @throws InternalUriException When parameters do not assemble to valid URI.
+     */
+    public Request buildEmpty() throws InternalUriException;
 }

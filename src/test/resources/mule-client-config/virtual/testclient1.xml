@@ -48,14 +48,20 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
 
-	<coap:client-config name="config_to_virtual_host" endpointHost="127.0.0.1" endpointPort="6767" >
-		<coap:endpoint udpEndpoint="Udp_Endpoint"/>
+	<coap:client-config name="config_to_virtual_host">
+		<coap:endpoint udpEndpoint="Udp_Endpoint"/>	
+		<coap:remote-endpoint-config >
+			<coap:shared-server-config endpointHost="127.0.0.1" endpointPort="6767" />
+		</coap:remote-endpoint-config>
 	</coap:client-config>
 
 	<flow name="do_request">
 		<coap:request config-ref="config"
 			requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]"
-			path="#[vars.path]" endpointHost="#[vars.endpointHost]" endpointPort="#[vars.endpointPort]">
+			path="#[vars.path]">
+			<coap:remote-endpoint>
+				<coap:shared-server endpointHost="#[vars.endpointHost]" endpointPort="#[vars.endpointPort]"/>
+			</coap:remote-endpoint>
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
@@ -70,7 +76,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<flow name="do_request_to_virtual_host_override">
 		<coap:request config-ref="config_to_virtual_host"
 			requestCode="#[vars.code]" host="#[vars.host]" port="#[vars.port]"
-			path="#[vars.path]" endpointHost="#[vars.endpointHost]" endpointPort="#[vars.endpointPort]">
+			path="#[vars.path]">
+			<coap:remote-endpoint>
+				<coap:shared-server endpointHost="#[vars.endpointHost]" endpointPort="#[vars.endpointPort]"/>
+			</coap:remote-endpoint>	
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>

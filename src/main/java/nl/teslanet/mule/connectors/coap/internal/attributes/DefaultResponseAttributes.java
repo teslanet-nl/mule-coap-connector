@@ -62,19 +62,11 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param requestPath The request path to set.
+     * @param requestUri The request uri to set.
      */
-    public void setRequestPath( String requestPath )
+    public void setRequestUri( String requestUri )
     {
-        this.requestPath= requestPath;
-    }
-
-    /**
-     * @param requestQuery The request query to set.
-     */
-    public void setRequestQuery( String requestQuery )
-    {
-        this.requestQuery= requestQuery;
+        this.requestUri= requestUri;
     }
 
     /**

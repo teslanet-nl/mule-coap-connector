@@ -46,14 +46,17 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="dynamic_service"
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="wrong_port"
 		host="127.0.0.1" port="6767" throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="wrong_host"
 		host="ditbestaatniet.org" port="6767"
 		throwExceptionOnErrorResponse="false">
@@ -73,8 +76,9 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	</flow>
 
 	<flow name="ping_dynamic">
-		<coap:ping config-ref="dynamic_service" host="#[vars.host]"
-			port="#[vars.port]" />
+		<coap:ping config-ref="dynamic_service">
+			<coap:ping-address endpointHost="#[vars.host]" endpointPort="#[vars.port]" />
+		</coap:ping>
 	</flow>
 
 	<flow name="discover">

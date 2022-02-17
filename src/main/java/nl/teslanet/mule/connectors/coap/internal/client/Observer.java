@@ -64,7 +64,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     private Client client;
 
     @ParameterGroup( name= "Observe uri" )
-    private RequestConfig requestConfig;
+    private ObserverConfig observerConfig;
 
     //TODO add options config?
     //TODO one relation namespace for dynamic and static observe, does coap allow for multiple uri observe from the same endooint?
@@ -82,7 +82,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     @Override
     public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
     {
-        CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( requestConfig );;
+        CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( observerConfig );;
         try
         {
             uri= requestBuilder.buildResourceUri();

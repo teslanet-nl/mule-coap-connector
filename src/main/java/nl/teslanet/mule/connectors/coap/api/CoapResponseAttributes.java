@@ -52,14 +52,9 @@ public class CoapResponseAttributes
     protected String localAddress= null;
 
     /**
-     * The path of the resource the request was issued on. 
+     * The uri of the request. 
      */
-    protected String requestPath= null;
-
-    /**
-     * The query parameters of the request.
-     */
-    protected String requestQuery= null;
+    protected String requestUri= null;
 
     /**
      * The address of the server that issued the response.
@@ -116,19 +111,11 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return The request path.
+     * @return The request uri.
      */
-    public String getRequestPath()
+    public String getRequestUri()
     {
-        return requestPath;
-    }
-
-    /**
-     * @return The request query.
-     */
-    public String getRequestQuery()
-    {
-        return requestQuery;
+        return requestUri;
     }
 
     /**

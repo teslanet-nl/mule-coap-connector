@@ -53,15 +53,17 @@ public class SecureTest extends AbstractSecureServerTestCase
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { "get_me", CoAPRequestCode.GET, "/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
-                { "do_not_get_me", CoAPRequestCode.GET, "/secure/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", CoAPRequestCode.POST, "/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
-                { "do_not_post_me", CoAPRequestCode.POST, "/secure/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", CoAPRequestCode.PUT, "/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
-                { "do_not_put_me", CoAPRequestCode.PUT, "/secure/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", CoAPRequestCode.DELETE, "/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
-                { "do_not_delete_me", CoAPRequestCode.DELETE, "/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
+            new Object [] []
+            {
+                { "get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
+                { "do_not_get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
+                { "do_not_post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
+                { "do_not_put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
+                { "do_not_delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
+        );
     }
 
     /**
@@ -77,10 +79,10 @@ public class SecureTest extends AbstractSecureServerTestCase
     public CoAPRequestCode expectedRequestCode;
 
     /**
-     * The request path that is expected.
+     * The request uri that is expected.
      */
-    @Parameter(2)
-    public String expectedRequestPath;
+    @Parameter( 2 )
+    public String expectedRequestUri;
 
     /**
      * The response code that is expected.
@@ -122,7 +124,7 @@ public class SecureTest extends AbstractSecureServerTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request uri", expectedRequestPath, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
 
         String payload= (String) result.getVariables().get( "saved_payload" ).getValue();

@@ -63,10 +63,10 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { Code.GET, "californium.eclipseprojects.io", 33, "127.0.0.1", 6767, "/echo", ResponseCode.CONTENT },
-                { Code.PUT, "californium.eclipseprojects.io", 33, "127.0.0.1", 6767, "/echo", ResponseCode.CHANGED },
-                { Code.POST, "californium.eclipseprojects.io", 33, "127.0.0.1", 6767, "/echo", ResponseCode.CHANGED },
-                { Code.DELETE, "californium.eclipseprojects.io", 33, "127.0.0.1", 6767, "/echo", ResponseCode.DELETED } }
+                { Code.GET, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CONTENT },
+                { Code.PUT, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CHANGED },
+                { Code.POST, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CHANGED },
+                { Code.DELETE, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.DELETED } }
         );
     }
 
@@ -86,7 +86,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
      * The path of the resource to call.
      */
     @Parameter( 2 )
-    public int port;
+    public Integer port;
 
     /**
      * The path of the resource to call.
@@ -98,7 +98,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
      * The path of the resource to call.
      */
     @Parameter( 4 )
-    public int endpointPort;
+    public Integer endpointPort;
 
     /**
      * The path of the resource to call.
@@ -138,7 +138,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
     @Test
     public void testVirtualHostRequest() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( "VirtualHostTestServer" );
+        MuleEventSpy spy= new MuleEventSpy( "6768" );
         spy.clear();
         Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
@@ -153,7 +153,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         assertEquals( "wrong options class", OptionSet.class, event.getContent().getClass() );
         OptionSet options= (OptionSet) event.getContent();
         assertEquals( "wrong uri host", host, options.getUriHost() );
-        assertEquals( "wrong uri port", host, options.getUriPort() );
+        assertEquals( "wrong uri port", port, options.getUriPort() );
     }
 
     /**
@@ -178,7 +178,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         assertEquals( "wrong options class", OptionSet.class, event.getContent().getClass() );
         OptionSet options= (OptionSet) event.getContent();
         assertEquals( "wrong uri host", host, options.getUriHost() );
-        assertEquals( "wrong uri port", host, options.getUriPort() );
+        assertEquals( "wrong uri port", port, options.getUriPort() );
     }
     /**
      * Test inbound property
@@ -202,6 +202,6 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         assertEquals( "wrong options class", OptionSet.class, event.getContent().getClass() );
         OptionSet options= (OptionSet) event.getContent();
         assertEquals( "wrong uri host", host, options.getUriHost() );
-        assertEquals( "wrong uri port", host, options.getUriPort() );
+        assertEquals( "wrong uri port", port, options.getUriPort() );
     }
 }

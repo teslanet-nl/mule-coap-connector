@@ -58,14 +58,22 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
+                { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "coap://127.0.0.1:8976/basic/get_me", "GET called on: /basic/get_me".getBytes() },
+                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", null },
+                { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "coap://127.0.0.1:8976/basic/post_me", "POST called on: /basic/post_me".getBytes() },
+                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", null },
+                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "coap://127.0.0.1:8976/basic/put_me", "PUT called on: /basic/put_me".getBytes() },
+                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", null },
+                {
+                    "do_request",
+                    "DELETE",
+                    "127.0.0.1",
+                    "8976",
+                    "/basic/delete_me",
+                    "DELETED",
+                    "coap://127.0.0.1:8976/basic/delete_me",
+                    "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", null } }
         );
     }
 
@@ -106,9 +114,15 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
     public String expectedResponseCode;
 
     /**
-     * The payload code that is expected.
+     * The request uri that is expected.
      */
     @Parameter( 6 )
+    public String expectedRequestUri;
+
+    /**
+     * The payload code that is expected.
+     */
+    @Parameter( 7 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -149,7 +163,7 @@ public class DynamicUriBasicTest extends AbstractClientTestCase
         assertEquals( "wrong attributes class", new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
-        assertEquals( "wrong request path", path, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, payload );
     }

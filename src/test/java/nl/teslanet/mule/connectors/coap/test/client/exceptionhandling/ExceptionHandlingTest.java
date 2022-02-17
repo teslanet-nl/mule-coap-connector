@@ -59,22 +59,17 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}, host= {1}, port= {2}, path= {3}, expectedResponseCode= {4}, expectedPayload= {5}")
+    @Parameters(name= "flowName= {0}, host= {1}, port= {2}, path= {3}")
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { "do_request", Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "Response is: CONTENT".getBytes() },
-                { "do_request", Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "Response is: CREATED".getBytes() },
-                { "do_request", Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "Response is: CHANGED".getBytes() },
-                {
-                    "do_request",
-                    Code.DELETE,
-                    "127.0.0.1",
-                    "8976",
-                    "/service/delete_me",
-                    "DELETED",
-                    "Response is: DELETED".getBytes() } } );
+            new Object [] []
+            {
+                { "do_request", Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me", "Response is: CONTENT".getBytes() },
+                { "do_request", Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
+                { "do_request", Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me", "Response is: CHANGED".getBytes() },
+                { "do_request", Code.DELETE, "127.0.0.1", "8976", "/service/delete_me", "DELETED", "coap://127.0.0.1:8976/service/delete_me", "Response is: DELETED".getBytes() } }
+        );
     }
 
     /**
@@ -114,9 +109,15 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     public String expectedResponseCode;
 
     /**
+     * The request uri that is expected.
+     */
+    @Parameter( 6 )
+    public String expectedRequestUri;
+
+    /**
      * The payload code that is expected.
      */
-    @Parameter(6)
+    @Parameter( 7 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -168,7 +169,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request path", path, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
 
@@ -181,7 +182,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request path", path, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
         //wait some more time and see that spy 3 is really not called
@@ -237,7 +238,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             response.getAttributes().getClass() );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request path", path, attributes.getRequestPath() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
     }

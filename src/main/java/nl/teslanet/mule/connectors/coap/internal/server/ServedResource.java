@@ -126,7 +126,7 @@ public class ServedResource extends CoapResource
             }
             if ( resource.getCoreInfoConfig().getRt() != null )
             {
-                for ( String rt : resource.getCoreInfoConfig().getRt().split(CSV_REGEX) )
+                for ( String rt : resource.getCoreInfoConfig().getRt().split( CSV_REGEX ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
@@ -356,14 +356,7 @@ public class ServedResource extends CoapResource
         attributes.setConfirmable( exchange.getRequest().isConfirmable() );
         attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
         attributes.setRemoteAddress( coapExchange.getSourceAddress().toString() + ":" + coapExchange.getSourcePort() );
-        if ( coapExchange.getRequestOptions().getURIPathCount() > 0 )
-        {
-            attributes.setRequestPath( "/" + coapExchange.getRequestOptions().getUriPathString() );
-        }
-        if ( coapExchange.getRequestOptions().getURIQueryCount() > 0 )
-        {
-            attributes.setRequestQuery( "?" + coapExchange.getRequestOptions().getUriQueryString() );
-        }
+        attributes.setRequestUri( exchange.getRequest().getURI() );
         attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
         attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKey() : null ) );
         return attributes;

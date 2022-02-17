@@ -32,6 +32,9 @@
                 <parameter name="throwExceptionOnErrorResponse">
                     <description><![CDATA[When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.]]></description>
                 </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
+                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
@@ -41,23 +44,11 @@
                 <parameter name="path">
                     <description><![CDATA[The path of the resource.]]></description>
                 </parameter>
-                <parameter name="queryParamConfigs">
-                    <description><![CDATA[The query parameters of the request.]]></description>
+                <parameter name="queryConfigs">
+                    <description><![CDATA[The default query parameters of requests.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpointConfig">
+                    <description><![CDATA[Configuration of virtual hosting defaults.]]></description>
                 </parameter>
             </parameters>
         </config>
@@ -87,7 +78,7 @@
     </configs>
     <connections/>
     <extension name="CoAP">
-        <description><![CDATA[A Mule extension that adds CoAP functionality to create CoAP clients and CoAP servers.]]></description>
+        <description><![CDATA[Mule extension that adds the capability for Mule applications to act as CoAP client and/or CoAP server.]]></description>
         <parameters/>
     </extension>
     <operations>
@@ -100,26 +91,14 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -152,26 +131,14 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
@@ -187,26 +154,14 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
@@ -216,11 +171,8 @@
         <operation name="ping">
             <description><![CDATA[The Ping processor checks whether a CoAP server is reachable.]]></description>
             <parameters>
-                <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
-                </parameter>
-                <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                <parameter name="pingAddress">
+                    <description><![CDATA[The address of the remote endpoint to ping. When empty the client request defaults are used.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -251,26 +203,14 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
@@ -307,26 +247,14 @@
                 <parameter name="port">
                     <description><![CDATA[The port of the server to access.]]></description>
                 </parameter>
-                <parameter name="endpointHost">
-                    <description><![CDATA[RFC 7252: The Uri-Host Option specifies the Internet host of the resource being requested. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[RFC 7252: The Uri-Port Option specifies the transport-layer port number of the resource. Explicit Uri-Host and Uri-Port Options are typically used when an endpoint hosts multiple virtual servers.]]></description>
-                </parameter>
-                <parameter name="proxyScheme">
-                    <description><![CDATA[RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is constructed as follows: a CoAP URI is constructed from the Uri-* options as defined in Section 6.5. In the resulting URI, the initial scheme up to, but not including, the following colon is then replaced by the content of the Proxy-Scheme Option.]]></description>
-                </parameter>
-                <parameter name="proxyHost">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
-                </parameter>
-                <parameter name="proxyPort">
-                    <description><![CDATA[RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.]]></description>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the request.]]></description>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
@@ -443,9 +371,6 @@
         <source name="observer">
             <description><![CDATA[The Observer message source observes a CoAP resource on a server. The CoAP notifications received from the server are delivered to the flow. The resource is observed during runtime of the flow. When an observe relation with the server could not be established or is lost, the flow is notified of the error and the observe request is retried continuously.]]></description>
             <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
-                </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
                 </parameter>
@@ -461,6 +386,9 @@
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
+                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
@@ -470,8 +398,11 @@
                 <parameter name="path">
                     <description><![CDATA[The path of the resource.]]></description>
                 </parameter>
-                <parameter name="queryParamConfigs">
-                    <description><![CDATA[The query parameters of the request.]]></description>
+                <parameter name="queryConfigs">
+                    <description><![CDATA[The default query parameters of requests.]]></description>
+                </parameter>
+                <parameter name="remoteEndpointConfig">
+                    <description><![CDATA[Configuration of virtual hosting defaults.]]></description>
                 </parameter>
             </parameters>
         </source>
@@ -539,10 +470,7 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestPath">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestQuery">
+                <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -571,10 +499,7 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestPath">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestQuery">
+                <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responseCode">
@@ -611,6 +536,67 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.PingAddress">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.Proxy">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="forwardToScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ProxyConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="forwardToScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.RemoteEndpointParams">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.ResourceConfig">
             <description><![CDATA[]]></description>
             <parameters>
@@ -643,7 +629,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.ResourceInfoBuilder">
+        <type name="nl.teslanet.mule.connectors.coap.api.ResourceInfoParams">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="title">
@@ -663,13 +649,35 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.ResponseBuilder">
+        <type name="nl.teslanet.mule.connectors.coap.api.ResponseParams">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="responseCode">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responsePayload">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.SharedServer">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.SharedServerConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1048,7 +1056,7 @@
                 <parameter name="requestSize">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="provideResponseSize">
+                <parameter name="requireResponseSize">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="otherRequestOptions">
@@ -1085,7 +1093,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryConfig">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="key">
@@ -1096,7 +1104,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParamConfig">
+        <type name="nl.teslanet.mule.connectors.coap.api.query.QueryParam">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="key">
