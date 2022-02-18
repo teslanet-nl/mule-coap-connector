@@ -77,7 +77,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 	<flow name="ping_dynamic">
 		<coap:ping config-ref="dynamic_service">
-			<coap:ping-address endpointHost="#[vars.host]" endpointPort="#[vars.port]" />
+			<coap:remote-endpoint-params endpointHost="#[vars.host]" endpointPort="#[vars.port]" />
 		</coap:ping>
 	</flow>
 
