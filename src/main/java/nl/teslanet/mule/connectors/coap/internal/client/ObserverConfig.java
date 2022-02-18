@@ -36,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestType;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.query.QueryConfig;
 
@@ -49,10 +50,11 @@ public class ObserverConfig
     /**
      * Available type codes.
      */
-    public enum CoAPRequestType
-    {
-        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
-    }
+    //TODO RC
+//    public enum CoAPRequestType
+//    {
+//        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
+//    }
 
     /**
      * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.

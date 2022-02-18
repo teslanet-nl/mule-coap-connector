@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapServer;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -37,13 +38,12 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import org.eclipse.californium.core.CoapServer;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class InSecureTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -51,7 +51,7 @@ public class InSecureTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -71,31 +71,31 @@ public class InSecureTest extends AbstractClientTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String expectedRequestCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String expectedRequestUri;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -126,11 +126,8 @@ public class InSecureTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

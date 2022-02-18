@@ -40,15 +40,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class RequestParams extends AbstractResourceRequestParams
 {
-    // Mule seems to need this to be an inner enum.
-    /**
-     * Available request codes.
-     */
-    public enum CoAPRequestCode
-    {
-        GET, POST, PUT, DELETE
-    }
-
     /**
      * The CoAP request code specifying the requested action on the resource on the server.
      */

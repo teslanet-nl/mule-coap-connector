@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
-import nl.teslanet.mule.connectors.coap.api.ResponseParams.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 
 
 /**

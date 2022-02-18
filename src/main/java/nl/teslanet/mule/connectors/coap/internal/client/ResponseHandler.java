@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -46,7 +46,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  * The received CoAP messages are delivered to the handlers mule-flow.
  */
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class ResponseHandler extends Source< InputStream, CoapResponseAttributes >
+public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes >
 {
 
     /**
@@ -71,7 +71,7 @@ public class ResponseHandler extends Source< InputStream, CoapResponseAttributes
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoAPResponseAttributes > sourceCallback ) throws MuleException
     {
         try
         {

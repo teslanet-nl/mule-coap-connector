@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.Proxy;
 import nl.teslanet.mule.connectors.coap.api.ProxyConfig;
-import nl.teslanet.mule.connectors.coap.api.RemoteEndpointParams;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.SharedServer;
 import nl.teslanet.mule.connectors.coap.api.SharedServerConfig;
@@ -84,7 +84,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @SubTypeMapping(baseType= MidTracker.class, subTypes= { NullMidTracker.class, GroupedMidTracker.class, MapBasedMidTracker.class })
 @SubTypeMapping(baseType= CongestionControl.class, subTypes= { Cocoa.class, CocoaStrong.class, BasicRto.class, LinuxRto.class, PeakhopperRto.class })
 @SubTypeMapping(baseType= Deduplicator.class, subTypes= { CropRotation.class, MarkAndSweep.class })
-@SubTypeMapping(baseType= RemoteEndpointParams.class, subTypes= { SharedServer.class, Proxy.class })
+@SubTypeMapping(baseType= RemoteEndpoint.class, subTypes= { SharedServer.class, Proxy.class })
 @SubTypeMapping(baseType= RemoteEndpointConfig.class, subTypes= { SharedServerConfig.class, ProxyConfig.class })
 @Configurations({ Server.class, Client.class })
 @Export(classes= { ETag.class })

@@ -147,7 +147,7 @@ public class OptionUtils
         }
         return sb.toString();
     }
-    
+
     /**
      * Converts an option value interpreted as UTF-8 string.
      * @param bytes The option value.
@@ -231,7 +231,9 @@ public class OptionUtils
             }
             if ( length > maxLength )
             {
-                throw new InvalidOptionValueException( "Given hexString is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + length );
+                throw new InvalidOptionValueException(
+                    "Given hexString is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + length
+                );
             }
             byte[] bytes= new byte [length];
             try
@@ -259,9 +261,9 @@ public class OptionUtils
      */
     public static byte[] toBytesFromHex( String hexString ) throws InvalidOptionValueException
     {
-        return toBytesFromHex( hexString, Integer.MAX_VALUE);
+        return toBytesFromHex( hexString, Integer.MAX_VALUE );
     }
-    
+
     /**
      * Converts a string representation of an option to byte array.
      * The bytes are written using UTF-8 encoding.
@@ -281,7 +283,9 @@ public class OptionUtils
             byte[] bytes= string.getBytes( Defs.COAP_CHARSET );
             if ( bytes.length > maxLength )
             {
-                throw new InvalidOptionValueException( "Given string is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + bytes.length );
+                throw new InvalidOptionValueException(
+                    "Given string is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + bytes.length
+                );
             }
             return bytes;
         }
@@ -296,7 +300,7 @@ public class OptionUtils
      */
     public static byte[] toBytes( String hexString ) throws InvalidOptionValueException
     {
-        return toBytes( hexString, Integer.MAX_VALUE);
+        return toBytes( hexString, Integer.MAX_VALUE );
     }
 
 }

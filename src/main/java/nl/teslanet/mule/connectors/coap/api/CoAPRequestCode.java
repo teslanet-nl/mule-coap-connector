@@ -24,10 +24,9 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- * The remote endpoint parameters.
- *
+ * Available request codes.
  */
-public class RemoteEndpointParams extends RemoteEndpoint
+public enum CoAPRequestCode
 {
-    //NOOP
+    GET, POST, PUT, DELETE
 }

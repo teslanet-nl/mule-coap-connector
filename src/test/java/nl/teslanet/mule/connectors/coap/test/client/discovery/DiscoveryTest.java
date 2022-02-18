@@ -41,7 +41,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import org.eclipse.californium.core.CoapServer;
@@ -415,9 +415,9 @@ public class DiscoveryTest extends AbstractClientTestCase
         response= result.getMessage();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
+            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not create resource", "CREATED", attributes.getResponseCode() );
 
         //check resource is there
@@ -434,9 +434,9 @@ public class DiscoveryTest extends AbstractClientTestCase
         response= result.getMessage();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
+            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not delete resource", "DELETED", attributes.getResponseCode() );
 
         //check resource is not there

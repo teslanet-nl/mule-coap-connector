@@ -44,12 +44,12 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class AsyncBasicTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -57,7 +57,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -77,31 +77,31 @@ public class AsyncBasicTest extends AbstractClientTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public Code expectedRequestCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String expectedRequestUri;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -126,7 +126,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testAsyncRequest() throws Exception
     {
         MuleEventSpy spy= new MuleEventSpy( "async-handler" );
@@ -144,11 +144,8 @@ public class AsyncBasicTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

@@ -48,7 +48,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
@@ -106,7 +106,7 @@ public class ClientOperations
     @Throws(
         { RequestErrorProvider.class }
     )
-    public Result< InputStream, CoapResponseAttributes > request( @Config
+    public Result< InputStream, CoAPResponseAttributes > request( @Config
     Client client, @ParameterGroup( name= "Request" )
     RequestParams requestParams,
         @Alias( "request-options" )

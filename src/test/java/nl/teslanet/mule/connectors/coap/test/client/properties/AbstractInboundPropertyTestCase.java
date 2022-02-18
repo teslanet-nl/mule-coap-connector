@@ -44,7 +44,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
@@ -168,7 +168,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
      * @param attributes the attributes to fetch the property from
      * @return the property value
      */
-    abstract protected Object fetchInboundProperty( CoapResponseAttributes attributes );
+    abstract protected Object fetchInboundProperty( CoAPResponseAttributes attributes );
 
     /**
      * Test inbound property
@@ -183,9 +183,9 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
         Message response= result.getMessage();
         assertEquals(
             "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
+            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 
         switch ( getPropertyType() )

@@ -65,12 +65,12 @@ public abstract class AbstractAddressParams
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 111, tab= Placement.ADVANCED_TAB )
     @Summary( "The virtual server or proxy send the request to." )
-    private RemoteEndpointParams remoteEndpoint= null;
+    private RemoteEndpoint remoteEndpoint= null;
 
     /**
      * @return the remoteEndpoint
      */
-    public RemoteEndpointParams getRemoteEndpoint()
+    public RemoteEndpoint getRemoteEndpoint()
     {
         return remoteEndpoint;
     }
@@ -78,7 +78,7 @@ public abstract class AbstractAddressParams
     /**
      * @param remoteEndpoint the remoteEndpoint to set
      */
-    public void setRemoteEndpoint( RemoteEndpointParams remoteEndpoint )
+    public void setRemoteEndpoint( RemoteEndpoint remoteEndpoint )
     {
         this.remoteEndpoint= remoteEndpoint;
     }

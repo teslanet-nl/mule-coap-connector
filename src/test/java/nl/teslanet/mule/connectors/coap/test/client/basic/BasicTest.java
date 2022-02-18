@@ -39,13 +39,13 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class BasicTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -53,7 +53,7 @@ public class BasicTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -73,31 +73,31 @@ public class BasicTest extends AbstractClientTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String expectedRequestCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String expectedRequestUri;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -122,22 +122,19 @@ public class BasicTest extends AbstractClientTestCase
      * Test CoAP request
      * @throws Exception should not happen in this test
      */
-    @Test( timeout=5000 )
+    @Test( timeout= 5000 )
     public void testRequest() throws Exception
     {
         MuleEventSpy spy= new MuleEventSpy( flowName );
         spy.clear();
-        
+
         flowRunner( flowName ).withPayload( "nothing_important" ).run();
-        
+
         assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
         byte[] payload= (byte[]) response.getPayload().getValue();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

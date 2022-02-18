@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 
@@ -52,7 +52,7 @@ public class OperationalListener
     /**
      * The callback of the Mule flow that will process requests.
      */
-    SourceCallback< InputStream, CoapRequestAttributes > callback= null;
+    SourceCallback< InputStream, CoAPRequestAttributes > callback= null;
 
     /**
      * Constructor
@@ -61,7 +61,7 @@ public class OperationalListener
      * @param callback
      * @throws InternalResourceUriException 
      */
-    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, CoapRequestAttributes > callback ) throws InternalResourceUriException
+    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, CoAPRequestAttributes > callback ) throws InternalResourceUriException
     {
         super();
         setUriPattern( uriPattern );
@@ -115,7 +115,7 @@ public class OperationalListener
     /**
      * @return the callback
      */
-    public SourceCallback< InputStream, CoapRequestAttributes > getCallback()
+    public SourceCallback< InputStream, CoAPRequestAttributes > getCallback()
     {
         return callback;
     }
@@ -123,7 +123,7 @@ public class OperationalListener
     /**
      * @param callback the callback to set
      */
-    public void setCallback( SourceCallback< InputStream, CoapRequestAttributes > callback )
+    public void setCallback( SourceCallback< InputStream, CoAPRequestAttributes > callback )
     {
         this.callback= callback;
     }

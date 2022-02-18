@@ -40,10 +40,11 @@ public abstract class AbstractRequestParams extends AbstractQueryParams
     /**
      * Available request codes.
      */
-    public enum CoAPRequestType
-    {
-        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
-    }
+    //TODO RC
+//    public enum CoAPRequestType
+//    {
+//        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
+//    }
 
     /**
      * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.

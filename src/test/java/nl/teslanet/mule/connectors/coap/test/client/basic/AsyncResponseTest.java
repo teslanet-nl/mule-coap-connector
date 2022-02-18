@@ -40,21 +40,21 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class AsyncResponseTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "code= {0}, resourcePath= {1}, expectedResponseCode= {2}, expectedPayload= {3}")
+    @Parameters( name= "code= {0}, resourcePath= {1}, expectedResponseCode= {2}, expectedPayload= {3}" )
     public static Collection< Object[] > getTests()
     {
         ArrayList< Object[] > tests= new ArrayList< Object[] >();
@@ -72,25 +72,25 @@ public class AsyncResponseTest extends AbstractClientTestCase
     /**
      * The request code that is expected.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String requestCode;
 
     /**
      * The path of the resource to call.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String resourcePath;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public ResponseCode expectedResponseCode;
 
     /**
      * The response payload that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponsePayload;
 
     /* (non-Javadoc)
@@ -123,30 +123,28 @@ public class AsyncResponseTest extends AbstractClientTestCase
 
         flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
-            "5683" ).withVariable( "path", resourcePath ).run();
+            "5683"
+        ).withVariable( "path", resourcePath ).run();
         //let handler do its asynchronous work
         await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
             return spy.getEvents().size() == 1;
         } );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         byte[] payload= (byte[]) ( response.getPayload().getValue() );
         if ( expectedResponseCode.name().startsWith( "_" ) )
         {
             assertNull( "wrong response code", attributes.getResponseCode() );
             assertNull( "wrong response payload", payload );
             assertEquals( "wrong success flag", false, attributes.isSuccess() );
-            
+
         }
         else
         {
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-        assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
-        assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+            assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
+            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
         }
     }
 }

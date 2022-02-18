@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -50,7 +50,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  */
 @Alias( "observer" )
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
-public class Observer extends Source< InputStream, CoapResponseAttributes >
+public class Observer extends Source< InputStream, CoAPResponseAttributes >
 {
     /**
      * The logger.
@@ -80,7 +80,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoAPResponseAttributes > sourceCallback ) throws MuleException
     {
         CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( observerConfig );;
         try

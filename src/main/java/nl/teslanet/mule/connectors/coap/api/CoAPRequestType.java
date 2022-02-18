@@ -24,10 +24,9 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- * The remote endpoint parameters.
- *
+ * The available request types.
  */
-public class RemoteEndpointParams extends RemoteEndpoint
+public enum CoAPRequestType
 {
-    //NOOP
+    DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
 }

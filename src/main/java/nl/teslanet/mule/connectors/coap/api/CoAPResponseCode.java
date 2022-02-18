@@ -22,11 +22,37 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
+
 /**
- * The address to ping
+ * Available response codes.
  *
  */
-public class PingAddress extends RemoteEndpointParams
+public enum CoAPResponseCode
 {
-    //NOOP
+    CONTENT,
+    CREATED,
+    CHANGED,
+    DELETED,
+    VALID,
+    CONTINUE,
+    BAD_REQUEST,
+    UNAUTHORIZED,
+    BAD_OPTION,
+    FORBIDDEN,
+    NOT_FOUND,
+    METHOD_NOT_ALLOWED,
+    NOT_ACCEPTABLE,
+    REQUEST_ENTITY_INCOMPLETE,
+    CONFLICT,
+    PRECONDITION_FAILED,
+    REQUEST_ENTITY_TOO_LARGE,
+    UNSUPPORTED_CONTENT_FORMAT,
+    UNPROCESSABLE_ENTITY,
+    INTERNAL_SERVER_ERROR,
+    NOT_IMPLEMENTED,
+    BAD_GATEWAY,
+    SERVICE_UNAVAILABLE,
+    GATEWAY_TIMEOUT,
+    PROXY_NOT_SUPPORTED,
+    TOO_MANY_REQUESTS
 }

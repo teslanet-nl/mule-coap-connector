@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.api;
  * Parameters of a shared server that will handle requests on behalf of a virtual server.
  *
  */
-public class SharedServer extends RemoteEndpointParams
+public class SharedServer extends RemoteEndpoint
 {
     //NOOP
 }

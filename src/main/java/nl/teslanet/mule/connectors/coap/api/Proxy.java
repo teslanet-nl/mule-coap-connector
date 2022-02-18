@@ -35,7 +35,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * Parameters of a shared server that will handle requests on behalf of a virtual server.
  *
  */
-public class Proxy extends RemoteEndpointParams
+public class Proxy extends RemoteEndpoint
 {
     /**
      * RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is

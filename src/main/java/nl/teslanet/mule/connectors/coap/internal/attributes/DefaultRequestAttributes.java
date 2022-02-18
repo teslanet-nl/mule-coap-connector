@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
@@ -35,7 +35,7 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 * The attributes of a CoAP request that was received from a client.
 *
 */
-public class DefaultRequestAttributes extends CoapRequestAttributes
+public class DefaultRequestAttributes extends CoAPRequestAttributes
 {
     /**
      * @param requestCode The requestCode to set.

@@ -43,13 +43,13 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapServer;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -57,7 +57,7 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "code= {1}, host= {2}, port= {3}, path= {4}")
+    @Parameters( name= "code= {1}, host= {2}, port= {3}, path= {4}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -85,37 +85,37 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String requestCode;
 
     /**
      * The server host to call.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String host;
 
     /**
      * The server port to call.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String port;
 
     /**
      * The server path to call.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public String path;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public String expectedResponseCode;
 
     /**
@@ -152,7 +152,7 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 15000L)
+    @Test( timeout= 15000L )
     public void testAsyncRequest() throws Exception
     {
         MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
@@ -160,7 +160,8 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
 
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", host ).withVariable(
             "port",
-            port ).withVariable( "path", path ).run();
+            port
+        ).withVariable( "path", path ).run();
         Message response= result.getMessage();
 
         assertTrue( "wrong response payload", response.getPayload().getDataType().isCompatibleWith( DataType.STRING ) );
@@ -172,11 +173,8 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         } );
         //assertions
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         byte[] payload= (byte[]) ( response.getPayload().getValue() );
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

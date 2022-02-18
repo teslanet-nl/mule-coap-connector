@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 
 
@@ -35,7 +35,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsA
  * The attributes of a CoAP response that was received from a server.
  *
  */
-public class DefaultResponseAttributes extends CoapResponseAttributes
+public class DefaultResponseAttributes extends CoAPResponseAttributes
 {
     /**
      * @param requestCode the requestCode to set

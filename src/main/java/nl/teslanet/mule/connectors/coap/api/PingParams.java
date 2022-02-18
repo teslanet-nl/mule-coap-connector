@@ -39,21 +39,21 @@ public class PingParams
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    private PingAddress pingAddress= null;
+    private RemoteEndpointParams remoteEndpointParams= null;
 
     /**
      * @return The pingAddress.
      */
-    public PingAddress getPingAddress()
+    public RemoteEndpointParams getPingAddress()
     {
-        return pingAddress;
+        return remoteEndpointParams;
     }
 
     /**
-     * @param pingAddress The pingAddress to set.
+     * @param remoteEndpointParams The pingAddress to set.
      */
-    public void setPingAddress( PingAddress pingAddress )
+    public void setPingAddress( RemoteEndpointParams remoteEndpointParams )
     {
-        this.pingAddress= pingAddress;
+        this.remoteEndpointParams= remoteEndpointParams;
     }
 }

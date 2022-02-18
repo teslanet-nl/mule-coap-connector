@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -40,13 +42,11 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo( Parameterized.class )
@@ -202,10 +202,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
             Message response= result.getMessage();
             assertEquals(
                 "wrong attributes class",
-                new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
+                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
                 response.getAttributes().getClass()
             );
-            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         }
     }

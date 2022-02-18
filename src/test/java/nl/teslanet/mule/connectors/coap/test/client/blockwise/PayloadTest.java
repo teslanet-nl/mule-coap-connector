@@ -38,7 +38,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -195,9 +195,9 @@ public class PayloadTest extends AbstractClientTestCase
         
         assertEquals(
             "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
+            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
             response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         if ( expectFailure )
         {
             assertFalse( "request should fail", attributes.isSuccess() );

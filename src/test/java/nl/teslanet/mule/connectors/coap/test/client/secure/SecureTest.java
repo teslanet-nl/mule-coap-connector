@@ -37,11 +37,11 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class SecureTest extends AbstractSecureServerTestCase
 {
     //TODO RC add query
@@ -49,7 +49,7 @@ public class SecureTest extends AbstractSecureServerTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -69,13 +69,13 @@ public class SecureTest extends AbstractSecureServerTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public CoAPRequestCode expectedRequestCode;
 
     /**
@@ -87,13 +87,13 @@ public class SecureTest extends AbstractSecureServerTestCase
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public String expectedPayload;
 
     /* (non-Javadoc)
@@ -117,11 +117,8 @@ public class SecureTest extends AbstractSecureServerTestCase
         Message response= result.getMessage();
         result.getVariables().get( "saved_payload" );
 
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoapResponseAttributes >( new CoapResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

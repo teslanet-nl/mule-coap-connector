@@ -75,19 +75,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.AbstractRequestParams;
-import nl.teslanet.mule.connectors.coap.api.AbstractRequestParams.CoAPRequestType;
 import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestParams;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestType;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
 import nl.teslanet.mule.connectors.coap.api.PingParams;
 import nl.teslanet.mule.connectors.coap.api.Proxy;
 import nl.teslanet.mule.connectors.coap.api.ProxyConfig;
-import nl.teslanet.mule.connectors.coap.api.RemoteEndpointParams;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
@@ -204,7 +204,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * The list of response handlers
      */
-    private ConcurrentHashMap< String, SourceCallback< InputStream, CoapResponseAttributes > > handlers= new ConcurrentHashMap<>();
+    private ConcurrentHashMap< String, SourceCallback< InputStream, CoAPResponseAttributes > > handlers= new ConcurrentHashMap<>();
 
     /**
      * Start the client. After starting the client is ready for issuing requests.
@@ -320,7 +320,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param callback the source callback that will process the responses
      * @throws InternalInvalidHandlerNameException 
      */
-    synchronized void addHandler( String handlerName, SourceCallback< InputStream, CoapResponseAttributes > callback ) throws InternalInvalidHandlerNameException
+    synchronized void addHandler( String handlerName, SourceCallback< InputStream, CoAPResponseAttributes > callback ) throws InternalInvalidHandlerNameException
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name not allowed" );
         if ( handlers.get( handlerName ) != null ) throw new InternalInvalidHandlerNameException( "responsehandler name { " + handlerName + " } not unique" );
@@ -333,10 +333,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @return The handler with given name.
      * @throws InternalInvalidHandlerNameException When the handler with given name could not be found. 
      */
-    private SourceCallback< InputStream, CoapResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerNameException
+    private SourceCallback< InputStream, CoAPResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerNameException
     {
         if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name is not allowed" );
-        SourceCallback< InputStream, CoapResponseAttributes > handler= handlers.get( handlerName );
+        SourceCallback< InputStream, CoAPResponseAttributes > handler= handlers.get( handlerName );
         if ( handler == null ) throw new InternalInvalidHandlerNameException( "response handler { " + handlerName + " } not found." );
         return handler;
     }
@@ -412,7 +412,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param callback The callback method of the muleflow.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
-    void processMuleFlow( String requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
+    void processMuleFlow( String requestUri, CoAPRequestCode requestCode, CoapResponse response, SourceCallback< InputStream, CoAPResponseAttributes > callback )
         throws InternalResponseException
 
     {
@@ -433,7 +433,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             if ( responsePayload != null )
             {
                 callback.handle(
-                    Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
+                    Result.< InputStream, CoAPResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
                         MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
                     ).build(),
                     requestcontext
@@ -442,7 +442,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             else
             {
                 callback.handle(
-                    Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType(
+                    Result.< InputStream, CoAPResponseAttributes > builder().attributes( responseAttributes ).mediaType(
                         MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
                     ).build(),
                     requestcontext
@@ -451,7 +451,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         else
         {
-            callback.handle( Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
+            callback.handle( Result.< InputStream, CoAPResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
         }
     }
 
@@ -473,7 +473,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalUriException When given request uri parameters are invalid.
      */
-    Result< InputStream, CoapResponseAttributes > doRequest( RequestParams builder, RequestOptions options, ResponseHandlerParams handlerBuilder )
+    Result< InputStream, CoAPResponseAttributes > doRequest( RequestParams builder, RequestOptions options, ResponseHandlerParams handlerBuilder )
         throws InternalInvalidHandlerNameException,
         InternalRequestException,
         InternalResponseException,
@@ -485,7 +485,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalServerErrorResponseException,
         InternalUriException
     {
-        Result< InputStream, CoapResponseAttributes > result= null;
+        Result< InputStream, CoAPResponseAttributes > result= null;
         CoapHandler handler= null;
         Request request= new CoapRequestBuilderImpl( builder ).build();
         try
@@ -499,7 +499,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         if ( handlerBuilder != null )
         {
             // asynchronous request
-            SourceCallback< InputStream, CoapResponseAttributes > callback;
+            SourceCallback< InputStream, CoAPResponseAttributes > callback;
             callback= getHandler( handlerBuilder.getResponseHandler() );
             handler= createCoapHandler( handlerBuilder.getResponseHandler(), request.getURI(), builder.getRequestCode(), callback );
             coapClient.advanced( handler, request );
@@ -524,7 +524,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalClientErrorResponseException The response received indicates client error.
      * @throws InternalNoResponseException No response was received within exchange lifetime.
      */
-    private Result< InputStream, CoapResponseAttributes > executeSynchronous( CoAPRequestCode code, Request request ) throws InternalEndpointException,
+    private Result< InputStream, CoAPResponseAttributes > executeSynchronous( CoAPRequestCode code, Request request ) throws InternalEndpointException,
         InternalNoResponseException,
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
@@ -550,23 +550,23 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new InternalResponseException( "CoAP response cannot be processed", e );
         }
-        Result< InputStream, CoapResponseAttributes > result;
+        Result< InputStream, CoAPResponseAttributes > result;
         if ( response == null )
         {
-            result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
+            result= Result.< InputStream, CoAPResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
         }
         else
         {
             byte[] payload= response.getPayload();
             if ( payload != null )
             {
-                result= Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length( payload.length ).attributes(
+                result= Result.< InputStream, CoAPResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length( payload.length ).attributes(
                     responseAttributes
                 ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
             }
             else
             {
-                result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
+                result= Result.< InputStream, CoAPResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
                     MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
                 ).build();
             }
@@ -679,7 +679,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         final String handlerName,
         final String requestUri,
         final CoAPRequestCode requestCode,
-        final SourceCallback< InputStream, CoapResponseAttributes > callback
+        final SourceCallback< InputStream, CoAPResponseAttributes > callback
     )
     {
         final Client thisClient= this;
@@ -812,7 +812,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalUriException,
         InternalInvalidHandlerNameException
     {
-        SourceCallback< InputStream, CoapResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
+        SourceCallback< InputStream, CoAPResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
         CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
         URI uri= requestBuilder.buildResourceUri();
         ObserveRelation relation= getRelation( uri );
@@ -1004,7 +1004,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * Set proxyScheme if provided.
          * @param remoteEndpoint The candidate provider of the proxyScheme.
          */
-        private void setProxyScheme( RemoteEndpointParams remoteEndpoint )
+        private void setProxyScheme( RemoteEndpoint remoteEndpoint )
         {
             if ( remoteEndpoint instanceof Proxy )
             {
@@ -1182,11 +1182,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             observe= Boolean.TRUE;
             requestCode= Code.GET;
             //get request type
-            if ( params.getType() == ObserverConfig.CoAPRequestType.CONFIRMABLE )
+            if ( params.getType() == CoAPRequestType.CONFIRMABLE )
             {
                 confirmable= true;
             }
-            else if ( params.getType() == ObserverConfig.CoAPRequestType.NON_CONFIRMABLE )
+            else if ( params.getType() == CoAPRequestType.NON_CONFIRMABLE )
             {
                 confirmable= false;
             }

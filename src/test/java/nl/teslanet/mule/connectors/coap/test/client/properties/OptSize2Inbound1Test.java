@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 
 
 /**
@@ -79,7 +79,7 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
     {
         return attributes.getOptions().getResponseSize();
     }

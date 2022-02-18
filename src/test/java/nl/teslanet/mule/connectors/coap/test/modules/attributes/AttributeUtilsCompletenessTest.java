@@ -23,15 +23,15 @@
 package nl.teslanet.mule.connectors.coap.test.modules.attributes;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-
 import org.junit.Test;
 
-import nl.teslanet.mule.connectors.coap.api.RequestParams.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.ResponseParams.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
