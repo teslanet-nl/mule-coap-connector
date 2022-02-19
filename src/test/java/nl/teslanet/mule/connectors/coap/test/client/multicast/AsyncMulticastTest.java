@@ -28,11 +28,13 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -46,11 +48,15 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.Code;
 
 
-@RunnerDelegateTo(Parameterized.class)
+/**
+ *  Multicast test.
+ *  The system needs to allow multicast on the loopback interface:
+ *  > sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+ *  > ip -f inet maddr show dev lo
+ */
+@RunnerDelegateTo( Parameterized.class )
 public class AsyncMulticastTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -58,51 +64,51 @@ public class AsyncMulticastTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
             new Object [] []
             {
                 { "get_me", Code.GET, "coap://224.0.1.187/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://224.0.1.187/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "do_not_get_me", Code.GET, "coap://224.0.1.187/basic/do_not_get_me", null, null },
                 { "post_me", Code.POST, "coap://224.0.1.187/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://224.0.1.187/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "do_not_post_me", Code.POST, "coap://224.0.1.187/basic/do_not_post_me", null, null },
                 { "put_me", Code.PUT, "coap://224.0.1.187/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://224.0.1.187/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "do_not_put_me", Code.PUT, "coap://224.0.1.187/basic/do_not_put_me", null, null },
                 { "delete_me", Code.DELETE, "coap://224.0.1.187/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://224.0.1.187/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
+                { "do_not_delete_me", Code.DELETE, "coap://224.0.1.187/basic/do_not_delete_me", null, null } }
         );
     }
 
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public Code expectedRequestCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String expectedRequestUri;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -127,9 +133,6 @@ public class AsyncMulticastTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    //TODO RC 
-    //sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
-    //ip -f inet maddr show dev lo
     @Test
     public void testAsyncRequest() throws Exception
     {
@@ -143,19 +146,31 @@ public class AsyncMulticastTest extends AbstractClientTestCase
         assertEquals( "wrong response payload", "nothing_important", (String) response.getPayload().getValue() );
 
         //let handler do its asynchronous work
-        await().atMost( 15, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == 1;
-        } );
-        response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
-        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
-        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
+        if ( expectedResponseCode == null )
+        {
+            Instant start = Instant.now();
+            await().atMost( 20, TimeUnit.SECONDS ).until( () -> {
+                return Instant.now().isAfter( start.plusSeconds( 15L ) );
+            } );
+            assertEquals( "should not receive response on multicast", 0, spy.getEvents().size() );
+        }
+        else
+        {
+            await().atMost( 15, TimeUnit.SECONDS ).until( () -> {
+                return spy.getEvents().size() == 1;
+            } );
+            response= (Message) spy.getEvents().get( 0 ).getContent();
+            assertEquals(
+                "wrong attributes class",
+                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
+                response.getAttributes().getClass()
+            );
+            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+            assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+            assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+            assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
+            assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
+        }
     }
 
 }

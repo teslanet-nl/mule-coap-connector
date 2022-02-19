@@ -27,8 +27,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:endpoint>
 			<coap:multicast-udp-endpoint
 				logCoapMessages="true">
-				<coap:multicast-params>
-					<coap:join>
+				<coap:multicast-params outgoingInterface="lo" >
+					<coap:join >
 						<coap:multicast-group group="224.0.1.187" />
 					</coap:join>
 				</coap:multicast-params>

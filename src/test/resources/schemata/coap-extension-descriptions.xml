@@ -171,7 +171,7 @@
         <operation name="ping">
             <description><![CDATA[The Ping processor checks whether a CoAP server is reachable.]]></description>
             <parameters>
-                <parameter name="pingAddress">
+                <parameter name="remoteEndpointParams">
                     <description><![CDATA[The address of the remote endpoint to ping. When empty the client request defaults are used.]]></description>
                 </parameter>
                 <parameter name="target">
@@ -449,7 +449,7 @@
         </source>
     </sources>
     <types>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes">
+        <type name="nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="confirmable">
@@ -470,12 +470,27 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes">
+        <type name="nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="confirmable">
@@ -497,6 +512,21 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestUri">
@@ -536,17 +566,6 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.PingAddress">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="endpointHost">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="endpointPort">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.Proxy">
             <description><![CDATA[]]></description>
             <parameters>
@@ -567,6 +586,17 @@
                 <parameter name="forwardToScheme">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="endpointHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.RemoteEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
                 <parameter name="endpointHost">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -1117,3 +1147,5 @@
         </type>
     </types>
 </extension-documentation>
+
+

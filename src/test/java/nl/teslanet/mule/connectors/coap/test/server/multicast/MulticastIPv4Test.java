@@ -27,11 +27,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.network.interceptors.MessageTracer;
+import org.eclipse.californium.elements.UdpMulticastConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,19 +57,11 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapHandler;
-import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.CoAP.Code;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.coap.CoAP.Type;
-import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 
 
 //TODO add IPv6 test
 @RunnerDelegateTo(Parameterized.class)
-public class MulticastTest extends AbstractServerTestCase
+public class MulticastIPv4Test extends AbstractServerTestCase
 {
     @Parameters(name= "Request= {0}, port= {1}, path= {2}, contentSize= {3}")
     public static Collection< Object[] > data()
@@ -119,11 +125,11 @@ public class MulticastTest extends AbstractServerTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/multicast/testserver1.xml";
+        return "mule-server-config/multicast/testserverIPv4.xml";
     };
 
     @Before
-    public void additionalSetUp()
+    public void additionalSetUp() throws UnknownHostException, SocketException
     {
         try
         {
@@ -135,9 +141,26 @@ public class MulticastTest extends AbstractServerTestCase
         }
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
         config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, maxResourceBodySize );
-        CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
-        endpointBuilder.setNetworkConfig( config );
-        client.setEndpoint( endpointBuilder.build() );
+
+        //unicast connector
+        //UDPConnector udpConnector = new UDPConnector(new InetSocketAddress( "127.0.0.1", port));
+        //udpConnector.setReuseAddress(true);
+        //multicast connector
+        UdpMulticastConnector.Builder multiCastConnectorBuilder= new UdpMulticastConnector.Builder();
+        multiCastConnectorBuilder.setLocalAddress( InetAddress.getByName( "127.0.0.1" ), 0 );
+        multiCastConnectorBuilder.setOutgoingMulticastInterface(NetworkInterface.getByName( "lo" )  );
+        multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ));
+        UdpMulticastConnector sender= multiCastConnectorBuilder.build();
+        sender.setReuseAddress( true );
+        sender.setLoopbackMode( true );
+        //endpoint
+        CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
+        builder.setNetworkConfig( config );
+        builder.setConnector( sender );
+        CoapEndpoint endpoint= builder.build(); 
+        //endpoint.addMulticastReceiver( receiver );
+        endpoint.addInterceptor( new MessageTracer() );
+        client.setEndpoint( endpoint );
     }
 
     @After
