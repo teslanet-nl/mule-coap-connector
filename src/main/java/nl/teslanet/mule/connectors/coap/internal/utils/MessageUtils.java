@@ -350,6 +350,10 @@ public class MessageUtils
         {
             return (ETag) object;
         }
+        else if ( object instanceof Long )
+        {
+            return new ETag( (Long) object );
+        }
         else if ( object instanceof String )
         {
             return new ETag( (String) object );

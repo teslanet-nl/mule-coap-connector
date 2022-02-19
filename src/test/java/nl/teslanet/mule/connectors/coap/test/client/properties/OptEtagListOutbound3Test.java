@@ -45,7 +45,7 @@ public class OptEtagListOutbound3Test extends AbstractOutboundPropertiesTestCase
     public OptEtagListOutbound3Test() throws InvalidETagException
     {
         super();
-        value= new ETag( "68656C6C6F" );
+        value= new ETag( 0x68656C6C6FL );
     }
 
     /* (non-Javadoc)
@@ -63,7 +63,7 @@ public class OptEtagListOutbound3Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return value.getValueAsHexString();
+        return value.getValueAsNumber();
     }
 
     /* (non-Javadoc)

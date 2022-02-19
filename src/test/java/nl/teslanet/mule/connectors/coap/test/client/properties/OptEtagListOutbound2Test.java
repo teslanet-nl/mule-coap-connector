@@ -45,7 +45,7 @@ public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
     public OptEtagListOutbound2Test() throws InvalidETagException
     {
         super();
-        value= new ETag( "AA001122" );
+        value= new ETag( 0xAA001122L );
     }
 
     /* (non-Javadoc)

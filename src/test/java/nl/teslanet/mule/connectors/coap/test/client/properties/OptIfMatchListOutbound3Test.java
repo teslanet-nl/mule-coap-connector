@@ -35,7 +35,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
 {
     private ETag getValue() throws InvalidETagException
     {
-        return new ETag( "68656C6C6F" );
+        return new ETag( 0x68656C6C6FL );
     }
 
     /* (non-Javadoc)
@@ -53,7 +53,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
     @Override
     protected Object getOutboundPropertyValue() throws InvalidETagException
     {
-        return new String( getValue().getValueAsHexString() );
+        return Long.valueOf( getValue().getValueAsNumber() );
     }
 
     /* (non-Javadoc)

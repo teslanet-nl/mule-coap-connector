@@ -56,10 +56,10 @@ public class RequestQueryTest extends AbstractServerTestCase
         return Arrays.asList(
             new Object [] []{
                 //default maxResourceBodySize on server
-                { Code.GET, "coap://localhost/requesturi/get_me?op=get", "?op=get" },
-                { Code.PUT, "coap://localhost/requesturi/put_me?op=put", "?op=put" },
-                { Code.POST, "coap://localhost/requesturi/post_me?op=post", "?op=post" },
-                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete", "?op=delete" } } );
+                { Code.GET, "coap://localhost/requesturi/get_me?op=get", "op=get" },
+                { Code.PUT, "coap://localhost/requesturi/put_me?op=put", "op=put" },
+                { Code.POST, "coap://localhost/requesturi/post_me?op=post", "op=post" },
+                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete", "op=delete" } } );
     }
 
     /**

@@ -75,7 +75,7 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected OptionStrategy getStrategy()
     {
-        return new OptSize2Strategy( 0 );
+        return new OptSize2Strategy( getValue() );
     }
 
     @Override

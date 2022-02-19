@@ -43,9 +43,9 @@ public class OptIfMatchListOutbound1mTest extends AbstractOutboundPropertiesTest
     private LinkedList< ETag > getValue() throws InvalidETagException
     {
         LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "A0" ) );
-        list.add( new ETag( "0011FF" ) );
-        list.add( new ETag( "0011223344556677" ) );
+        list.add( new ETag( 0xA0L ) );
+        list.add( new ETag( 0x11FFL ) );
+        list.add( new ETag( 0x1122334455667788L ) );
 
         return list;
     }

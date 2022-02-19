@@ -42,7 +42,7 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
      */
     private ETag getValue() throws InvalidETagException
     {
-        return new ETag( "0011223344556677" );
+        return new ETag( 0x1122334455667788L);
     }
 
     @Override

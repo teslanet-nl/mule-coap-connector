@@ -40,7 +40,7 @@ public class OptIfMatchListOutbound1Test extends AbstractOutboundPropertiesTestC
      */
     private ETag getValue() throws InvalidETagException
     {
-        return new ETag( "AA001122" );
+        return new ETag( 0xAA001122L );
     }
 
     /* (non-Javadoc)
