@@ -36,9 +36,9 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "A0" ).getValue() );
-        options.addIfMatch( new ETag( "0011FF" ).getValue() );
-        options.addIfMatch( new ETag( "0011223344556677" ).getValue() );
+        options.addIfMatch( new ETag( 0xA0L ).getValue() );
+        options.addIfMatch( new ETag( 0x11FFL ).getValue() );
+        options.addIfMatch( new ETag( 0x1122334455667788L).getValue() );
     }
 
     @Override
@@ -51,9 +51,9 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     protected Object getExpectedPropertyValue() throws InvalidETagException
     {
         LinkedList< ETag > list= new LinkedList<>();
-        list.add( new ETag( "A0" ) );
-        list.add( new ETag( "0011FF" ) );
-        list.add( new ETag( "0011223344556677" ) );
+        list.add( new ETag( 0xA0L ) );
+        list.add( new ETag( 0x11FFL ) );
+        list.add( new ETag( 0x1122334455667788L ) );
 
         return Collections.unmodifiableList( list );
     }

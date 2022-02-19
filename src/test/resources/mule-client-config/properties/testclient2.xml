@@ -141,7 +141,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			requestCode="#[vars.requestCode]" host="#[vars.host]"
 			path="#[vars.path]">
 			<coap:request-options
-				provideResponseSize="#[vars.option]" />
+				requireResponseSize="#[vars.option]" />
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>

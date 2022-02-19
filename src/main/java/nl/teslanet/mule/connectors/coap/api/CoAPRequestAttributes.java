@@ -102,7 +102,6 @@ public class CoAPRequestAttributes
         return localAddress;
     }
 
-    //TODO RC add convenience methods for scheme host port path query
     /**
      * @return The request uri.
      */

@@ -45,13 +45,13 @@ public class OptEtagOutbound2Test extends AbstractOutboundPropertyTestcase
     @Override
     protected Object getPropertyValue() throws InvalidETagException
     {
-        return new ETag( "0011FF" ).getValue();
+        return new ETag( 0x0011FFL ).getValue();
     }
 
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {        
-        return new ETag( "0011FF" ).getValue();
+        return new ETag( 0x0011FFL ).getValue();
     }
 
     @Override

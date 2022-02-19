@@ -64,14 +64,14 @@ public class AsyncMulticastTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "get_me", Code.GET, "coap://127.0.0.1:5683/basic/get_me?", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1:5683/basic/do_not_get_me?", "METHOD_NOT_ALLOWED", null },
-                { "post_me", Code.POST, "coap://127.0.0.1:5683/basic/post_me?", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1:5683/basic/do_not_post_me?", "METHOD_NOT_ALLOWED", null },
-                { "put_me", Code.PUT, "coap://127.0.0.1:5683/basic/put_me?", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1:5683/basic/do_not_put_me?", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", Code.DELETE, "coap://127.0.0.1:5683/basic/delete_me?", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1:5683/basic/do_not_delete_me?", "METHOD_NOT_ALLOWED", null } }
+                { "get_me", Code.GET, "coap://224.0.1.187/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
+                { "do_not_get_me", Code.GET, "coap://224.0.1.187/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
+                { "post_me", Code.POST, "coap://224.0.1.187/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
+                { "do_not_post_me", Code.POST, "coap://224.0.1.187/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
+                { "put_me", Code.PUT, "coap://224.0.1.187/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
+                { "do_not_put_me", Code.PUT, "coap://224.0.1.187/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", Code.DELETE, "coap://224.0.1.187/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
+                { "do_not_delete_me", Code.DELETE, "coap://224.0.1.187/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
         );
     }
 
@@ -127,8 +127,9 @@ public class AsyncMulticastTest extends AbstractClientTestCase
      * Test Async request
      * @throws Exception should not happen in this test
      */
-    //TODO RC
-    //@Ignore
+    //TODO RC 
+    //sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+    //ip -f inet maddr show dev lo
     @Test
     public void testAsyncRequest() throws Exception
     {

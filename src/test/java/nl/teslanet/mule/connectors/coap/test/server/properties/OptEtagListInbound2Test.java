@@ -37,9 +37,9 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addETag( new ETag( "A0" ).getValue() );
-        options.addETag( new ETag( "0011FF" ).getValue() );
-        options.addETag( new ETag( "0011223344556677" ).getValue() );
+        options.addETag( new ETag( 0xA0L ).getValue() );
+        options.addETag( new ETag( 0x11FFL ).getValue() );
+        options.addETag( new ETag( 0x11223344556677L ).getValue() );
     }
 
     @Override
@@ -52,9 +52,9 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
     protected Object getExpectedPropertyValue() throws InvalidETagException
     {
         LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "A0" ) );
-        list.add( new ETag( "0011FF" ) );
-        list.add( new ETag( "0011223344556677" ) );
+        list.add( new ETag( 0xA0L ) );
+        list.add( new ETag( 0x11FFL ) );
+        list.add( new ETag( 0x11223344556677L ) );
 
         return Collections.unmodifiableList( list );
     }
