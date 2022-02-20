@@ -74,13 +74,16 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.AbstractRequestParams;
+import nl.teslanet.mule.connectors.coap.api.AbstractAddressParams;
+import nl.teslanet.mule.connectors.coap.api.AbstractQueryParams;
+import nl.teslanet.mule.connectors.coap.api.AbstractResourceParams;
 import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestParams;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestType;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverExistsParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
 import nl.teslanet.mule.connectors.coap.api.PingParams;
 import nl.teslanet.mule.connectors.coap.api.Proxy;
@@ -856,6 +859,20 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
+     * Query existence of an observer.
+     * @param params The parameters defining the observer.
+     * @return True when the observer exists, otherwise False.
+     * @throws InternalUriException
+     */
+    public boolean observerExists( ObserverExistsParams params ) throws InternalUriException
+    {
+        CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
+        URI uri= requestBuilder.buildResourceUri();
+        ObserveRelation relation= getRelation( uri );
+        return( relation != null );
+    }
+
+    /**
      * Get String repesentation.
      */
     @Override
@@ -1041,7 +1058,20 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          */
         public CoapRequestBuilderImpl( DiscoverParams params )
         {
-            this( (AbstractRequestParams) params );
+            this( (AbstractQueryParams) params );
+            //get request type
+            if ( params.getType() == CoAPRequestType.CONFIRMABLE )
+            {
+                confirmable= true;
+            }
+            else if ( params.getType() == CoAPRequestType.NON_CONFIRMABLE )
+            {
+                confirmable= false;
+            }
+            else
+            {
+                confirmable= requestConfig.isConfirmable();
+            }
             requestCode= Code.GET;
             resourcePath= "/.well-known/core";
         }
@@ -1061,12 +1091,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
 
         /**
-         * Constructor using AbstractRequestBuilder and client defaults.
+         * Constructor using AbstractResourceRequestParams and client defaults.
          * @param params Provides request parameters.
-         * @return The constructed UriBuilder object.
+         * @return The constructed builder object.
          */
-        private CoapRequestBuilderImpl( AbstractRequestParams params )
+        private CoapRequestBuilderImpl( AbstractResourceRequestParams params )
         {
+            this( (AbstractResourceParams) params );
             //get request type
             if ( params.getType() == CoAPRequestType.CONFIRMABLE )
             {
@@ -1080,6 +1111,44 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 confirmable= requestConfig.isConfirmable();
             }
+        }
+
+        /**
+         * Constructor using AbstractResourceParams and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed builder object.
+         */
+        private CoapRequestBuilderImpl( AbstractResourceParams params )
+        {
+            this( (AbstractQueryParams) params );
+            if ( params.getPath() != null )
+            {
+                resourcePath= params.getPath();
+            }
+            else if ( requestConfig.getPath() != null )
+            {
+                resourcePath= requestConfig.getPath();
+            }
+        }
+
+        /**
+         * Constructor using AbstractQueryParams and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed builder object.
+         */
+        private CoapRequestBuilderImpl( AbstractQueryParams params )
+        {
+            this( (AbstractAddressParams) params );
+            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryParams() );
+        }
+
+        /**
+         * Constructor using AbstractAddressParams and client defaults.
+         * @param params Provides request parameters.
+         * @return The constructed builder object.
+         */
+        private CoapRequestBuilderImpl( AbstractAddressParams params )
+        {
             //get the endpoint address
             if ( params.getRemoteEndpoint() != null )
             {
@@ -1131,25 +1200,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             else if ( requestConfig.getPort() != null )
             {
                 resourcePort= requestConfig.getPort();
-            }
-            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryParams() );
-        }
-
-        /**
-         * Constructor using AbstractResourceRequestBuilder and client defaults.
-         * @param params Provides request parameters.
-         * @return The constructed UriBuilder object.
-         */
-        private CoapRequestBuilderImpl( AbstractResourceRequestParams params )
-        {
-            this( (AbstractRequestParams) params );
-            if ( params.getPath() != null )
-            {
-                resourcePath= params.getPath();
-            }
-            else if ( requestConfig.getPath() != null )
-            {
-                resourcePath= requestConfig.getPath();
             }
         }
 
@@ -1263,7 +1313,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * @throws InternalUriException When URI components cannot be assembled to a valid URI.
          */
         @Override
-
         public URI buildEndpointUri() throws InternalUriException
         {
             URI uri;
@@ -1348,4 +1397,5 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             return request;
         }
     }
+
 }

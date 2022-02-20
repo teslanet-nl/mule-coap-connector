@@ -27,41 +27,39 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
  * The uri parameters for a CoAP request.
  *
  */
-public abstract class AbstractResourceRequestParams extends AbstractRequestParams
+public abstract class AbstractResourceRequestParams extends AbstractResourceParams
 {
     /**
-    * The path of the resource to access.
-    */
+     * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.
+     * When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.
+     * When DEFAULT the client default is used.
+     */
     @Parameter
-    @Optional
+    @Optional( defaultValue= "DEFAULT" )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 51 )
-    @Example( value= "/some/resource/path" )
-    @Summary( "The path of the resource to access." )
-    private String path= null;
+    @Placement( order= 1 )
+    private CoAPRequestType type= CoAPRequestType.DEFAULT;
 
     /**
-     * @return the path
+     * @return the confirmable
      */
-    public String getPath()
+    public CoAPRequestType getType()
     {
-        return path;
+        return type;
     }
 
     /**
-     * @param path the path to set
+     * @param type the message type to set
      */
-    public void setPath( String path )
+    public void setType( CoAPRequestType type )
     {
-        this.path= path;
+        this.type= type;
     }
 }

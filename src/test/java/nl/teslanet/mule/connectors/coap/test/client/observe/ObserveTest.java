@@ -167,7 +167,7 @@ public class ObserveTest extends AbstractClientTestCase
 
         //let asynchronous work happen
         pauze();
-        assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
 
         for ( int i= 1; i < contents.size(); i++ )
         {
@@ -182,7 +182,7 @@ public class ObserveTest extends AbstractClientTestCase
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "1st series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-        assertEquals( "unexpected obsevation after 1st test series", 0, spy.getEvents().size() );
+        assertEquals( "unexpected observation after 1st test series", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_temporary" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
@@ -202,7 +202,7 @@ public class ObserveTest extends AbstractClientTestCase
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "2nd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-        await( "number of obsevation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+        await( "number of observation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
             return spy.getEvents().size() == contents.size();
         } );
         result= flowRunner( "stop_temporary" ).withPayload( "nothing_important" ).run();
@@ -223,7 +223,7 @@ public class ObserveTest extends AbstractClientTestCase
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "3rd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
-        await( "number of obsevation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+        await( "number of observation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
             return spy.getEvents().size() == contents.size() + 1;
         } );
 
@@ -263,7 +263,7 @@ public class ObserveTest extends AbstractClientTestCase
         //let asynchronous work happen
         pauze();
 
-        assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage1" ).withPayload( "nothing_important" ).run();
         pauze( 5500 );
@@ -298,7 +298,7 @@ public class ObserveTest extends AbstractClientTestCase
         pauze();
 
         //check clean start
-        assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage1_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
@@ -334,7 +334,7 @@ public class ObserveTest extends AbstractClientTestCase
         pauze();
 
         //check clean start
-        assertEquals( "unexpected obsevation on start test", 0, spy.getEvents().size() );
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
 
         result= flowRunner( "start_maxage4_nonotify" ).withPayload( "nothing_important" ).run();
         //five notifications expected, period= max_age + notificationReregistrationBackoff per notification, plus margin
@@ -413,6 +413,75 @@ public class ObserveTest extends AbstractClientTestCase
         response= result.getMessage();
         assertEquals( "wrong number of observer", 0, ( (List< String >) response.getPayload().getValue() ).size() );
 
+    }
+
+    /**
+     * Test existence observe relations
+     * @throws Exception should not happen in this test
+     */
+    @Test( timeout= 100000L )
+    public void testObserverExists() throws Exception
+    {
+        Event result;
+        Message response;
+
+        //get observer 1 exists
+        result= flowRunner( "exists_temporary1" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer1", Boolean.FALSE, response.getPayload().getValue() );
+        //get observe 2 exists
+        result= flowRunner( "exists_temporary2" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer2", Boolean.FALSE, response.getPayload().getValue() );
+
+        //first observe
+        result= flowRunner( "start_temporary1" ).withPayload( "nothing_important" ).run();
+
+        //get observer 1 exists
+        result= flowRunner( "exists_temporary1" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer1", Boolean.TRUE, response.getPayload().getValue() );
+        //get observe 2 exists
+        result= flowRunner( "exists_temporary2" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer2", Boolean.FALSE, response.getPayload().getValue() );
+
+        //second observe
+        result= flowRunner( "start_temporary2" ).withPayload( "nothing_important" ).run();
+
+        //get observer 1 exists
+        result= flowRunner( "exists_temporary1" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer1", Boolean.TRUE, response.getPayload().getValue() );
+        //get observe 2 exists
+        result= flowRunner( "exists_temporary2" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer2", Boolean.TRUE, response.getPayload().getValue() );
+        //pauze();
+
+        //remove second observe
+        result= flowRunner( "stop_temporary2" ).withPayload( "nothing_important" ).run();
+
+        //get observer 1 exists
+        result= flowRunner( "exists_temporary1" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer1", Boolean.TRUE, response.getPayload().getValue() );
+        //get observe 2 exists
+        result= flowRunner( "exists_temporary2" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer2", Boolean.FALSE, response.getPayload().getValue() );
+
+        //remove first observe
+        result= flowRunner( "stop_temporary1" ).withPayload( "nothing_important" ).run();
+
+        //get observer 1 exists
+        result= flowRunner( "exists_temporary1" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer1", Boolean.FALSE, response.getPayload().getValue() );
+        //get observe 2 exists
+        result= flowRunner( "exists_temporary2" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        assertEquals( "wrong exististence of observer2", Boolean.FALSE, response.getPayload().getValue() );
     }
 
 }

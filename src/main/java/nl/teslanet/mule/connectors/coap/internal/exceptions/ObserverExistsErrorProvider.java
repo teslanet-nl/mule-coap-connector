@@ -33,13 +33,13 @@ import nl.teslanet.mule.connectors.coap.api.error.Errors;
 
 
 /**
- * Provider of errors that can be thrown by stop observe operation.
+ * Provider of errors that can be thrown by the observe remove operation.
  *
  */
-public class ObserverStopErrorProvider implements ErrorTypeProvider
+public class ObserverExistsErrorProvider implements ErrorTypeProvider
 {
-    /* (non-Javadoc)
-     * @see org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider#getErrorTypes()
+    /**
+     * Bind to mule errors.
      */
     @SuppressWarnings( "rawtypes" )
     @Override

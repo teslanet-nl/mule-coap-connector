@@ -52,6 +52,7 @@ import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverExistsParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
 import nl.teslanet.mule.connectors.coap.api.PingParams;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
@@ -80,8 +81,9 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverAddErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverExistsErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverRemoveErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
@@ -335,29 +337,24 @@ public class ClientOperations
     }
 
     /**
-     * The Start Observer processor creates an observer on the CoAP client. It
-     * starts observing the specified server resource immediately.
-     * 
-     * @param client             The client instance that starts the observer.
-     * @param handlerName        Name of the response handler that will process the
+     * The ObserverAdd processor creates an observer. 
+     * A request to observe the specified resource is sent to the server.
+     * The client defaults are used to issue the request.
+     * @param client The client instance that the observer belongs to.
+     * @param responseHandlerParams Name of the response handler that will process the
      *                           notification received from server.
-     * @param observerAttributes Attributes of the observe request.
+     * @param observerAddParams Parameters of the observe request. These will override client defaults.
      */
-    /**
-     * @param client
-     * @param responseHandlerParams Name of the response handler that will process the notification received from server.
-     * @param observerStartBuilder The observe request parameters.
-     */
-    @Throws( { ObserverStartErrorProvider.class } )
-    public void observerStart( @Config
+    @Throws( { ObserverAddErrorProvider.class } )
+    public void observerAdd( @Config
     Client client, @ParameterGroup( name= "Notification handling" )
-    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Observe uri" )
-    ObserverAddParams observerStartBuilder )
+    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Observe request" )
+    ObserverAddParams observerAddParams )
     {
-        String errorMsg= ": observer start failed.";
+        String errorMsg= ": observer add failed.";
         try
         {
-            client.startObserver( observerStartBuilder, responseHandlerParams );
+            client.startObserver( observerAddParams, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
@@ -374,19 +371,21 @@ public class ClientOperations
     }
 
     /**
-     * Stop a running observer.
-     * @param client The client instance that stops the observer.
-     * @param observerStopBuilder Parameters of the observer
+     * The ObserverRemove processor removes an observer. 
+     * A request to terminate observe the specified resource is sent to the server.
+     * The client defaults are used to issue the request.
+     * @param client The client instance that the observer belongs to.
+     * @param observerRemoveParams Parameters of the observe request. These will override client defaults.
      */
-    @Throws( { ObserverStopErrorProvider.class } )
-    public void observerStop( @Config
-    Client client, @ParameterGroup( name= "Observe uri" )
-    ObserverRemoveParams observerStopBuilder )
+    @Throws( { ObserverRemoveErrorProvider.class } )
+    public void observerRemove( @Config
+    Client client, @ParameterGroup( name= "Observe request" )
+    ObserverRemoveParams observerRemoveParams )
     {
-        String errorMsg= ": observer stop failed.";
+        String errorMsg= ": observer remove failed.";
         try
         {
-            client.stopObserver( observerStopBuilder );
+            client.stopObserver( observerRemoveParams );
         }
         catch ( InternalUriException e )
         {
@@ -395,6 +394,29 @@ public class ClientOperations
         catch ( InternalInvalidObserverException e )
         {
             throw new InvalidObserverException( client + errorMsg, e );
+        }
+    }
+
+    /**
+     * Establish whether an observer with given parameters exists.
+     * 
+     * @param client The client instance of which the observers are searched.
+     * @param observerExistsParams The the list of observer uri parameters.
+     * @return True when the observer exists, otherwise False.
+     */
+    @Throws( { ObserverExistsErrorProvider.class } )
+    public boolean observerExists( @Config
+    Client client, @ParameterGroup( name= "Observer uri" )
+    ObserverExistsParams observerExistsParams )
+    {
+        String errorMsg= ": observer query failed.";
+        try
+        {
+            return client.observerExists( observerExistsParams );
+        }
+        catch ( InternalUriException e )
+        {
+            throw new UriException( client + errorMsg, e );
         }
     }
 
@@ -411,5 +433,4 @@ public class ClientOperations
         List< String > list= client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toList() );
         return Collections.unmodifiableList( list );
     }
-
 }
