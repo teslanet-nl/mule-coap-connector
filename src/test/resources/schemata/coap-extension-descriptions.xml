@@ -108,19 +108,8 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="observerList">
-            <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
-            <parameters>
-                <parameter name="target">
-                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
-                </parameter>
-                <parameter name="targetValue">
-                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
-                </parameter>
-            </parameters>
-        </operation>
-        <operation name="observerStart">
-            <description><![CDATA[]]></description>
+        <operation name="observerAdd">
+            <description><![CDATA[The ObserverAdd processor creates an observer. A request to observe the specified resource is sent to the server. The client defaults are used to issue the request.]]></description>
             <parameters>
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
@@ -137,16 +126,16 @@
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
-                </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
+                </parameter>
             </parameters>
         </operation>
-        <operation name="observerStop">
-            <description><![CDATA[Stop a running observer.]]></description>
+        <operation name="observerExists">
+            <description><![CDATA[Establish whether an observer with given parameters exists.]]></description>
             <parameters>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to access.]]></description>
@@ -160,11 +149,48 @@
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
+                <parameter name="path">
+                    <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="observerList">
+            <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
+            <parameters>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="observerRemove">
+            <description><![CDATA[The ObserverRemove processor removes an observer. A request to terminate observe the specified resource is sent to the server. The client defaults are used to issue the request.]]></description>
+            <parameters>
+                <parameter name="host">
+                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                </parameter>
+                <parameter name="port">
+                    <description><![CDATA[The port of the server to access.]]></description>
+                </parameter>
+                <parameter name="remoteEndpoint">
+                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                </parameter>
+                <parameter name="queryParams">
+                    <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -209,11 +235,11 @@
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
-                </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
@@ -253,11 +279,11 @@
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
-                </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
                 <parameter name="requestCode">
                     <description><![CDATA[The CoAP request code specifying the requested action on the resource on the server.]]></description>
@@ -1147,5 +1173,3 @@
         </type>
     </types>
 </extension-documentation>
-
-
