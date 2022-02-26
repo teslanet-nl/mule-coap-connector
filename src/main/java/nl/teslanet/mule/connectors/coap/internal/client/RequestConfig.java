@@ -95,14 +95,13 @@ public class RequestConfig
     private List< QueryConfig > queryConfigs= null;
 
     /**
-     * Configuration of virtual hosting defaults.
+     * The shared server or proxy to address the request to.
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
     @Placement( order= 1, tab= "Advanced" )
-    @Summary( "The virtual server or proxy to address the request to." )
     private RemoteEndpointConfig remoteEndpointConfig= null;
 
     /**

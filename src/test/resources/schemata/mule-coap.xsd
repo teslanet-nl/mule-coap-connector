@@ -743,7 +743,7 @@
             </xs:element>
             <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint-config">
               <xs:annotation>
-                <xs:documentation>Configuration of virtual hosting defaults.</xs:documentation>
+                <xs:documentation>The shared server or proxy to address the request to.</xs:documentation>
               </xs:annotation>
               <xs:complexType>
                 <xs:choice minOccurs="1" maxOccurs="1">
@@ -934,7 +934,7 @@
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint-config">
             <xs:annotation>
-              <xs:documentation>Configuration of virtual hosting defaults.</xs:documentation>
+              <xs:documentation>The shared server or proxy to address the request to.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">

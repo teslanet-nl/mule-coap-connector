@@ -48,7 +48,7 @@
                     <description><![CDATA[The default query parameters of requests.]]></description>
                 </parameter>
                 <parameter name="remoteEndpointConfig">
-                    <description><![CDATA[Configuration of virtual hosting defaults.]]></description>
+                    <description><![CDATA[The shared server or proxy to address the request to.]]></description>
                 </parameter>
             </parameters>
         </config>
@@ -422,7 +422,7 @@
                     <description><![CDATA[The default query parameters of requests.]]></description>
                 </parameter>
                 <parameter name="remoteEndpointConfig">
-                    <description><![CDATA[Configuration of virtual hosting defaults.]]></description>
+                    <description><![CDATA[The shared server or proxy to address the request to.]]></description>
                 </parameter>
             </parameters>
         </source>
