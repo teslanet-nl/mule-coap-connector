@@ -49,6 +49,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<coap:client-config name="config" host="127.0.0.1">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
+	<!-- when cf supports NON: type="#[vars.msgType default 'CONFIRMABLE']" -->
 
 	<flow name="start_temporary">
 		<coap:observer-add config-ref="config"

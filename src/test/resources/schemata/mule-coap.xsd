@@ -1003,7 +1003,7 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1030,17 +1030,17 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
@@ -1093,7 +1093,7 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1121,17 +1121,17 @@
         <xs:attribute type="mule:expressionString" use="required" name="responseHandler"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
@@ -1142,11 +1142,6 @@
         <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
             <xs:documentation>The path of the resource to access.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
-          <xs:annotation>
-            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1163,7 +1158,7 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1190,17 +1185,17 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
@@ -1264,7 +1259,7 @@
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1291,17 +1286,17 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
@@ -1312,11 +1307,6 @@
         <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
             <xs:documentation>The path of the resource to access.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoAPRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
-          <xs:annotation>
-            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1395,7 +1385,7 @@
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1434,17 +1424,17 @@
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">
@@ -1546,7 +1536,7 @@
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
-              <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+              <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
@@ -1580,17 +1570,17 @@
         <xs:attribute type="mule:expressionString" use="required" name="responseHandler"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="host">
           <xs:annotation>
-            <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
+            <xs:documentation>The hostname or ip of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="port">
           <xs:annotation>
-            <xs:documentation>The port of the server to access.</xs:documentation>
+            <xs:documentation>The port of the server to reach.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="remoteEndpoint">
           <xs:annotation>
-            <xs:documentation>Remote endpont of the server that is hosting resources or virtual servers.</xs:documentation>
+            <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="queryParams">

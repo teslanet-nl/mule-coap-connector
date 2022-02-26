@@ -40,6 +40,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<description>Mule CoAP connector test application</description>
 
 	<coap:udp-endpoint name="udp" logCoapMessages="true">
+		<coap:socket-params bindToPort="5683" />
 		<coap:exchange-params exchangeLifetime="1000"/>
         <coap:notification-params
 			notificationCheckIntervalCount="5"

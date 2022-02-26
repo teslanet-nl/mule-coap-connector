@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.api;
  * The parameters of a CoAP observer.
  *
  */
-public class ObserverAddParams extends AbstractResourceRequestParams
+public class ObserverAddParams extends AbstractResourceParams
 {
     //NOOP
 }

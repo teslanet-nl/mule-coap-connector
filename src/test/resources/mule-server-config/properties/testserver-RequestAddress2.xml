@@ -35,7 +35,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
    
 	<coap:udp-endpoint name="udp" logCoapMessages="true">
 		<coap:socket-params bindToHost="127.0.0.1" bindToPort="8883"/>
-		<coap:exchange-params exchangeLifetime="1000" />
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -54,7 +54,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 
 	<coap:udp-endpoint name="udpLocal" logCoapMessages="true">
 		<coap:socket-params bindToHost="127.0.0.1" bindToPort="9983" />
-		<coap:exchange-params exchangeLifetime="1000" />
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="configLocal"><coap:endpoint udpEndpoint="udpLocal" /> 

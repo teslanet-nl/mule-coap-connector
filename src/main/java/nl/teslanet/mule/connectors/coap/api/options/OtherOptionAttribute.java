@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
-//TODO RC unittests
 /**
  * Other option interface.
  */
@@ -63,7 +62,7 @@ public class OtherOptionAttribute
     {
         super();
         this.number= number;
-        this.value= value;
+        this.value= ( value == null ? OptionUtils.EMPTY_BYTES : value );
     }
 
     /**

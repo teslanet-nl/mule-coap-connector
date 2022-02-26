@@ -86,13 +86,13 @@
             <description><![CDATA[The Discover processor retrieves information about CoAP resources of a server.]]></description>
             <parameters>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
@@ -115,13 +115,13 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
@@ -129,22 +129,19 @@
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
-                </parameter>
             </parameters>
         </operation>
         <operation name="observerExists">
             <description><![CDATA[Establish whether an observer with given parameters exists.]]></description>
             <parameters>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
@@ -175,22 +172,19 @@
             <description><![CDATA[The ObserverRemove processor removes an observer. A request to terminate observe the specified resource is sent to the server. The client defaults are used to issue the request.]]></description>
             <parameters>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
-                </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -224,13 +218,13 @@
                     <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
                 </parameter>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>
@@ -268,13 +262,13 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="host">
-                    <description><![CDATA[The hostname or ip of the server to access.]]></description>
+                    <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
                 <parameter name="port">
-                    <description><![CDATA[The port of the server to access.]]></description>
+                    <description><![CDATA[The port of the server to reach.]]></description>
                 </parameter>
                 <parameter name="remoteEndpoint">
-                    <description><![CDATA[Remote endpont of the server that is hosting resources or virtual servers.]]></description>
+                    <description><![CDATA[The shared server or proxy that will forward requests.]]></description>
                 </parameter>
                 <parameter name="queryParams">
                     <description><![CDATA[The query parameters of the request.]]></description>

@@ -48,15 +48,6 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryConfig;
 public class ObserverConfig
 {
     /**
-     * Available type codes.
-     */
-    //TODO RC
-//    public enum CoAPRequestType
-//    {
-//        DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
-//    }
-
-    /**
      * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.
      * When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.
      * When DEFAULT the client default is used.

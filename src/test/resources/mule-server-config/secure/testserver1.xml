@@ -43,6 +43,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			privateKeyAlias="server" privateKeyPassword="endPass"
 			trustStoreLocation="certs/trustStore.jks"
 			trustStorePassword="rootPass" trustedRootCertificateAlias="root" />
+		<coap:socket-params bindToPort="5684" />
 	</coap:dtls-endpoint>
 
 	<coap:server-config name="config">

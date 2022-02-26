@@ -29,7 +29,6 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
@@ -45,9 +44,8 @@ public abstract class AbstractResourceParams extends AbstractQueryParams
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 51 )
-    @Example( value= "/some/resource/path" )
-    @Summary( "The path of the resource to access." )
-    private String path= null;
+    @Example( "/seg1/seg2/seg3" )
+     private String path= null;
 
     /**
      * @return the path

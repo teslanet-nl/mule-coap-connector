@@ -94,7 +94,41 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider
  */
 public class ClientOperations
 {
-    //TODO RC review error messages
+    /**
+     * Request failure message.
+     */
+    static final String requestErrorMsg= " failed to execute request.";
+
+    /**
+     * Async Request failure message.
+     */
+    static final String AsyncRequestErrorMsg= " failed to execute async request.";
+
+    /**
+     * Ping failure message.
+     */
+    static final String pingErrorMsg= " failed to execute ping.";
+
+    /**
+     * Discover failure message.
+     */
+    static final String discoverErrorMsg= " failed to execute discover.";
+
+    /**
+     * Observer add failure message.
+     */
+    static final String observerAddErrorMsg= " failed to add observer.";
+
+    /**
+     * Observer remove failure message.
+     */
+    static final String observerRemoveErrorMsg= " failed to remove observer.";
+
+    /**
+     * Observer exists failure message.
+     */
+    static final String observerExistsErrorMsg= " failed to query observer existence.";
+
     /**
      * The Request Processor issues a request on a CoAP server. The processor blocks
      * until a response is received or a timeout occurs.
@@ -119,38 +153,37 @@ public class ClientOperations
         RequestOptions requestOptions
     )
     {
-        String errorMsg= ": request failed.";
         try
         {
             return client.doRequest( requestParams, requestOptions, null );
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + requestErrorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new RequestException( client + errorMsg, e );
+            throw new RequestException( client + requestErrorMsg, e );
         }
         catch ( InternalResponseException | InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + requestErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + errorMsg, e );
+            throw new ClientErrorResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + requestErrorMsg, e );
         }
     }
 
@@ -177,42 +210,41 @@ public class ClientOperations
         RequestOptions requestOptions
     )
     {
-        String errorMsg= ": async request failed.";
         try
         {
             client.doRequest( requestParams, requestOptions, responseHandlerParams );
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
-            throw new RequestException( client + errorMsg, e );
+            throw new RequestException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + errorMsg, e );
+            throw new InvalidHandlerNameException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + errorMsg, e );
+            throw new ClientErrorResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + AsyncRequestErrorMsg, e );
         }
     }
 
@@ -229,18 +261,17 @@ public class ClientOperations
     Client client, @ParameterGroup( name= "Ping address" )
     PingParams pingParams )
     {
-        String errorMsg= ": ping failed.";
         try
         {
             return client.ping( pingParams );
         }
         catch ( ConnectorException | IOException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + pingErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + pingErrorMsg, e );
         }
     }
 
@@ -248,7 +279,7 @@ public class ClientOperations
      * The Discover processor retrieves information about CoAP resources of a
      * server.
      * 
-     * @param client             The client to use to issue the request.
+     * @param client         The client to use to issue the request.
      * @param discoverParams The attributes of the discover request
      * @return The resources description on the server that have been discovered.
      */
@@ -257,7 +288,6 @@ public class ClientOperations
     Client client, @ParameterGroup( name= "Discover address" )
     DiscoverParams discoverParams )
     {
-        String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
         try
         {
@@ -265,40 +295,40 @@ public class ClientOperations
         }
         catch ( IOException | ConnectorException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + discoverErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + discoverErrorMsg, e );
         }
         catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException e )
         {
-            throw new InvalidRequestCodeException( client + errorMsg, e );
+            throw new InvalidRequestCodeException( client + discoverErrorMsg, e );
         }
         catch ( InternalRequestException e )
         {
-            throw new RequestException( client + errorMsg, e );
+            throw new RequestException( client + discoverErrorMsg, e );
         }
         CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
         for ( WebLink link : links )
         {
-            // TODO RC change members in resourceinfo to list?
+            // TODO RC ? change members in resourceinfo to list?
             StringBuilder ifBuilder= new StringBuilder();
             Iterator< String > ifIterator= link.getAttributes().getInterfaceDescriptions().iterator();
             while ( ifIterator.hasNext() )
@@ -351,22 +381,21 @@ public class ClientOperations
     ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Observe request" )
     ObserverAddParams observerAddParams )
     {
-        String errorMsg= ": observer add failed.";
         try
         {
             client.startObserver( observerAddParams, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + observerAddErrorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + errorMsg, e );
+            throw new InvalidObserverException( client + observerAddErrorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + errorMsg, e );
+            throw new InvalidHandlerNameException( client + observerAddErrorMsg, e );
         }
     }
 
@@ -382,18 +411,17 @@ public class ClientOperations
     Client client, @ParameterGroup( name= "Observe request" )
     ObserverRemoveParams observerRemoveParams )
     {
-        String errorMsg= ": observer remove failed.";
         try
         {
             client.stopObserver( observerRemoveParams );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + observerRemoveErrorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + errorMsg, e );
+            throw new InvalidObserverException( client + observerRemoveErrorMsg, e );
         }
     }
 
@@ -409,14 +437,13 @@ public class ClientOperations
     Client client, @ParameterGroup( name= "Observer uri" )
     ObserverExistsParams observerExistsParams )
     {
-        String errorMsg= ": observer query failed.";
         try
         {
             return client.observerExists( observerExistsParams );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + observerExistsErrorMsg, e );
         }
     }
 

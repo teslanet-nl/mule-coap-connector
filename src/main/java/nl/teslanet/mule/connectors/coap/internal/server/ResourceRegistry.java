@@ -55,18 +55,30 @@ public class ResourceRegistry
     //TODO review concurrency
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
+    static final String noListenerWarning= "Resource '{' {0}::{1} '}' has no listener for {2} requests.";
+    
+    /**
+     * The root resource on the server.
+     */
     Resource root= null;
+
+    /**
+     * The name of the server owning the registry.
+     */
+    private String serverName;
 
     /**
      * Construct a registry. The constructor initializes served resources 
      * and listener repositories. 
-     * @param root mandatory root resource
-     * @throws InternalResourceRegistryException 
+     * @param serverName The name of the CoAP server owning the resource.
+     * @param root Mandatory root resource.
+     * @throws InternalResourceRegistryException When the the root resource is null.
      */
-    public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
+    public ResourceRegistry( String serverName, Resource root ) throws InternalResourceRegistryException
     {
         if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
+        this.serverName= serverName;
 
         servedResources= new ConcurrentHashMap<>();
         listeners= new CopyOnWriteArrayList<>();
@@ -251,7 +263,7 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingGet()) logger.warn( noListenerWarning, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -261,7 +273,7 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingPost()) logger.warn( noListenerWarning, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -271,7 +283,7 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingPut()) logger.warn( noListenerWarning, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -281,7 +293,7 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingDelete()) logger.warn( noListenerWarning, serverName, resource.getURI(), "DELETE" );
         }
     }
 
@@ -321,7 +333,6 @@ public class ResourceRegistry
     public List< ServedResource > findResources( String uriPattern )
     {
         //TODO regex support
-        //TODO RC concurrent?
         ArrayList< ServedResource > found= new ArrayList<>();
 
         for ( Entry< String, ServedResource > entry : servedResources.entrySet() )

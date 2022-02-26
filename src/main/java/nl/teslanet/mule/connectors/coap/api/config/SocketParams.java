@@ -33,8 +33,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Socket configuration parameters
- *
+ * Socket configuration parameters.
  */
 public class SocketParams implements VisitableConfig
 {
@@ -51,12 +50,12 @@ public class SocketParams implements VisitableConfig
     public String bindToHost= null;
 
     /**
-     * The port the CoAP server will listen on. 
-     * If empty the default coap of coaps port will be used.
+     * The port the CoAP endpoint binds to.  
+     * When empty a free ephemeral port will be used, which is usual for client endpoints.
+     * Server endpoint usually will bind to one of the standardized CoAP ports 5683 (coap) and 5684 (coaps), or to other predetermined port value. 
      */
     @Parameter
     @Optional
-    @Summary("The port the CoAP server will listen on.\nIf empty the default coap or coaps port will be used.")
     @Expression(ExpressionSupport.NOT_SUPPORTED)
     @ParameterDsl(allowReferences= false)
     public Integer bindToPort= null;

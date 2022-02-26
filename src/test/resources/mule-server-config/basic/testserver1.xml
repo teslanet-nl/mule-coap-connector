@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	<coap:server-config name="config">
 		<coap:endpoint>
 			<coap:udp-endpoint logCoapMessages="true">
-				<coap:exchange-params exchangeLifetime="1000" />
+				<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
 			</coap:udp-endpoint>
 		</coap:endpoint>
 		<coap:resources>

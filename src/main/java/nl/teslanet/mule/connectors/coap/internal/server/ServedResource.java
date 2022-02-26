@@ -224,6 +224,14 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /**
+     * @return True when this resource will handle get requests.
+     */
+    boolean isHandlingGet()
+    {
+        return requestCodeFlags.isGet();
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.californium.core.CoapResource#handleGET(org.eclipse.californium.core.server.resources.CoapExchange)
      */
@@ -239,6 +247,14 @@ public class ServedResource extends CoapResource
         {
             handleRequest( getCallback, exchange, CoAPResponseCode.CONTENT );
         }
+    }
+
+    /**
+     * @return True when this resource will handle put requests.
+     */
+    boolean isHandlingPut()
+    {
+        return requestCodeFlags.isPut();
     }
 
     /* (non-Javadoc)
@@ -258,6 +274,14 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /**
+     * @return True when this resource will handle post requests.
+     */
+    boolean isHandlingPost()
+    {
+        return requestCodeFlags.isPost();
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.californium.core.CoapResource#handlePOST(org.eclipse.californium.core.server.resources.CoapExchange)
      */
@@ -273,6 +297,14 @@ public class ServedResource extends CoapResource
         {
             handleRequest( postCallback, exchange, CoAPResponseCode.CHANGED );
         }
+    }
+
+    /**
+     * @return True when this resource will handle delete requests.
+     */
+    boolean isHandlingDelete()
+    {
+        return requestCodeFlags.isDelete();
     }
 
     /* (non-Javadoc)

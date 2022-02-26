@@ -194,7 +194,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         coapServer= new CoapServer( networkConfig );
         try
         {
-            registry= new ResourceRegistry( coapServer.getRoot() );
+            registry= new ResourceRegistry( serverName, coapServer.getRoot() );
         }
         catch ( InternalResourceRegistryException e1 )
         {

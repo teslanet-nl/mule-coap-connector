@@ -25,7 +25,6 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 import java.net.InetSocketAddress;
 
-import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
@@ -60,14 +59,16 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
         endpointName= toVisit.configName;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.SocketParams)
+
+    /**
+     * Visit socket parameters.
+     * @param toVisit The object to visit.
      */
     @Override
     public void visit( SocketParams toVisit )
     {
         super.visit( toVisit );
-        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : CoAP.DEFAULT_COAP_PORT );
+        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : 0 );
 
         if ( toVisit.bindToHost != null )
         {

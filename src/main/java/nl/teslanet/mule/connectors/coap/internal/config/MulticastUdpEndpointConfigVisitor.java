@@ -30,7 +30,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
@@ -94,12 +93,16 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
         outgoingAddress= toVisit.outgoingMulticastConfig.outgoingAddress;
     }
 
+    /**
+     * Visit socket parameters.
+     * @param toVisit The object to visit.
+     */
     @Override
     public void visit( SocketParams toVisit )
     {
         //Do not call super because UDP endpoint bind configuration is not allowed by Cf when connector is is set.  
         //super.visit( toVisit );
-        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : CoAP.DEFAULT_COAP_PORT );
+        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : 0 );
 
         if ( toVisit.bindToHost != null )
         {

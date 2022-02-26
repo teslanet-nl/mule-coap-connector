@@ -849,6 +849,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
+            //TODO RC ? Cf support for NON observe cancel
             relation.stop();
             removeRelation( uri );
         }
@@ -1210,7 +1211,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          */
         public CoapRequestBuilderImpl( ObserverAddParams params )
         {
-            this( (AbstractResourceRequestParams) params );
+            this( (AbstractResourceParams) params );
             observe= Boolean.TRUE;
             requestCode= Code.GET;
         }
@@ -1222,7 +1223,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          */
         public CoapRequestBuilderImpl( ObserverRemoveParams params )
         {
-            this( (AbstractResourceRequestParams) params );
+            this( (AbstractResourceParams) params );
             observe= Boolean.FALSE;
             requestCode= Code.GET;
         }

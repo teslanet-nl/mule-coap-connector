@@ -27,8 +27,8 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
@@ -38,33 +38,32 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public abstract class AbstractAddressParams
 {
     /**
-     * The hostname or ip of the server to access. 
+     * The hostname or ip of the server to reach. 
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 41 )
-    @Summary( "The hostname or ip of the server to access." )
+    @Example("californium.eclipseprojects.io")
     private String host= null;
 
     /**
-     * The port of the server to access.
+     * The port of the server to reach.
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 42 )
-    @Summary( "The port of the server to access." )
+    @Example("5683")
     private Integer port= null;
 
     /**
-     * Remote endpont of the server that is hosting resources or virtual servers.
+     * The shared server or proxy that will forward requests.
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 111, tab= Placement.ADVANCED_TAB )
-    @Summary( "The virtual server or proxy send the request to." )
     private RemoteEndpoint remoteEndpoint= null;
 
     /**

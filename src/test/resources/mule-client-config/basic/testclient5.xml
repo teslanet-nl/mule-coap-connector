@@ -39,7 +39,6 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
    <description>Mule CoAP connector test application</description>
    
 	<coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true" >
-		<coap:socket-params bindToPort="0" />
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 			  

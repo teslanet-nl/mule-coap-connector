@@ -27,6 +27,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:endpoint>
 			<coap:multicast-udp-endpoint
 				logCoapMessages="true">
+				<coap:socket-params bindToPort="5683" />
 				<coap:multicast-params outgoingInterface="lo" >
 					<coap:join >
 						<coap:multicast-group group="224.0.1.187" />

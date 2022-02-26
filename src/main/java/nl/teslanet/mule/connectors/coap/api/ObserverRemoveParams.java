@@ -26,7 +26,7 @@ package nl.teslanet.mule.connectors.coap.api;
  * The request parameters for stopping an CoAP observer.
  *
  */
-public class ObserverRemoveParams extends AbstractResourceRequestParams
+public class ObserverRemoveParams extends AbstractResourceParams
 {
-    //TODO RC check confirmable processing
+    //NOOP
 }
