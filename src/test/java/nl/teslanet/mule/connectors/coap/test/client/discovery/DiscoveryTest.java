@@ -120,12 +120,8 @@ public class DiscoveryTest extends AbstractClientTestCase
     {
         String flowName= "ping_notresolvable";
 
-        Exception e= assertThrows(
-            Exception.class,
-            () -> flowRunner( flowName ).withPayload( "nothing_important" ).run() );
-        assertTrue(
-            "wrong exception message",
-            e.getMessage().contains( "ping failed" ) );
+        Exception e= assertThrows( Exception.class, () -> flowRunner( flowName ).withPayload( "nothing_important" ).run() );
+        assertTrue( "wrong exception message", e.getMessage().contains( "failed to execute ping" ) );
         assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
 
@@ -181,10 +177,9 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         Exception e= assertThrows(
             Exception.class,
-            () -> flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run() );
-        assertTrue(
-            "wrong exception message",
-            e.getMessage().contains( "ping failed" ) );
+            () -> flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run()
+        );
+        assertTrue( "wrong exception message", e.getMessage().contains( "failed to execute ping" ) );
         //assert( "COAP:MALFORMED_URI" );
         assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
@@ -196,7 +191,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         assertEquals( "wrong number of weblinks", 8, links.size() );
@@ -211,7 +206,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
         DiscoveredResource link= links.get( "/service/resource_with_ct" );
 
@@ -244,7 +239,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         DiscoveredResource link= links.get( "/service/resource_with_if" );
@@ -276,7 +271,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         DiscoveredResource link= links.get( "/service/resource_with_obs" );
@@ -307,7 +302,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         DiscoveredResource link= links.get( "/service/resource_with_rt" );
@@ -339,7 +334,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         DiscoveredResource link= links.get( "/service/resource_with_sz" );
@@ -371,7 +366,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
         DiscoveredResource link= links.get( "/service/resource_with_title" );
@@ -396,7 +391,7 @@ public class DiscoveryTest extends AbstractClientTestCase
 
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     @Test
     public void testDynamicResource() throws Exception
     {
@@ -413,10 +408,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "post";
         result= flowRunner( flowName ).withPayload( "dynamic_resource" ).run();
         response= result.getMessage();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not create resource", "CREATED", attributes.getResponseCode() );
 
@@ -432,10 +424,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "delete";
         result= flowRunner( flowName ).withVariable( "host", "127.0.0.1" ).withVariable( "port", "5683" ).withVariable( "path", "/service/dynamic_resource" ).run();
         response= result.getMessage();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not delete resource", "DELETED", attributes.getResponseCode() );
 

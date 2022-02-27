@@ -137,12 +137,12 @@ public class ObserveRelation implements CoapHandler
     /**
      * Start observing.
      */
-    public void start()
+    public synchronized void start()
     {
         try
         {
             coapRelation= sendObserveRequest();
-            logger.info( this + " started." );
+            logger.info( this + " has started." );
         }
         catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
         {
@@ -153,11 +153,14 @@ public class ObserveRelation implements CoapHandler
     /**
      * Stop observing
      */
-    public void stop()
+    public synchronized void stop()
     {
-        coapRelation.proactiveCancel();
-        coapRelation= null;
-        logger.info( this + " stopped." );
+        if ( coapRelation != null )
+        {
+            coapRelation.proactiveCancel();
+            coapRelation= null;
+            logger.info( this + " has stopped." );
+        }
     }
 
     /**

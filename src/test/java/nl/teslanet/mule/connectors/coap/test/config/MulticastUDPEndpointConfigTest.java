@@ -155,6 +155,7 @@ public class MulticastUDPEndpointConfigTest
             case protocolStageThreadCount:
 
             case bindToSecurePort:
+            case bindToPort:
             case dtlsAutoResumeTimeout:
             case keyStoreLocation:
             case keyStorePassword:

@@ -27,13 +27,14 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.awaitility.core.ConditionTimeoutException;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -47,11 +48,9 @@ import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.Code;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class ExceptionHandlingTest extends AbstractClientTestCase
 {
     //TODO RC add query
@@ -59,7 +58,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}, host= {1}, port= {2}, path= {3}")
+    @Parameters( name= "flowName= {0}, host= {1}, port= {2}, path= {3}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
@@ -75,37 +74,37 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public Code expectedRequestCode;
 
     /**
      * The server host to call.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String host;
 
     /**
      * The server port to call.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String port;
 
     /**
      * The server path to call.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public String path;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public String expectedResponseCode;
 
     /**
@@ -155,7 +154,8 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
 
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
-            port ).withVariable( "path", path ).withVariable( "handler", "catching_handler" ).run();
+            port
+        ).withVariable( "path", path ).withVariable( "handler", "catching_handler" ).run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
@@ -163,10 +163,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             return spy1.getEvents().size() == 1 && spy2.getEvents().size() == 1;
         } );
         response= (Message) spy1.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
@@ -176,10 +173,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         response= (Message) spy2.getEvents().get( 0 ).getContent();
         //message containing message!!
         response= (Message) response.getPayload().getValue();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
@@ -213,7 +207,8 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
 
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
-            port ).withVariable( "path", path ).withVariable( "handler", "failing_handler" ).run();
+            port
+        ).withVariable( "path", path ).withVariable( "handler", "failing_handler" ).run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
@@ -232,10 +227,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
 
         assertEquals( "spy has not been called once", 1, spy3.getEvents().size() );
         response= (Message) spy3.getEvents().get( 0 ).getContent();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
@@ -255,9 +247,10 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         Exception e= assertThrows( Exception.class, () -> {
             flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
                 "port",
-                port ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
+                port
+            ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
         } );
-        assertTrue( "wrong exception message", e.getMessage().contains( "async request failed" ) );
+        assertEquals( "wrong exception message", "CoAP Client { config } failed to execute async request.", e.getMessage() );
         assertEquals( "wrong exception cause", InvalidHandlerNameException.class, e.getCause().getClass() );
     }
 

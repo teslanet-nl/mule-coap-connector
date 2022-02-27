@@ -25,8 +25,6 @@ package nl.teslanet.mule.connectors.coap.api;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import java.net.URI;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
@@ -57,11 +55,6 @@ public class CoAPResponseAttributes
      * The uri of the request. 
      */
     protected String requestUri= null;
-
-    /**
-     * Lazy initialized request URI.
-     */
-    protected URI requestUriObject= null;
 
     /**
      * The address of the server that issued the response.
@@ -123,51 +116,6 @@ public class CoAPResponseAttributes
     public String getRequestUri()
     {
         return requestUri;
-    }
-
-    /**
-     * @return The request scheme.
-     */
-    public String getRequestScheme()
-    {
-        if ( requestUriObject == null ) requestUriObject= URI.create( requestUri );
-        return requestUriObject.getScheme();
-    }
-
-    /**
-     * @return The request host.
-     */
-    public String getRequestHost()
-    {
-        if ( requestUriObject == null ) requestUriObject= URI.create( requestUri );
-        return requestUriObject.getHost();
-    }
-
-    /**
-     * @return The request port.
-     */
-    public int getRequestPort()
-    {
-        if ( requestUriObject == null ) requestUriObject= URI.create( requestUri );
-        return requestUriObject.getPort();
-    }
-
-    /**
-     * @return The request path.
-     */
-    public String getRequestPath()
-    {
-        if ( requestUriObject == null ) requestUriObject= URI.create( requestUri );
-        return requestUriObject.getPath();
-    }
-
-    /**
-     * @return The request query.
-     */
-    public String getRequestQuery()
-    {
-        if ( requestUriObject == null ) requestUriObject= URI.create( requestUri );
-        return requestUriObject.getQuery();
     }
 
     /**

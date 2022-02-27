@@ -154,6 +154,7 @@ public class UDPEndpointConfigTest
         {
             case protocolStageThreadCount:
 
+            case bindToPort:
             case bindToSecurePort:
             case dtlsAutoResumeTimeout:
             case keyStoreLocation:

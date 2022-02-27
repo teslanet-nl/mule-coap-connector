@@ -153,7 +153,7 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
                 () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
                     "port",
                     "5683" ).withVariable( "path", resourcePath ).run() );
-            assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
+            assertTrue( "wrong exception message", e.getMessage().contains( "failed to execute request" ) );
             if ( expectClientError )
             {
                 assertEquals( "wrong exception cause", e.getCause().getClass(), ClientErrorResponseException.class );
