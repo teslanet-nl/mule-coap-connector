@@ -70,7 +70,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		</coap:listener>
 
 		<set-payload
-			value="#[ output text/plain --- attributes.requestPath ++ ( payload default '' ) ]" />
+			value="#[ output text/plain --- attributes.requestUri ++ ( payload default '' ) ]" />
 	</flow>
 
 </mule>

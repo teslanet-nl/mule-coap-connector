@@ -47,10 +47,10 @@ public class PutMethodTest extends AbstractServerTestCase
     @Test
     public void testSuccess() throws ConnectorException, IOException
     {
-        String path= "/basic/put_me";
+        String uri= "coap://localhost/basic/put_me";
         String payload= ":payload_put_me";
-        String expected= path + payload;
-        setClientUri( path );
+        String expected= uri + payload;
+        setClientUri( uri );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -62,9 +62,9 @@ public class PutMethodTest extends AbstractServerTestCase
     @Test
     public void testNoPutAllowed() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_put_me";
+        String uri= "coap://localhost/basic/do_not_put_me";
         String payload= ":payload_do_not_put_me";
-        setClientUri( path );
+        setClientUri( uri );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -76,9 +76,9 @@ public class PutMethodTest extends AbstractServerTestCase
     @Test
     public void testNoPutAllowedDefault() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_put_me2";
+        String uri= "coap://localhost/basic/do_not_put_me2";
         String payload= ":payload_do_not_put_me2";
-        setClientUri( path );
+        setClientUri( uri );
 
         CoapResponse response= client.put( payload, 0 );
 
@@ -90,9 +90,9 @@ public class PutMethodTest extends AbstractServerTestCase
     @Test
     public void testNoResource() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_put_me3";
+        String uri= "coap://localhost/basic/do_not_put_me3";
         String payload= ":payload_do_not_put_me3";
-        setClientUri( path );
+        setClientUri( uri );
 
         CoapResponse response= client.put( payload, 0 );
 

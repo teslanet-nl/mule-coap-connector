@@ -490,21 +490,6 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="requestHost">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestPath">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestPort">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestQuery">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestScheme">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -532,21 +517,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestHost">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestPath">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestPort">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestQuery">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestScheme">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestUri">

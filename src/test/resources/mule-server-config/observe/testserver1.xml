@@ -76,11 +76,8 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 		<set-variable variableName="method"
 			value="#[ vars.attr.requestCode ]" doc:name="set method" />
-		<set-variable variableName="path"
-			value="#[ vars.attr.requestPath ]" doc:name="set path" />
 		<set-variable variableName="resource_path"
-			value="#[  payload ]"
-			doc:name="set resource_path" />
+			value="#[ payload ]" doc:name="set path" />
 		<set-variable variableName="get" value="true" />
 		<set-variable variableName="post" value="false" />
 		<set-variable variableName="put" value="true" />
@@ -128,7 +125,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<set-variable variableName="method"
 			value="#[ attributes.requestCode ]" doc:name="set method" />
 		<set-variable variableName="path"
-			value="#[ attributes.requestPath ]" doc:name="set path" />
+			value="#[ (java!java::net::URI::create( attributes.requestUri )).path ]" doc:name="set path" />
 		<set-variable variableName="attr" value="#[ attributes ]"
 			doc:name="set attr" />
 
@@ -153,10 +150,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 			</when>
 			<when expression="#[vars.method == 'POST']">
-				<os:store doc:name="Store" key="#[ vars.path ]"
+				<os:store doc:name="Store" key="#[ payload ]"
 					failOnNullValue="false" objectStore="Object_store" />
 				<coap:notify config-ref="config"
-					pathPattern="#[ vars.path ]" doc:name="resource changed" />
+					pathPattern="#[ payload ]" doc:name="resource changed" />
 				<set-variable variableName="response_code"
 					value="CHANGED" />
 				<set-payload value="OK" doc:name="return OK"
