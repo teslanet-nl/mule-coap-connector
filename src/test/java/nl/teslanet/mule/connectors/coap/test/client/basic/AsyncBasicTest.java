@@ -41,10 +41,10 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -52,7 +52,6 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 @RunnerDelegateTo( Parameterized.class )
 public class AsyncBasicTest extends AbstractClientTestCase
 {
-    //TODO RC add query
     /**
      * The list of tests with their parameters
      * @return Test parameters.
@@ -63,14 +62,14 @@ public class AsyncBasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } }
+                { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me?test=async", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=async" },
+                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me?test=async", "CREATED", "POST called on: coap://localhost/basic/post_me?test=async" },
+                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me?test=async", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=async" },
+                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me?test=async", "DELETED", "DELETE called on: coap://localhost/basic/delete_me?test=async" },
+                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me?test=async", "METHOD_NOT_ALLOWED", null } }
         );
     }
 
@@ -102,7 +101,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
      * The payload code that is expected.
      */
     @Parameter( 4 )
-    public byte[] expectedPayload;
+    public String expectedPayload;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -144,12 +143,16 @@ public class AsyncBasicTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            ( expectedPayload == null ? null : expectedPayload.getBytes( Defs.COAP_CHARSET ) ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 
 }

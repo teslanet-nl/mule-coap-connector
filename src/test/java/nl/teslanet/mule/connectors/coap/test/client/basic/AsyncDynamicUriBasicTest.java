@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.californium.core.CoapServer;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -44,15 +44,14 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
 
 
 @RunnerDelegateTo( Parameterized.class )
 public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
 {
-    //TODO RC add query
     /**
      * The list of tests with their parameters
      * @return Test parameters.
@@ -63,12 +62,12 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "coap://127.0.0.1:8976/basic/get_me", "GET called on: /basic/get_me".getBytes() },
-                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", null },
-                { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "coap://127.0.0.1:8976/basic/post_me", "POST called on: /basic/post_me".getBytes() },
-                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", null },
-                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "coap://127.0.0.1:8976/basic/put_me", "PUT called on: /basic/put_me".getBytes() },
-                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", null },
+                { "do_request", "GET", "127.0.0.1", "8976", "/basic/get_me", "CONTENT", "coap://127.0.0.1:8976/basic/get_me", "GET called on: coap://localhost/basic/get_me" },
+                { "do_request", "GET", "127.0.0.1", "8976", "/basic/do_not_get_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_get_me", "" },
+                { "do_request", "POST", "127.0.0.1", "8976", "/basic/post_me", "CREATED", "coap://127.0.0.1:8976/basic/post_me", "POST called on: coap://localhost/basic/post_me" },
+                { "do_request", "POST", "127.0.0.1", "8976", "/basic/do_not_post_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_post_me", "" },
+                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/put_me", "CHANGED", "coap://127.0.0.1:8976/basic/put_me", "PUT called on: coap://localhost/basic/put_me" },
+                { "do_request", "PUT", "127.0.0.1", "8976", "/basic/do_not_put_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_put_me", "" },
                 {
                     "do_request",
                     "DELETE",
@@ -77,8 +76,8 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
                     "/basic/delete_me",
                     "DELETED",
                     "coap://127.0.0.1:8976/basic/delete_me",
-                    "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", null } }
+                    "DELETE called on: coap://localhost/basic/delete_me" },
+                { "do_request", "DELETE", "127.0.0.1", "8976", "/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", "coap://127.0.0.1:8976/basic/do_not_delete_me", "" } }
         );
     }
 
@@ -128,7 +127,7 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
      * The payload code that is expected.
      */
     @Parameter( 7 )
-    public byte[] expectedPayload;
+    public String expectedPayload;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -173,13 +172,13 @@ public class AsyncDynamicUriBasicTest extends AbstractClientTestCase
         } );
         //assertions
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) ( response.getPayload().getValue() );
         assertEquals( "wrong request code", requestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals( "wrong response payload", expectedPayload, payload );
+        byte[] responsePayload= (byte[]) TypedValue.unwrap( response.getPayload() );
+        assertEquals( "wrong response payload", expectedPayload, responsePayload == null ? "" : new String( responsePayload, Defs.COAP_CHARSET ) );
     }
 
 }

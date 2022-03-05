@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.client.basic;
+package nl.teslanet.mule.connectors.coap.test.client.query;
 
 
 import java.net.InetSocketAddress;
@@ -39,7 +39,7 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
  * Server used to test client 
  *
  */
-public class BasicTestServer extends CoapServer
+public class QueryTestServer extends CoapServer
 {
     /**
      * Network configuration is set to standards 
@@ -49,7 +49,7 @@ public class BasicTestServer extends CoapServer
     /**
      * Default Constructor for test server.
      */
-    public BasicTestServer() throws SocketException
+    public QueryTestServer() throws SocketException
     {
         this( CoAP.DEFAULT_COAP_PORT );
     }
@@ -57,25 +57,20 @@ public class BasicTestServer extends CoapServer
     /**
      * Constructor for test server.
      */
-    public BasicTestServer( int port ) throws SocketException
+    public QueryTestServer( int port ) throws SocketException
     {
         super( networkConfig );
         addEndpoints( port );
         addResources();
     }
 
+    /**
+     * Provide resources.
+     */
     private void addResources()
     {
-        // provide an instance of a Hello-World resource
-        add( new GetResource( "basic" ) );
-        getRoot().getChild( "basic" ).add( new GetResource( "get_me" ) );
-        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_get_me" ) );
-        getRoot().getChild( "basic" ).add( new PutResource( "put_me" ) );
-        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_put_me" ) );
-        getRoot().getChild( "basic" ).add( new PostResource( "post_me" ) );
-        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_post_me" ) );
-        getRoot().getChild( "basic" ).add( new DeleteResource( "delete_me" ) );
-        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_delete_me" ) );
+        add( new NoneResource( "query" ) );
+        getRoot().getChild( "query" ).add( new QueryResource( "test" ) );
     }
 
     /**
@@ -104,11 +99,11 @@ public class BasicTestServer extends CoapServer
     }
 
     /**
-     * Resource that allows GET only
+     * Resource
      */
-    class GetResource extends CoapResource
+    class QueryResource extends CoapResource
     {
-        public GetResource( String name )
+        public QueryResource( String name )
         {
             // set resource name
             super( name );
@@ -122,20 +117,6 @@ public class BasicTestServer extends CoapServer
             // respond to the request
             exchange.respond( ResponseCode.CONTENT, "GET called on: " + exchange.advanced().getRequest().getURI() );
         }
-    }
-
-    /**
-     * Resource that allows POST only
-     */
-    class PostResource extends CoapResource
-    {
-        public PostResource( String name )
-        {
-            // set resource name
-            super( name );
-            // set display name
-            getAttributes().setTitle( name );
-        }
 
         @Override
         public void handlePOST( CoapExchange exchange )
@@ -143,40 +124,12 @@ public class BasicTestServer extends CoapServer
             // respond to the request
             exchange.respond( ResponseCode.CREATED, "POST called on: " + exchange.advanced().getRequest().getURI() );
         }
-    }
-
-    /**
-     * Resource that allows PUT only
-     */
-    class PutResource extends CoapResource
-    {
-        public PutResource( String name )
-        {
-            // set resource name
-            super( name );
-            // set display name
-            getAttributes().setTitle( name );
-        }
 
         @Override
         public void handlePUT( CoapExchange exchange )
         {
             // respond to the request
             exchange.respond( ResponseCode.CHANGED, "PUT called on: " + exchange.advanced().getRequest().getURI() );
-        }
-    }
-
-    /**
-     * Resource that allows DELETE only
-     */
-    class DeleteResource extends CoapResource
-    {
-        public DeleteResource( String name )
-        {
-            // set resource name
-            super( name );
-            // set display name
-            getAttributes().setTitle( name );
         }
 
         @Override

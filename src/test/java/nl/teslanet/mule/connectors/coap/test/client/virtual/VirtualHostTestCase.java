@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.test.client.virtual;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +39,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
@@ -145,7 +145,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
             port
         ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
         Message response= result.getMessage();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 
@@ -170,7 +170,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
             host
         ).withVariable( "port", port ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
         Message response= result.getMessage();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 
@@ -180,6 +180,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         assertEquals( "wrong uri host", host, options.getUriHost() );
         assertEquals( "wrong uri port", port, options.getUriPort() );
     }
+
     /**
      * Test inbound property
      * @throws Exception should not happen in this test
@@ -194,7 +195,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
             host
         ).withVariable( "port", port ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
         Message response= result.getMessage();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 

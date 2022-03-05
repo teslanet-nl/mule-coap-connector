@@ -40,7 +40,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -122,11 +121,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             Event result= flowRunner( "do_put_permanent" ).withPayload( contents.get( i ) ).run();
             Message response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -137,11 +133,8 @@ public class ObserveTest extends AbstractClientTestCase
         for ( int i= 0; i < spy.getEvents().size(); i++ )
         {
             Message response= (Message) spy.getEvents().get( i ).getContent();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             if ( i == 0 ) obsOffset= attributes.getOptions().getObserve().intValue();
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload() );
@@ -174,11 +167,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "1st series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -194,11 +184,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "2nd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -215,11 +202,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "3rd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -231,11 +215,8 @@ public class ObserveTest extends AbstractClientTestCase
         for ( int i= 1; i < contents.size(); i++ )
         {
             response= (Message) spy.getEvents().get( i ).getContent();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
@@ -267,11 +248,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "1st series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -287,11 +265,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "2nd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -308,11 +283,8 @@ public class ObserveTest extends AbstractClientTestCase
             pauze();
             result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
             response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "3rd series put nr: " + i + " gave wrong response", ResponseCode.CHANGED.name(), attributes.getResponseCode() );
         }
@@ -324,11 +296,8 @@ public class ObserveTest extends AbstractClientTestCase
         for ( int i= 1; i < contents.size(); i++ )
         {
             response= (Message) spy.getEvents().get( i ).getContent();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );

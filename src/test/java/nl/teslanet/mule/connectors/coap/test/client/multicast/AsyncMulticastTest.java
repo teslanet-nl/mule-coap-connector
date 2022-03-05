@@ -42,7 +42,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
@@ -59,7 +58,6 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 @RunnerDelegateTo( Parameterized.class )
 public class AsyncMulticastTest extends AbstractClientTestCase
 {
-    //TODO RC add query
     /**
      * The list of tests with their parameters
      * @return Test parameters.
@@ -148,7 +146,7 @@ public class AsyncMulticastTest extends AbstractClientTestCase
         //let handler do its asynchronous work
         if ( expectedResponseCode == null )
         {
-            Instant start = Instant.now();
+            Instant start= Instant.now();
             await().atMost( 20, TimeUnit.SECONDS ).until( () -> {
                 return Instant.now().isAfter( start.plusSeconds( 15L ) );
             } );
@@ -160,11 +158,8 @@ public class AsyncMulticastTest extends AbstractClientTestCase
                 return spy.getEvents().size() == 1;
             } );
             response= (Message) spy.getEvents().get( 0 ).getContent();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
             assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

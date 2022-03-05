@@ -26,25 +26,25 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo( Parameterized.class )
@@ -128,7 +128,7 @@ public class AsyncNoResponseTest extends AbstractClientTestCase
             return spy.getEvents().size() == 1;
         } );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         byte[] payload= (byte[]) ( response.getPayload().getValue() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );

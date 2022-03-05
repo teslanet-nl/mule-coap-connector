@@ -36,7 +36,7 @@ public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
 {
     private ETag getValue() throws InvalidETagException
     {
-        return new ETag( );
+        return new ETag();
     }
 
     /* (non-Javadoc)
@@ -55,9 +55,9 @@ public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Exception getExpectedException()
     {
-        return new RequestException("request failed");
+        return new RequestException( "CoAP Client { config } failed to execute request." );
     }
-    
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */

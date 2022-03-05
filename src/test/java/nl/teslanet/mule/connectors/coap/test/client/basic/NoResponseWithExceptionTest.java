@@ -25,12 +25,13 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -40,18 +41,16 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class NoResponseWithExceptionTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "code= {0}, resourcePath= {1}")
+    @Parameters( name= "code= {0}, resourcePath= {1}" )
     public static Collection< Object[] > getTests()
     {
         ArrayList< Object[] > tests= new ArrayList< Object[] >();
@@ -67,25 +66,25 @@ public class NoResponseWithExceptionTest extends AbstractClientTestCase
     /**
      * The request code that is expected.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String requestCode;
 
     /**
      * The path of the resource to call.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String resourcePath;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public ResponseCode expectedResponseCode;
 
     /**
      * The response payload that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponsePayload;
 
     /* (non-Javadoc)
@@ -120,9 +119,11 @@ public class NoResponseWithExceptionTest extends AbstractClientTestCase
             Exception.class,
             () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
                 "port",
-                "999" ).withVariable( "path", resourcePath ).run() );
+                "999"
+            ).withVariable( "path", resourcePath ).run()
+        );
         assertEquals( "spy has not been called once", 0, spy.getEvents().size() );
-        assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
+        assertEquals( "wrong exception message", "CoAP Client { config } failed to execute request.", e.getMessage() );
         assertEquals( "wrong exception cause", e.getCause().getClass(), NoResponseException.class );
     }
 }

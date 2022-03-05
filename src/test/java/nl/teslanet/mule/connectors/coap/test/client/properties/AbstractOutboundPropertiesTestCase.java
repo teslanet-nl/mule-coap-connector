@@ -39,7 +39,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
@@ -200,11 +199,8 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         {
             result= runFlow();
             Message response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         }

@@ -34,18 +34,17 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
 import org.junit.Test;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
-import org.mule.runtime.api.metadata.TypedValue;
 
-import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP;
 
 
 public class DiscoveryTest extends AbstractClientTestCase
@@ -408,7 +407,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "post";
         result= flowRunner( flowName ).withPayload( "dynamic_resource" ).run();
         response= result.getMessage();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not create resource", "CREATED", attributes.getResponseCode() );
 
@@ -424,7 +423,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "delete";
         result= flowRunner( flowName ).withVariable( "host", "127.0.0.1" ).withVariable( "port", "5683" ).withVariable( "path", "/service/dynamic_resource" ).run();
         response= result.getMessage();
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not delete resource", "DELETED", attributes.getResponseCode() );
 

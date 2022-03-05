@@ -55,7 +55,7 @@ public class ResourceRegistry
     //TODO review concurrency
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
-    static final String noListenerWarning= "Resource '{' {0}::{1} '}' has no listener for {2} requests.";
+    static final String noListenerWarning= "Resource { {}::{} } has no listener for {} requests.";
     
     /**
      * The root resource on the server.

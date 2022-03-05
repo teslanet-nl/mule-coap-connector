@@ -41,7 +41,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
@@ -53,40 +52,42 @@ import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
  * Abstract class for testing inbound properties
  *
  */
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public abstract class AbstractInboundPropertyTestCase extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "request= {0}  ")
+    @Parameters( name= "request= {0}  " )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 { Code.GET, "/property/setoption", ResponseCode.CONTENT },
                 { Code.PUT, "/property/setoption", ResponseCode.CHANGED },
                 { Code.POST, "/property/setoption", ResponseCode.CHANGED },
-                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } } );
+                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
      * The path of the resource to call.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String path;
 
     /**
      * The expected response code.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public ResponseCode expectedResponseCode;
 
     /* (non-Javadoc)
@@ -179,12 +180,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     {
         Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
-            null ).withVariable( "path", path + getPathExtension() ).run();
+            null
+        ).withVariable( "path", path + getPathExtension() ).run();
         Message response= result.getMessage();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 
@@ -192,11 +192,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
         {
             case CollectionOfByteArray:
             {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< byte[] > property= (Collection< byte[] >) fetchInboundProperty( attributes );
                 assertNotNull( "property is not found in inbound scope", property );
 
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< byte[] > expected= (Collection< byte[] >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 
@@ -213,11 +213,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
 
             case CollectionOfObject:
             {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< Object > property= (Collection< Object >) fetchInboundProperty( attributes );
                 assertNotNull( "property is not found in inbound scope", property );
 
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< Object > expected= (Collection< Object >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 
@@ -234,11 +234,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
 
             case CollectionOfETag:
             {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< ETag > property= (Collection< ETag >) fetchInboundProperty( attributes );
                 assertNotNull( "property is not found in inbound scope", property );
 
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 Collection< ETag > expected= (Collection< ETag >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 

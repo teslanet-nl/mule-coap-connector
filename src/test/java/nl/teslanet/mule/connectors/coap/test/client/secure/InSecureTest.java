@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.test.client.secure;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
@@ -46,7 +46,6 @@ import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 @RunnerDelegateTo( Parameterized.class )
 public class InSecureTest extends AbstractClientTestCase
 {
-    //TODO RC add query
     /**
      * The list of tests with their parameters
      * @return Test parameters.
@@ -126,7 +125,7 @@ public class InSecureTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        assertEquals( "wrong attributes class", new TypedValue< CoAPResponseAttributes >( new CoAPResponseAttributes(), null ).getClass(), response.getAttributes().getClass() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );

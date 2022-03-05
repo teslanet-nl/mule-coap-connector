@@ -46,14 +46,23 @@
 	<coap:client-config name="config" host="127.0.0.1"
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="sync" />
+		</coap:query-configs>
 	</coap:client-config>
 	<coap:client-config name="configNOK"
 		host="127.0.0.1" port="6767" throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="sync" />
+		</coap:query-configs>
 	</coap:client-config>
 	<coap:client-config name="configNOR"
 		host="192.168.0.99" port="6767" throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="sync" />
+		</coap:query-configs>
 	</coap:client-config>
 
 
@@ -63,17 +72,6 @@
 			requestCode="GET" path="/basic/get_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "get_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
-
 	</flow>
 
 	<flow name="do_not_get_me">
@@ -81,16 +79,6 @@
 			requestCode="GET" path="/basic/do_not_get_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "do_not_get_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="post_me">
@@ -98,16 +86,6 @@
 			requestCode="POST" path="/basic/post_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "post_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="do_not_post_me">
@@ -115,16 +93,6 @@
 			requestCode="POST" path="/basic/do_not_post_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "do_not_post_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="put_me">
@@ -132,16 +100,6 @@
 			requestCode="PUT" path="/basic/put_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "put_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="do_not_put_me">
@@ -149,16 +107,6 @@
 			requestCode="PUT" path="/basic/do_not_put_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "do_not_put_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="delete_me">
@@ -166,16 +114,6 @@
 			requestCode="DELETE" path="/basic/delete_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "delete_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 	<flow name="do_not_delete_me">
@@ -183,16 +121,6 @@
 			requestCode="DELETE" path="/basic/do_not_delete_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<java:new
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "do_not_delete_me" }]]]></java:args>
-		</java:new>
-		<java:invoke instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
 	</flow>
 
 </mule>

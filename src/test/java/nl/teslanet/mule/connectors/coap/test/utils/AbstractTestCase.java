@@ -23,8 +23,13 @@
 package nl.teslanet.mule.connectors.coap.test.utils;
 
 
+import java.io.StringWriter;
+import java.util.List;
+
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 
 
 @ArtifactClassLoaderRunnerConfig
@@ -66,4 +71,28 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 )
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase
 {
+    /**
+     * Create query part of an uri.
+     * @param queryParams
+     * @return The string representation of query parameters
+     */
+    protected static String queryString( List< ? extends AbstractQueryParam > queryParams )
+    {
+        if ( ( queryParams == null || queryParams.isEmpty() ) ) return "";
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        for ( AbstractQueryParam param : queryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        return writer.toString();
+    }
 }
