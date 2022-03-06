@@ -44,40 +44,37 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.elements.exception.ConnectorException;
 
 
-@RunnerDelegateTo(Parameterized.class)
-public class RequestQueryTest extends AbstractServerTestCase
+@RunnerDelegateTo( Parameterized.class )
+public class RequestUriTest extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}, uri= {1}")
+    @Parameters( name= "Request= {0}, uri= {1}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
-                { Code.GET, "coap://localhost/requesturi/get_me?op=get", "op=get" },
-                { Code.PUT, "coap://localhost/requesturi/put_me?op=put", "op=put" },
-                { Code.POST, "coap://localhost/requesturi/post_me?op=post", "op=post" },
-                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete", "op=delete" } } );
+                { Code.GET, "coap://localhost/requesturi/get_me?op=get" },
+                { Code.PUT, "coap://localhost/requesturi/put_me?op=put" },
+                { Code.POST, "coap://localhost/requesturi/post_me?op=post" },
+                { Code.DELETE, "coap://localhost/requesturi/delete_me?op=delete" } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
     * Test uri to call
     */
-    @Parameter(1)
+    @Parameter( 1 )
     public String requestUri;
-    /**
-    * Test uri to call
-    */
-    @Parameter(2)
-    public String expect;
 
     /* (non-Javadoc)
      * @see org.mule.functional.junit4.FunctionalTestCase#getConfigResources()
@@ -85,7 +82,7 @@ public class RequestQueryTest extends AbstractServerTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-RequestQuery.xml";
+        return "mule-server-config/properties/testserver-RequestUri.xml";
     };
 
     @Test
@@ -97,6 +94,6 @@ public class RequestQueryTest extends AbstractServerTestCase
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", expect, response.getResponseText() );
+        assertEquals( "echoed request code has wrong value", requestUri, response.getResponseText() );
     }
 }

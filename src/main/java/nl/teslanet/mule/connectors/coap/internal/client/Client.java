@@ -849,7 +849,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
-            //TODO RC ? Cf support for NON observe cancel
+            //TODO Cf lacking support for NON observe cancel
             relation.stop();
             removeRelation( uri );
         }

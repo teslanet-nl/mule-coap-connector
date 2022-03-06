@@ -108,107 +108,107 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
       <set-payload value=""/>
       <choice>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_CREATED']">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_CREATED']">
 				<set-variable value="CREATED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_DELETED']">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_DELETED']">
             <set-variable value="DELETED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_VALID' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_VALID' ]">
             <set-variable value="VALID" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_CHANGED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_CHANGED' ]">
             <set-variable value="CHANGED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_CONTENT' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_CONTENT' ]">
             <set-variable value="CONTENT" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_CONTINUE' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_CONTINUE' ]">
             <set-variable value="CONTINUE" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_BAD_REQUEST' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_BAD_REQUEST' ]">
             <set-variable value="BAD_REQUEST" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_UNAUTHORIZED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_UNAUTHORIZED' ]">
             <set-variable value="UNAUTHORIZED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_BAD_OPTION' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_BAD_OPTION' ]">
             <set-variable value="BAD_OPTION" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_FORBIDDEN' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_FORBIDDEN' ]">
             <set-variable value="FORBIDDEN" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_NOT_FOUND' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_NOT_FOUND' ]">
             <set-variable value="NOT_FOUND" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_METHOD_NOT_ALLOWED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_METHOD_NOT_ALLOWED' ]">
             <set-variable value="METHOD_NOT_ALLOWED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_NOT_ACCEPTABLE' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_NOT_ACCEPTABLE' ]">
             <set-variable value="NOT_ACCEPTABLE" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_REQUEST_ENTITY_INCOMPLETE' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_REQUEST_ENTITY_INCOMPLETE' ]">
             <set-variable value="REQUEST_ENTITY_INCOMPLETE" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_CONFLICT' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_CONFLICT' ]">
             <set-variable value="CONFLICT" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_PRECONDITION_FAILED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_PRECONDITION_FAILED' ]">
             <set-variable value="PRECONDITION_FAILED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_REQUEST_ENTITY_TOO_LARGE' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_REQUEST_ENTITY_TOO_LARGE' ]">
             <set-variable value="REQUEST_ENTITY_TOO_LARGE" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_UNSUPPORTED_CONTENT_FORMAT' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_UNSUPPORTED_CONTENT_FORMAT' ]">
             <set-variable value="UNSUPPORTED_CONTENT_FORMAT" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_UNPROCESSABLE_ENTITY' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_UNPROCESSABLE_ENTITY' ]">
             <set-variable value="UNPROCESSABLE_ENTITY" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_INTERNAL_SERVER_ERROR' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_INTERNAL_SERVER_ERROR' ]">
             <set-variable value="INTERNAL_SERVER_ERROR" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_NOT_IMPLEMENTED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_NOT_IMPLEMENTED' ]">
             <set-variable value="NOT_IMPLEMENTED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_BAD_GATEWAY' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_BAD_GATEWAY' ]">
             <set-variable value="BAD_GATEWAY" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_SERVICE_UNAVAILABLE' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_SERVICE_UNAVAILABLE' ]">
             <set-variable value="SERVICE_UNAVAILABLE" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_GATEWAY_TIMEOUT' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_GATEWAY_TIMEOUT' ]">
             <set-variable value="GATEWAY_TIMEOUT" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_PROXY_NOT_SUPPORTED' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_PROXY_NOT_SUPPORTED' ]">
             <set-variable value="PROXY_NOT_SUPPORTED" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <when
-            expression="#[ attributes.requestPath == '/responsecode/always_TOO_MANY_REQUESTS' ]">
+            expression="#[ attributes.requestUri endsWith '/responsecode/always_TOO_MANY_REQUESTS' ]">
             <set-variable value="TOO_MANY_REQUESTS" doc:name="Set responseCode" variableName="responseCode"/>
          </when>
          <otherwise>
