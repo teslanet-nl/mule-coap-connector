@@ -210,24 +210,16 @@ public class DiscoveryTest extends AbstractClientTestCase
         DiscoveredResource link= links.get( "/service/resource_with_ct" );
 
         assertNotNull( "/service/resource_with_ct is missing", link );
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "wrong number ct", 2, ct.length );
-        assertEquals( "ct does not contain 0", "0", ct[0] );
-        assertEquals( "ct does not contain 41", "41", ct[1] );
+        assertEquals( "wrong number ct", 2, link.getCt().size() );
+        assertEquals( "ct does not contain 0", "0", link.getCt().get( 0 ) );
+        assertEquals( "ct does not contain 41", "41", link.getCt().get( 1 ) );
 
         //check other attributes are not there
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "if length unexpected", 1, ifdesc.length );
-        assertEquals( "if unexpected", "", ifdesc[0] );
-        boolean obs= link.isObs();
-        assertFalse( "obs unexpected", obs );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "rt length unexpected", 1, rt.length );
-        assertEquals( "rt unexpected", "", rt[0] );
-        String sz= link.getSz();
-        assertEquals( "sz unexpected", "", sz );
-        String title= link.getTitle();
-        assertNull( "title unexpected", title );
+        assertEquals( "if length unexpected", 0, link.getIf().size() );
+        assertFalse( "obs unexpected", link.isObs() );
+        assertEquals( "rt length unexpected", 0, link.getRt().size() );
+        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "title unexpected", link.getTitle() );
 
     }
 
@@ -243,24 +235,16 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         DiscoveredResource link= links.get( "/service/resource_with_if" );
         assertNotNull( "/service/resource_with_if is missing", link );
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "wrong number of ifdesc", 2, ifdesc.length );
-        assertEquals( "ifdesc does not contain 0", "if1", ifdesc[0] );
-        assertEquals( "ifdesc does not contain 41", "if2", ifdesc[1] );
+        assertEquals( "wrong number of ifdesc", 2, link.getIf().size() );
+        assertEquals( "ifdesc does not contain 0", "if1", link.getIf().get( 0 ) );
+        assertEquals( "ifdesc does not contain 41", "if2", link.getIf().get( 1 ) );
 
         //check other attributes are not there
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "ct length unexpected", 1, ct.length );
-        assertEquals( "ct unexpected", "", ct[0] );
-        boolean obs= link.isObs();
-        assertFalse( "obs unexpected", obs );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "rt length unexpected", 1, rt.length );
-        assertEquals( "rt unexpected", "", rt[0] );
-        String sz= link.getSz();
-        assertEquals( "sz unexpected", "", sz );
-        String title= link.getTitle();
-        assertNull( "title unexpected", title );
+        assertEquals( "ct length unexpected", 0, link.getCt().size() );
+        assertFalse( "obs unexpected", link.isObs() );
+        assertEquals( "rt length unexpected", 0, link.getRt().size() );
+        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "title unexpected", link.getTitle() );
     }
 
     @Test
@@ -275,23 +259,14 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         DiscoveredResource link= links.get( "/service/resource_with_obs" );
         assertNotNull( "/service/resource_with_obs is missing", link );
-        boolean obs= link.isObs();
-        assertTrue( "obs not true", obs );
+        assertTrue( "obs not true", link.isObs() );
 
         //check other attributes are not there
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "ct length unexpected", 1, ct.length );
-        assertEquals( "ct unexpected", "", ct[0] );
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "if length unexpected", 1, ifdesc.length );
-        assertEquals( "if unexpected", "", ifdesc[0] );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "rt length unexpected", 1, rt.length );
-        assertEquals( "rt unexpected", "", rt[0] );
-        String sz= link.getSz();
-        assertEquals( "sz unexpected", "", sz );
-        String title= link.getTitle();
-        assertNull( "title unexpected", title );
+        assertEquals( "ct length unexpected", 0, link.getCt().size() );
+        assertEquals( "if length unexpected", 0, link.getIf().size() );
+        assertEquals( "rt length unexpected", 0, link.getRt().size() );
+        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "title unexpected", link.getTitle() );
     }
 
     @Test
@@ -306,24 +281,16 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         DiscoveredResource link= links.get( "/service/resource_with_rt" );
         assertNotNull( "/service/resource_with_rt is missing", link );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "wrong number of rt", 2, rt.length );
-        assertEquals( "rt does not contain rt1", "rt1", rt[0] );
-        assertEquals( "rt does not contain rt2", "rt2", rt[1] );
+        assertEquals( "wrong number of rt", 2, link.getRt().size() );
+        assertEquals( "rt does not contain rt1", "rt1", link.getRt().get( 0 ) );
+        assertEquals( "rt does not contain rt2", "rt2", link.getRt().get( 1 ) );
 
         //check other attributes are not there
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "ct length unexpected", 1, ct.length );
-        assertEquals( "ct unexpected", "", ct[0] );
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "if length unexpected", 1, ifdesc.length );
-        assertEquals( "if unexpected", "", ifdesc[0] );
-        boolean obs= link.isObs();
-        assertFalse( "obs unexpected", obs );
-        String sz= link.getSz();
-        assertEquals( "sz unexpected", "", sz );
-        String title= link.getTitle();
-        assertNull( "title unexpected", title );
+        assertEquals( "ct length unexpected", 0, link.getCt().size() );
+        assertEquals( "if length unexpected", 0, link.getIf().size() );
+        assertFalse( "obs unexpected", link.isObs() );
+        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "title unexpected", link.getTitle() );
     }
 
     @Test
@@ -338,23 +305,14 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         DiscoveredResource link= links.get( "/service/resource_with_sz" );
         assertNotNull( "/service/resource_with_sz is missing", link );
-        String sz= link.getSz();
-        assertEquals( "sz has wrong value", "123456", sz );
+        assertEquals( "sz has wrong value", "123456", link.getSz() );
 
         //check other attributes are not there
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "ct length unexpected", 1, ct.length );
-        assertEquals( "ct unexpected", "", ct[0] );
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "if length unexpected", 1, ifdesc.length );
-        assertEquals( "if unexpected", "", ifdesc[0] );
-        boolean obs= link.isObs();
-        assertFalse( "obs unexpected", obs );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "rt length unexpected", 1, rt.length );
-        assertEquals( "rt unexpected", "", rt[0] );
-        String title= link.getTitle();
-        assertNull( "title unexpected", title );
+        assertEquals( "ct length unexpected", 0, link.getCt().size() );
+        assertEquals( "if length unexpected", 0, link.getIf().size() );
+        assertFalse( "obs unexpected", link.isObs() );
+        assertEquals( "rt length unexpected", 0, link.getRt().size() );
+        assertNull( "title unexpected", link.getTitle() );
 
     }
 
@@ -370,24 +328,14 @@ public class DiscoveryTest extends AbstractClientTestCase
 
         DiscoveredResource link= links.get( "/service/resource_with_title" );
         assertNotNull( "/service/resource_with_title is missing", link );
-        String title= link.getTitle();
-        assertEquals( "title has wrong value", "Title is resource_with_title", title );
+        assertEquals( "title has wrong value", "Title is resource_with_title", link.getTitle() );
 
         //check other attributes are not there
-        String[] ct= link.getCt().split( "\\s*,\\s*" );
-        assertEquals( "ct length unexpected", 1, ct.length );
-        assertEquals( "ct unexpected", "", ct[0] );
-        String[] ifdesc= link.getIf().split( "\\s*,\\s*" );
-        assertEquals( "if length unexpected", 1, ifdesc.length );
-        assertEquals( "if unexpected", "", ifdesc[0] );
-        boolean obs= link.isObs();
-        assertFalse( "obs unexpected", obs );
-        String[] rt= link.getRt().split( "\\s*,\\s*" );
-        assertEquals( "rt length unexpected", 1, rt.length );
-        assertEquals( "rt unexpected", "", rt[0] );
-        String sz= link.getSz();
-        assertEquals( "sz unexpected", "", sz );
-
+        assertEquals( "ct length unexpected", 0, link.getCt().size() );
+        assertEquals( "if length unexpected", 0, link.getIf().size() );
+        assertFalse( "obs unexpected", link.isObs() );
+        assertEquals( "rt length unexpected", 0, link.getRt().size() );
+        assertEquals( "sz unexpected", "", link.getSz() );
     }
 
     @SuppressWarnings( "unchecked" )

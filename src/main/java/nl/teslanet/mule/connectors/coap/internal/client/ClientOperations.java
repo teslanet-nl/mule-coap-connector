@@ -27,10 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
@@ -281,7 +280,7 @@ public class ClientOperations
      * 
      * @param client         The client to use to issue the request.
      * @param discoverParams The attributes of the discover request
-     * @return The resources description on the server that have been discovered.
+     * @return The description of resources on the server that have been discovered.
      */
     @Throws( { DiscoverErrorProvider.class } )
     public Set< DiscoveredResource > discover( @Config
@@ -325,45 +324,22 @@ public class ClientOperations
         {
             throw new RequestException( client + discoverErrorMsg, e );
         }
-        CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
+        TreeSet< DiscoveredResource > resultSet= new TreeSet< DiscoveredResource >();
         for ( WebLink link : links )
         {
-            // TODO RC ? change members in resourceinfo to list?
-            StringBuilder ifBuilder= new StringBuilder();
-            Iterator< String > ifIterator= link.getAttributes().getInterfaceDescriptions().iterator();
-            while ( ifIterator.hasNext() )
-            {
-                ifBuilder.append( ifIterator.next() );
-                if ( ifIterator.hasNext() ) ifBuilder.append( ", " );
-            }
-
-            StringBuilder rtBuilder= new StringBuilder();
-            Iterator< String > rtIterator= link.getAttributes().getResourceTypes().iterator();
-            while ( rtIterator.hasNext() )
-            {
-                rtBuilder.append( rtIterator.next() );
-                if ( rtIterator.hasNext() ) rtBuilder.append( ", " );
-            }
-            StringBuilder ctBuilder= new StringBuilder();
-            Iterator< String > ctIterator= link.getAttributes().getContentTypes().iterator();
-            while ( ctIterator.hasNext() )
-            {
-                ctBuilder.append( ctIterator.next() );
-                if ( ctIterator.hasNext() ) ctBuilder.append( ", " );
-            }
             resultSet.add(
                 new DiscoveredResource(
                     link.getURI(),
                     link.getAttributes().hasObservable(),
                     link.getAttributes().getTitle(),
-                    ifBuilder.toString(),
-                    rtBuilder.toString(),
+                    link.getAttributes().getInterfaceDescriptions(),
+                    link.getAttributes().getResourceTypes(),
                     link.getAttributes().getMaximumSizeEstimate(),
-                    ctBuilder.toString()
+                    link.getAttributes().getContentTypes()
                 )
             );
         }
-        return resultSet;
+        return Collections.unmodifiableSortedSet( resultSet );
     }
 
     /**

@@ -241,7 +241,7 @@ public class TestServer extends CoapServer
         {
             // set resource name
             super( name );
-            //set interface descriptions
+            //set size description
             getAttributes().setMaximumSizeEstimate( 123456 );
         }
     }
