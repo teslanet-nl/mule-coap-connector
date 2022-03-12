@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -241,7 +241,7 @@ public class TestServer extends CoapServer
         {
             // set resource name
             super( name );
-            //set interface descriptions
+            //set size description
             getAttributes().setMaximumSizeEstimate( 123456 );
         }
     }

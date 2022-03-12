@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,14 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-import org.junit.Ignore;
 
 /**
  * Test outbound size1 property, as String
  *
  */
-//TODO manual size1 needed?
-@Ignore
 public class OptSize1Outbound2Test extends AbstractOutboundPropertiesTestCase
 {
     private final int value= 133;

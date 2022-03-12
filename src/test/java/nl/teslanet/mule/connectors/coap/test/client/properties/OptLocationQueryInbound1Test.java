@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,7 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -39,10 +40,10 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
      * Test value
      * @return the value to use in test
      */
-    private LinkedList< String > getValue()
+    private LinkedList< QueryParamAttribute > getValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "first=1" );
+        LinkedList< QueryParamAttribute > list= new LinkedList<>();
+        list.add( new QueryParamAttribute( "first", "1" ) );
 
         return list;
     }
@@ -56,28 +57,18 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
         return "coap.opt.location_query";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
     @Override
     protected PropertyType getPropertyType()
     {
-        return PropertyType.Object;
+        return PropertyType.CollectionOfObject;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO RC add '?' ?
-        return new String( "first=1" );
+        return getValue();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
     @Override
     protected OptionStrategy getStrategy()
     {
@@ -85,7 +76,7 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
     }
 
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
     {
         return attributes.getOptions().getLocationQuery();
     }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,30 +31,29 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class ResponseTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "code= {0}, resourcePath= {1}")
+    @Parameters( name= "code= {0}, resourcePath= {1}" )
     public static Collection< Object[] > getTests()
     {
         ArrayList< Object[] > tests= new ArrayList< Object[] >();
@@ -72,25 +71,25 @@ public class ResponseTest extends AbstractClientTestCase
     /**
      * The request code that is expected.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String requestCode;
 
     /**
      * The path of the resource to call.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String resourcePath;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public ResponseCode expectedResponseCode;
 
     /**
      * The response payload that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponsePayload;
 
     /* (non-Javadoc)
@@ -127,23 +126,23 @@ public class ResponseTest extends AbstractClientTestCase
                 Exception.class,
                 () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
                     "port",
-                    "5683" ).withVariable( "path", resourcePath ).run() );
-            assertTrue( "wrong exception message", e.getMessage().contains( "request failed" ) );
+                    "5683"
+                ).withVariable( "path", resourcePath ).run()
+            );
+            assertEquals( "wrong exception message", "CoAP Client { config } failed to execute request.", e.getMessage() );
             assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
         }
         else
         {
             flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
                 "port",
-                "5683" ).withVariable( "path", resourcePath ).run();
+                "5683"
+            ).withVariable( "path", resourcePath ).run();
 
             assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass() );
-            ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );

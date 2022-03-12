@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -126,7 +126,7 @@ public class ExceptionHandlingTest extends AbstractServerTestCase
     public void testException() throws Exception
     {
         client.setTimeout( 5000L );
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         if ( unintendedPayload ) request.setUnintendedPayload();
         request.setPayload( "nothing important" );

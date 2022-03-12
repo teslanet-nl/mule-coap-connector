@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
@@ -34,17 +37,30 @@ import org.eclipse.californium.core.coap.Response;
 public class OptOtherStrategy implements OptionStrategy
 {
     /**
-     * option test value
+     * option test values
      */
-    private Option value;
+    private LinkedList<Option> values= new LinkedList<>();
 
     /**
-     * Constructor 
+     * Constructor setting one value
      * @param value the test value
      */
     public OptOtherStrategy( Option value )
     {
-        this.value= value;
+        values.add( value );
+    }
+
+    /**
+     * Constructor setting multiple values.
+     * @param optionNumber The number of the option.
+     * @param optionValues The values to set.
+     */
+    public OptOtherStrategy( int optionNumber, byte[][] optionValues )
+    {
+        for ( int i= 0; i < optionValues.length; i++ )
+        {
+            values.add( new Option( optionNumber, optionValues[i] ) );
+        }
     }
 
     /* (non-Javadoc)
@@ -53,41 +69,27 @@ public class OptOtherStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-        response.getOptions().addOption( value );
+        for ( Option option : values ) {
+        response.getOptions().addOption( option );}
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.OptionStrategy#validateOption(org.eclipse.californium.core.coap.Request)
+
+    /**
+     * validate all expected options are contained in the request in the richt order.
      */
     @Override
     public boolean validateOption( Request request )
     {
-        Option found= null;
+        int optionNumber= values.element().getNumber();
+        Iterator< Option > expectedIterator= values.iterator();
         for ( Option option : request.getOptions().getOthers() )
         {
-            if ( option.compareTo( value ) == 0 )
+            if ( option.getNumber() == optionNumber )
             {
-                if ( found == null )
-                {
-                    //option is found
-                    found= option;
-                }
-                else
-                {
-                    //option must occur only once
-                    return false;
-                }
+                Option expected= expectedIterator.next();
+                if ( !option.equals( expected )) return false;
             }
         }
-        if ( found != null )
-        {
-            //option must have equal value
-            return found.equals( value );
-        }
-        else
-        {
-            //option is missing
-            return false;
-        }
+        return !expectedIterator.hasNext();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,7 +52,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testAll() throws ConnectorException, IOException
     {
         String path= "/different_listeners/all";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -84,7 +84,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     {
         String path= "/different_listeners/all";
         String path1= "/different_listeners/get_only";
-        setClientPath( path1 );
+        setClientUri( path1 );
 
         CoapResponse response= client.get();
 
@@ -117,7 +117,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     {
         String path= "/different_listeners/all";
         String path1= "/different_listeners/post_only";
-        setClientPath( path1 );
+        setClientUri( path1 );
 
         CoapResponse response= client.get();
 
@@ -149,7 +149,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     {
         String path= "/different_listeners/all";
         String path1= "/different_listeners/put_only";
-        setClientPath( path1 );
+        setClientUri( path1 );
 
         CoapResponse response= client.get();
 
@@ -181,7 +181,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     {
         String path= "/different_listeners/all";
         String path1= "/different_listeners/delete_only";
-        setClientPath( path1 );
+        setClientUri( path1 );
 
         CoapResponse response= client.get();
 
@@ -212,7 +212,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testNoListeners() throws ConnectorException, IOException
     {
         String path= "/no_listeners";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -243,7 +243,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testNoListenersGetOnly() throws ConnectorException, IOException
     {
         String path= "/no_listeners/get_only";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -274,7 +274,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testNoListenersPostOnly() throws ConnectorException, IOException
     {
         String path= "/no_listeners/post_only";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -305,7 +305,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testNoListenersPutOnly() throws ConnectorException, IOException
     {
         String path= "/no_listeners/put_only";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 
@@ -336,7 +336,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
     public void testNoListenersDeleteOnly() throws ConnectorException, IOException
     {
         String path= "/no_listeners/delete_only";
-        setClientPath( path );
+        setClientUri( path );
 
         CoapResponse response= client.get();
 

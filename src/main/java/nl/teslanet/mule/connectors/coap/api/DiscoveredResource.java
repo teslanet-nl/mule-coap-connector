@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,7 +23,12 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,8 +38,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * information given by the server such as the resource uri and attributes.
  * The class is immutable.
  */
-public final class DiscoveredResource implements Comparable< DiscoveredResource >
+public final class DiscoveredResource implements Comparable< DiscoveredResource >,  Serializable
 {
+    /**
+     * Version ID.
+     */
+    private static final long serialVersionUID= 1L;
+
     /**
      * The uri-path of the resource.
      */
@@ -46,47 +56,68 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     private final boolean obs;
 
     /**
-     * The CoRE attribute information of the resource.
+     * Human readable title of the resource. 
      */
-    private final ResourceInfoConfig coreInfo;
+    private String title;
+
+    /**
+     * List of interface descriptions that apply to the resource.
+     */
+    private LinkedList< String > ifdesc= new LinkedList<>();
+
+    /**
+     * List of resource types that apply to the resource.
+     */
+    private LinkedList< String > rt= new LinkedList<>();
+
+    /**
+     * Maximum size estimate of the resource. [bytes]
+     */
+    private String sz;
+
+    /**
+     * List of content types that are available on the resource.
+     * The types are specified by an integer as defined by CoAP.
+     */
+    private LinkedList< String > ct= new LinkedList<>();
 
     /**
      * HashCode, that will be set to value unequal to zero when needed.
      */
-    private final AtomicInteger hashCode= new AtomicInteger();
+    private transient final AtomicInteger hashCode= new AtomicInteger();
 
+    /**
+     * The Comparator of lists.
+     */
+    public static final Comparator< List< String > > LISTCOMPARATOR= new Comparator< List< String > >()
+        {
+
+            @Override
+            public int compare( List< String > o1, List< String > o2 )
+            {
+                if ( o1 == o2 ) return 0;
+                if ( o1.size() != o2.size() ) return( o1.size() < o2.size() ? -1 : 1 );
+                Iterator< String > it1= o1.iterator();
+                Iterator< String > it2= o2.iterator();
+                int result= 0;
+                while ( result == 0 && it1.hasNext() && it2.hasNext() )
+                {
+                    result= Objects.compare( it1.next(), it2.next(), Comparator.nullsLast( Comparator.naturalOrder() ) );
+                }
+                return result;
+            }
+        };
+
+    /**
+     * The Comparator.
+     */
     public static final Comparator< DiscoveredResource > COMPARATOR= Comparator.comparing( DiscoveredResource::getPath, Comparator.naturalOrder() ).thenComparing(
         DiscoveredResource::getObs,
-        Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing( DiscoveredResource::getTitle, Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing(
-            DiscoveredResource::getIf,
-            Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing( DiscoveredResource::getRt, Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing(
-                DiscoveredResource::getSz,
-                Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing( DiscoveredResource::getCt, Comparator.nullsLast( Comparator.naturalOrder() ) );
-
-    /**
-     * Construct DiscoveredResource from uri and ResourceInfo.
-     * @param path Identifies the resource.
-     * @param obs Flag indicating the resource is observable ({@code True}), or not ({@code False})
-     * @param coreInfo The CoRE resource attributes.
-     */
-    /**
-     * @param path
-     * @param coreInfo
-     */
-    public DiscoveredResource( String path, boolean obs, ResourceInfoConfig coreInfo )
-    {
-        if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path: null is not allowed" );
-        this.path= path;
-        this.obs= obs;
-        if ( coreInfo == null )
-        {
-            this.coreInfo= new ResourceInfoConfig();
-        }
-        else
-        {
-            this.coreInfo= new ResourceInfoConfig( coreInfo );
-        }
-    }
+        Comparator.nullsLast( Comparator.naturalOrder() )
+    ).thenComparing( DiscoveredResource::getTitle, Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing( DiscoveredResource::getIf, LISTCOMPARATOR ).thenComparing(
+        DiscoveredResource::getRt,
+        LISTCOMPARATOR
+    ).thenComparing( DiscoveredResource::getSz, Comparator.nullsLast( Comparator.naturalOrder() ) ).thenComparing( DiscoveredResource::getCt, LISTCOMPARATOR );
 
     /**
      * Construct DiscoveredResource from uri-path and meta coreInfo.
@@ -98,17 +129,16 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      * @param sz Content size estimation of the resource.
      * @param ct Content formats of the resource.
      */
-    public DiscoveredResource( String path, boolean obs, String title, String ifdesc, String rt, String sz, String ct )
+    public DiscoveredResource( String path, boolean obs, String title, List< String > ifdesc, List< String > rt, String sz, List< String > ct )
     {
         if ( path == null ) throw new NullPointerException( "DiscoveredResource uri-path of null is not allowed" );
         this.path= path;
         this.obs= obs;
-        this.coreInfo= new ResourceInfoConfig();
-        this.coreInfo.setTitle( title );
-        this.coreInfo.setIfdesc( ifdesc );
-        this.coreInfo.setRt( rt );
-        this.coreInfo.setSz( sz );
-        this.coreInfo.setCt( ct );
+        this.title= title;
+        this.ifdesc.addAll( ifdesc );
+        this.rt.addAll( rt );
+        this.sz= sz;
+        this.ct.addAll( ct );
     }
 
     /**
@@ -144,25 +174,25 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getTitle()
     {
-        return coreInfo.getTitle();
+        return title;
     }
 
     /**
-     * Get resource if.
-     * @return the if of the resource
+     * Get resource if values.
+     * @return Unmodifiable list of if values.
      */
-    public String getIf()
+    public List< String > getIf()
     {
-        return coreInfo.getIfdesc();
+        return Collections.unmodifiableList( ifdesc );
     }
 
     /**
-     * Get resource rt.
-     * @return the rt of the resource
+     * Get resource rt values.
+     * @return Unmodifiable list of if values.
      */
-    public String getRt()
+    public List< String > getRt()
     {
-        return coreInfo.getRt();
+        return Collections.unmodifiableList( rt );
     }
 
     /**
@@ -171,16 +201,16 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
      */
     public String getSz()
     {
-        return coreInfo.getSz();
+        return sz;
     }
 
     /**
-     * Get resource ct.
-     * @return the ct of the resource
+     * Get resource ct values.
+     * @return Unmodifiable list of if values.
      */
-    public String getCt()
+    public List< String > getCt()
     {
-        return coreInfo.getCt();
+        return Collections.unmodifiableList( ct );
     }
 
     /**
@@ -205,7 +235,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     @Override
     public boolean equals( Object other )
     {
-        if ( !DiscoveredResource.class.isInstance( other )) return false;
+        if ( !DiscoveredResource.class.isInstance( other ) ) return false;
         return 0 == COMPARATOR.compare( this, (DiscoveredResource) other );
     }
 
@@ -218,11 +248,20 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
         int result= 113;
         result= 31 * result + Objects.hashCode( this.path );
         result= 31 * result + Objects.hashCode( this.obs );
-        result= 31 * result + Objects.hashCode( this.coreInfo.getTitle() );
-        result= 31 * result + Objects.hashCode( this.coreInfo.getIfdesc() );
-        result= 31 * result + Objects.hashCode( this.coreInfo.getRt() );
-        result= 31 * result + Objects.hashCode( this.coreInfo.getSz() );
-        result= 31 * result + Objects.hashCode( this.coreInfo.getCt() );
+        result= 31 * result + Objects.hashCode( this.title );
+        for ( String value : this.ifdesc )
+        {
+            result= 31 * result + Objects.hashCode( value );
+        }
+        for ( String value : this.rt )
+        {
+            result= 31 * result + Objects.hashCode( value );
+        }
+        result= 31 * result + Objects.hashCode( sz );
+        for ( String value : this.ct )
+        {
+            result= 31 * result + Objects.hashCode( value );
+        }
         //never set hashCode to 0
         return( result == 0 ? 1 : result );
     }
@@ -239,15 +278,14 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
         }
         return hashCode.get();
     }
-    
-    
+
     /**
      * Convert to string.
      */
     @Override
     public String toString()
     {
-        StringBuilder builder= new StringBuilder( "CoRE info {");
+        StringBuilder builder= new StringBuilder( "CoRE info {" );
         builder.append( " path= " );
         builder.append( getPath() );
         builder.append( ", obs= " );

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -67,7 +67,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
     {
         for ( ETag etag : values )
         {
-            response.getOptions().addIfMatch( etag.getBytes() );
+            response.getOptions().addIfMatch( etag.getValue() );
         }
     }
 
@@ -81,7 +81,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
         if ( etags.size() != values.size() ) return false;
         for ( int i= 0; i < etags.size(); i++ )
         {
-            if ( !Arrays.equals( etags.get( i ), values.get( i ).getBytes() ) )
+            if ( !Arrays.equals( etags.get( i ), values.get( i ).getValue() ) )
             {
                 return false;
             }

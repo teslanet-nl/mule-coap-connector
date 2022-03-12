@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -48,8 +48,7 @@ public class MuleInputStreamFactory implements InputStreamFactory
     public InputStream create( String uri ) throws IOException
     {
         String resource= uri.substring( MULE_RESOURCE_SCHEME.length() );
-        //TODO RC is allowing url safe?
-        InputStream inStream= IOUtils.getResourceAsStream( resource, this.getClass(), true, true );
+        InputStream inStream= IOUtils.getResourceAsStream( resource, this.getClass(), true, false );
         if ( inStream == null ) throw new IOException( "resource not found: " + resource );
         return inStream;
     }

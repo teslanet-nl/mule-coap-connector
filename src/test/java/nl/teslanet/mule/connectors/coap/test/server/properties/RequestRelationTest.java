@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -83,7 +83,7 @@ public class RequestRelationTest extends AbstractServerTestCase
     @Test
     public void testRelation() throws ConnectorException, IOException
     {
-        setClientPath( resourcePath );
+        setClientUri( resourcePath );
         Request request= new Request( requestCode );
         CoapResponse response= client.advanced( request );
 

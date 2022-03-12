@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,10 +40,9 @@ public class QueryParam extends AbstractQueryParam
      * The key of the query parmeter.
      */
     @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The key of query parameter. When empty the parameter is ignored.")
-    @Example("some_key")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The key of query parameter. When empty the parameter is ignored." )
+    @Example( "some_key" )
     private String key= null;
 
     /**
@@ -51,10 +50,29 @@ public class QueryParam extends AbstractQueryParam
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The value of the query parameter. When empty only the key will be added to the request.")
-    @Example("some_value_if_any")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The value of the query parameter. When empty only the key will be added." )
+    @Example( "some_value_if_any" )
     private String value= null;
+
+    /**
+     * Default constructor.
+     */
+    public QueryParam()
+    {
+        //NOOP
+    }
+
+    /**
+     * Constructor withe member values.
+     * @param key
+     * @param value
+     */
+    public QueryParam( String key, String value )
+    {
+        this.key= key;
+        this.value= value;
+    }
 
     /**
      * @return the key of the query parameter.
@@ -66,11 +84,27 @@ public class QueryParam extends AbstractQueryParam
     }
 
     /**
+     * @param key the key to set
+     */
+    public void setKey( String key )
+    {
+        this.key= key;
+    }
+
+    /**
      * @return the value of the query parameter.
      */
     @Override
     public String getValue()
     {
         return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue( String value )
+    {
+        this.value= value;
     }
 }

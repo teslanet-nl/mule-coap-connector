@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,22 +31,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.RequestParams;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
 
 @RunnerDelegateTo( Parameterized.class )
@@ -179,7 +178,7 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     @Test
     public void testOutboundProperty() throws Exception
     {
-        RequestBuilder requestAttibutes= new RequestBuilder();
+        RequestParams requestAttibutes= new RequestParams();
         requestAttibutes.setRequestCode( requestCode );
         requestAttibutes.setHost( "127.0.0.1" );
         requestAttibutes.setPath( getResourcePath() );
@@ -200,12 +199,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         {
             result= runFlow();
             Message response= result.getMessage();
-            assertEquals(
-                "wrong attributes class",
-                new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-                response.getAttributes().getClass()
-            );
-            ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
+            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         }
     }

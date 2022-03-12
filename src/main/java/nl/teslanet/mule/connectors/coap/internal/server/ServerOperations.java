@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,7 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ServerOperationErrorProvider;
@@ -82,29 +82,29 @@ public class ServerOperations
      * The resource is available to clients immediately, provided there is a listener configured which 
      * has an uri pattern that applies to it.
      * @param server The configuration name of the CoAP server to add the resource to.
-     * @param resourceBuilder The builder that delivers the resource parameters.
+     * @param resourceParams The builder that delivers the resource parameters.
      * @throws InvalidResourceUriException When the uri has invalid value.
      */
     @Throws( { ServerOperationErrorProvider.class } )
     public void resourceAdd( @Config
     Server server, @ParameterGroup( name= "Resource to add" )
-    ResourceBuilder resourceBuilder ) throws InvalidResourceUriException
+    ResourceParams resourceParams ) throws InvalidResourceUriException
     {
-        if ( resourceBuilder.getResourcePath() == null )
+        if ( resourceParams.getResourcePath() == null )
         {
             throw new InvalidResourceUriException( server + ": resource add operation failed,", "null" );
         }
-        String parentUri= ResourceRegistry.getParentUri( resourceBuilder.getResourcePath() );
-        String name= ResourceRegistry.getUriResourceName( resourceBuilder.getResourcePath() );
-        if ( name.length() <= 0 ) throw new InvalidResourceUriException( server + ": resource add operation failed, empty resource name", resourceBuilder.getResourcePath() );
+        String parentUri= ResourceRegistry.getParentUri( resourceParams.getResourcePath() );
+        String name= ResourceRegistry.getUriResourceName( resourceParams.getResourcePath() );
+        if ( name.length() <= 0 ) throw new InvalidResourceUriException( server + ": resource add operation failed, empty resource name", resourceParams.getResourcePath() );
 
         try
         {
-            server.getRegistry().add( parentUri, resourceBuilder );
+            server.getRegistry().add( parentUri, resourceParams );
         }
         catch ( InternalResourceUriException e )
         {
-            throw new InvalidResourceUriException( server + ": resource add operation failed, ", resourceBuilder.getResourcePath(), e );
+            throw new InvalidResourceUriException( server + ": resource add operation failed, ", resourceParams.getResourcePath(), e );
 
         }
     }

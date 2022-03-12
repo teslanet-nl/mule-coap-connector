@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -21,6 +21,7 @@
  * #L%
  */
 package nl.teslanet.mule.connectors.coap.api.options;
+
 
 /**
  * Implementation of a block option value for convenience.
@@ -144,21 +145,11 @@ public final class BlockValue implements Comparable< BlockValue >
             return false;
         }
         BlockValue other= (BlockValue) o;
-        if ( num == other.num && szx == other.szx && m == other.m )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return( num == other.num && szx == other.szx && m == other.m );
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
+    /**
+     * Compare to other blockvalue object.
      */
     @Override
     public int compareTo( BlockValue other )
@@ -177,6 +168,9 @@ public final class BlockValue implements Comparable< BlockValue >
         return compared;
     }
 
+    /**
+     * Return the hash code of this object.
+     */
     @Override
     public int hashCode()
     {

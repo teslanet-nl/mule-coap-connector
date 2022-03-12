@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,10 +25,12 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
@@ -45,17 +47,20 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
-import nl.teslanet.mule.connectors.coap.api.DiscoverBuilder;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.ObserverBuilder;
-import nl.teslanet.mule.connectors.coap.api.PingBuilder;
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder;
-import nl.teslanet.mule.connectors.coap.api.ResponseHandlerBuilder;
+import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverExistsParams;
+import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
+import nl.teslanet.mule.connectors.coap.api.PingParams;
+import nl.teslanet.mule.connectors.coap.api.RequestParams;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
@@ -75,8 +80,9 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseExce
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStartErrorProvider;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverStopErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverAddErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverExistsErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverRemoveErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.PingErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestAsyncErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider;
@@ -87,67 +93,96 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.RequestErrorProvider
  */
 public class ClientOperations
 {
-    //TODO RC review error messages
+    /**
+     * Request failure message.
+     */
+    static final String requestErrorMsg= " failed to execute request.";
+
+    /**
+     * Async Request failure message.
+     */
+    static final String AsyncRequestErrorMsg= " failed to execute async request.";
+
+    /**
+     * Ping failure message.
+     */
+    static final String pingErrorMsg= " failed to execute ping.";
+
+    /**
+     * Discover failure message.
+     */
+    static final String discoverErrorMsg= " failed to execute discover.";
+
+    /**
+     * Observer add failure message.
+     */
+    static final String observerAddErrorMsg= " failed to add observer.";
+
+    /**
+     * Observer remove failure message.
+     */
+    static final String observerRemoveErrorMsg= " failed to remove observer.";
+
+    /**
+     * Observer exists failure message.
+     */
+    static final String observerExistsErrorMsg= " failed to query observer existence.";
+
     /**
      * The Request Processor issues a request on a CoAP server. The processor blocks
      * until a response is received or a timeout occurs.
      * 
      * @param client         The client used for issuing the request.
-     * @param requestBuilder Builder that delivers the request parameters.
+     * @param requestParams Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
      * @return The result of the request which contains the received server response, if any.
      */
-    @MediaType(value= "*/*", strict= false)
-    @Throws({ RequestErrorProvider.class })
-    public Result< InputStream, ReceivedResponseAttributes > request(
-        @Config Client client,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Alias("request-options") @Optional @NullSafe @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
+    @MediaType( value= "*/*", strict= false )
+    @Throws(
+        { RequestErrorProvider.class }
+    )
+    public Result< InputStream, CoAPResponseAttributes > request( @Config
+    Client client, @ParameterGroup( name= "Request" )
+    RequestParams requestParams,
+        @Alias( "request-options" )
+        @Optional
+        @NullSafe
+        @Summary( "The CoAP options to send with the request." )
+        @Placement( tab= "Options", order= 1 )
+        RequestOptions requestOptions
+    )
     {
-        String errorMsg= ": request failed.";
         try
         {
-            String uri= client.getURI(
-                requestBuilder.getHost(),
-                requestBuilder.getPort(),
-                requestBuilder.getPath(),
-                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
-            return client.doRequest(
-                requestBuilder.isConfirmable(),
-                requestBuilder.getRequestCode(),
-                uri,
-                requestBuilder.getRequestPayload(),
-                requestBuilder.isForcePayload(),
-                requestOptions,
-                null );
+            return client.doRequest( requestParams, requestOptions, null );
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + requestErrorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new RequestException( client + errorMsg, e );
+            throw new RequestException( client + requestErrorMsg, e );
         }
         catch ( InternalResponseException | InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + requestErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + errorMsg, e );
+            throw new ClientErrorResponseException( client + requestErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + requestErrorMsg, e );
         }
     }
 
@@ -157,65 +192,58 @@ public class ClientOperations
      * of a response (if any) is delegated to the response handler.
      * 
      * @param client          The client used for issuing the request.
-     * @param responseHandlerBuilder Builder that delivers the response handler parameters.
-     * @param requestBuilder Builder that delivers the request parameters.
+     * @param responseHandlerParams Builder that delivers the response handler parameters.
+     * @param requestParams Builder that delivers the request parameters.
      * @param requestOptions The CoAP options to send with the request.
      */
-    @Throws({ RequestAsyncErrorProvider.class })
-    public void requestAsync(
-        @Config Client client,
-        @ParameterGroup(name= "Response handling") ResponseHandlerBuilder responseHandlerBuilder,
-        @ParameterGroup(name= "Request") RequestBuilder requestBuilder,
-        @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("The CoAP options to send with the request.") @Placement(tab= "Options", order= 1) RequestOptions requestOptions )
+    @Throws( { RequestAsyncErrorProvider.class } )
+    public void requestAsync( @Config
+    Client client, @ParameterGroup( name= "Response handling" )
+    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Request" )
+    RequestParams requestParams,
+        @Optional
+        @NullSafe
+        @Expression( ExpressionSupport.SUPPORTED )
+        @Summary( "The CoAP options to send with the request." )
+        @Placement( tab= "Options", order= 1 )
+        RequestOptions requestOptions
+    )
     {
-        String errorMsg= ": async request failed.";
         try
         {
-            String uri= client.getURI(
-                requestBuilder.getHost(),
-                requestBuilder.getPort(),
-                requestBuilder.getPath(),
-                client.toQueryString( requestBuilder.getQueryParams() ) ).toString();
-            client.doRequest(
-                requestBuilder.isConfirmable(),
-                requestBuilder.getRequestCode(),
-                uri,
-                requestBuilder.getRequestPayload(),
-                requestBuilder.isForcePayload(),
-                requestOptions,
-                responseHandlerBuilder.responseHandler );
+            client.doRequest( requestParams, requestOptions, responseHandlerParams );
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
-            throw new RequestException( client + errorMsg, e );
+            throw new RequestException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + errorMsg, e );
+            throw new InvalidHandlerNameException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + errorMsg, e );
+            throw new ClientErrorResponseException( client + AsyncRequestErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + AsyncRequestErrorMsg, e );
         }
     }
 
@@ -224,24 +252,25 @@ public class ClientOperations
      * The Ping processor checks whether a CoAP server is reachable.
      * 
      * @param client         The client to use to issue the request.
-     * @param pingBuilder The request attributes to use.
+     * @param pingParams The request attributes to use.
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
-    @Throws({ PingErrorProvider.class })
-    public Boolean ping( @Config Client client, @ParameterGroup(name= "Ping uri") PingBuilder pingBuilder )
+    @Throws( { PingErrorProvider.class } )
+    public Boolean ping( @Config
+    Client client, @ParameterGroup( name= "Ping address" )
+    PingParams pingParams )
     {
-        String errorMsg= ": ping failed.";
         try
         {
-            return client.ping( pingBuilder.getHost(), pingBuilder.getPort() );
+            return client.ping( pingParams );
         }
         catch ( ConnectorException | IOException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + pingErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + pingErrorMsg, e );
         }
     }
 
@@ -249,165 +278,162 @@ public class ClientOperations
      * The Discover processor retrieves information about CoAP resources of a
      * server.
      * 
-     * @param client             The client to use to issue the request.
-     * @param discoverBuilder The attributes of the discover request
-     * @return The resources description on the server that have been discovered.
+     * @param client         The client to use to issue the request.
+     * @param discoverParams The attributes of the discover request
+     * @return The description of resources on the server that have been discovered.
      */
-    @Throws({ DiscoverErrorProvider.class })
-    public Set< DiscoveredResource > discover( @Config Client client, @ParameterGroup(name= "Discover") DiscoverBuilder discoverBuilder )
+    @Throws( { DiscoverErrorProvider.class } )
+    public Set< DiscoveredResource > discover( @Config
+    Client client, @ParameterGroup( name= "Discover address" )
+    DiscoverParams discoverParams )
     {
-        String errorMsg= ": discover failed.";
         Set< WebLink > links= null;
         try
         {
-            links= client.discover( discoverBuilder.isConfirmable(), discoverBuilder.getHost(), discoverBuilder.getPort(), discoverBuilder.getQueryParams() );
+            links= client.discover( discoverParams );
         }
         catch ( IOException | ConnectorException e )
         {
-            throw new EndpointException( client + errorMsg, e );
+            throw new EndpointException( client + discoverErrorMsg, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + discoverErrorMsg, e );
         }
-        catch ( InternalUnexpectedResponseException  | InternalInvalidResponseCodeException | InternalResponseException e  )
+        catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + errorMsg, e );
+            throw new NoResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
-
+            throw new ResponseException( client + discoverErrorMsg, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ResponseException( client + errorMsg, e );
+            throw new ServerErrorResponseException( client + discoverErrorMsg, e );
         }
-        CopyOnWriteArraySet< DiscoveredResource > resultSet= new CopyOnWriteArraySet< DiscoveredResource >();
+        catch ( InternalInvalidRequestCodeException e )
+        {
+            throw new InvalidRequestCodeException( client + discoverErrorMsg, e );
+        }
+        catch ( InternalRequestException e )
+        {
+            throw new RequestException( client + discoverErrorMsg, e );
+        }
+        TreeSet< DiscoveredResource > resultSet= new TreeSet< DiscoveredResource >();
         for ( WebLink link : links )
         {
-            // TODO RC change members in resourceinfo to list?
-            StringBuilder ifBuilder= new StringBuilder();
-            Iterator< String > ifIterator= link.getAttributes().getInterfaceDescriptions().iterator();
-            while ( ifIterator.hasNext() )
-            {
-                ifBuilder.append( ifIterator.next() );
-                if ( ifIterator.hasNext() ) ifBuilder.append( ", " );
-            }
-
-            StringBuilder rtBuilder= new StringBuilder();
-            Iterator< String > rtIterator= link.getAttributes().getResourceTypes().iterator();
-            while ( rtIterator.hasNext() )
-            {
-                rtBuilder.append( rtIterator.next() );
-                if ( rtIterator.hasNext() ) rtBuilder.append( ", " );
-            }
-            StringBuilder ctBuilder= new StringBuilder();
-            Iterator< String > ctIterator= link.getAttributes().getContentTypes().iterator();
-            while ( ctIterator.hasNext() )
-            {
-                ctBuilder.append( ctIterator.next() );
-                if ( ctIterator.hasNext() ) ctBuilder.append( ", " );
-            }
             resultSet.add(
                 new DiscoveredResource(
                     link.getURI(),
                     link.getAttributes().hasObservable(),
                     link.getAttributes().getTitle(),
-                    ifBuilder.toString(),
-                    rtBuilder.toString(),
+                    link.getAttributes().getInterfaceDescriptions(),
+                    link.getAttributes().getResourceTypes(),
                     link.getAttributes().getMaximumSizeEstimate(),
-                    ctBuilder.toString() ) );
+                    link.getAttributes().getContentTypes()
+                )
+            );
         }
-        return resultSet;
+        return Collections.unmodifiableSortedSet( resultSet );
     }
 
     /**
-     * The Start Observer processor creates an observer on the CoAP client. It
-     * starts observing the specified server resource immediately.
-     * 
-     * @param client             The client instance that starts the observer.
-     * @param handlerName        Name of the response handler that will process the
+     * The ObserverAdd processor creates an observer. 
+     * A request to observe the specified resource is sent to the server.
+     * The client defaults are used to issue the request.
+     * @param client The client instance that the observer belongs to.
+     * @param responseHandlerParams Name of the response handler that will process the
      *                           notification received from server.
-     * @param observerAttributes Attributes of the observe request.
+     * @param observerAddParams Parameters of the observe request. These will override client defaults.
      */
-    /**
-     * @param client
-     * @param responseHandlerBuilder Name of the response handler that will process the notification received from server.
-     * @param observerBuilder The observe request parameters.
-     */
-    @Throws({ ObserverStartErrorProvider.class })
-    public void observerStart(
-        @Config Client client,
-        @ParameterGroup(name= "Notification handling") ResponseHandlerBuilder responseHandlerBuilder,
-        @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
+    @Throws( { ObserverAddErrorProvider.class } )
+    public void observerAdd( @Config
+    Client client, @ParameterGroup( name= "Notification handling" )
+    ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Observe request" )
+    ObserverAddParams observerAddParams )
     {
-        String errorMsg= ": observer start failed.";
         try
         {
-            client.startObserver(
-                responseHandlerBuilder.getResponseHandler(),
-                observerBuilder.isConfirmable(),
-                observerBuilder.getHost(),
-                observerBuilder.getPort(),
-                observerBuilder.getPath(),
-                observerBuilder.getQueryParams() );
+            client.startObserver( observerAddParams, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + observerAddErrorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + errorMsg, e );
+            throw new InvalidObserverException( client + observerAddErrorMsg, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + errorMsg, e );
+            throw new InvalidHandlerNameException( client + observerAddErrorMsg, e );
         }
     }
 
     /**
-     * Stop a running observer.
-     * 
-     * @param client             The client instance that stops the observer.
-     * @param observerBuilder Attributes of the observe request
+     * The ObserverRemove processor removes an observer. 
+     * A request to terminate observe the specified resource is sent to the server.
+     * The client defaults are used to issue the request.
+     * @param client The client instance that the observer belongs to.
+     * @param observerRemoveParams Parameters of the observe request. These will override client defaults.
      */
-    @Throws({ ObserverStopErrorProvider.class })
-    public void observerStop( @Config Client client, @ParameterGroup(name= "Observer uri") ObserverBuilder observerBuilder )
+    @Throws( { ObserverRemoveErrorProvider.class } )
+    public void observerRemove( @Config
+    Client client, @ParameterGroup( name= "Observe request" )
+    ObserverRemoveParams observerRemoveParams )
     {
-        String errorMsg= ": observer stop failed.";
-        // TODO RC confirmable is not applicable
         try
         {
-            client.stopObserver( observerBuilder.getHost(), observerBuilder.getPort(), observerBuilder.getPath(), observerBuilder.getQueryParams() );
+            client.stopObserver( observerRemoveParams );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + errorMsg, e );
+            throw new UriException( client + observerRemoveErrorMsg, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + errorMsg, e );
+            throw new InvalidObserverException( client + observerRemoveErrorMsg, e );
         }
     }
 
     /**
-     * This processor returns a ConcurrentSkipListSet of observers. The list contains the uri's of
+     * Establish whether an observer with given parameters exists.
+     * 
+     * @param client The client instance of which the observers are searched.
+     * @param observerExistsParams The the list of observer uri parameters.
+     * @return True when the observer exists, otherwise False.
+     */
+    @Throws( { ObserverExistsErrorProvider.class } )
+    public boolean observerExists( @Config
+    Client client, @ParameterGroup( name= "Observer uri" )
+    ObserverExistsParams observerExistsParams )
+    {
+        try
+        {
+            return client.observerExists( observerExistsParams );
+        }
+        catch ( InternalUriException e )
+        {
+            throw new UriException( client + observerExistsErrorMsg, e );
+        }
+    }
+
+    /**
+     * This processor returns a list of observers. The list contains the uri's of
      * the active observers of the CoAP client.
      * 
      * @param client The client instance of which the observers are listed.
      * @return the list of observed uri's
      */
-    public ConcurrentSkipListSet< String > observerList( @Config Client client )
+    public List< String > observerList( @Config
+    Client client )
     {
-        ConcurrentSkipListSet< String > list= new ConcurrentSkipListSet< String >();
-        list.addAll( client.getRelations().keySet() );
-        return list;
+        List< String > list= client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toList() );
+        return Collections.unmodifiableList( list );
     }
-
 }

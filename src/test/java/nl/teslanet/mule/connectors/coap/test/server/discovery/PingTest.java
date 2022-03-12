@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -50,7 +50,7 @@ public class PingTest extends AbstractServerTestCase
     public void testPing()
     {
         String path= "/service";
-        setClientPath( path );
+        setClientUri( path );
         boolean reachable= client.ping( 1000 );
         assertTrue( "service is not reachable", reachable );
     }

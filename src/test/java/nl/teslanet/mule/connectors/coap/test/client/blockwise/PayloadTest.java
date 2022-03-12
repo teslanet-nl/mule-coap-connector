@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,33 +30,33 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.californium.core.CoapServer;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
-import org.eclipse.californium.core.CoapServer;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class PayloadTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}, resourcePath= {1}, requestPayloadSize= {2}, expectedResponseCode= {3}, expectedResponsePayloadSize= {4}")
+    @Parameters( name= "flowName= {0}, resourcePath= {1}, requestPayloadSize= {2}, expectedResponseCode= {3}, expectedResponsePayloadSize= {4}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 { "do_get", "/blockwise/rq0", -1, "CONTENT", 2, false },
                 { "do_post", "/blockwise/rq0", -1, "CREATED", 2, false },
                 { "do_put", "/blockwise/rq0", -1, "CHANGED", 2, false },
@@ -115,43 +115,44 @@ public class PayloadTest extends AbstractClientTestCase
                 { "do_put2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
                 { "do_put2", "/blockwise/rsp16001", 2, null, -1, true },
                 { "do_delete2", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
-                { "do_delete2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true } } );
+                { "do_delete2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true } }
+        );
     }
 
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The path of the resource to call.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String resourcePath;
 
     /**
      * The request payload size to test.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public Integer requestPayloadSize;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The response payload size to test.
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public Integer expectedResponsePayloadSize;
 
     /**
      * True when response is Too Large to process
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public boolean expectFailure;
 
     /* (non-Javadoc)
@@ -180,7 +181,7 @@ public class PayloadTest extends AbstractClientTestCase
      * Test CoAP request with request or response payload
      * @throws Exception should not happen in this test
      */
-    @Test(timeout= 100000)
+    @Test( timeout= 100000 )
     public void testPayload() throws Exception
     {
         MuleEventSpy spy= new MuleEventSpy( flowName );
@@ -188,16 +189,14 @@ public class PayloadTest extends AbstractClientTestCase
 
         flowRunner( flowName ).withVariable( "path", resourcePath ).withPayload( Data.getContent( requestPayloadSize ) ).run();
 
-        assertEquals( "spy has wrong number of events", 1, spy.getEvents().size());
-        
+        assertEquals( "spy has wrong number of events", 1, spy.getEvents().size() );
+
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
         byte[] payload= (byte[]) response.getPayload().getValue();
-        
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         if ( expectFailure )
         {
             assertFalse( "request should fail", attributes.isSuccess() );
@@ -207,7 +206,7 @@ public class PayloadTest extends AbstractClientTestCase
         {
             assertTrue( "request failed", attributes.isSuccess() );
             assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-            assertEquals( "wrong response size", expectedResponsePayloadSize.intValue(), ( payload == null ? -1 : payload.length ));
+            assertEquals( "wrong response size", expectedResponsePayloadSize.intValue(), ( payload == null ? -1 : payload.length ) );
             assertTrue( "wrong response payload contents", Data.validateContent( payload, expectedResponsePayloadSize ) );
         }
     }

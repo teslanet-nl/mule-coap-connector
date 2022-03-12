@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,9 +43,9 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
     private LinkedList< ETag > getValue() throws InvalidETagException
     {
         LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "68656C6C6F" ) );
-        list.add( new ETag( "6F6C6C61" ) );
-        list.add( new ETag( "686F69" ) );
+        list.add( new ETag( 0x68656C6C6FL ) );
+        list.add( new ETag( 0x6F6C6C61L ) );
+        list.add( new ETag( 0x686F69L ) );
 
         return list;
     }
@@ -65,10 +65,10 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
     @Override
     protected Object getOutboundPropertyValue() throws InvalidETagException
     {
-        LinkedList< String > propertyValue= new LinkedList< String >();
+        LinkedList< Long > propertyValue= new LinkedList<>();
         for ( ETag value : getValue() )
         {
-            propertyValue.add( value.getHexString() );
+            propertyValue.add( value.getValueAsNumber() );
         }
         return propertyValue;
     }

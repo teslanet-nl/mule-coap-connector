@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,36 +25,30 @@ package nl.teslanet.mule.connectors.coap.internal.utils;
 
 import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
 
 import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
-import org.mule.runtime.api.message.Message;
+import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.transformation.TransformationService;
-import org.mule.runtime.core.api.message.OutputHandler;
-import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
 import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.options.OptionAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
-import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
@@ -66,12 +60,6 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptio
 public class MessageUtils
 {
     /**
-     * Mule transformation service.
-     */
-    @Inject
-    private static TransformationService transformationService;
-
-    /**
      * Do not create objects.
      */
     private MessageUtils()
@@ -80,147 +68,26 @@ public class MessageUtils
     }
 
     /**
-     * Copy options from given optionSet to optionAttributes .
-     * Processing options stops when an exception occurs.
-     * @param optionSet to copy from.
-     * @param attributes to copy to
-     * @throws InvalidOptionValueException when given option value could not be copied
-     */
-    public static void copyOptions( OptionSet optionSet, OptionAttributes attributes ) throws InternalInvalidOptionValueException
-    {
-        String errorMsg= "cannot create attribute";
-
-        if ( !optionSet.getIfMatch().isEmpty() )
-        {
-            try
-            {
-                List< ETag > ifMatch= ETag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= ifMatch.removeIf( etag -> etag.isEmpty() );
-                if ( emptyPresent )
-                {
-                    attributes.setifExists( true );
-                }
-                if ( !ifMatch.isEmpty() )
-                {
-                    attributes.setifMatch( ifMatch );
-                }
-            }
-            catch ( InvalidETagException e )
-            {
-                throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
-            }
-        }
-        if ( optionSet.hasUriHost() )
-        {
-            attributes.setUriHost( optionSet.getUriHost() );
-        }
-        if ( !optionSet.getETags().isEmpty() )
-        {
-            try
-            {
-                attributes.setEtags( ETag.getList( optionSet.getETags() ) );
-            }
-            catch ( InvalidETagException e )
-            {
-                throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
-            }
-        }
-        attributes.setIfNoneMatch( optionSet.hasIfNoneMatch() );
-        if ( optionSet.hasUriPort() )
-        {
-            attributes.setUriPort( optionSet.getUriPort() );
-        }
-        if ( !optionSet.getLocationPath().isEmpty() )
-        {
-            attributes.setLocationPathList( Collections.unmodifiableList( optionSet.getLocationPath() ) );
-            attributes.setLocationPath( optionSet.getLocationPathString() );
-        }
-        if ( !optionSet.getUriPath().isEmpty() )
-        {
-            attributes.setUriPathList( Collections.unmodifiableList( optionSet.getUriPath() ) );
-            attributes.setUriPath( optionSet.getUriPathString() );
-        }
-        if ( optionSet.hasContentFormat() )
-        {
-            attributes.setContentFormat( Integer.valueOf( optionSet.getContentFormat() ) );
-        }
-        if ( optionSet.hasMaxAge() )
-        {
-            attributes.setMaxAge( optionSet.getMaxAge() );
-        }
-        if ( !optionSet.getUriQuery().isEmpty() )
-        {
-            attributes.setUriQueryList( Collections.unmodifiableList( optionSet.getUriQuery() ) );
-            attributes.setUriQuery( optionSet.getUriQueryString() );
-        }
-        if ( optionSet.hasAccept() )
-        {
-            attributes.setAccept( Integer.valueOf( optionSet.getAccept() ) );
-        }
-        if ( !optionSet.getLocationQuery().isEmpty() )
-        {
-            attributes.setLocationQueryList( Collections.unmodifiableList( optionSet.getLocationQuery() ) );
-            attributes.setLocationQuery( optionSet.getLocationQueryString() );
-        }
-        if ( optionSet.hasProxyUri() )
-        {
-            attributes.setProxyUri( optionSet.getProxyUri() );
-        }
-        if ( optionSet.hasProxyScheme() )
-        {
-            attributes.setProxyScheme( optionSet.getProxyScheme() );
-        }
-        if ( optionSet.hasBlock1() )
-        {
-            attributes.setBlock1( toBlockValue( optionSet.getBlock1() ) );
-        }
-        if ( optionSet.hasBlock2() )
-        {
-            attributes.setBlock2( toBlockValue( optionSet.getBlock2() ) );
-        }
-        if ( optionSet.hasSize1() )
-        {
-            attributes.setSize1( optionSet.getSize1() );
-        }
-        if ( optionSet.hasSize2() )
-        {
-            attributes.setSize2( optionSet.getSize2() );
-        }
-        if ( optionSet.hasObserve() )
-        {
-            attributes.setObserve( optionSet.getObserve() );
-        }
-        for ( Option other : optionSet.getOthers() )
-        {
-            attributes.addOtherOption( String.valueOf( other.getNumber() ), other.getValue() );
-        }
-    }
-
-    /**
      * Copy options from {@link RequestOptions} to {@link OptionSet}.
      * @param requestOptions to copy from
      * @param optionSet to copy to
      * @throws InvalidOptionValueException when given option value could not be copied
      */
-    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException
+    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
     {
-        if ( requestOptions.isifExists() )
+        if ( requestOptions.isIfExists() )
         {
             optionSet.addIfMatch( new byte [0] );
         }
-        if ( requestOptions.isIfNoneMatch() )
-        {
-            optionSet.setIfNoneMatch( true );
-        }
-        if ( requestOptions.getifMatch() != null )
+        if ( requestOptions.getIfMatch() != null )
         {
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getifMatch() );
+                etags= MessageUtils.toEtagList( requestOptions.getIfMatch(), transformationService );
                 for ( ETag etag : etags )
                 {
-                    optionSet.addIfMatch( etag.getBytes() );
+                    optionSet.addIfMatch( etag.getValue() );
                 }
             }
             catch ( IOException | InvalidETagException e )
@@ -233,17 +100,21 @@ public class MessageUtils
             List< ETag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getEtags() );
+                etags= MessageUtils.toEtagList( requestOptions.getEtags(), transformationService );
                 for ( ETag etag : etags )
                 {
                     if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
-                    optionSet.addETag( etag.getBytes() );
+                    optionSet.addETag( etag.getValue() );
                 }
             }
             catch ( IOException | InvalidETagException e )
             {
                 throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
             }
+        }
+        if ( requestOptions.isIfNoneMatch() )
+        {
+            optionSet.setIfNoneMatch( true );
         }
         if ( requestOptions.getContentFormat() != null )
         {
@@ -253,27 +124,23 @@ public class MessageUtils
         {
             optionSet.setAccept( requestOptions.getAccept() );
         }
-        if ( requestOptions.getProxyUri() != null )
+        if ( requestOptions.isRequireResponseSize() )
         {
-            optionSet.setProxyUri( requestOptions.getProxyUri() );
+            optionSet.setSize2( 0 );
         }
-        if ( requestOptions.getProxyScheme() != null )
+        if ( requestOptions.getRequestSize() != null )
         {
-            optionSet.setProxyScheme( requestOptions.getProxyScheme() );
+            optionSet.setSize1( requestOptions.getRequestSize() );
         }
-        for ( Entry< String, Object > otherOption : requestOptions.getOtherRequestOptions().entryList() )
+        for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
         {
-            if ( !otherOption.getKey().isEmpty() )
+            try
             {
-                int optionNr= Integer.parseInt( otherOption.getKey() );
-                try
-                {
-                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
-                }
-                catch ( InternalInvalidByteArrayValueException e )
-                {
-                    throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + Integer.toString( optionNr ) + " }", e );
-                }
+                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue(), transformationService ) ) );
+            }
+            catch ( InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
             }
         }
     }
@@ -286,13 +153,15 @@ public class MessageUtils
      * @throws InvalidETagException when an option containes invalid ETag value
      * @throws IOException when an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet ) throws InternalInvalidOptionValueException, IOException, InvalidETagException
+    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException,
+        IOException,
+        InvalidETagException
     {
         if ( responseOptions.getEtag() != null )
         {
-            ETag etag= MessageUtils.toETag( responseOptions.getEtag() );
+            ETag etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
             if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
-            optionSet.addETag( etag.getBytes() );
+            optionSet.addETag( etag.getValue() );
         }
         if ( responseOptions.getContentFormat() != null )
         {
@@ -308,97 +177,45 @@ public class MessageUtils
         }
         if ( responseOptions.getLocationQuery() != null )
         {
-            optionSet.setLocationQuery( responseOptions.getLocationQuery() );
-        }
-        for ( Entry< String, Object > otherOption : responseOptions.getOtherResponseOptions().entryList() )
-        {
-            if ( !otherOption.getKey().isEmpty() )
+            for ( AbstractQueryParam param : responseOptions.getLocationQuery() )
             {
-                int optionNr= Integer.parseInt( otherOption.getKey() );
-                try
-                {
-                    optionSet.addOption( new Option( optionNr, optionToBytes( otherOption.getValue() ) ) );
-                }
-                catch ( InternalInvalidByteArrayValueException e )
-                {
-                    throw new InternalInvalidOptionValueException( otherOption.getKey(), "option value cannot be converted to bytes" );
-                }
+                optionSet.addLocationQuery( param.toString() );
+            }
+        }
+        if ( responseOptions.getResponseSize() != null )
+        {
+            optionSet.setSize2( responseOptions.getResponseSize() );
+        }
+        if ( responseOptions.getAcceptableRequestSize() != null )
+        {
+            optionSet.setSize1( responseOptions.getAcceptableRequestSize() );
+        }
+        for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
+        {
+            try
+            {
+                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue(), transformationService ) ) );
+            }
+            catch ( InternalInvalidByteArrayValueException e )
+            {
+                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
             }
         }
     }
 
     /**
-     * Convert option object to bytes.
-     * @param optionObject to convert.
-     * @return Converted object as bytes.
-     * @throws InternalInvalidByteArrayValueException when object cannot be converted to bytes.
+     * Convert an object to byte array.
+     * @param toConvert The object to convert.
+     * @return Converted object as bytes, or null when the input was null.
+     * @throws InternalInvalidByteArrayValueException When object cannot be converted to bytes.
      */
-    private static byte[] optionToBytes( Object optionObject ) throws InternalInvalidByteArrayValueException
+    public static byte[] toBytes( Object toConvert, TransformationService transformationService ) throws InternalInvalidByteArrayValueException
     {
-        if ( Object.class.isInstance( optionObject ) )
-        {
-            if ( InputStream.class.isInstance( optionObject ) )
-            {
-                byte[] bytes= null;
-                try
-                {
-                    bytes= IOUtils.toByteArray( (InputStream) optionObject );
-                }
-                catch ( RuntimeException e )
-                {
-                    throw new InternalInvalidByteArrayValueException( "Cannot convert object to byte[]", e );
-                }
-                finally
-                {
-                    IOUtils.closeQuietly( (InputStream) optionObject );
-                }
-                return bytes;
-            }
-            else if ( Byte[].class.isInstance( optionObject ) )
-            {
-                return (byte[]) optionObject;
-            }
-            else if ( byte[].class.isInstance( optionObject ) )
-            {
-                return (byte[]) optionObject;
-            }
-            else if ( ETag.class.isInstance( optionObject ) )
-            {
-                return ( (ETag) optionObject ).getBytes();
-            }
-            else
-            {
-                return optionObject.toString().getBytes( CoAP.UTF8_CHARSET );
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Convert a payload value to byte array.
-     * @param payload is the payload to convert.
-     * @return converted payload as bytes
-     * @throws IOException when the payload is an outputhandler that cannot write.
-     */
-    public static byte[] payloadToByteArray( TypedValue< Object > payload ) throws IOException
-    {
-        Object object= TypedValue.unwrap( payload );
+        Object object= TypedValue.unwrap( toConvert );
 
         if ( object == null )
         {
-            return null;
-        }
-        else if ( object instanceof String )
-        {
-            return ( (String) object ).getBytes( Defs.COAP_CHARSET );
-        }
-        if ( object instanceof CursorStreamProvider )
-        {
-            return IOUtils.toByteArray( (CursorStreamProvider) object );
-        }
-        else if ( object instanceof InputStream )
-        {
-            return IOUtils.toByteArray( (InputStream) object );
+            return Bytes.EMPTY;
         }
         else if ( object instanceof byte[] )
         {
@@ -408,16 +225,63 @@ public class MessageUtils
         {
             return toPrimitives( (Byte[]) object );
         }
-        else if ( object instanceof OutputHandler )
+        else if ( object instanceof String )
         {
-            ByteArrayOutputStream output= new ByteArrayOutputStream();
-            ( (OutputHandler) object ).write( null, output );
-            return output.toByteArray();
+            return ( (String) object ).getBytes( CoAP.UTF8_CHARSET );
         }
-        else //do transform using Mule's transformers.
+        else if ( object instanceof ETag )
         {
-            return (byte[]) transformationService.transform( Message.builder().payload( payload ).build(), BYTE_ARRAY ).getPayload().getValue();
+            return ( (ETag) object ).getValue();
         }
+        else if ( object instanceof Integer )
+        {
+            return OptionUtils.toBytes( (Integer) object );
+        }
+        else if ( object instanceof Long )
+        {
+            return OptionUtils.toBytes( (Long) object );
+        }
+        //        if ( object instanceof CursorStreamProvider )
+        //        {
+        //            return IOUtils.toByteArray( (CursorStreamProvider) object );
+        //        }
+        //        else if ( object instanceof InputStream )
+        //        {
+        //            byte[] bytes= null;
+        //            try
+        //            {
+        //                bytes= IOUtils.toByteArray( (InputStream) object );
+        //            }
+        //            catch ( RuntimeException e )
+        //            {
+        //                throw new InternalInvalidByteArrayValueException( "Cannot convert InputStream instance to byte[]", e );
+        //            }
+        //            finally
+        //            {
+        //                IOUtils.closeQuietly( (InputStream) object );
+        //            }
+        //            return bytes;
+        //        }
+        //        else if ( object instanceof OutputHandler )
+        //        {
+        //            ByteArrayOutputStream output= new ByteArrayOutputStream();
+        //            try
+        //            {
+        //                ( (OutputHandler) object ).write( null, output );
+        //            }
+        //            catch ( IOException e )
+        //            {
+        //                throw new InternalInvalidByteArrayValueException( "Cannot convert OutputHandler instance to byte[]", e );
+        //            }
+        //            return output.toByteArray();
+        //        }
+        //        else
+        //        {
+
+        //do transform using Mule's transformers.
+        TypedValue< Object > value= TypedValue.of( toConvert );
+        return (byte[]) transformationService.transform( value.getValue(), value.getDataType(), BYTE_ARRAY );
+
     }
 
     /* TODO needed in future release
@@ -474,7 +338,7 @@ public class MessageUtils
     * @throws IOException When the value is a stream that could not be read.
     * @throws InvalidETagException When value cannot be converted to a valid ETag.
     */
-    private static ETag toETag( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static ETag toETag( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidETagException
     {
         Object object= TypedValue.unwrap( typedValue );
 
@@ -486,17 +350,13 @@ public class MessageUtils
         {
             return (ETag) object;
         }
+        else if ( object instanceof Long )
+        {
+            return new ETag( (Long) object );
+        }
         else if ( object instanceof String )
         {
             return new ETag( (String) object );
-        }
-        if ( object instanceof CursorStreamProvider )
-        {
-            return new ETag( IOUtils.toByteArray( (CursorStreamProvider) object ) );
-        }
-        else if ( object instanceof InputStream )
-        {
-            return new ETag( IOUtils.toByteArray( (InputStream) object ) );
         }
         else if ( object instanceof byte[] )
         {
@@ -506,15 +366,10 @@ public class MessageUtils
         {
             return new ETag( toPrimitives( (Byte[]) object ) );
         }
-        else if ( object instanceof OutputHandler )
+        else
         {
-            ByteArrayOutputStream output= new ByteArrayOutputStream();
-            ( (OutputHandler) object ).write( null, output );
-            return new ETag( output.toByteArray() );
-        }
-        else //do transform using Mule's transformers.
-        {
-            return new ETag( (byte[]) transformationService.transform( Message.builder().payload( typedValue ).build(), BYTE_ARRAY ).getPayload().getValue() );
+            //do transform using Mule's transformers.
+            return new ETag( (byte[]) transformationService.transform( typedValue.getValue(), typedValue.getDataType(), BYTE_ARRAY ) );
         }
     }
 
@@ -525,7 +380,7 @@ public class MessageUtils
      * @throws InvalidETagException 
      * @throws IOException 
      */
-    private static List< ETag > toEtagList( TypedValue< Object > typedValue ) throws IOException, InvalidETagException
+    private static List< ETag > toEtagList( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidETagException
     {
         Object object= TypedValue.unwrap( typedValue );
         LinkedList< ETag > list= new LinkedList<>();
@@ -538,22 +393,22 @@ public class MessageUtils
         {
             for ( Object item : (Collection< ? >) object )
             {
-                list.add( toETag( new TypedValue<>( item, null ) ) );
+                list.add( toETag( new TypedValue<>( item, null ), transformationService ) );
             }
         }
         else
         {
-            list.add( toETag( typedValue ) );
+            list.add( toETag( typedValue, transformationService ) );
         }
         return Collections.unmodifiableList( list );
     }
 
     /**
-     * Creates a BlockValue from a Cf block option 
-     * @param block1 block option to use the values from
-     * @return a BlockValue that corresponds to the block option
+     * Creates a BlockValue from a Cf block option.
+     * @param block The block option to use.
+     * @return BlockValue that corresponds to the block option.
      */
-    private static BlockValue toBlockValue( BlockOption block )
+    public static BlockValue toBlockValue( BlockOption block )
     {
         return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
     }
@@ -575,5 +430,91 @@ public class MessageUtils
             result[i]= bytes[i].byteValue();
         }
         return result;
+    }
+
+    /**
+     * Construct string representation of query parameters, merged with default parameters.
+     * The string conforms to URI format,
+     * @param defaultQueryParams The default parameters.
+     * @param queryParams The query parameters.
+     * @return The string representation for usage in an URI.
+     */
+    public static String queryString( List< ? extends AbstractQueryParam > defaultQueryParams, List< ? extends AbstractQueryParam > queryParams )
+    {
+        if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        for ( AbstractQueryParam param : defaultQueryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        for ( AbstractQueryParam param : queryParams )
+        {
+            if ( first )
+            {
+                first= false;
+            }
+            else
+            {
+                writer.append( "&" );
+            }
+            writer.append( param.toString() );
+        }
+        return writer.toString();
+    }
+
+    /**
+     * Create UriString from path and query.
+     * @param path The optional list of path segements.
+     * @param query The optional list of query parameters.
+     * @return The uri string.
+     */
+    public static String uriString( List< String > path, List< ? extends AbstractQueryParam > query )
+    {
+        if ( ( path == null || path.isEmpty() ) && ( query == null || query.isEmpty() ) ) return null;
+        StringWriter writer= new StringWriter();
+        boolean first= true;
+        writer.append( "/" );
+        if ( path != null )
+        {
+            for ( String pathsegment : path )
+            {
+                if ( first )
+                {
+                    first= false;
+                }
+                else
+                {
+                    writer.append( "/" );
+                }
+                writer.append( pathsegment );
+            }
+        }
+        first= true;
+        if ( query != null )
+        {
+            for ( AbstractQueryParam param : query )
+            {
+                if ( first )
+                {
+                    writer.append( "?" );
+                    first= false;
+                }
+                else
+                {
+                    writer.append( "&" );
+                }
+                writer.append( param.toString() );
+            }
+        }
+        return writer.toString();
     }
 }

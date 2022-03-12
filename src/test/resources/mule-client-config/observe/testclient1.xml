@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -49,14 +49,16 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<coap:client-config name="config" host="127.0.0.1">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
+	<!-- when cf supports NON: type="#[vars.msgType default 'CONFIRMABLE']" -->
 
 	<flow name="start_temporary">
-		<coap:observer-start config-ref="config"
+		<coap:observer-add config-ref="config"
 			responseHandler="handler_temporary" path="/observe/temporary" />
 	</flow>
 
 	<flow name="stop_temporary">
-		<coap:observer-stop config-ref="config"
+		<coap:observer-remove config-ref="config"
 			path="/observe/temporary" />
 	</flow>
 
@@ -85,12 +87,17 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_temporary1">
-		<coap:observer-start config-ref="config"
+		<coap:observer-add config-ref="config"
 			responseHandler="handler_temporary1" path="/observe/temporary1" />
 	</flow>
 
 	<flow name="stop_temporary1">
-		<coap:observer-stop config-ref="config"
+		<coap:observer-remove config-ref="config"
+			path="/observe/temporary1" />
+	</flow>
+
+	<flow name="exists_temporary1">
+		<coap:observer-exists config-ref="config"
 			path="/observe/temporary1" />
 	</flow>
 
@@ -117,20 +124,37 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</java:invoke>
 	</flow>
 
-
-
 	<flow name="start_temporary2">
-		<coap:observer-start config-ref="config"
-			responseHandler="handler_temporary2" path="/observe/temporary2" />
+		<coap:observer-add config-ref="config"
+			responseHandler="handler_temporary2" path="/observe/temporary2">
+			<coap:query-params>
+                <coap:query-param key="test1" value="1" />
+                <coap:query-param key="test2" value="2"/>
+			</coap:query-params>
+		</coap:observer-add>
 	</flow>
 
 	<flow name="stop_temporary2">
-		<coap:observer-stop config-ref="config"
-			path="/observe/temporary2" />
+		<coap:observer-remove config-ref="config"
+			path="/observe/temporary2">
+			<coap:query-params>
+				<coap:query-param key="test1" value="1" />
+                <coap:query-param key="test2" value="2"/>
+			</coap:query-params>
+		</coap:observer-remove>
 
 	</flow>
 
-
+	<flow name="exists_temporary2">
+		<coap:observer-exists config-ref="config"
+			path="/observe/temporary2">
+			<coap:query-params>
+				<coap:query-param key="test1" value="1" />
+                <coap:query-param key="test2" value="2"/>
+			</coap:query-params>
+		</coap:observer-exists>
+	</flow>
+	
 	<flow name="do_put_temporary2">
 		<coap:request config-ref="config" requestCode="PUT"
 			path="/observe/temporary2">
@@ -155,12 +179,12 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage1">
-		<coap:observer-start config-ref="config"
+		<coap:observer-add config-ref="config"
 			responseHandler="handler_maxage1" path="/observe/maxage1" />
 	</flow>
 
 	<flow name="stop_maxage1">
-		<coap:observer-stop config-ref="config"
+		<coap:observer-remove config-ref="config"
 			path="/observe/maxage1" />
 	</flow>
 
@@ -187,13 +211,13 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="start_maxage1_nonotify">
-		<coap:observer-start config-ref="config"
+		<coap:observer-add config-ref="config"
 			responseHandler="handler_maxage1_nonotify"
 			path="/observe/maxage1_nonotify" />
 	</flow>
 
 	<flow name="stop_maxage1_nonotify">
-		<coap:observer-stop config-ref="config"
+		<coap:observer-remove config-ref="config"
 			path="/observe/maxage1_nonotify" />
 	</flow>
 
@@ -221,13 +245,13 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="start_maxage4_nonotify">
-		<coap:observer-start config-ref="config"
+		<coap:observer-add config-ref="config"
 			responseHandler="handler_maxage4_nonotify"
 			path="/observe/maxage4_nonotify" />
 	</flow>
 
 	<flow name="stop_maxage4_nonotify">
-		<coap:observer-stop config-ref="config"
+		<coap:observer-remove config-ref="config"
 			path="/observe/maxage4_nonotify" />
 	</flow>
 

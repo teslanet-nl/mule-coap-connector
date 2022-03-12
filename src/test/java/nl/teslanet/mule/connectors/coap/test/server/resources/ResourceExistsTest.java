@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -44,28 +44,26 @@ public class ResourceExistsTest extends AbstractServerTestCase
         return "mule-server-config/resources/testserver1.xml";
     };
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testResourceExists() throws Exception
     {
-        setClientPath( "/service/exists" );
-        Request request= new Request( Code.GET );
-        request.getOptions().addLocationPath( "service" );
-        request.getOptions().addLocationPath( "resource-to-remove" );
+        setClientUri( "/exists" );
+        Request request= new Request( Code.POST );
+        request.setPayload( "/service/resource-to-remove" );
         CoapResponse response= client.advanced( request );
         assertNotNull( "get exists gave no response", response );
         assertTrue( "response get exists indicates failure", response.isSuccess() );
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.TRUE.toString(), response.getResponseText() );
 
-        setClientPath( "/service/resource-to-remove" );
+        setClientUri( "/service/resource-to-remove" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/service/exists" );
-        request= new Request( Code.GET );
-        request.getOptions().addLocationPath( "service" );
-        request.getOptions().addLocationPath( "resource-to-remove" );
+        setClientUri( "/exists" );
+        request= new Request( Code.POST );
+        request.setPayload( "/service/resource-to-remove" );
         response= client.advanced( request );
         assertNotNull( "get exists gave no response", response );
         assertTrue( "response get exists indicates failure", response.isSuccess() );
@@ -73,44 +71,43 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertEquals( "get exists gave wrong payload", Boolean.FALSE.toString(), response.getResponseText() );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testAddedResourceExists() throws Exception
     {
-        setClientPath( "/service/exists" );
-        Request request= new Request( Code.GET );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "temporary-resource" );
+        setClientUri( "/exists" );
+        Request request= new Request( Code.POST );
+        request.setPayload( "/service/temporary-resource" );
         CoapResponse response= client.advanced( request );
         assertNotNull( "get exists gave no response", response );
         assertTrue( "response get exists indicates failure", response.isSuccess() );
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.FALSE.toString(), response.getResponseText() );
 
-        setClientPath( "/service/add_resource/all_methods" );
+        setClientUri( "/add_resource/all_methods" );
         request= new Request( Code.POST );
-        request.setPayload( "some content" );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "temporary-resource" );
+        request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
 
-        setClientPath( "/service/exists" );
-        request= new Request( Code.GET );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "temporary-resource" );
+        setClientUri( "/exists" );
+        request= new Request( Code.POST );
+        request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );
         assertNotNull( "get exists gave no response", response );
         assertTrue( "response get exists indicates failure", response.isSuccess() );
         assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get exists gave wrong payload", Boolean.TRUE.toString(), response.getResponseText() );
 
-        setClientPath( "/service/temporary-resource" );
+        setClientUri( "/service/temporary-resource" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/service/exists" );
-        request= new Request( Code.GET );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "temporary-resource" );
+        setClientUri( "/exists" );
+        request= new Request( Code.POST );
+        request.setPayload( "/service/temporary-resource" );
         response= client.advanced( request );
         assertNotNull( "get exists gave no response", response );
         assertTrue( "response get exists indicates failure", response.isSuccess() );

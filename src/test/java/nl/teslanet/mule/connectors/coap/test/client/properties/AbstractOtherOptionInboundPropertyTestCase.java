@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,11 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import org.eclipse.californium.core.coap.Option;
+import java.util.Collections;
+import java.util.LinkedList;
+
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 
 
 /**
@@ -33,12 +36,59 @@ import org.eclipse.californium.core.coap.Option;
  */
 public abstract class AbstractOtherOptionInboundPropertyTestCase extends AbstractInboundPropertyTestCase
 {
-    abstract protected  Option getOption();
-    
-    @SuppressWarnings("unlikely-arg-type")
+    abstract protected int getOptionNumber();
+
+    abstract protected byte[][] getOptionValues();
+
+    /**
+     * Fetch the inbound property from the response attributes.
+     */
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
     {
-        return attributes.getOptions().getOtherOptions().get( getOption().getNumber() );
+        LinkedList< OtherOptionAttribute > found= new LinkedList<>();
+        for ( OtherOptionAttribute otherOption : attributes.getOptions().getOtherOptions() )
+        {
+            if ( otherOption.getNumber() == getOptionNumber() )
+            {
+                found.add( otherOption );
+            }
+        }
+        return Collections.unmodifiableList( found );
     }
+
+    /**
+     * Get expected inbound property value.
+     */
+    @Override
+    protected Object getExpectedInboundPropertyValue()
+    {
+        LinkedList< OtherOptionAttribute > list= new LinkedList<>();
+        for ( int i= 0; i < getOptionValues().length; i++ )
+        {
+            OtherOptionAttribute otherOption= new OtherOptionAttribute( getOptionNumber(), getOptionValues()[i] );
+            list.add( otherOption );
+        }
+        return Collections.unmodifiableList( list );
+    }
+
+    /**
+     * The assertion is done on collection of objects.
+     * @return The type of the property expected.
+     */
+    @Override
+    protected PropertyType getPropertyType()
+    {
+        return PropertyType.CollectionOfObject;
+    }
+    
+    /* (non-Javadoc)
+     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
+     */
+    @Override
+    protected OptionStrategy getStrategy()
+    {
+        return new OptOtherStrategy( getOptionNumber(), getOptionValues() );
+    }
+
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -47,21 +47,21 @@ public class DeleteMethodTest extends AbstractServerTestCase
     @Test
     public void testSuccess() throws ConnectorException, IOException
     {
-        String path= "/basic/delete_me";
-        setClientPath( path );
+        String uri= "coap://localhost/basic/delete_me";
+        setClientUri( uri );
 
         CoapResponse response= client.delete();
 
         assertNotNull( "delete gave no response", response );
         assertEquals( "response code should be DELETED", ResponseCode.DELETED, response.getCode() );
-        assertEquals( "response payload has wrong value", path, response.getResponseText() );
+        assertEquals( "response payload has wrong value", uri, response.getResponseText() );
     }
 
     @Test
     public void testNoDeleteAllowed() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_delete_me";
-        setClientPath( path );
+        String uri= "coap://localhost/basic/do_not_delete_me";
+        setClientUri( uri );
 
         CoapResponse response= client.delete();
 
@@ -73,8 +73,8 @@ public class DeleteMethodTest extends AbstractServerTestCase
     @Test
     public void testNoDeleteAllowedDefault() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_delete_me2";
-        setClientPath( path );
+        String uri= "coap://localhost/basic/do_not_delete_me2";
+        setClientUri( uri );
 
         CoapResponse response= client.delete();
 
@@ -86,8 +86,8 @@ public class DeleteMethodTest extends AbstractServerTestCase
     @Test
     public void testNoResource() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_delete_me3";
-        setClientPath( path );
+        String uri= "coap://localhost/basic/do_not_delete_me3";
+        setClientUri( uri );
 
         CoapResponse response= client.delete();
 

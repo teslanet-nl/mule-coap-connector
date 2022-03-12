@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -53,7 +53,8 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     {
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );
-        client.setTimeout( 10000L );
+        client.setTimeout( 1000000L );
+        client.setEndpoint( EndpointManager.getEndpointManager().getDefaultEndpoint() );
     }
 
     /**
@@ -73,19 +74,19 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
 
     /**
     * Set the default resource-path that the client uses.
-    * @param path to use in subsequent calls by client
+    * @param uri to use in subsequent calls by client
     */
-    protected void setClientPath( String path )
+    protected void setClientUri( String uri )
     {
-        URI uri;
+        URI clientUri;
         try
         {
-            uri= new URI( client.getURI() );
+            clientUri= new URI( client.getURI() );
         }
         catch ( URISyntaxException e )
         {
             throw new RuntimeException( e );
         }
-        client.setURI( uri.resolve( path ).toString() );
+        client.setURI( clientUri.resolve( uri ).toString() );
     }
 }

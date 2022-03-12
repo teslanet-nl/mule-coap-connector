@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -51,22 +51,22 @@ public class GetMethodTest extends AbstractServerTestCase
     @Test(timeout= 5000)
     public void testSuccess() throws ConnectorException, IOException
     {
-        String path= "/basic/get_me";
-        setClientPath( path );
+        String uri= "coap://localhost/basic/get_me";
+        setClientUri( uri );
 
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
         assertEquals( "response code should be CONTENT", ResponseCode.CONTENT, response.getCode() );
-        assertEquals( "response payload has wrong value", path, response.getResponseText() );
+        assertEquals( "response payload has wrong value", uri, response.getResponseText() );
     }
 
     @Test
     public void testNoGetAllowed() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_get_me";
+        String uri= "coap://localhost/basic/do_not_get_me";
 
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.get();
 
@@ -78,9 +78,9 @@ public class GetMethodTest extends AbstractServerTestCase
     @Test
     public void testNoGetAllowed2() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_get_me2";
+        String uri= "coap://localhost/basic/do_not_get_me2";
 
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.get();
 
@@ -92,9 +92,9 @@ public class GetMethodTest extends AbstractServerTestCase
     @Test
     public void testNoResource() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_get_me3";
+        String uri= "coap://localhost/basic/do_not_get_me3";
 
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.get();
 

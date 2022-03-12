@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,7 +52,7 @@ public class DynamicResourcesTest extends AbstractServerTestCase
     @Before
     public void additionalSetUp()
     {
-        setClientPath( "/service/add_resources" );
+        setClientUri( "/service/add_resources" );
         try
         {
             //post to create resource on server

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,8 +27,8 @@ import java.io.InputStream;
 
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
-import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 
 
@@ -52,7 +52,7 @@ public class OperationalListener
     /**
      * The callback of the Mule flow that will process requests.
      */
-    SourceCallback< InputStream, ReceivedRequestAttributes > callback= null;
+    SourceCallback< InputStream, CoAPRequestAttributes > callback= null;
 
     /**
      * Constructor
@@ -61,7 +61,7 @@ public class OperationalListener
      * @param callback
      * @throws InternalResourceUriException 
      */
-    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, ReceivedRequestAttributes > callback ) throws InternalResourceUriException
+    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, CoAPRequestAttributes > callback ) throws InternalResourceUriException
     {
         super();
         setUriPattern( uriPattern );
@@ -115,7 +115,7 @@ public class OperationalListener
     /**
      * @return the callback
      */
-    public SourceCallback< InputStream, ReceivedRequestAttributes > getCallback()
+    public SourceCallback< InputStream, CoAPRequestAttributes > getCallback()
     {
         return callback;
     }
@@ -123,7 +123,7 @@ public class OperationalListener
     /**
      * @param callback the callback to set
      */
-    public void setCallback( SourceCallback< InputStream, ReceivedRequestAttributes > callback )
+    public void setCallback( SourceCallback< InputStream, CoAPRequestAttributes > callback )
     {
         this.callback= callback;
     }

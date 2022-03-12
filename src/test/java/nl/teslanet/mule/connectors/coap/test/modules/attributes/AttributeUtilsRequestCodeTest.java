@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,7 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.modules.attributes;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 
@@ -44,33 +44,31 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidReque
  * Tests the implementation of the AttributeUtils class requestCode methods.
  *
  */
-@RunWith(Parameterized.class)
+@RunWith( Parameterized.class )
 public class AttributeUtilsRequestCodeTest
 {
     /**
      * @return the collection of test parameters.
      */
-    @Parameters(name= "requestCode= {0}")
+    @Parameters( name= "requestCode= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { CoAPRequestCode.GET, Code.GET },
-                { CoAPRequestCode.POST, Code.POST },
-                { CoAPRequestCode.PUT, Code.PUT },
-                { CoAPRequestCode.DELETE, Code.DELETE } } );
+            new Object [] []
+            { { CoAPRequestCode.GET, Code.GET }, { CoAPRequestCode.POST, Code.POST }, { CoAPRequestCode.PUT, Code.PUT }, { CoAPRequestCode.DELETE, Code.DELETE } }
+        );
     }
 
     /**
      * Actual attributeValue parameter value.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public CoAPRequestCode attributeValue;
 
     /**
      * Actual Cf value.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public Code cfVlalue;
 
     /**
@@ -82,7 +80,7 @@ public class AttributeUtilsRequestCodeTest
     {
         assertEquals( cfVlalue, AttributeUtils.toRequestCode( attributeValue ) );
     }
-    
+
     /**
      * Test translation  Cf request Code to requestCode attribute.
      * @throws InternalInvalidRequestCodeException

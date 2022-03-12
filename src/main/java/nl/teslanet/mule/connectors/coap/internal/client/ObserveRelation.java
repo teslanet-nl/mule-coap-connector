@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,14 +27,15 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.CoAP.Code;
-import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 
 
 /**
@@ -59,14 +60,14 @@ public class ObserveRelation implements CoapHandler
     private final CoapClient coapClient;
 
     /**
-     * The uri of the resource that is observed.
+     * The request builder.
      */
-    private final String uri;
+    private final CoapRequestBuilder requestBuilder;
 
     /**
-     * The uri of the resource that is observed.
+     * The request uri.
      */
-    private final boolean confirmable;
+    private String requestUri= null;
 
     /**
      * Failure logmessage.
@@ -117,13 +118,12 @@ public class ObserveRelation implements CoapHandler
      * Constructor
      * @param sourceCallback
      */
-    ObserveRelation( String observerName, CoapClient coapClient, boolean confirmable, String uri, ResponseProcessingStrategy processor )
+    ObserveRelation( String observerName, CoapClient coapClient, CoapRequestBuilder requestBuilder, ResponseProcessingStrategy processor )
     {
         super();
         this.observerName= observerName;
         this.coapClient= coapClient;
-        this.uri= uri;
-        this.confirmable= confirmable;
+        this.requestBuilder= requestBuilder;
         this.processor= processor;
         logMessageFailed= toString() + " failed to observe, trying to restore relation with server...";
         logMessageRecreated= toString() + " relation with server recreated.";
@@ -137,20 +137,30 @@ public class ObserveRelation implements CoapHandler
     /**
      * Start observing.
      */
-    public void start()
+    public synchronized void start()
     {
-        coapRelation= sendObserveRequest();
-        logger.info( this + " started." );
+        try
+        {
+            coapRelation= sendObserveRequest();
+            logger.info( this + " has started." );
+        }
+        catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+        {
+            logger.error( logMessageRecreatedFailed, e );
+        }
     }
 
     /**
      * Stop observing
      */
-    public void stop()
+    public synchronized void stop()
     {
-        coapRelation.proactiveCancel();
-        coapRelation= null;
-        logger.info( this + " stopped." );
+        if ( coapRelation != null )
+        {
+            coapRelation.proactiveCancel();
+            coapRelation= null;
+            logger.info( this + " has stopped." );
+        }
     }
 
     /**
@@ -165,7 +175,14 @@ public class ObserveRelation implements CoapHandler
             //TODO wait time?
             if ( coapRelation.isCanceled() )
             {
-                coapRelation= sendObserveRequest();
+                try
+                {
+                    coapRelation= sendObserveRequest();
+                }
+                catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+                {
+                    logger.error( logMessageRecreatedFailed, e );
+                }
                 if ( coapRelation != null )
                 {
                     logger.info( logMessageRecreated );
@@ -190,7 +207,7 @@ public class ObserveRelation implements CoapHandler
         }
         try
         {
-            processor.process( uri, CoAPRequestCode.GET, null );
+            processor.process( requestUri, CoAPRequestCode.GET, null );
         }
         catch ( InternalResponseException e )
         {
@@ -206,7 +223,7 @@ public class ObserveRelation implements CoapHandler
     {
         try
         {
-            processor.process( uri, CoAPRequestCode.GET, response );
+            processor.process( requestUri, CoAPRequestCode.GET, response );
         }
         catch ( InternalResponseException e )
         {
@@ -217,13 +234,14 @@ public class ObserveRelation implements CoapHandler
     /**
      * Send an observe request
      * @return the established CoAP relation with the resource when the request succeeded, otherwise null 
+     * @throws InternalRequestException When the request cannot be constructed.
+     * @throws InternalUriException When no valid uri could be constructed.
+     * @throws InternalInvalidRequestCodeException When request code is invalid.
      */
-    private CoapObserveRelation sendObserveRequest()
+    private CoapObserveRelation sendObserveRequest() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
     {
-        Request request= new Request( Code.GET, ( confirmable ? Type.CON : Type.NON ) );
-        request.setURI( uri );
-        //TODO add (other) options
-        request.setObserve();
+        Request request= requestBuilder.build();
+        requestUri= request.getURI();
         return coapClient.observe( request, this );
     }
 

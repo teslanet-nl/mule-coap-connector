@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -37,6 +37,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:dtls-endpoint name="Dtls_endpoint2"
 		doc:name="Dtls endpoint" logCoapMessages="true">
+		<coap:socket-params bindToPort="5684" />
 		<coap:dtls-params />
 		<coap:security-params
 			keyStoreLocation="certs/keyStore.jks" keyStorePassword="endPass"

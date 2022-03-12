@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -60,8 +60,8 @@ public abstract class AbstractQueryParam
         return( getValue() != null && !getValue().isEmpty() );
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
+    /**
+     * @see Object#equals(Object)
      */
     @Override
     public boolean equals( Object object )
@@ -74,12 +74,29 @@ public abstract class AbstractQueryParam
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
+    /**
+     * @see Object#hashCode()
      */
     @Override
     public int hashCode()
     {
         return hash( getKey(), getValue() );
+    }
+    
+    /**
+     * @see Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        String actualValue= getValue();
+        if ( actualValue != null )
+        {
+            return getKey() + "=" + actualValue;
+        }
+        else
+        {
+            return getKey();
+        }
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,11 +23,14 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
+import java.util.List;
+
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -253,5 +256,28 @@ public class AttributeUtils
             default:
                 throw new InternalInvalidResponseCodeException( reponseCode );
         }
+    }
+
+    /**
+     * Add query parameter string with optional value to multiMap.
+     * @param list The list to add the parameter to.
+     * @param parameterString The string containing the key and optional value.
+     */
+    public static void addQueryParam( List< QueryParamAttribute > list, String parameterString )
+    {
+        String key;
+        String value;
+        int separatorIndex= parameterString.indexOf( "=" );
+        if ( separatorIndex < 0 )
+        {
+            key= parameterString;
+            value= null;
+        }
+        else
+        {
+            key= parameterString.substring( 0, separatorIndex );
+            value= parameterString.substring( separatorIndex + 1 );
+        }
+        list.add( new QueryParamAttribute( key, value ) );
     }
 }

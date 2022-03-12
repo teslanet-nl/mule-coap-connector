@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
@@ -33,6 +35,7 @@ import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
@@ -53,9 +56,9 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder;
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ResponseParams;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
@@ -77,12 +80,18 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @Alias( "listener" )
 @EmitsResponse
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
-public class Listener extends Source< InputStream, ReceivedRequestAttributes >
+public class Listener extends Source< InputStream, CoAPRequestAttributes >
 {
     private static final Logger logger= LoggerFactory.getLogger( Listener.class );
 
     @Config
     private Server server;
+
+    /**
+     * Mule transformation service.
+     */
+    @Inject
+    private TransformationService transformationService;
 
     /**
      * The pathPattern defines the resources the listener listens on.
@@ -136,7 +145,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
     OperationalListener operationalListener= null;
 
     @Override
-    public void onStart( SourceCallback< InputStream, ReceivedRequestAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoAPRequestAttributes > sourceCallback ) throws MuleException
     {
         try
         {
@@ -157,7 +166,7 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         @NullSafe
         @Alias( "response" )
         @Placement( tab= "Response", order= 1 )
-        ResponseBuilder response,
+        ResponseParams response,
         @Optional
         @NullSafe
         @Alias( "response-options" )
@@ -179,12 +188,12 @@ public class Listener extends Source< InputStream, ReceivedRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions() );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
         }
         //TODO add streaming & blockwise cooperation
         try
         {
-            coapResponse.setPayload( MessageUtils.payloadToByteArray( responsePayload ) );
+            coapResponse.setPayload( MessageUtils.toBytes( responsePayload, transformationService ) );
         }
         catch ( Exception e )
         {

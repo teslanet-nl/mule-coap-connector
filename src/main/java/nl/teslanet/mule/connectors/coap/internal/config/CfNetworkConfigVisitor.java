@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -271,13 +271,8 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( SocketParams toVisit )
     {
-        //TODO RC does Cf use networkconfig port when explicit endpoint is configured?
-        //host is configured on endpoint itself
-        if ( toVisit.bindToPort != null )
-        {
-            networkConfig.setInt( NetworkConfig.Keys.COAP_PORT, toVisit.bindToPort );
-            networkConfig.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, toVisit.bindToPort );
-        }
+        //TODO reuse address?
+        //host and port are configured on endpoint itself
     }
 
     /* (non-Javadoc)

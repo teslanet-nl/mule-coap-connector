@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -65,6 +65,8 @@ public class ResourceRegistryStaticMethodsTest
         String pattern2= "/resource1/*";
         String pattern3= "/resource1/resource2/*";
         String pattern4= "/resource1/resource4/*";
+        //actually not supported:
+        String pattern5= "/*/resource4";
 
         assertEquals( "wrong match against pattern: " + uri1 + " on uri: " + uri1, Integer.MAX_VALUE, ResourceRegistry.matchUri( uri1, uri1 ) );
         assertEquals( "wrong match against pattern: " + uri2 + " on uri: " + uri2, Integer.MAX_VALUE, ResourceRegistry.matchUri( uri2, uri2 ) );
@@ -90,7 +92,17 @@ public class ResourceRegistryStaticMethodsTest
         assertEquals( "wrong match against pattern: " + pattern4 + " on uri: " + uri2, 0, ResourceRegistry.matchUri( pattern4, uri2 ) );
         assertEquals( "wrong match against pattern: " + pattern4 + " on uri: " + uri3, 0, ResourceRegistry.matchUri( pattern4, uri3 ) );
         assertEquals( "wrong match against pattern: " + pattern4 + " on uri: " + uri4, 0, ResourceRegistry.matchUri( pattern4, uri4 ) );
-    }
+ 
+        InternalUriPatternException e1= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> ResourceRegistry.matchUri( pattern5, uri1 ) );
+        InternalUriPatternException e2= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> ResourceRegistry.matchUri( pattern5, uri2 ) );
+        InternalUriPatternException e3= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> ResourceRegistry.matchUri( pattern5, uri3 ) );
+        InternalUriPatternException e4= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> ResourceRegistry.matchUri( pattern5, uri4 ) );
+
+        assertTrue( "Wrong exceptionmessage from uri: " + uri1, e1.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
+        assertTrue( "Wrong exceptionmessage from uri: " + uri2, e2.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
+        assertTrue( "Wrong exceptionmessage from uri: " + uri3, e3.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
+        assertTrue( "Wrong exceptionmessage from uri: " + uri4, e4.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
+}
 
     @Test
     public void testGetUriDepth() throws InvalidResourceUriException
@@ -178,7 +190,7 @@ public class ResourceRegistryStaticMethodsTest
         String uri2= "/resource1/resource2";
         String uri3= "/resource1/resource2/resource3";
         String uri4= "/resource1/resource4";
-        String parenturi1= "";
+        String parenturi1= "/";
         String parenturi2= "/resource1";
         String parenturi3= "/resource1/resource2";
         String parenturi4= "/resource1";
@@ -190,21 +202,32 @@ public class ResourceRegistryStaticMethodsTest
     }
 
     @Test
-    public void testInvalidUriPattern() throws InvalidResourceUriException
+    public void testInvalidUriPattern() throws InvalidResourceUriException, InternalUriPatternException
     {
-        String uri1= "/resource1";
-        String uri2= "/resource1/resource2";
-        String uri3= "/resource1/resource2/resource3";
-        String uri4= "/resource1/resource4";
-        String parenturi1= "";
-        String parenturi2= "/resource1";
-        String parenturi3= "/resource1/resource2";
-        String parenturi4= "/resource1";
+        String uri1= "/*";
+        String uri2= "/resource1/*";
+        String uri3= "/resource1/resource2/*";
+        //actually not supported:
+        String uri4= "/*/resource4";
+        String uri5= "/resource1";
+        String uri6= "/resource1/resource2";
+        String uri7= "/resource1/resource2/resource3";
+        String uri8= "/resource1/resource4";
 
-        assertEquals( "got wrong parent from uri: " + uri1, parenturi1, ResourceRegistry.getParentUri( uri1 ) );
-        assertEquals( "got wrong parent from uri: " + uri2, parenturi2, ResourceRegistry.getParentUri( uri2 ) );
-        assertEquals( "got wrong parent from uri: " + uri3, parenturi3, ResourceRegistry.getParentUri( uri3 ) );
-        assertEquals( "got wrong parent from uri: " + uri4, parenturi4, ResourceRegistry.getParentUri( uri4 ) );
+        assertTrue( "got wrong wildcard flag from uri: " + uri1, ResourceRegistry.uriHasWildcard( uri1 ) );
+        assertTrue( "got wrong wildcard flag from uri: " + uri2, ResourceRegistry.uriHasWildcard( uri2 ) );
+        assertTrue( "got wrong wildcard flag from uri: " + uri3, ResourceRegistry.uriHasWildcard( uri3 ) );
+
+        InternalUriPatternException e= assertThrows( "No exception from uri: \" + uri4", InternalUriPatternException.class, () -> {
+            ResourceRegistry.uriHasWildcard( uri4 );
+        } );
+
+        assertTrue( "Wrong exceptionmessage from uri: " + uri4, e.getMessage().contains( "Wildcard is only allowed on pattern ending" ) );
+
+        assertFalse( "got wrong wildcard flag from uri: " + uri5, ResourceRegistry.uriHasWildcard( uri5 ) );
+        assertFalse( "got wrong wildcard flag from uri: " + uri6, ResourceRegistry.uriHasWildcard( uri6 ) );
+        assertFalse( "got wrong wildcard flag from uri: " + uri7, ResourceRegistry.uriHasWildcard( uri7 ) );
+        assertFalse( "got wrong wildcard flag from uri: " + uri8, ResourceRegistry.uriHasWildcard( uri8 ) );
     }
 
 }

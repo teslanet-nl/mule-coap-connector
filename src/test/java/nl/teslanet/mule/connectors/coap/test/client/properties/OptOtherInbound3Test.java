@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,70 +23,29 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import org.eclipse.californium.core.coap.Option;
-
-
 /**
  * Test inbound other option property
  *
  */
 public class OptOtherInbound3Test extends AbstractOtherOptionInboundPropertyTestCase
 {
+    byte[][] values= { { (byte) 0x12, (byte) 0x23, (byte) 0x45, (byte) 0x33 } };
 
-    /**
-     * Test other option
-     * @return the option to use in test
-     */
-    @Override
-    protected Option getOption()
-    {
-        byte[] value= { (byte) 0x12, (byte) 0x23, (byte) 0x45, (byte) 0x33 };
-        return new Option( 65308, value );
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
-     */
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other." + getOption().getNumber();
+        return "coap.opt.other." + getOptionNumber();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
     @Override
-    protected PropertyType getPropertyType()
+    protected int getOptionNumber()
     {
-        return PropertyType.ByteArray;
+        return 65308;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected byte[][] getOptionValues()
     {
-        return getOption().getValue();
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
-    @Override
-    protected OptionStrategy getStrategy()
-    {
-        return new OptOtherStrategy( getOption() );
-    }
-    
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.test.client.properties.AbstractOtherOptionInboundPropertyTestCase#fetchInboundProperty(nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes)
-     */
-    @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
-    {
-        return attributes.getOptions().getOtherOptions().get( "65308" );
+        return values;
     }
 }

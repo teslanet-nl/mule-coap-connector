@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.ResponseBuilder.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -44,17 +44,18 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRespo
  * Tests the implementation of the AttributeUtils class responseCode methods.
  *
  */
-@RunWith(Parameterized.class)
+@RunWith( Parameterized.class )
 public class AttributeUtilsResponseCodeTest
 {
     /**
      * @return the collection of test parameters.
      */
-    @Parameters(name= "responseCode= {0}")
+    @Parameters( name= "responseCode= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 { CoAPResponseCode.CREATED, ResponseCode.CREATED },
                 { CoAPResponseCode.DELETED, ResponseCode.DELETED },
                 { CoAPResponseCode.VALID, ResponseCode.VALID },
@@ -84,19 +85,20 @@ public class AttributeUtilsResponseCodeTest
                 { CoAPResponseCode.BAD_GATEWAY, ResponseCode.BAD_GATEWAY },
                 { CoAPResponseCode.SERVICE_UNAVAILABLE, ResponseCode.SERVICE_UNAVAILABLE },
                 { CoAPResponseCode.GATEWAY_TIMEOUT, ResponseCode.GATEWAY_TIMEOUT },
-                { CoAPResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } } );
+                { CoAPResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } }
+        );
     }
 
     /**
      * Actual attributeValue parameter value.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public CoAPResponseCode attributeValue;
 
     /**
      * Actual expected value.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public ResponseCode cfValue;
 
     /**

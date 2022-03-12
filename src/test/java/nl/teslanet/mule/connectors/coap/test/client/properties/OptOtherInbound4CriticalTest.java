@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,64 +23,35 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import org.junit.Ignore;
-
-import org.eclipse.californium.core.coap.Option;
-
-
 /**
  * Test inbound other option critical property
  *
  */
-//TODO implement operation
-@Ignore
-public class OptOtherInbound4CriticalTest extends AbstractOtherOptionInboundPropertyTestCase
+public class OptOtherInbound4CriticalTest extends AbstractOtherOptionInboundPropertyCriticalTestCase
 {
+    byte[][] values= { { (byte) 0x12, (byte) 0x67, (byte) 0x45, (byte) 0x11 } };
 
-    /**
-     * Test other option
-     * @return the option to use in test
-     */
-    @Override
-    protected Option getOption()
-    {
-        byte[] value= { (byte) 0x12, (byte) 0x67, (byte) 0x45, (byte) 0x11 };
-        return new Option( 65008, value );
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
-     */
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other." + getOption().getNumber() + ".critical";
+        return "coap.opt.other." + getOptionNumber() + ".unsafe";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getPropertyType()
-     */
     @Override
-    protected PropertyType getPropertyType()
+    protected int getOptionNumber()
     {
-        return PropertyType.Object;
+        return 65008;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getExpectedInboundPropertyValue()
-     */
     @Override
-    protected Object getExpectedInboundPropertyValue()
+    protected byte[][] getOptionValues()
     {
-        return new Boolean( false );
+        return values;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
-     */
     @Override
-    protected OptionStrategy getStrategy()
+    protected boolean isCritical()
     {
-        return new OptOtherStrategy( getOption() );
+        return false;
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,7 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+
 
 /**
  * Test inbound size2 property, integer value
@@ -77,8 +79,8 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
     {
-        return attributes.getOptions().getSize2();
+        return attributes.getOptions().getResponseSize();
     }
 }

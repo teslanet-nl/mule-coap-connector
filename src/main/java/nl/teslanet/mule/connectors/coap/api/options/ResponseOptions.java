@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,9 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -33,6 +34,8 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
 /**
@@ -53,8 +56,8 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Content-Format Option indicates the representation format of the message payload.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Content-Format Option indicates the representation format of the message payload." )
     private Integer contentFormat= null;
 
     /**
@@ -71,8 +74,8 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh." )
     private Long maxAge= null;
 
     /**
@@ -100,9 +103,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Content(primary= false)
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource.")
+    @Content( primary= false )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource." )
     private TypedValue< Object > etag= null;
 
     /**
@@ -121,9 +124,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Location-Path specifies the absolute path to a resource that is created.")
-    @Example("/some/location/on/server")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Location-Path specifies the absolute path to a resource that is created." )
+    @Example( "/some/location/on/server" )
     private String locationPath= null;
 
     /**
@@ -143,10 +146,36 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Location-Query specifies the arguments parameterizing the resource that is created.")
-    @Example("someparam&param1=1&param2=2")
-    private String locationQuery= null;
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The Location-Query specifies the arguments parameterizing the resource that is created." )
+    private List< QueryParam > locationQuery= null;
+
+    /**
+     * RFC 7959: In a response carrying a Block2 Option, to indicate the current
+     *  estimate the server has of the total size of the resource
+     * representation, measured in bytes ("size indication").
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "Indication of the response payload size in [Bytes]." )
+    private Integer responseSize= null;
+
+    /**
+     * RFC 7959: The Size1 Option may be used: In a 4.13 response, to indicate the maximum size that would have
+     * been acceptable, measured in bytes.
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "To indicate (in a 4.13 response) the maximum payload size that would have been acceptable, in [Bytes]." )
+    private Integer acceptableRequestSize= null;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
@@ -171,15 +200,15 @@ public class ResponseOptions
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to send with the request.")
-    private MultiMap< String, Object > otherResponseOptions;
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The CoAP options to send with the request." )
+    private List< OtherOption > otherResponseOptions;
     // Mule does not seem to convert multimap key to Integer
 
     /**
      * @return the otherResponseOptions
      */
-    public MultiMap< String, Object > getOtherResponseOptions()
+    public List< OtherOption > getOtherResponseOptions()
     {
         return otherResponseOptions;
     }
@@ -187,7 +216,7 @@ public class ResponseOptions
     /**
      * @param otherResponseOptions the otherResponseOptions to set
      */
-    public void setOtherResponseOptions( MultiMap< String, Object > otherResponseOptions )
+    public void setOtherResponseOptions( List< OtherOption > otherResponseOptions )
     {
         this.otherResponseOptions= otherResponseOptions;
     }
@@ -259,7 +288,7 @@ public class ResponseOptions
     /**
      * @return the locationQuery
      */
-    public String getLocationQuery()
+    public List< QueryParam > getLocationQuery()
     {
         return locationQuery;
     }
@@ -267,8 +296,40 @@ public class ResponseOptions
     /**
      * @param locationQuery the locationQuery to set
      */
-    public void setLocationQuery( String locationQuery )
+    public void setLocationQuery( List< QueryParam > locationQuery )
     {
         this.locationQuery= locationQuery;
+    }
+
+    /**
+     * @return the responseSize
+     */
+    public Integer getResponseSize()
+    {
+        return responseSize;
+    }
+
+    /**
+     * @param responseSize the responseSize to set
+     */
+    public void setResponseSize( Integer responseSize )
+    {
+        this.responseSize= responseSize;
+    }
+
+    /**
+     * @return the acceptableRequestSize
+     */
+    public Integer getAcceptableRequestSize()
+    {
+        return acceptableRequestSize;
+    }
+
+    /**
+     * @param acceptableRequestSize the acceptableRequestSize to set
+     */
+    public void setAcceptableRequestSize( Integer acceptableRequestSize )
+    {
+        this.acceptableRequestSize= acceptableRequestSize;
     }
 }

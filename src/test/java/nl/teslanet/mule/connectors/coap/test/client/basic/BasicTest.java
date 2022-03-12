@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
 import java.util.Arrays;
@@ -37,65 +38,75 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.core.api.event.CoreEvent;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.RequestBuilder.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
-import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class BasicTest extends AbstractClientTestCase
 {
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters(name= "flowName= {0}")
+    @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
-                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: /basic/get_me".getBytes() },
-                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/do_not_get_me", "METHOD_NOT_ALLOWED", null },
-                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: /basic/post_me".getBytes() },
-                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/do_not_post_me", "METHOD_NOT_ALLOWED", null },
-                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: /basic/put_me".getBytes() },
-                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/do_not_put_me", "METHOD_NOT_ALLOWED", null },
-                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: /basic/delete_me".getBytes() },
-                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/do_not_delete_me", "METHOD_NOT_ALLOWED", null } } );
+            new Object [] []
+            {
+                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/get_me?test=sync", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=sync" },
+                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/do_not_get_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/post_me?test=sync", "CREATED", "POST called on: coap://localhost/basic/post_me?test=sync" },
+                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/do_not_post_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=sync" },
+                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/do_not_put_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                {
+                    "delete_me",
+                    CoAPRequestCode.DELETE.name(),
+                    "coap://127.0.0.1/basic/delete_me?test=sync",
+                    "DELETED",
+                    "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
+                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
+        );
     }
 
     /**
      * The mule flow to call.
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public String flowName;
 
     /**
      * The request code that is expected.
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public String expectedRequestCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String expectedRequestUri;
 
     /**
      * The response code that is expected.
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public String expectedResponseCode;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter(4)
-    public byte[] expectedPayload;
+    @Parameter( 4 )
+    public String expectedPayload;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -119,27 +130,24 @@ public class BasicTest extends AbstractClientTestCase
      * Test CoAP request
      * @throws Exception should not happen in this test
      */
-    @Test( timeout=5000 )
+    @Test
     public void testRequest() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( flowName );
-        spy.clear();
-        
-        flowRunner( flowName ).withPayload( "nothing_important" ).run();
-        
-        assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
-        Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        byte[] payload= (byte[]) response.getPayload().getValue();
-        assertEquals(
-            "wrong attributes class",
-            new TypedValue< ReceivedResponseAttributes >( new ReceivedResponseAttributes(), null ).getClass(),
-            response.getAttributes().getClass() );
-        ReceivedResponseAttributes attributes= (ReceivedResponseAttributes) response.getAttributes().getValue();
+        CoreEvent result= flowRunner( flowName ).keepStreamsOpen().withPayload( "nothing_important" ).run();
+        Message response= result.getMessage();
+
+        assertNotNull( "no mule event", response );
+        CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals( "wrong response payload", expectedPayload, payload );
-
+        assertEquals(
+            "wrong response payload",
+            expectedPayload,
+            responsePayload == null ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
+        );
     }
 
 }

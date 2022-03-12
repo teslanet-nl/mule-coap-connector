@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,7 +36,7 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options )
     {
-        options.setSize2( 456 );
+        options.setSize2( 0 );
     }
 
     @Override
@@ -48,9 +48,15 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue()
     {
-        return new Integer( 456 );
+        return new Boolean( true );
     }
-    
+
+    @Override
+    protected Object getReplacementValue() throws Exception
+    {
+        return Integer.valueOf( 1024 );
+    }
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.test.server.properties.AbstractInboundPropertyTestcase#getConfigResources()
      */

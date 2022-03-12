@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,6 +27,8 @@ import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
+
 
 public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestcase
 {
@@ -34,6 +36,12 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestc
     protected String getPropertyName()
     {
         return "coap.opt.location_query";
+    }
+
+    @Override
+    protected boolean optionValueIsCollectionOfStringable()
+    {
+        return true;
     }
 
     @Override
@@ -45,7 +53,12 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestc
     @Override
     protected Object getPropertyValue()
     {
-        return new String( "first=1&second=2" );
+        LinkedList< QueryParam > list= new LinkedList<>();
+        list.add( new QueryParam( "first", "1" ) );
+        list.add( new QueryParam( "second", "2" ) );
+        list.add( new QueryParam( "third", null ) );
+
+        return list;
     }
 
     @Override
@@ -54,6 +67,7 @@ public class OptLocationQueryOutbound2Test extends AbstractOutboundPropertyTestc
         LinkedList< String > list= new LinkedList< String >();
         list.add( "first=1" );
         list.add( "second=2" );
+        list.add( "third" );
 
         return list;
     }

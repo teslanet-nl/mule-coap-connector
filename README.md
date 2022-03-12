@@ -1,10 +1,9 @@
 # Mule CoAP Connector
 ![Mule-Coap logo](icon/icon.svg)
 
-The Mule CoAP Connector is a Mule 4 extension that adds CoAP capability to the  [Mule enterprise service bus](https://www.mulesoft.com/).
-Mule 4 applications use this to implement IoT services and/or IoT clients that communicate by means of the CoAP protocol.
+Mule CoAP Connector is a [Mule](https://www.mulesoft.com/) extension that enables Mule 4 applications to implement IoT services and/or IoT clients that make use of the CoAP protocol. 
 
-The CoAP protocol is specified in [RFC7252 - Constrained Application Protocol](http://tools.ietf.org/html/rfc7252) and other specefications (see below). 
+The CoAP protocol is specified by [RFC7252 - Constrained Application Protocol](http://tools.ietf.org/html/rfc7252) and other specifications (see below). 
 The connector uses Californium, a Java CoAP implementation. More information about Californium and CoAP can be found at:
 
 * [http://www.eclipse.org/californium/](http://www.eclipse.org/californium/)
@@ -16,13 +15,13 @@ The complete Mule CoAP Connector documentation can be found at [Teslanet.nl](htt
 
 ## Implemented CoAP specifications
 The CoAP protocol is supported as defined in: 
-* [IETF rfc 6690](https://tools.ietf.org/html/rfc6690)
-* [IETF rfc 7252](https://tools.ietf.org/html/rfc7252)
-* [IETF rfc 7641](https://tools.ietf.org/html/rfc7641)
-* [IETF rfc 7959](https://tools.ietf.org/html/rfc7959)
+* [IETF rfc 6690](https://www.rfc-editor.org/rfc/rfc6690)
+* [IETF rfc 7252](https://www.rfc-editor.org/rfc/rfc7252)
+* [IETF rfc 7641](https://www.rfc-editor.org/rfc/rfc7641)
+* [IETF rfc 7959](https://www.rfc-editor.org/rfc/rfc7959)
 
 ## Dependencies
-* [Californium](https://www.eclipse.org/californium/) 2.6.5
+* [Californium](https://www.eclipse.org/californium/) 2.7.0
 
 ## Installation
 
@@ -33,7 +32,7 @@ add following dependency to your `pom.xml`.
     <dependency>
         <groupId>nl.teslanet.mule.connectors.coap</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.0.0-M8</version>
+        <version>2.0.0-M9</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,13 +52,13 @@ public class OptEtagOutbound1Test extends AbstractOutboundPropertyTestcase
     @Override
     protected Object getPropertyValue() throws InvalidETagException
     {
-        return new ETag( "0011FF" );
+        return new ETag( 0x0011FFL );
     }
 
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {
-        return ETag.valueOf( "0011FF" );
+        return ETag.valueOf( 0x0011FFL );
     }
 
     /* (non-Javadoc)

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,28 +43,30 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Request;
 
 
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class RemoveResourceTest extends AbstractServerTestCase
 {
     /**
      * @return the test parameters
      */
-    @Parameters(name= "Request= {0}")
+    @Parameters( name= "Request= {0}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
                 { Code.GET },
                 { Code.PUT },
                 { Code.POST },
-                { Code.DELETE } } );
+                { Code.DELETE } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /* (non-Javadoc)
@@ -76,10 +78,10 @@ public class RemoveResourceTest extends AbstractServerTestCase
         return "mule-server-config/resources/testserver1.xml";
     };
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testRemoveResource() throws Exception
     {
-        setClientPath( "/service/resource-to-remove" );
+        setClientUri( "/service/resource-to-remove" );
         CoapResponse response= client.put( "some content", 0 );
         assertNotNull( "put resource gave no response", response );
         assertEquals( "put gave wrong response", ResponseCode.CHANGED, response.getCode() );
@@ -94,34 +96,34 @@ public class RemoveResourceTest extends AbstractServerTestCase
         assertEquals( "wrong response code", ResponseCode.NOT_FOUND, response.getCode() );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testRemoveAddedResource() throws Exception
     {
-        setClientPath( "/service/resource1" );
+        setClientUri( "/service/resource1" );
         CoapResponse response= client.get();
         assertNotNull( "get resoure1 gave no response", response );
         assertTrue( "response get resoure1 indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         response= client.get();
         assertNotNull( "get resoure2 gave no response", response );
         assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
 
-        setClientPath( "/service/add_resource/all_methods" );
+        setClientUri( "/add_resource/all_methods" );
         Request request= new Request( Code.POST );
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "resource-to-remove2" );
+        request.setPayload( "/service/resource-to-remove2" );
         response= client.advanced( request );
         assertNotNull( "post gave no response", response );
         assertTrue( "post response indicates failure", response.isSuccess() );
         assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         response= client.delete();
         assertNotNull( "got no response on delete", response );
         assertEquals( "wrong response on delete", ResponseCode.DELETED, response.getCode() );
 
-        setClientPath( "/service/resource-to-remove2" );
+        setClientUri( "/service/resource-to-remove2" );
         request= new Request( requestCode );
         response= client.advanced( request );
         assertNotNull( "got no response", response );

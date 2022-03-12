@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,10 +29,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedList;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.ResourceInfoConfig;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
 
 
@@ -42,127 +44,118 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  */
 public class DiscoveredResourceTest
 {
-    @Test
-    public void testConstructorAndGetters1()
+    private String path1;
+
+    private boolean obs1;
+
+    private String title1;
+
+    private LinkedList< String > ifdesc1;
+
+    private LinkedList< String > rt1;
+
+    private String sz1;
+
+    private LinkedList< String > ct1;
+
+    private String path2;
+
+    private boolean obs2;
+
+    private String title2;
+
+    private LinkedList< String > ifdesc2;
+
+    private LinkedList< String > rt2;
+
+    private String sz2= "340909";
+
+    private LinkedList< String > ct2;
+
+    @Before
+    public void setup()
     {
-        String path= "/path";
-        boolean obs= true;
-        String title= "title";
-        String ifdesc= "if1,if2";
-        String rt= "rt1,rt2";
-        String sz= "3409";
-        String ct= "0,41";
+        path1= "/path";
+        obs1= true;
+        title1= "title";
+        ifdesc1= new LinkedList<>();
+        ifdesc1.add( "if1" );
+        ifdesc1.add( "if2" );
+        rt1= new LinkedList<>();
+        rt1.add( "rt1" );
+        rt1.add( "rt2" );
+        sz1= "3409";
+        ct1= new LinkedList<>();
+        ct1.add( "0" );
+        ct1.add( "41" );
 
-        DiscoveredResource resource= new DiscoveredResource( path, obs, title, ifdesc, rt, sz, ct );
-
-        assertNotNull( "no object constructed", resource );
-
-        assertEquals( "wrong path", path, resource.getPath() );
-        assertEquals( "wrong obs", obs, resource.isObs() );
-        assertEquals( "wrong Obs", obs, resource.getObs() );
-        assertEquals( "wrong title", title, resource.getTitle() );
-        assertEquals( "wrong if", ifdesc, resource.getIf() );
-        assertEquals( "wrong rt", rt, resource.getRt() );
-        assertEquals( "wrong sz", sz, resource.getSz() );
-        assertEquals( "wrong ct", ct, resource.getCt() );
+        path2= "/path2";
+        obs2= false;
+        title2= "title2";
+        ifdesc2= new LinkedList<>();
+        ifdesc2.add( "if1" );
+        ifdesc2.add( "if2" );
+        ifdesc2.add( "if3" );
+        rt2= new LinkedList<>();
+        rt2.add( "rt1" );
+        rt2.add( "rt2" );
+        rt2.add( "rt3" );
+        sz2= "340909";
+        ct2= new LinkedList<>();
+        ct2.add( "0" );
+        ct2.add( "41" );
+        ct2.add( "40" );
     }
 
     @Test
-    public void testConstructorAndGetters2()
+    public void testConstructorAndGetters1()
     {
-        String path= "/path";
-        boolean obs= true;
-        String title= "title";
-        String ifdesc= "if1,if2";
-        String rt= "rt1,rt2";
-        String sz= "3409";
-        String ct= "0,41";
-
-        DiscoveredResource resource= new DiscoveredResource( path, obs, new ResourceInfoConfig( title, ifdesc, rt, sz, ct ) );
+        DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
 
         assertNotNull( "no object constructed", resource );
 
-        assertEquals( "wrong path", path, resource.getPath() );
-        assertEquals( "wrong obs", obs, resource.isObs() );
-        assertEquals( "wrong Obs", obs, resource.getObs() );
-        assertEquals( "wrong title", title, resource.getTitle() );
-        assertEquals( "wrong if", ifdesc, resource.getIf() );
-        assertEquals( "wrong rt", rt, resource.getRt() );
-        assertEquals( "wrong sz", sz, resource.getSz() );
-        assertEquals( "wrong ct", ct, resource.getCt() );
+        assertEquals( "wrong path", path1, resource.getPath() );
+        assertEquals( "wrong obs", obs1, resource.isObs() );
+        assertEquals( "wrong Obs", obs1, resource.getObs() );
+        assertEquals( "wrong title", title1, resource.getTitle() );
+        assertEquals( "wrong if", ifdesc1, resource.getIf() );
+        assertEquals( "wrong rt", rt1, resource.getRt() );
+        assertEquals( "wrong sz", sz1, resource.getSz() );
+        assertEquals( "wrong ct", ct1, resource.getCt() );
     }
 
     @Test
     public void testToString()
     {
-        String path= "/path";
-        boolean obs= true;
-        String title= "title";
-        String ifdesc= "if1,if2";
-        String rt= "rt1,rt2";
-        String sz= "3409";
-        String ct= "0,41";
+        DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
 
-        DiscoveredResource resource= new DiscoveredResource( path, obs, new ResourceInfoConfig( title, ifdesc, rt, sz, ct ) );
-
-        assertTrue( "toString shows wrong path value", resource.toString().contains( path ) );
-        assertTrue( "toString shows wrong obs value", resource.toString().contains( Boolean.toString( obs ) ) );
-        assertTrue( "toString shows wrong title value", resource.toString().contains( title ) );
-        assertTrue( "toString shows wrong if value", resource.toString().contains( ifdesc ) );
-        assertTrue( "toString shows wrong rt value", resource.toString().contains( rt ) );
-        assertTrue( "toString shows wrong sz value", resource.toString().contains( sz ) );
-        assertTrue( "toString shows wrong ct value", resource.toString().contains( ct ) );
+        assertTrue( "toString shows wrong path value", resource.toString().contains( path1 ) );
+        assertTrue( "toString shows wrong obs value", resource.toString().contains( Boolean.toString( obs1 ) ) );
+        assertTrue( "toString shows wrong title value", resource.toString().contains( title1 ) );
+        assertTrue( "toString shows wrong if value", resource.toString().contains( ifdesc1.toString() ) );
+        assertTrue( "toString shows wrong rt value", resource.toString().contains( rt1.toString() ) );
+        assertTrue( "toString shows wrong sz value", resource.toString().contains( sz1.toString() ) );
+        assertTrue( "toString shows wrong ct value", resource.toString().contains( ct1.toString() ) );
     }
 
-    @SuppressWarnings("unlikely-arg-type")
+    @SuppressWarnings( "unlikely-arg-type" )
     @Test
     public void testEqualsToWrongClass()
     {
-        String path= "/path";
-        boolean obs= true;
-        String title= "title";
-        String ifdesc= "if1,if2";
-        String rt= "rt1,rt2";
-        String sz= "3409";
-        String ct= "0,41";
-
-        DiscoveredResource resource= new DiscoveredResource( path, obs, title, ifdesc, rt, sz, ct );
+        DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         assertFalse( "resource wrongfully equals other class", resource.equals( Boolean.TRUE ) );
     }
 
     @Test
     public void testEqualsNull()
     {
-        String path= "/path";
-        boolean obs= true;
-        String title= "title";
-        String ifdesc= "if1,if2";
-        String rt= "rt1,rt2";
-        String sz= "3409";
-        String ct= "0,41";
-
-        DiscoveredResource resource= new DiscoveredResource( path, obs, title, ifdesc, rt, sz, ct );
+        DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         assertFalse( "resource wrongfully equals other class", resource.equals( null ) );
     }
 
     @Test
     public void testEquals()
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= "title2";
-        String ifdesc2= "if1,if2,if3";
-        String rt2= "rt1,rt2,rt3";
-        String sz2= "340909";
-        String ct2= "0,41,40";
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -186,29 +179,14 @@ public class DiscoveredResourceTest
     @Test
     public void testEquals2()
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= null;
-        String ifdesc2= null;
-        String rt2= null;
-        String sz2= null;
-        String ct2= null;
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource4= new DiscoveredResource( path1, obs2, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, title2, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource4= new DiscoveredResource( path1, false, title1, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, null, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource6= new DiscoveredResource( path1, obs1, title1, ifdesc2, rt1, sz1, ct1 );
         DiscoveredResource resource7= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt2, sz1, ct1 );
-        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz2, ct1 );
+        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, null, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
         assertTrue( "resource2 wrongfully equals resource1", resource1.equals( resource2 ) );
@@ -224,21 +202,6 @@ public class DiscoveredResourceTest
     @Test
     public void testCompareTo() throws InvalidETagException
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= "title2";
-        String ifdesc2= "if1,if2,if3";
-        String rt2= "rt1,rt2,rt3";
-        String sz2= "340909";
-        String ct2= "0,41,40";
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -273,29 +236,14 @@ public class DiscoveredResourceTest
     @Test
     public void testCompareTo2() throws InvalidETagException
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= null;
-        String ifdesc2= null;
-        String rt2= null;
-        String sz2= null;
-        String ct2= null;
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource4= new DiscoveredResource( path1, obs2, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, title2, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource4= new DiscoveredResource( path1, false, title1, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, null, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource6= new DiscoveredResource( path1, obs1, title1, ifdesc2, rt1, sz1, ct1 );
         DiscoveredResource resource7= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt2, sz1, ct1 );
-        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz2, ct1 );
+        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, null, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
         assertTrue( "resource2 wrongfully compares resource1", 0 == resource1.compareTo( resource2 ) );
@@ -322,21 +270,6 @@ public class DiscoveredResourceTest
     @Test
     public void testHashCode() throws InvalidETagException
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= "title2";
-        String ifdesc2= "if1,if2,if3";
-        String rt2= "rt1,rt2,rt3";
-        String sz2= "340909";
-        String ct2= "0,41,40";
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -360,29 +293,14 @@ public class DiscoveredResourceTest
     @Test
     public void testHashCode2() throws InvalidETagException
     {
-        String path1= "/path";
-        boolean obs1= true;
-        String title1= "title";
-        String ifdesc1= "if1,if2";
-        String rt1= "rt1,rt2";
-        String sz1= "3409";
-        String ct1= "0,41";
-        String path2= "/path2";
-        boolean obs2= false;
-        String title2= null;
-        String ifdesc2= null;
-        String rt2= null;
-        String sz2= null;
-        String ct2= null;
-
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource3= new DiscoveredResource( path2, obs1, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource4= new DiscoveredResource( path1, obs2, title1, ifdesc1, rt1, sz1, ct1 );
-        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, title2, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource4= new DiscoveredResource( path1, false, title1, ifdesc1, rt1, sz1, ct1 );
+        DiscoveredResource resource5= new DiscoveredResource( path1, obs1, null, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource6= new DiscoveredResource( path1, obs1, title1, ifdesc2, rt1, sz1, ct1 );
         DiscoveredResource resource7= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt2, sz1, ct1 );
-        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz2, ct1 );
+        DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, null, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
         assertEquals( "resource2 wrongfully compares resource1", resource1.hashCode(), resource2.hashCode() );

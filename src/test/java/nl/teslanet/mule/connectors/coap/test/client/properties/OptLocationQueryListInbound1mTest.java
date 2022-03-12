@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,7 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.ReceivedResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
 /**
@@ -39,12 +40,12 @@ public class OptLocationQueryListInbound1mTest extends AbstractInboundPropertyTe
      * Test value
      * @return the value to use in test
      */
-    private LinkedList< String > getValue()
+    private LinkedList< QueryParamAttribute > getValue()
     {
-        LinkedList< String > list= new LinkedList< String >();
-        list.add( "first=1" );
-        list.add( "second=2" );
-        list.add( "third=3" );
+        LinkedList< QueryParamAttribute > list= new LinkedList<>();
+        list.add( new QueryParamAttribute( "first", "1" ) );
+        list.add( new QueryParamAttribute( "second", "2" ) );
+        list.add( new QueryParamAttribute( "third", "3" ) );
 
         return list;
     }
@@ -86,8 +87,8 @@ public class OptLocationQueryListInbound1mTest extends AbstractInboundPropertyTe
     }
 
     @Override
-    protected Object fetchInboundProperty( ReceivedResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
     {
-        return attributes.getOptions().getLocationQueryList();
+        return attributes.getOptions().getLocationQuery();
     }
 }

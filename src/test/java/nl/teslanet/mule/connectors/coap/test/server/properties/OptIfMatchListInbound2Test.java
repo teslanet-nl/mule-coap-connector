@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
@@ -35,9 +36,9 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "A0" ).getBytes() );
-        options.addIfMatch( new ETag( "0011FF" ).getBytes() );
-        options.addIfMatch( new ETag( "0011223344556677" ).getBytes() );
+        options.addIfMatch( new ETag( 0xA0L ).getValue() );
+        options.addIfMatch( new ETag( 0x11FFL ).getValue() );
+        options.addIfMatch( new ETag( 0x1122334455667788L).getValue() );
     }
 
     @Override
@@ -49,12 +50,12 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue() throws InvalidETagException
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "A0" ) );
-        list.add( new ETag( "0011FF" ) );
-        list.add( new ETag( "0011223344556677" ) );
+        LinkedList< ETag > list= new LinkedList<>();
+        list.add( new ETag( 0xA0L ) );
+        list.add( new ETag( 0x11FFL ) );
+        list.add( new ETag( 0x1122334455667788L ) );
 
-        return list;
+        return Collections.unmodifiableList( list );
     }
     
     /* (non-Javadoc)

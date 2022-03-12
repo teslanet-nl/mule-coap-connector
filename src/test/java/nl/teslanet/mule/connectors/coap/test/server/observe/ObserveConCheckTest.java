@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -102,7 +102,7 @@ public class ObserveConCheckTest extends AbstractServerTestCase
     @Test(timeout= 60000L)
     public void testConCheckOnCount() throws Exception
     {
-        setClientPath( "/service/observe_me" );
+        setClientUri( "/service/observe_me" );
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
         assertTrue( "response nr: 0 indicates failure", response.isSuccess() );
@@ -142,7 +142,7 @@ public class ObserveConCheckTest extends AbstractServerTestCase
     public void testConCheckOnTime() throws Exception
     {
 
-        setClientPath( "/service/observe_me" );
+        setClientUri( "/service/observe_me" );
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
         assertTrue( "response nr: 0 indicates failure", response.isSuccess() );

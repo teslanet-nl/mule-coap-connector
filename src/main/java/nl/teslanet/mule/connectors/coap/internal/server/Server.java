@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -194,7 +194,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         coapServer= new CoapServer( networkConfig );
         try
         {
-            registry= new ResourceRegistry( coapServer.getRoot() );
+            registry= new ResourceRegistry( serverName, coapServer.getRoot() );
         }
         catch ( InternalResourceRegistryException e1 )
         {

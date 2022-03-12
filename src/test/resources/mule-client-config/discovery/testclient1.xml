@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -38,7 +38,6 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
-		<coap:socket-params bindToPort="0" />
 		<coap:exchange-params exchangeLifetime="1000" />
 	</coap:udp-endpoint>
 
@@ -46,14 +45,17 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="dynamic_service"
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="wrong_port"
 		host="127.0.0.1" port="6767" throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
+	
 	<coap:client-config name="wrong_host"
 		host="ditbestaatniet.org" port="6767"
 		throwExceptionOnErrorResponse="false">
@@ -73,8 +75,9 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	</flow>
 
 	<flow name="ping_dynamic">
-		<coap:ping config-ref="dynamic_service" host="#[vars.host]"
-			port="#[vars.port]" />
+		<coap:ping config-ref="dynamic_service">
+			<coap:remote-endpoint-params endpointHost="#[vars.host]" endpointPort="#[vars.port]" />
+		</coap:ping>
 	</flow>
 
 	<flow name="discover">

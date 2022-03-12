@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,7 +34,7 @@ public class OptifExistsInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addIfMatch( new ETag( "0011FF" ).getBytes() );
+        options.addIfMatch( new ETag( 0x11FFL ).getValue() );
         options.addIfMatch( new byte[0] );
     }
 

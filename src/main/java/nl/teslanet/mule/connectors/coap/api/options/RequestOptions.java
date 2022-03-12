@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,9 +23,10 @@
 package nl.teslanet.mule.connectors.coap.api.options;
 
 
+import java.util.List;
+
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -40,37 +41,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class RequestOptions
 {
-
-    /**
-     * RFC 7252: The Proxy-Uri Option is used to make a request to a forward-proxy.
-     * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 -
-     *      5.10.2. Proxy-Uri and Proxy-Scheme</a>
-     */
-    @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Proxy-Uri Option is used to make a request to a forward-proxy.")
-    private String proxyUri= null;
-
-    /**
-     * RFC 7252: When a Proxy-Scheme Option is present, the absolute-URI is
-     * constructed as follows: a CoAP URI is constructed from the Uri-* options as
-     * defined in Section 6.5. In the resulting URI, the initial scheme up to, but
-     * not including, the following colon is then replaced by the content of the
-     * Proxy-Scheme Option.
-     * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.2">IETF RFC 7252 -
-     *      5.10.2. Proxy-Uri and Proxy-Scheme</a>
-     */
-    @Parameter
-    @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Proxy-Scheme Option is used to make a request to a forward-proxy.")
-    private String proxyScheme= null;
-
     /**
      * RFC 7252: The Content-Format Option indicates the representation format of
      * the message payload. The representation format is given as a numeric
@@ -83,8 +53,10 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The Content-Format Option indicates the representation format of the message payload.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary(
+        "The Content-Format Option indicates the representation format of the request payload. \nWhen empty the Mimetype of the payload is used. \nWhen none of these are set no content type option is set on the request."
+    )
     private Integer contentFormat= null;
 
     /**
@@ -99,8 +71,8 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client." )
     private Integer accept= null;
 
     /**
@@ -128,8 +100,11 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Content(primary= false)
-    @Summary("An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values be set.")
+    @Content( primary= false )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary(
+        "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values can be set."
+    )
     private TypedValue< Object > etags= null;
 
     /**
@@ -148,9 +123,11 @@ public class RequestOptions
      *      5.10.8.1. If-Match</a>
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("Sets an empty If-Match Option which makes a request conditional on the existence of the resource only. When set If-MAtch options containing ETags must be ignored server-side.")
+    @Optional( defaultValue= "false" )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary(
+        "Sets an empty If-Match Option which makes a request conditional on the existence of the resource only. When set If-MAtch options containing ETags must be ignored server-side."
+    )
     private boolean ifExists= false;
 
     /**
@@ -167,9 +144,9 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Content(primary= false)
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The If-Match Option makes a request conditional on the resources ETag.")
+    @Content( primary= false )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The If-Match Option makes a request conditional on the resources ETag." )
     private TypedValue< Object > ifMatch= null;
 
     /**
@@ -185,10 +162,38 @@ public class RequestOptions
      *      5.10.8.2. If-None-Match</a>
      */
     @Parameter
-    @Optional(defaultValue= "false")
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource.")
+    @Optional( defaultValue= "false" )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource." )
     private boolean ifNoneMatch= false;
+
+    /**
+     * RFC 7959: In a request carrying a Block1 Option, to indicate the current
+      estimate the client has of the total size of the resource
+      representation, measured in bytes ("size indication")
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "Indication of the request payload size in [Bytes]." )
+    private Integer requestSize= null;
+
+    /**
+     * RFC 7959: In a request, to ask the server to provide a size estimate along
+      with the usual response ("size request").  For this usage, the
+      value MUST be set to 0.
+     * 
+     * @see <a href=
+     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     */
+    @Parameter
+    @Optional( defaultValue= "false" )
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "Ask server to provide for a Size2 option in the response,\nindicating the response payload size." )
+    private boolean requireResponseSize= false;
 
     /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
@@ -213,61 +218,78 @@ public class RequestOptions
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("The CoAP options to send with the request.")
-    private MultiMap< String, Object > otherRequestOptions;
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The CoAP options to send with the request." )
+    private List< OtherOption > otherRequestOptions;
     // Mule does not seem to convert multimap key to Integer
 
     /**
-     * @return the otherRequestOptions
+     * @return The ifExists option.
      */
-    public MultiMap< String, Object > getOtherRequestOptions()
+    public boolean isIfExists()
     {
-        return otherRequestOptions;
+        return ifExists;
     }
 
     /**
-     * @param otherRequestOptions the otherRequestOptions to set
+     * @param ifExists The ifExists option to set.
      */
-    public void setOtherRequestOptions( MultiMap< String, Object > otherRequestOptions )
+    public void setIfExists( boolean ifExists )
     {
-        this.otherRequestOptions= otherRequestOptions;
+        this.ifExists= ifExists;
     }
 
     /**
-     * @return the proxyUri
+     * The If-Match option contains an ETag value or a collection of ETag values.
+     * @return The ifMatch options.
      */
-    public String getProxyUri()
+    public TypedValue< Object > getIfMatch()
     {
-        return proxyUri;
+        return ifMatch;
     }
 
     /**
-     * @param proxyUri the proxyUri to set
+     * @param ifMatch the ifMatch value to set.
      */
-    public void setProxyUri( String proxyUri )
+    public void setIfMatch( TypedValue< Object > ifMatch )
     {
-        this.proxyUri= proxyUri;
+        this.ifMatch= ifMatch;
     }
 
     /**
-     * @return the proxyScheme
+     * @return The etags value.
      */
-    public String getProxyScheme()
+    public TypedValue< Object > getEtags()
     {
-        return proxyScheme;
+        return etags;
     }
 
     /**
-     * @param proxyScheme the proxyScheme to set
+     * @param etags The etags to set.
      */
-    public void setProxyScheme( String proxyScheme )
+    public void setEtags( TypedValue< Object > etags )
     {
-        this.proxyScheme= proxyScheme;
+        this.etags= etags;
     }
 
     /**
-     * @return the contentFormat
+     * @return the ifNoneMatch value
+     */
+    public boolean isIfNoneMatch()
+    {
+        return ifNoneMatch;
+    }
+
+    /**
+     * @param ifNoneMatch the ifNoneMatch to set
+     */
+    public void setIfNoneMatch( boolean ifNoneMatch )
+    {
+        this.ifNoneMatch= ifNoneMatch;
+    }
+
+    /**
+     * @return The contentFormat option.
      */
     public Integer getContentFormat()
     {
@@ -275,7 +297,7 @@ public class RequestOptions
     }
 
     /**
-     * @param contentFormat the contentFormat to set
+     * @param contentFormat The contentFormat option to set.
      */
     public void setContentFormat( Integer contentFormat )
     {
@@ -299,66 +321,51 @@ public class RequestOptions
     }
 
     /**
-     * @return the etags list
+     * @return True when Size2 option is required in the server response, otherwise false.
      */
-    public TypedValue< Object > getEtags()
+    public boolean isRequireResponseSize()
     {
-        return etags;
+        return requireResponseSize;
     }
 
     /**
-     * @param etags the etags to set
+     * @param requireResponseSize The requireResponseSize option to set.
      */
-    public void setEtags( TypedValue< Object > etags )
+    public void setRequireResponseSize( boolean requireResponseSize )
     {
-        this.etags= etags;
+        this.requireResponseSize= requireResponseSize;
     }
 
     /**
-     * @return the ifExists value
+     * @return The Size1 option if present, otherwise null.
      */
-    public boolean isifExists()
+    public Integer getRequestSize()
     {
-        return ifExists;
+        return requestSize;
     }
 
     /**
-     * @param ifExists the ifExists to set
+     * @param size1 The size1 option to set.
      */
-    public void setifExists( boolean ifExists )
+    public void setRequestSize( Integer size1 )
     {
-        this.ifExists= ifExists;
+        this.requestSize= size1;
     }
 
     /**
-     * @return the ifMatch list
-     */
-    public TypedValue< Object > getifMatch()
+    * @return the otherRequestOptions
+    */
+    public List< OtherOption > getOtherRequestOptions()
     {
-        return ifMatch;
+        return otherRequestOptions;
     }
 
     /**
-     * @param ifMatch the ifMatch to set
+     * @param otherRequestOptions the otherRequestOptions to set
      */
-    public void setifMatch( TypedValue< Object > ifMatch )
+    public void setOtherRequestOptions( List< OtherOption > otherRequestOptions )
     {
-        this.ifMatch= ifMatch;
+        this.otherRequestOptions= otherRequestOptions;
     }
 
-    /**
-     * @return the ifNoneMatch value
-     */
-    public boolean isIfNoneMatch()
-    {
-        return ifNoneMatch;
-    }
-
-    /**
-     * @param ifNoneMatch the ifNoneMatch to set
-     */
-    public void setIfNoneMatch( boolean ifNoneMatch )
-    {
-        this.ifNoneMatch= ifNoneMatch;
-    }
 }

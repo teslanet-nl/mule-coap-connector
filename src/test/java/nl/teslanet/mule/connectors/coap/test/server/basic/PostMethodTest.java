@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -47,23 +47,24 @@ public class PostMethodTest extends AbstractServerTestCase
     @Test
     public void testSuccess() throws ConnectorException, IOException
     {
-        String path= "/basic/post_me";
+        String uri= "coap://localhost/basic/post_me";
         String payload= ":payload_post_me";
-        setClientPath( path );
+        String expected= uri + payload;
+        setClientUri( uri );
 
         CoapResponse response= client.post( payload, 0 );
 
         assertNotNull( "post gave no response", response );
         assertEquals( "response code should be CHANGED", ResponseCode.CHANGED, response.getCode() );
-        assertEquals( "response payload has wrong value", path + payload, response.getResponseText() );
+        assertEquals( "response payload has wrong value", expected, response.getResponseText() );
     }
 
     @Test
     public void testNoPostAllowed() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_post_me";
+        String uri= "coap://localhost/basic/do_not_post_me";
         String payload= ":payload_do_not_post_me";
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.post( payload, 0 );
 
@@ -75,9 +76,9 @@ public class PostMethodTest extends AbstractServerTestCase
     @Test
     public void testNoPostAllowedDefault() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_post_me2";
+        String uri= "coap://localhost/basic/do_not_post_me2";
         String payload= ":payload_do_not_post_me2";
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.post( payload, 0 );
 
@@ -89,9 +90,9 @@ public class PostMethodTest extends AbstractServerTestCase
     @Test
     public void testNoResource() throws ConnectorException, IOException
     {
-        String path= "/basic/do_not_post_me3";
+        String uri= "coap://localhost/basic/do_not_post_me3";
         String payload= ":payload_do_not_post_me3";
-        setClientPath( path );
+        setClientUri( uri );
 
         CoapResponse response= client.post( payload, 0 );
 

@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -40,22 +40,30 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
-		<coap:socket-params bindToPort="0" />
 		<coap:exchange-params maxRetransmit="0" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="config" host="127.0.0.1"
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="async" />
+		</coap:query-configs>
 	</coap:client-config>
 	<coap:client-config name="configNOK"
 		host="127.0.0.1" port="6767" throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="async" />
+		</coap:query-configs>
 	</coap:client-config>
 	<coap:client-config name="configNOR"
 		host="ditbestaatniet" port="6767"
 		throwExceptionOnErrorResponse="false">
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
+		<coap:query-configs >
+			<coap:query-config key="test" value="async" />
+		</coap:query-configs>
 	</coap:client-config>
 
 	<flow name="get_me">

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
@@ -35,7 +36,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addETag( new ETag( "0011FF" ).getBytes() );
+        options.addETag( new ETag( "0011FF" ).getValue() );
     }
 
     @Override
@@ -50,7 +51,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
         LinkedList< ETag > list= new LinkedList< ETag >();
         list.add( new ETag( "0011FF" ) );
 
-        return list;
+        return Collections.unmodifiableList( list );
     }
     
     /* (non-Javadoc)

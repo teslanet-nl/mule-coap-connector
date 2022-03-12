@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.api.ResourceBuilder;
-import nl.teslanet.mule.connectors.coap.internal.Defs;
+import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
@@ -55,18 +55,30 @@ public class ResourceRegistry
     //TODO review concurrency
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
+    static final String noListenerWarning= "Resource { {}::{} } has no listener for {} requests.";
+    
+    /**
+     * The root resource on the server.
+     */
     Resource root= null;
+
+    /**
+     * The name of the server owning the registry.
+     */
+    private String serverName;
 
     /**
      * Construct a registry. The constructor initializes served resources 
      * and listener repositories. 
-     * @param root mandatory root resource
-     * @throws InternalResourceRegistryException 
+     * @param serverName The name of the CoAP server owning the resource.
+     * @param root Mandatory root resource.
+     * @throws InternalResourceRegistryException When the the root resource is null.
      */
-    public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
+    public ResourceRegistry( String serverName, Resource root ) throws InternalResourceRegistryException
     {
         if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
+        this.serverName= serverName;
 
         servedResources= new ConcurrentHashMap<>();
         listeners= new CopyOnWriteArrayList<>();
@@ -103,7 +115,7 @@ public class ResourceRegistry
      * @param resourceDesciption The definition of the resource to create.
      * @throws InternalResourceUriException when the parent uri does not resolve to an existing resource.
      */
-    public void add( String parentUri, ResourceBuilder resourceDesciption ) throws InternalResourceUriException
+    public void add( String parentUri, ResourceParams resourceDesciption ) throws InternalResourceUriException
     {
         ServedResource parent= getResource( parentUri );
         ServedResource resource= new ServedResource( resourceDesciption );
@@ -251,7 +263,7 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingGet()) logger.warn( noListenerWarning, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -261,7 +273,7 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingPost()) logger.warn( noListenerWarning, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -271,7 +283,7 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingPut()) logger.warn( noListenerWarning, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -281,7 +293,7 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            //TODO RC log warning
+            if ( resource.isHandlingDelete()) logger.warn( noListenerWarning, serverName, resource.getURI(), "DELETE" );
         }
     }
 
@@ -321,7 +333,6 @@ public class ResourceRegistry
     public List< ServedResource > findResources( String uriPattern )
     {
         //TODO regex support
-        //TODO RC concurrent?
         ArrayList< ServedResource > found= new ArrayList<>();
 
         for ( Entry< String, ServedResource > entry : servedResources.entrySet() )
@@ -413,12 +424,11 @@ public class ResourceRegistry
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
-            //TODO RC check uri format .*/x+
             return uri.substring( lastPathSep + 1 );
         }
         else
         {
-            return Defs.COAP_URI_ROOTRESOURCE;
+            return Defs.COAP_URI_ROOTRESOURCE_NAME;
         }
     }
 

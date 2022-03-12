@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,17 +24,19 @@ package nl.teslanet.mule.connectors.coap.test.client.multicast;
 
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
-import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.server.resources.CoapExchange;
-import org.eclipse.californium.elements.Connector;
+import org.eclipse.californium.elements.UDPConnector;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
 
@@ -55,17 +57,17 @@ public class MulticastTestServer extends CoapServer
      */
     public MulticastTestServer() throws SocketException, UnknownHostException
     {
-        this( CoAP.DEFAULT_COAP_PORT );
+        this( 5690, 5683 );
     }
 
     /**
      * Constructor for test server.
      * @throws UnknownHostException 
      */
-    public MulticastTestServer( int port ) throws SocketException, UnknownHostException
+    public MulticastTestServer( int port, int multicastPort ) throws SocketException, UnknownHostException
     {
         super( networkConfig );
-        addEndpoints( port );
+        addEndpoints( port, multicastPort );
         addResources();
     }
 
@@ -86,19 +88,29 @@ public class MulticastTestServer extends CoapServer
     /**
      * Add test endpoints listening on default CoAP port.
      * @throws UnknownHostException 
+     * @throws SocketException 
      */
-    private void addEndpoints( int port ) throws UnknownHostException
+    private void addEndpoints( int port, int multicastPort ) throws UnknownHostException, SocketException
     {
-        UdpMulticastConnector.Builder connectorBuilder= new UdpMulticastConnector.Builder();
-        connectorBuilder.setOutgoingMulticastInterface( InetAddress.getByName( "127.0.0.1" ) );
-        connectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ) );
-        connectorBuilder.setLocalPort( port );
-
+        //unicast connector
+        UDPConnector udpConnector = new UDPConnector(new InetSocketAddress( "127.0.0.1", port));
+        udpConnector.setReuseAddress(true);
+        //multicast connector
+        UdpMulticastConnector.Builder multiCastConnectorBuilder= new UdpMulticastConnector.Builder();
+        multiCastConnectorBuilder.setLocalAddress( InetAddress.getByName( "224.0.1.187" ), multicastPort );
+        multiCastConnectorBuilder.setOutgoingMulticastInterface(InetAddress.getByName( "127.0.0.1" )  );
+        multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ));
+        UdpMulticastConnector receiver= multiCastConnectorBuilder.build();
+        receiver.setReuseAddress( true );
+        receiver.setLoopbackMode( true );
+        //endpoint
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
         builder.setNetworkConfig( networkConfig );
-        builder.setConnector( (Connector) connectorBuilder.build() );
-
-        addEndpoint( builder.build() );
+        builder.setConnector( udpConnector );
+        CoapEndpoint endpoint= builder.build(); 
+        endpoint.addMulticastReceiver( receiver );
+        endpoint.addInterceptor( new MessageTracer() );
+        addEndpoint( endpoint );
     }
 
     /**

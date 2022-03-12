@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -120,7 +120,7 @@ public class BasicTestServer extends CoapServer
         public void handleGET( CoapExchange exchange )
         {
             // respond to the request
-            exchange.respond( ResponseCode.CONTENT, "GET called on: " + this.getURI() );
+            exchange.respond( ResponseCode.CONTENT, "GET called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 
@@ -141,7 +141,7 @@ public class BasicTestServer extends CoapServer
         public void handlePOST( CoapExchange exchange )
         {
             // respond to the request
-            exchange.respond( ResponseCode.CREATED, "POST called on: " + this.getURI() );
+            exchange.respond( ResponseCode.CREATED, "POST called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 
@@ -162,7 +162,7 @@ public class BasicTestServer extends CoapServer
         public void handlePUT( CoapExchange exchange )
         {
             // respond to the request
-            exchange.respond( ResponseCode.CHANGED, "PUT called on: " + this.getURI() );
+            exchange.respond( ResponseCode.CHANGED, "PUT called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 
@@ -183,7 +183,7 @@ public class BasicTestServer extends CoapServer
         public void handleDELETE( CoapExchange exchange )
         {
             // respond to the request
-            exchange.respond( ResponseCode.DELETED, "DELETE called on: " + this.getURI() );
+            exchange.respond( ResponseCode.DELETED, "DELETE called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 }

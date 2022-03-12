@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2021 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,6 +35,12 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.api.Proxy;
+import nl.teslanet.mule.connectors.coap.api.ProxyConfig;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
+import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
+import nl.teslanet.mule.connectors.coap.api.SharedServer;
+import nl.teslanet.mule.connectors.coap.api.SharedServerConfig;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CocoaStrong;
@@ -63,7 +69,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
 
 /**
- * A Mule extension that adds CoAP functionality to create CoAP clients and CoAP servers.
+ * Mule extension that adds the capability for Mule applications to act as CoAP client and/or CoAP server.
  */
 @Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
 @Extension(name= "CoAP", vendor= "Teslanet.nl")
@@ -78,6 +84,8 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @SubTypeMapping(baseType= MidTracker.class, subTypes= { NullMidTracker.class, GroupedMidTracker.class, MapBasedMidTracker.class })
 @SubTypeMapping(baseType= CongestionControl.class, subTypes= { Cocoa.class, CocoaStrong.class, BasicRto.class, LinuxRto.class, PeakhopperRto.class })
 @SubTypeMapping(baseType= Deduplicator.class, subTypes= { CropRotation.class, MarkAndSweep.class })
+@SubTypeMapping(baseType= RemoteEndpoint.class, subTypes= { SharedServer.class, Proxy.class })
+@SubTypeMapping(baseType= RemoteEndpointConfig.class, subTypes= { SharedServerConfig.class, ProxyConfig.class })
 @Configurations({ Server.class, Client.class })
 @Export(classes= { ETag.class })
 @ErrorTypes(Errors.class)
