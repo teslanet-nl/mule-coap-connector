@@ -47,7 +47,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
  */
 public class ResourceRegistry
 {
-    private static final Logger logger= LoggerFactory.getLogger( ResourceRegistry.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ResourceRegistry.class );
 
     //TODO maybe list, depending on validation of duplication of resourcenames
     private ConcurrentHashMap< String, ServedResource > servedResources;
@@ -55,7 +55,7 @@ public class ResourceRegistry
     //TODO review concurrency
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
-    static final String noListenerWarning= "Resource { {}::{} } has no listener for {} requests.";
+    private static final String NO_LISTENER_WARNING= "Resource { {}::{} } has no listener for {} requests.";
     
     /**
      * The root resource on the server.
@@ -231,7 +231,7 @@ public class ResourceRegistry
             catch ( InternalUriPatternException e )
             {
                 //listeners uriPattern is invalid. Should not occur.
-                logger.error( e.getMessage() );
+                LOGGER.error( e.getMessage() );
                 matchLevel= 0;
             }
             if ( matchLevel > maxGetMatchlevel && listener.requestCodeFlags.isGet() )
@@ -263,7 +263,7 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            if ( resource.isHandlingGet()) logger.warn( noListenerWarning, serverName, resource.getURI(), "GET" );
+            if ( resource.isHandlingGet()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -273,7 +273,7 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            if ( resource.isHandlingPost()) logger.warn( noListenerWarning, serverName, resource.getURI(), "POST" );
+            if ( resource.isHandlingPost()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -283,7 +283,7 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            if ( resource.isHandlingPut()) logger.warn( noListenerWarning, serverName, resource.getURI(), "PUT" );
+            if ( resource.isHandlingPut()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -293,7 +293,7 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            if ( resource.isHandlingDelete()) logger.warn( noListenerWarning, serverName, resource.getURI(), "DELETE" );
+            if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
         }
     }
 
@@ -347,7 +347,7 @@ public class ResourceRegistry
             catch ( InternalUriPatternException e )
             {
                 //uriPattern is invalid. Should not occur, is already validated.
-                logger.error( e.getMessage() );
+                LOGGER.error( e.getMessage() );
                 break;
             }
         }

@@ -34,6 +34,7 @@ import org.eclipse.californium.core.CoapResource;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
@@ -82,7 +83,7 @@ public class ResourceRegistryTest
     }
 
     @Test
-    public void testAddResource() throws InternalResourceUriException, InternalResourceRegistryException
+    public void testAddResourceConfig() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( "test_server", root );
@@ -117,6 +118,42 @@ public class ResourceRegistryTest
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name4 );
         registry.add( uri1, resourceConfig );
+        assertNotNull( registry );
+        assertEquals( "registry does not contain resource4", uri4, registry.getResource( uri4 ).getURI() );
+    }
+
+    @Test
+    public void testAddResourceParams() throws InternalResourceUriException, InternalResourceRegistryException
+    {
+        CoapResource root= new CoapResource( "" );
+        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceParams resourceParams;
+        String uri1= "/resource1";
+        String uri2= "/resource1/resource2";
+        String uri3= "/resource1/resource2/resource3";
+        String uri4= "/resource1/resource4";
+
+        resourceParams= new ResourceParams();
+        resourceParams.setResourcePath( uri1 );
+        registry.add( null, resourceParams );
+        assertNotNull( registry );
+        assertEquals( "registry does not contain resource1", uri1, registry.getResource( uri1 ).getURI() );
+
+        resourceParams= new ResourceParams();
+        resourceParams.setResourcePath( uri2 );
+        registry.add( uri1, resourceParams );
+        assertNotNull( registry );
+        assertEquals( "registry does not contain resource2", uri2, registry.getResource( uri2 ).getURI() );
+
+        resourceParams= new ResourceParams();
+        resourceParams.setResourcePath( uri3 );
+        registry.add( uri2, resourceParams );
+        assertNotNull( registry );
+        assertEquals( "registry does not contain resource3", uri3, registry.getResource( uri3 ).getURI() );
+
+        resourceParams= new ResourceParams();
+        resourceParams.setResourcePath( uri4 );
+        registry.add( uri1, resourceParams );
         assertNotNull( registry );
         assertEquals( "registry does not contain resource4", uri4, registry.getResource( uri4 ).getURI() );
     }
