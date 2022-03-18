@@ -40,7 +40,7 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
  *
  */
 public class UdpParams implements VisitableConfig
-{
+{ 
     /**
      * When {@code true} the message IDs will start at a random index. Otherwise the
      * first message ID returned will be {@code 0}.
@@ -76,7 +76,7 @@ public class UdpParams implements VisitableConfig
     @Summary( value= "Receiver thread pool size. Default value is 1, or equal to the number of cores on Windows." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer networkStageReceiverThreadCount= null;
+    public Integer receiverThreadCount= null;
 
     /**
      * Sender thread pool size. Default value is 1, or equal to the number of cores
@@ -87,17 +87,17 @@ public class UdpParams implements VisitableConfig
     @Summary( value= "Sender thread pool size. Default value is 1, or equal to the number of cores on Windows." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer networkStageSenderThreadCount= null;
+    public Integer senderThreadCount= null;
 
     /**
-     * UDP datagram size [bytes].
+     * Maximum UDP datagram size [bytes] that can be received.
      */
     @Parameter
     @Optional( defaultValue= "2048" )
-    @Summary( value= "UDP datagram size [bytes]." )
+    @Summary( value= "Maximum UDP datagram size [bytes] that can be received." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer udpConnectorDatagramSize= null;
+    public Integer datagramSize= null;
 
     /**
      * UDP receive buffer size [bytes].
@@ -107,7 +107,7 @@ public class UdpParams implements VisitableConfig
     @Summary( value= "UDP receive buffer size [bytes]." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer udpConnectorReceiveBuffer= null;
+    public Integer receiveBuffer= null;
 
     /**
      * UDP send buffer size [bytes].
@@ -117,7 +117,7 @@ public class UdpParams implements VisitableConfig
     @Summary( value= "UDP send buffer size [bytes]." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer udpConnectorSendBuffer= null;
+    public Integer sendBuffer= null;
 
     /**
      * Default udp params used by Mule. 

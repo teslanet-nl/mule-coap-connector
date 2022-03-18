@@ -37,7 +37,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class Unused implements VisitableConfig
 {
-    // TODO RC review for removed and new config items
+    // TODO review for removed and new config items in cf3
     /**
      * RFC 7252: MAX_TRANSMIT_WAIT is the maximum time from the first transmission
      * of a Confirmable message to the time when the sender gives up on
@@ -48,48 +48,52 @@ public class Unused implements VisitableConfig
      *      4.8.2 Time Values Derived from Transmission Parameters</a>
      */
     @Parameter
-    @Optional(defaultValue= "93000")
-    @Summary(value= "the maximum time (in milliseconds [ms]) from the first transmission of a Confirmable message to the time when the sender gives up on receiving an acknowledgement or reset.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "93000" )
+    @Summary(
+                    value= "The maximum time (in milliseconds [ms]) between the first transmission of a Confirmable message \nand the sender giving up on receiving an acknowledgement or reset."
+    )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Long maxTransmitWait= null;
 
+    //TODO used in cf3
     /**
-     * Period of time (in milliseconds [ms]) of the spreading of responses to a
+     * LEISURE is the period of time (in milliseconds [ms]) of the spreading of responses to a
      * multicast request, for network congestion prevention.
      * @see <a href=
      *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-8.2">IETF RFC 7252 -
      *      8.2. Request/Response Layer</a>
      */
     @Parameter
-    @Optional(defaultValue= "5000")
-    @Summary(value= "Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request, \nfor network congestion prevention.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "5000" )
+    @Summary( value= "Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request, \nfor network congestion prevention." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer leisure= null;
 
     /**
-     * The probing rate [byte/s] indicates the maximum average data rate of sending to another endpoint that does not respond.
+     * PROBING_RATE [byte/s] indicates the maximum average data rate of sending to another endpoint that does not respond.
      * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-4.7">IETF RFC 7252 - 4.7. Congestion Control</a>
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-4.7">IETF RFC 7252 - 4.7. Congestion Control</a>
      */
     @Parameter
-    @Optional(defaultValue= "1.0")
-    @Summary(value= "Maximum average data rate (in [bytes/second]) of sending to another endpoint that does not respond. ")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "1.0" )
+    @Summary( value= "Maximum average data rate (in [bytes/second]) of sending to another endpoint that does not respond. " )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Float probingRate= null;
 
+    //TODO used in cf3
     /**
-     * 
+     * Maximum number of pending outbound messages.
      */
     @Parameter
-    @Optional
-    @Summary(value= "does Cf use this?")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Integer udpConnectorOutCapacity= null;
-    
+    @Optional( defaultValue= "1000" )
+    @Summary( value= "Maximum number of pending outbound messages. Default" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public int udpConnectorOutCapacity= 1000;
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
      */

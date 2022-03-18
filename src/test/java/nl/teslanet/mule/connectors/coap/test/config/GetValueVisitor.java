@@ -348,19 +348,19 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.useRandomMidStart != null ? toVisit.useRandomMidStart.toString() : null );
                 break;
             case networkStageReceiverThreadCount:
-                result= ( toVisit.networkStageReceiverThreadCount != null ? toVisit.networkStageReceiverThreadCount.toString() : null );
+                result= ( toVisit.receiverThreadCount != null ? toVisit.receiverThreadCount.toString() : null );
                 break;
             case networkStageSenderThreadCount:
-                result= ( toVisit.networkStageSenderThreadCount != null ? toVisit.networkStageSenderThreadCount.toString() : null );
+                result= ( toVisit.senderThreadCount != null ? toVisit.senderThreadCount.toString() : null );
                 break;
             case udpConnectorDatagramSize:
-                result= ( toVisit.udpConnectorDatagramSize != null ? toVisit.udpConnectorDatagramSize.toString() : null );
+                result= ( toVisit.datagramSize != null ? toVisit.datagramSize.toString() : null );
                 break;
             case udpConnectorReceiveBuffer:
-                result= ( toVisit.udpConnectorReceiveBuffer != null ? toVisit.udpConnectorReceiveBuffer.toString() : null );
+                result= ( toVisit.receiveBuffer != null ? toVisit.receiveBuffer.toString() : null );
                 break;
             case udpConnectorSendBuffer:
-                result= ( toVisit.udpConnectorSendBuffer != null ? toVisit.udpConnectorSendBuffer.toString() : null );
+                result= ( toVisit.sendBuffer != null ? toVisit.sendBuffer.toString() : null );
                 break;
             default:
                 break;

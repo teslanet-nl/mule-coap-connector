@@ -318,11 +318,11 @@
         </xs:sequence>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useRandomMidStart"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="networkStageReceiverThreadCount"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="networkStageSenderThreadCount"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="2048" name="udpConnectorDatagramSize"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="udpConnectorReceiveBuffer"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="udpConnectorSendBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="receiverThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="senderThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="2048" name="datagramSize"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="receiveBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="sendBuffer"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

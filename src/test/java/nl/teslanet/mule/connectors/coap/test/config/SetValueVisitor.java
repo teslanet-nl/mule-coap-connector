@@ -460,19 +460,19 @@ public class SetValueVisitor implements ConfigVisitor
                 toVisit.useRandomMidStart= new Boolean( value );
                 break;
             case networkStageReceiverThreadCount:
-                toVisit.networkStageReceiverThreadCount= new Integer( value );
+                toVisit.receiverThreadCount= new Integer( value );
                 break;
             case networkStageSenderThreadCount:
-                toVisit.networkStageSenderThreadCount= new Integer( value );
+                toVisit.senderThreadCount= new Integer( value );
                 break;
             case udpConnectorDatagramSize:
-                toVisit.udpConnectorDatagramSize= new Integer( value );
+                toVisit.datagramSize= new Integer( value );
                 break;
             case udpConnectorReceiveBuffer:
-                toVisit.udpConnectorReceiveBuffer= new Integer( value );
+                toVisit.receiveBuffer= new Integer( value );
                 break;
             case udpConnectorSendBuffer:
-                toVisit.udpConnectorSendBuffer= new Integer( value );
+                toVisit.sendBuffer= new Integer( value );
                 break;
             case midTracker:
                 if ( value == null )

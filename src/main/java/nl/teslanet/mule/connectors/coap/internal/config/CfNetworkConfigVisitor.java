@@ -209,12 +209,12 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     public void visit( UdpParams toVisit )
     {
         if ( toVisit.useRandomMidStart != null ) networkConfig.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, toVisit.useRandomMidStart );
-        if ( toVisit.networkStageReceiverThreadCount != null )
-            networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, toVisit.networkStageReceiverThreadCount );
-        if ( toVisit.networkStageSenderThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, toVisit.networkStageSenderThreadCount );
-        if ( toVisit.udpConnectorDatagramSize != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, toVisit.udpConnectorDatagramSize );
-        if ( toVisit.udpConnectorReceiveBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, toVisit.udpConnectorReceiveBuffer );
-        if ( toVisit.udpConnectorSendBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, toVisit.udpConnectorSendBuffer );
+        if ( toVisit.receiverThreadCount != null )
+            networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, toVisit.receiverThreadCount );
+        if ( toVisit.senderThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, toVisit.senderThreadCount );
+        if ( toVisit.datagramSize != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, toVisit.datagramSize );
+        if ( toVisit.receiveBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, toVisit.receiveBuffer );
+        if ( toVisit.sendBuffer != null ) networkConfig.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, toVisit.sendBuffer );
     }
 
     /* (non-Javadoc)
