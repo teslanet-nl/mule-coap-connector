@@ -26,10 +26,9 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
@@ -256,7 +255,7 @@ public class ClientOperations
      * @return {@code True} when the server has responded, {@code False} otherwise.
      */
     @Throws( { PingErrorProvider.class } )
-    public Boolean ping( @Config
+    public boolean ping( @Config
     Client client, @ParameterGroup( name= "Ping address" )
     PingParams pingParams )
     {
@@ -324,7 +323,7 @@ public class ClientOperations
         {
             throw new RequestException( client + discoverErrorMsg, e );
         }
-        TreeSet< DiscoveredResource > resultSet= new TreeSet< DiscoveredResource >();
+        ConcurrentSkipListSet< DiscoveredResource > resultSet= new ConcurrentSkipListSet<>();
         for ( WebLink link : links )
         {
             resultSet.add(
@@ -339,7 +338,7 @@ public class ClientOperations
                 )
             );
         }
-        return Collections.unmodifiableSortedSet( resultSet );
+        return resultSet;
     }
 
     /**
@@ -428,12 +427,19 @@ public class ClientOperations
      * the active observers of the CoAP client.
      * 
      * @param client The client instance of which the observers are listed.
-     * @return the list of observed uri's
+     * @return the set of observed uri's
      */
-    public List< String > observerList( @Config
+    public Set< String > observerList( @Config
     Client client )
     {
-        List< String > list= client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toList() );
-        return Collections.unmodifiableList( list );
+        Supplier< ConcurrentSkipListSet< String > > supplier= new Supplier< ConcurrentSkipListSet< String > >()
+            {
+                @Override
+                public ConcurrentSkipListSet< String > get()
+                {
+                    return new ConcurrentSkipListSet<>();
+                }
+            };
+        return client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toCollection( supplier ) );
     }
 }

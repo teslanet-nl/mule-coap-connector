@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.californium.core.CoapServer;
@@ -424,12 +424,14 @@ public class ObserveTest extends AbstractClientTestCase
     {
         Event result;
         Message response;
+        Set< String > uris;
 
         pauze();
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 0, ( (List< String >) response.getPayload().getValue() ).size() );
+        uris= (Set< String >) response.getPayload().getValue();
+        assertEquals( "wrong number of observers", 0, uris.size() );
 
         //first observe
         result= flowRunner( "start_temporary1" ).withPayload( "nothing_important" ).run();
@@ -438,8 +440,9 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 1, ( (List< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (List< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
+        uris= (Set< String >) response.getPayload().getValue();
+        assertEquals( "wrong number of observers", 1, uris.size() );
+        assertTrue( "wrong observer uri", uris.contains( "coap://127.0.0.1/observe/temporary1" ) );
         pauze();
 
         //second observe
@@ -449,10 +452,10 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 2, ( (List< String >) response.getPayload().getValue() ).size() );
-        System.out.println( (List< String >) response.getPayload().getValue() );
-        assertTrue( "wrong observer uri", ( (List< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
-        assertTrue( "wrong observer uri", ( (List< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary2?test1=1&test2=2" ) );
+        uris= (Set< String >) response.getPayload().getValue();
+        assertEquals( "wrong number of observers", 2, uris.size() );
+        assertTrue( "wrong observer uri", uris.contains( "coap://127.0.0.1/observe/temporary1" ) );
+        assertTrue( "wrong observer uri", uris.contains( "coap://127.0.0.1/observe/temporary2?test1=1&test2=2" ) );
         pauze();
 
         //remove second observe
@@ -462,8 +465,9 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observers", 1, ( (List< String >) response.getPayload().getValue() ).size() );
-        assertTrue( "wrong observer uri", ( (List< String >) response.getPayload().getValue() ).contains( "coap://127.0.0.1/observe/temporary1" ) );
+        uris= (Set< String >) response.getPayload().getValue();
+        assertEquals( "wrong number of observers", 1, uris.size() );
+        assertTrue( "wrong observer uri", uris.contains( "coap://127.0.0.1/observe/temporary1" ) );
         pauze();
 
         //remove first observe
@@ -473,8 +477,8 @@ public class ObserveTest extends AbstractClientTestCase
         //get observe list
         result= flowRunner( "observer_list" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
-        assertEquals( "wrong number of observer", 0, ( (List< String >) response.getPayload().getValue() ).size() );
-
+        uris= (Set< String >) response.getPayload().getValue();
+        assertEquals( "wrong number of observer", 0, uris.size() );
     }
 
     /**
