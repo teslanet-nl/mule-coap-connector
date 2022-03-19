@@ -46,7 +46,8 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
         "org.eclipse.californium:californium-core",
         "org.eclipse.californium:element-connector",
         "org.eclipse.californium:scandium",
-        "org.eclipse.californium:demo-certs"
+        "org.eclipse.californium:demo-certs",
+        "org.codehaus.groovy:groovy-all"
     },
     exportPluginClasses= {
     }, 
@@ -64,9 +65,10 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
     }, 
     testInclusions= { 
         "*:*:jar:tests:*", 
-        "*:*:test-jar:*:*",
+        "*:*:test-jar:*:*"
     }, 
-    extraPrivilegedArtifacts= {
+    extraPrivilegedArtifacts= {         
+
     }
 )
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase

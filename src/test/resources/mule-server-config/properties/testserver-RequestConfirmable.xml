@@ -55,7 +55,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.confirmable]" doc:name="Set value to test" doc:id="14a950a8-7b52-4a3c-ad0a-b8cd7d4a6d8d" variableName="valueToTest"/>
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="ee736688-f066-4f00-bb62-11ee8e9ee8bf" >
+		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="ee736688-f066-4f00-bb62-11ee8e9ee8bf" >
 
 			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
 				java.lang.Boolean(false) ) == false )

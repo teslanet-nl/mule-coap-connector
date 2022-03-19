@@ -67,7 +67,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			<coap:response />
 		</coap:listener>
 		<set-payload value="server response" />
-		<scripting:execute engine="groovy"
+		<scripting:execute engine="Groovy"
 			doc:name="throw exception"
 			doc:id="c663e99a-47db-4f21-87ac-21c6b08635af">
 			<scripting:code>throw new java.lang.Exception(&quot;test the
@@ -85,7 +85,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		</coap:listener>
 		<set-payload value="server response" />
 		<try doc:name="Try" doc:id="7c514e9a-ff5b-4115-b817-dc0de0dd58e3">
-			<scripting:execute engine="groovy"
+			<scripting:execute engine="Groovy"
 				doc:name="throw exception"
 				doc:id="ac9a7d98-4358-49e7-bce8-0ddfec7aeb3b">
 				<scripting:code>throw new java.lang.Exception(&quot;test the exception&quot;);</scripting:code>

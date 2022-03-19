@@ -39,7 +39,6 @@
 	<packaging>mule-extension</packaging>
 	
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Mule extension that provides functionality to communicate using the CoAP protocol.</description>
 	<url>http://www.teslanet.nl</url>
 	<organization>
 		<name>Teslanet.nl</name>
@@ -237,41 +236,41 @@ Contributors:
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>demo-certs</artifactId>
-			<version>3.0.0</version>
+			<version>3.3.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-scripting-module</artifactId>
-			<version>1.1.1</version>
+			<version>2.0.0</version>
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-xml-module</artifactId>
-			<version>1.2.3</version>
-			<classifier>mule-plugin</classifier>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.4.16</version>
+			<classifier>indy</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.module</groupId>
 			<artifactId>mule-java-module</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.9</version>
 			<classifier>mule-plugin</classifier>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-validation-module</artifactId>
-			<version>1.2.1</version>
+			<version>1.4.5</version>
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-objectstore-connector</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.1</version>
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
@@ -291,13 +290,13 @@ Contributors:
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
-			<version>4.0.3</version>
+			<version>4.2.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -347,4 +346,5 @@ Contributors:
 			</build>
 		</profile>
 	</profiles>
+	<description>Mule extension that enables Mule 4 applications to implement IoT services and/or IoT clients that use the CoAP protocol. </description>
 </project>

@@ -55,7 +55,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.relation]" doc:name="Set value to test" doc:id="22ac78bd-2dd8-4f14-a822-d69a0cdeb96f" variableName="valueToTest"/>
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="f080f0ee-d8d8-43bc-8911-eada164750c9" >
+		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="f080f0ee-d8d8-43bc-8911-eada164750c9" >
 
 			<scripting:code>if ( vars.valueToTest != null )
 				{

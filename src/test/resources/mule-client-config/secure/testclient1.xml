@@ -43,13 +43,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/get_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 	<flow name="do_not_get_me">
@@ -57,13 +51,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/do_not_get_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 	<flow name="post_me">
@@ -72,13 +60,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 		<logger message="#[payload]" />
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 	<flow name="do_not_post_me">
@@ -86,13 +68,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/do_not_post_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 
@@ -101,13 +77,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/put_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 	<flow name="do_not_put_me">
@@ -115,13 +85,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/do_not_put_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 
@@ -130,13 +94,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/delete_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 	<flow name="do_not_delete_me">
@@ -144,13 +102,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="/secure/do_not_delete_me">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<scripting:execute engine="Groovy"
-			target="saved_payload">
-			<scripting:code><![CDATA[
-                return content;
-                ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ content: payload }]]]></scripting:parameters>
-		</scripting:execute>
+		<set-variable value="#[output application/java --- payload default 'empty']" variableName="saved_payload"/>
 	</flow>
 
 </mule>

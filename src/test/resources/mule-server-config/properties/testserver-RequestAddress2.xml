@@ -75,7 +75,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="996160c2-51b6-44f9-82e0-b70bf430f9fc" variableName="valueToTest"/>
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="225f7a91-105d-4e30-853f-3e3b9592b940" >
+		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="225f7a91-105d-4e30-853f-3e3b9592b940" >
 
 			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
 				java.lang.String() ) == false )
@@ -91,7 +91,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 			<coap:response />
 		</coap:listener>
 		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="05b1bd2c-2fc3-43a9-99a8-1cae0af230c3" variableName="valueToTest"/>
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="73818368-43af-4e8b-8eda-a953fd4fdacb" >
+		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="73818368-43af-4e8b-8eda-a953fd4fdacb" >
 
 			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
 				java.lang.String() ) == false )
