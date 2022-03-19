@@ -46,6 +46,8 @@ public class Defs
 
     public static final String COAP_URI_ROOTRESOURCE_NAME= "";
 
+    public static final String COAP_URI_WELLKNOWN_CORE= "/.well-known/core";
+
     /**
      * No need to instantiate.
      */

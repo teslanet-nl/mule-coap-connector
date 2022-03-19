@@ -43,6 +43,11 @@ public class OptionUtils
     public static final byte[] EMPTY_BYTES= new byte [0];
 
     /**
+     * Empty byte array.
+     */
+    public static final String EMPTY_STRING= "";
+
+    /**
      * private constructor
      */
     private OptionUtils()
@@ -138,7 +143,7 @@ public class OptionUtils
     {
         if ( bytes == null || bytes.length <= 0 )
         {
-            return new String();
+            return EMPTY_STRING;
         }
         StringBuilder sb= new StringBuilder();
         for ( byte b : bytes )

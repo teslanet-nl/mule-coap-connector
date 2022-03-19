@@ -95,37 +95,37 @@ public class ClientOperations
     /**
      * Request failure message.
      */
-    static final String requestErrorMsg= " failed to execute request.";
+    static final String REQUEST_ERROR_MSG= " failed to execute request.";
 
     /**
      * Async Request failure message.
      */
-    static final String AsyncRequestErrorMsg= " failed to execute async request.";
+    static final String ASYNC_REQUEST_ERROR_MSG= " failed to execute async request.";
 
     /**
      * Ping failure message.
      */
-    static final String pingErrorMsg= " failed to execute ping.";
+    static final String PING_ERROR_MSG= " failed to execute ping.";
 
     /**
      * Discover failure message.
      */
-    static final String discoverErrorMsg= " failed to execute discover.";
+    static final String DISCOVERY_ERROR_MSG= " failed to execute discover.";
 
     /**
      * Observer add failure message.
      */
-    static final String observerAddErrorMsg= " failed to add observer.";
+    static final String OBSERVER_ADD_ERROR_MSG= " failed to add observer.";
 
     /**
      * Observer remove failure message.
      */
-    static final String observerRemoveErrorMsg= " failed to remove observer.";
+    static final String OBSERVER_REMOVE_ERROR_MSG= " failed to remove observer.";
 
     /**
      * Observer exists failure message.
      */
-    static final String observerExistsErrorMsg= " failed to query observer existence.";
+    static final String OBSERVER_EXISTS_ERROR_MSG= " failed to query observer existence.";
 
     /**
      * The Request Processor issues a request on a CoAP server. The processor blocks
@@ -157,31 +157,31 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + requestErrorMsg, e );
+            throw new EndpointException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
-            throw new RequestException( client + requestErrorMsg, e );
+            throw new RequestException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalResponseException | InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + requestErrorMsg, e );
+            throw new ResponseException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + requestErrorMsg, e );
+            throw new UriException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + requestErrorMsg, e );
+            throw new NoResponseException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + requestErrorMsg, e );
+            throw new ClientErrorResponseException( client + REQUEST_ERROR_MSG, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + requestErrorMsg, e );
+            throw new ServerErrorResponseException( client + REQUEST_ERROR_MSG, e );
         }
     }
 
@@ -214,35 +214,35 @@ public class ClientOperations
         }
         catch ( InternalEndpointException e )
         {
-            throw new EndpointException( client + AsyncRequestErrorMsg, e );
+            throw new EndpointException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
-            throw new RequestException( client + AsyncRequestErrorMsg, e );
+            throw new RequestException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + AsyncRequestErrorMsg, e );
+            throw new InvalidHandlerNameException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + AsyncRequestErrorMsg, e );
+            throw new UriException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalInvalidResponseCodeException e )
         {
-            throw new ResponseException( client + AsyncRequestErrorMsg, e );
+            throw new ResponseException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + AsyncRequestErrorMsg, e );
+            throw new NoResponseException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ClientErrorResponseException( client + AsyncRequestErrorMsg, e );
+            throw new ClientErrorResponseException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + AsyncRequestErrorMsg, e );
+            throw new ServerErrorResponseException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
     }
 
@@ -265,11 +265,11 @@ public class ClientOperations
         }
         catch ( ConnectorException | IOException e )
         {
-            throw new EndpointException( client + pingErrorMsg, e );
+            throw new EndpointException( client + PING_ERROR_MSG, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + pingErrorMsg, e );
+            throw new UriException( client + PING_ERROR_MSG, e );
         }
     }
 
@@ -293,35 +293,35 @@ public class ClientOperations
         }
         catch ( IOException | ConnectorException e )
         {
-            throw new EndpointException( client + discoverErrorMsg, e );
+            throw new EndpointException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + discoverErrorMsg, e );
+            throw new UriException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
         {
-            throw new ResponseException( client + discoverErrorMsg, e );
+            throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalNoResponseException e )
         {
-            throw new NoResponseException( client + discoverErrorMsg, e );
+            throw new NoResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalClientErrorResponseException e )
         {
-            throw new ResponseException( client + discoverErrorMsg, e );
+            throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
-            throw new ServerErrorResponseException( client + discoverErrorMsg, e );
+            throw new ServerErrorResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalInvalidRequestCodeException e )
         {
-            throw new InvalidRequestCodeException( client + discoverErrorMsg, e );
+            throw new InvalidRequestCodeException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalRequestException e )
         {
-            throw new RequestException( client + discoverErrorMsg, e );
+            throw new RequestException( client + DISCOVERY_ERROR_MSG, e );
         }
         ConcurrentSkipListSet< DiscoveredResource > resultSet= new ConcurrentSkipListSet<>();
         for ( WebLink link : links )
@@ -362,15 +362,15 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + observerAddErrorMsg, e );
+            throw new UriException( client + OBSERVER_ADD_ERROR_MSG, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + observerAddErrorMsg, e );
+            throw new InvalidObserverException( client + OBSERVER_ADD_ERROR_MSG, e );
         }
         catch ( InternalInvalidHandlerNameException e )
         {
-            throw new InvalidHandlerNameException( client + observerAddErrorMsg, e );
+            throw new InvalidHandlerNameException( client + OBSERVER_ADD_ERROR_MSG, e );
         }
     }
 
@@ -392,11 +392,11 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + observerRemoveErrorMsg, e );
+            throw new UriException( client + OBSERVER_REMOVE_ERROR_MSG, e );
         }
         catch ( InternalInvalidObserverException e )
         {
-            throw new InvalidObserverException( client + observerRemoveErrorMsg, e );
+            throw new InvalidObserverException( client + OBSERVER_REMOVE_ERROR_MSG, e );
         }
     }
 
@@ -418,7 +418,7 @@ public class ClientOperations
         }
         catch ( InternalUriException e )
         {
-            throw new UriException( client + observerExistsErrorMsg, e );
+            throw new UriException( client + OBSERVER_EXISTS_ERROR_MSG, e );
         }
     }
 

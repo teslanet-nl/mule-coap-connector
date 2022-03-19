@@ -81,6 +81,7 @@ import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestParams;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestType;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverExistsParams;
@@ -1074,7 +1075,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 confirmable= requestConfig.isConfirmable();
             }
             requestCode= Code.GET;
-            resourcePath= "/.well-known/core";
+            resourcePath= Defs.COAP_URI_WELLKNOWN_CORE;
         }
 
         /**

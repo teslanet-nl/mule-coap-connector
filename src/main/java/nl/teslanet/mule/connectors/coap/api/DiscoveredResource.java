@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * information given by the server such as the resource uri and attributes.
  * The class is immutable.
  */
-public final class DiscoveredResource implements Comparable< DiscoveredResource >,  Serializable
+public final class DiscoveredResource implements Comparable< DiscoveredResource >, Serializable
 {
     /**
      * Version ID.
@@ -84,29 +84,24 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     /**
      * HashCode, that will be set to value unequal to zero when needed.
      */
-    private transient final AtomicInteger hashCode= new AtomicInteger();
+    private final transient AtomicInteger hashCode= new AtomicInteger();
 
     /**
      * The Comparator of lists.
      */
-    public static final Comparator< List< String > > LISTCOMPARATOR= new Comparator< List< String > >()
-        {
+    public static final Comparator< List< String > > LISTCOMPARATOR= ( o1, o2 ) -> {
 
-            @Override
-            public int compare( List< String > o1, List< String > o2 )
-            {
-                if ( o1 == o2 ) return 0;
-                if ( o1.size() != o2.size() ) return( o1.size() < o2.size() ? -1 : 1 );
-                Iterator< String > it1= o1.iterator();
-                Iterator< String > it2= o2.iterator();
-                int result= 0;
-                while ( result == 0 && it1.hasNext() && it2.hasNext() )
-                {
-                    result= Objects.compare( it1.next(), it2.next(), Comparator.nullsLast( Comparator.naturalOrder() ) );
-                }
-                return result;
-            }
-        };
+        if ( o1 == o2 ) return 0;
+        if ( o1.size() != o2.size() ) return( o1.size() < o2.size() ? -1 : 1 );
+        Iterator< String > it1= o1.iterator();
+        Iterator< String > it2= o2.iterator();
+        int result= 0;
+        while ( result == 0 && it1.hasNext() && it2.hasNext() )
+        {
+            result= Objects.compare( it1.next(), it2.next(), Comparator.nullsLast( Comparator.naturalOrder() ) );
+        }
+        return result;
+    };
 
     /**
      * The Comparator.

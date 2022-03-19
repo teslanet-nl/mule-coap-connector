@@ -422,7 +422,7 @@ public class MessageUtils
     {
         if ( bytes == null || bytes.length == 0 )
         {
-            return null;
+            return OptionUtils.EMPTY_BYTES;
         }
         final byte[] result= new byte [bytes.length];
         for ( int i= 0; i < bytes.length; i++ )
