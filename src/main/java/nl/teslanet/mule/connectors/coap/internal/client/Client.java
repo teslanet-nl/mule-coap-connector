@@ -1384,7 +1384,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             request.setOptions( buildResourceUri() );
             if ( observe != null )
             {
-                if ( observe )
+                if ( observe.booleanValue() )
                 {
                     request.setObserve();
                 }

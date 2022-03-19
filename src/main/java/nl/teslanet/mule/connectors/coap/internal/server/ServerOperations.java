@@ -23,9 +23,10 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -143,7 +144,7 @@ public class ServerOperations
      * @throws InvalidResourceUriException When given resource uri is not valid
      */
     @Throws( { ServerOperationErrorProvider.class } )
-    public Boolean resourceExists( @Config
+    public boolean resourceExists( @Config
     Server server,
         @Alias( "pathPattern" )
         @Summary( "If any resources that apply to the path-pattern exist true is retuned, otherwise false." )
@@ -159,7 +160,6 @@ public class ServerOperations
         return !found.isEmpty();
     }
 
-    //TODO unit test, test performance
     /**
      * Returns a list of uri's of the resources, that match given uri pattern. 
      * @param server The server instance to list resources of.
@@ -168,10 +168,10 @@ public class ServerOperations
      * @throws InvalidResourceUriException Thrown when given uri pattern is not valid.
      */
     @Throws( { ServerOperationErrorProvider.class } )
-    public List< String > resourceList( 
+    public Set< String > resourceList( 
         @Config Server server,
         @Alias( "pathPattern" )
-        @Summary( "Paths of the resources that apply to the path-pattern are listed and returned." )
+        @Summary( "Get the set of paths of the resources that apply to the path-pattern." )
         String pathPattern
     ) throws InvalidResourceUriException
     {
@@ -179,11 +179,11 @@ public class ServerOperations
         {
             throw new InvalidResourceUriException( server + ": resource list operation failed", "null" );
         }
-        List< String > uriList= new ArrayList<>();
+        List< String > uriList= new LinkedList<>();
         for ( ServedResource found : server.getRegistry().findResources( pathPattern ) )
         {
             uriList.add( found.getURI() );
         }
-        return new CopyOnWriteArrayList<>( uriList );
+        return new ConcurrentSkipListSet<>( uriList );
     }
 }

@@ -46,6 +46,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				</coap:sub-resources>
 			</coap:resource>
 			<coap:resource resourceName="exists" post="true" />
+			<coap:resource resourceName="list" post="true" />
 			<coap:resource resourceName="service">
 				<coap:sub-resources>
 					<coap:resource resourceName="resource1" get="true"
@@ -152,6 +153,16 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 				responsePayload="#[ payload as String ]" />
 		</coap:listener>
 		<coap:resource-exists config-ref="config"
+			pathPattern="#[ payload ]" />
+	</flow>
+	
+	<flow name="listen_list">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/list" config-ref="config">
+			<coap:response responseCode="CONTENT"
+				responsePayload="#[ payload joinBy (',') ]" />
+		</coap:listener>
+		<coap:resource-list config-ref="config"
 			pathPattern="#[ payload ]" />
 	</flow>
 
