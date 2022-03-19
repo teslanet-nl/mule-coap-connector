@@ -71,6 +71,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
  * The endpoints make the server resources available to clients.
  */
 @Configuration( name= "server" )
+//TODO upgrade needed to mule 4.3: @NoImplicit
 @Sources( value=
 { Listener.class } )
 @Operations( ServerOperations.class )

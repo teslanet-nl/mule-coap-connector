@@ -97,6 +97,7 @@ public class ServedResource extends CoapResource
      */
     public ServedResource( ResourceConfig resource )
     {
+        //TODO add / replacement
         super( resource.getResourceName() );
 
         //TODO make use of visible/invisible?
