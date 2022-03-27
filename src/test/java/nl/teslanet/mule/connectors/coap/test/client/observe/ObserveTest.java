@@ -139,6 +139,9 @@ public class ObserveTest extends AbstractClientTestCase
             if ( i == 0 ) obsOffset= attributes.getOptions().getObserve().intValue();
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
+            assertEquals( "observation nr: " + i + " has wrong requestType", "CONFIRMABLE", attributes.getRequestType() );
+            if ( i == 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "ACKNOWLEDGEMENT", attributes.getResponseType() );
+            if ( i > 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "NON_CONFIRMABLE", attributes.getResponseType() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
             assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
@@ -221,6 +224,9 @@ public class ObserveTest extends AbstractClientTestCase
             if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
+            assertEquals( "observation nr: " + i + " has wrong requestType", "CONFIRMABLE", attributes.getRequestType() );
+            if ( i == 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "ACKNOWLEDGEMENT", attributes.getResponseType() );
+            if ( i > 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "NON_CONFIRMABLE", attributes.getResponseType() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
             assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }
@@ -302,6 +308,9 @@ public class ObserveTest extends AbstractClientTestCase
             if ( i == 1 ) obsOffset= attributes.getOptions().getObserve().intValue() - 1;
             assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
             assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
+            assertEquals( "observation nr: " + i + " has wrong requestType", "CONFIRMABLE", attributes.getRequestType() );
+            if ( i == 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "ACKNOWLEDGEMENT", attributes.getResponseType() );
+            if ( i > 0 ) assertEquals( "observation nr: " + i + " has wrong responseType", "NON_CONFIRMABLE", attributes.getResponseType() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), new String( (byte[]) response.getPayload().getValue() ) );
             assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, attributes.getOptions().getObserve().intValue() );
         }

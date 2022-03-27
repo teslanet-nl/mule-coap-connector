@@ -41,6 +41,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -145,7 +146,7 @@ public class ResponseTest extends AbstractClientTestCase
             CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-            assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
+            assertEquals( "wrong response payload", expectedResponsePayload, new String( payload, Defs.COAP_CHARSET ) );
             assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
             //TODO test for property clienterror, servererror
         }

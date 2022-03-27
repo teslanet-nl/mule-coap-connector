@@ -472,9 +472,6 @@
         <type name="nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="localAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -490,6 +487,9 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="requestType">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -498,9 +498,6 @@
         <type name="nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="confirmable">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="localAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -519,10 +516,16 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="requestType">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="requestUri">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseType">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="success">

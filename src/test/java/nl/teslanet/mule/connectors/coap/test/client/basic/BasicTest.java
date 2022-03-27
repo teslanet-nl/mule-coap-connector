@@ -125,7 +125,7 @@ public class BasicTest extends AbstractClientTestCase
      * @throws Exception should not happen in this test
      */
     @Test
-    public void testRequest() throws Exception
+    public void testConRequest() throws Exception
     {
         CoreEvent result= flowRunner( flowName ).keepStreamsOpen().withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
@@ -146,4 +146,29 @@ public class BasicTest extends AbstractClientTestCase
         );
     }
 
+    /**
+     * Test CoAP request
+     * @throws Exception should not happen in this test
+     */
+    @Test
+    public void testNonRequest() throws Exception
+    {
+        CoreEvent result= flowRunner( flowName + "_non").keepStreamsOpen().withPayload( "nothing_important" ).run();
+        Message response= result.getMessage();
+
+        assertNotNull( "no mule event", response );
+        CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong message type", "NON_CONFIRMABLE", attributes.getRequestType() );
+        assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong response type", "NON_CONFIRMABLE", attributes.getResponseType() );
+        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
+        assertEquals(
+            "wrong response payload",
+            expectedPayload,
+            responsePayload == null ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
+        );
+    }
 }

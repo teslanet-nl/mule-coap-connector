@@ -84,26 +84,24 @@ public class RequestConfirmableTest extends AbstractServerTestCase
     @Test
     public void testCON() throws ConnectorException, IOException
     {
-        String expected= "true";
         setClientUri( resourcePath );
         Request request= new Request( requestCode, Type.CON );
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request confirmable has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request type has wrong value", "CONFIRMABLE", response.getResponseText() );
     }
 
     @Test
     public void testNon() throws ConnectorException, IOException
     {
-        String expected= "false";
         setClientUri( resourcePath );
         Request request= new Request( requestCode, Type.NON );
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request confirmable has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request confirmable has wrong value", "NON_CONFIRMABLE", response.getResponseText() );
     }
 }
