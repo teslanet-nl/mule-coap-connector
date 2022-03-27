@@ -38,19 +38,19 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsA
 public class DefaultResponseAttributes extends CoAPResponseAttributes
 {
     /**
+     * @param requestType the requestType to set
+     */
+    public void setRequestType( String requestType )
+    {
+        this.requestType= requestType;
+    }
+
+    /**
      * @param requestCode the requestCode to set
      */
     public void setRequestCode( String requestCode )
     {
         this.requestCode= requestCode;
-    }
-
-    /**
-     * @param confirmable the confirmable to set
-     */
-    public void setConfirmable( Boolean confirmable )
-    {
-        this.confirmable= confirmable;
     }
 
     /**
@@ -94,11 +94,19 @@ public class DefaultResponseAttributes extends CoAPResponseAttributes
     }
 
     /**
-     * @param string the responseCode to set
+     * @param responseType the responseCode to set
      */
-    public void setResponseCode( String string )
+    public void setResponseType( String responseType )
     {
-        this.responseCode= string;
+        this.responseType= responseType;
+    }
+
+    /**
+     * @param responseCode the responseCode to set
+     */
+    public void setResponseCode( String responseCode )
+    {
+        this.responseCode= responseCode;
     }
 
     /**

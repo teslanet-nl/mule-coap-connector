@@ -28,11 +28,14 @@ import static org.junit.Assert.assertThrows;
 
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
 import org.junit.Test;
 
+import nl.teslanet.mule.connectors.coap.api.CoAPMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -43,6 +46,56 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRespo
  */
 public class AttributeUtilsCompletenessTest
 {
+    /**
+     * Test whether all message type attributes can be translated to Cf Code.
+     * @throws InternalInvalidMessageTypeException 
+     */
+    @Test
+    public void testToMessageType() throws InternalInvalidMessageTypeException
+    {
+        for ( CoAPMessageType type : CoAPMessageType.values() )
+        {
+            assertNotNull( type + " translation to Cf Code failed", AttributeUtils.toMessageType( type ) );
+        }
+    }
+
+    /**
+     * Test whether null throws NPE.
+     * @throws InternalInvalidMessageTypeException
+     */
+    @Test
+    public void testToMessageTypeNull() throws InternalInvalidMessageTypeException
+    {
+        assertThrows( "translation null to Cf Code did not throw exception", NullPointerException.class, () -> {
+            AttributeUtils.toMessageType( null );
+        } );
+    }
+
+    /**
+     * Test whether all requestCode attributes can be translated to Cf Code.
+     * @throws InternalInvalidMessageTypeException
+     */
+    @Test
+    public void testToMessageTypeAttribute() throws InternalInvalidMessageTypeException
+    {
+        for ( Type type : Type.values() )
+        {
+            assertNotNull( type + " translation to requestCode attribute failed", AttributeUtils.toMessageTypeAttribute( type ) );
+        }
+    }
+
+    /**
+     * Test whether null throws NPE.
+     * @throws InternalInvalidMessageTypeException
+     */
+    @Test
+    public void testToToMessageTypeAttributeNull() throws InternalInvalidMessageTypeException
+    {
+        assertThrows( "translation null to requestCode attribute did not throw exception", NullPointerException.class, () -> {
+            AttributeUtils.toMessageTypeAttribute( null );
+        } );
+    }
+
     /**
      * Test whether all requestCode attributes can be translated to Cf Code.
      * @throws InternalInvalidRequestCodeException

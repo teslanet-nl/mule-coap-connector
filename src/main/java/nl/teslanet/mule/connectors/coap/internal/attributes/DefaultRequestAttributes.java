@@ -38,19 +38,19 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 public class DefaultRequestAttributes extends CoAPRequestAttributes
 {
     /**
+     * @param requestType The request type to set.
+     */
+    public void setRequestType( String requestType )
+    {
+        this.requestType= requestType;
+    }
+
+    /**
      * @param requestCode The requestCode to set.
      */
     public void setRequestCode( String requestCode )
     {
         this.requestCode= requestCode;
-    }
-
-    /**
-     * @param confirmable The confirmable to set.
-     */
-    public void setConfirmable( Boolean confirmable )
-    {
-        this.confirmable= confirmable;
     }
 
     /**

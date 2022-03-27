@@ -39,8 +39,11 @@ import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 
@@ -381,14 +384,24 @@ public class ServedResource extends CoapResource
 
     }
 
-    private DefaultRequestAttributes createRequestAttributes( CoapExchange coapExchange ) throws InternalInvalidOptionValueException
+    /**
+     * Create request attributes.
+     * @param coapExchange
+     * @return The attributes to add to the mule message.
+     * @throws InternalInvalidOptionValueException When request options could not be interpreted.
+     * @throws InternalInvalidMessageTypeException When request type could not be interpreted.
+     * @throws InternalInvalidRequestCodeException When request code could not be interpreted.
+     */
+    private DefaultRequestAttributes createRequestAttributes( CoapExchange coapExchange ) throws InternalInvalidOptionValueException,
+        InternalInvalidMessageTypeException,
+        InternalInvalidRequestCodeException
     {
         Exchange exchange= coapExchange.advanced();
         DefaultRequestAttributes attributes= new DefaultRequestAttributes();
-        attributes.setRequestCode( coapExchange.getRequestCode().toString() );
-        attributes.setConfirmable( exchange.getRequest().isConfirmable() );
+        attributes.setRequestType( AttributeUtils.toMessageTypeAttribute( coapExchange.advanced().getRequest().getType() ).name() );
+        attributes.setRequestCode( AttributeUtils.toRequestCodeAttribute( coapExchange.getRequestCode() ).name() );
         attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
-        attributes.setRemoteAddress( coapExchange.getSourceAddress().toString() + ":" + coapExchange.getSourcePort() );
+        attributes.setRemoteAddress( coapExchange.getSourceSocketAddress().toString() );
         attributes.setRequestUri( exchange.getRequest().getURI() );
         attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
         attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKey() : null ) );

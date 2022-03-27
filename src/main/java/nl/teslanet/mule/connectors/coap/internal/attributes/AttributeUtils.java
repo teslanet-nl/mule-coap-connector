@@ -27,10 +27,13 @@ import java.util.List;
 
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
 
+import nl.teslanet.mule.connectors.coap.api.CoAPMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -47,6 +50,52 @@ public class AttributeUtils
     private AttributeUtils()
     {
         //NOOP
+    }
+
+    /**
+     * Translate to Cf message type..
+     * @param type to convert
+     * @return the converted message type
+     * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
+     */
+    public static Type toMessageType( CoAPMessageType type ) throws InternalInvalidMessageTypeException
+    {
+        switch ( type )
+        {
+            case CONFIRMABLE:
+                return Type.CON;
+            case NON_CONFIRMABLE:
+                return Type.NON;
+            case ACKNOWLEDGEMENT:
+                return Type.ACK;
+            case RESET:
+                return Type.RST;
+            default:
+                throw new InternalInvalidMessageTypeException( "Invalid message type { " + type + " }" );
+        }
+    }
+
+    /**
+     * Translate Cf message type to messageType attribute.
+     * @param type to convert
+     * @return the converted message attribute
+     * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
+     */
+    public static CoAPMessageType toMessageTypeAttribute( Type type ) throws InternalInvalidMessageTypeException
+    {
+        switch ( type )
+        {
+            case CON:
+                return CoAPMessageType.CONFIRMABLE;
+            case NON:
+                return CoAPMessageType.NON_CONFIRMABLE;
+            case ACK:
+                return CoAPMessageType.ACKNOWLEDGEMENT;
+            case RST:
+                return CoAPMessageType.RESET;
+            default:
+                throw new InternalInvalidMessageTypeException( "Invalid message type { " + type + " }" );
+        }
     }
 
     /**
@@ -74,13 +123,13 @@ public class AttributeUtils
 
     /**
      * Translate Cf request Code to requestCode attribute.
-     * @param requestCode to convert
-     * @return the converted requestCode attribute
+     * @param requestCodeAttribute to convert
+     * @return the converted requestCode
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static CoAPRequestCode toRequestCodeAttribute( Code requestCode ) throws InternalInvalidRequestCodeException
+    public static CoAPRequestCode toRequestCodeAttribute( Code code ) throws InternalInvalidRequestCodeException
     {
-        switch ( requestCode )
+        switch ( code )
         {
             case GET:
                 return CoAPRequestCode.GET;
@@ -91,7 +140,7 @@ public class AttributeUtils
             case DELETE:
                 return CoAPRequestCode.DELETE;
             default:
-                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCode + " }" );
+                throw new InternalInvalidRequestCodeException( "invalid request code { " + code + " }" );
         }
     }
 

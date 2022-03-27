@@ -31,7 +31,6 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
@@ -207,7 +206,7 @@ public class ObserveRelation implements CoapHandler
         }
         try
         {
-            processor.process( requestUri, CoAPRequestCode.GET, null );
+            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), null );
         }
         catch ( InternalResponseException e )
         {
@@ -223,7 +222,7 @@ public class ObserveRelation implements CoapHandler
     {
         try
         {
-            processor.process( requestUri, CoAPRequestCode.GET, response );
+            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), response );
         }
         catch ( InternalResponseException e )
         {

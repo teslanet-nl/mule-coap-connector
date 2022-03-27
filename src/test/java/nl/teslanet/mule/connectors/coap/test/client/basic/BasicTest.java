@@ -43,7 +43,6 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -62,19 +61,14 @@ public class BasicTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/get_me?test=sync", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=sync" },
-                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1/basic/do_not_get_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/post_me?test=sync", "CREATED", "POST called on: coap://localhost/basic/post_me?test=sync" },
-                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1/basic/do_not_post_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=sync" },
-                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1/basic/do_not_put_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                {
-                    "delete_me",
-                    CoAPRequestCode.DELETE.name(),
-                    "coap://127.0.0.1/basic/delete_me?test=sync",
-                    "DELETED",
-                    "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
-                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
+                { "get_me", "GET", "coap://127.0.0.1/basic/get_me?test=sync", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=sync" },
+                { "do_not_get_me", "GET", "coap://127.0.0.1/basic/do_not_get_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "post_me", "POST", "coap://127.0.0.1/basic/post_me?test=sync", "CREATED", "POST called on: coap://localhost/basic/post_me?test=sync" },
+                { "do_not_post_me", "POST", "coap://127.0.0.1/basic/do_not_post_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "put_me", "PUT", "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=sync" },
+                { "do_not_put_me", "PUT", "coap://127.0.0.1/basic/do_not_put_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me?test=sync", "DELETED", "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
+                { "do_not_delete_me", "DELETE", "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
         );
     }
 
@@ -140,8 +134,10 @@ public class BasicTest extends AbstractClientTestCase
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
         assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong message type", "CONFIRMABLE", attributes.getRequestType() );
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong response type", "ACKNOWLEDGEMENT", attributes.getResponseType() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertEquals(
             "wrong response payload",

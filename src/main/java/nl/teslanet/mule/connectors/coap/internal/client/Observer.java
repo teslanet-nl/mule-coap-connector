@@ -67,7 +67,6 @@ public class Observer extends Source< InputStream, CoAPResponseAttributes >
     private ObserverConfig observerConfig;
 
     //TODO add options config?
-    //TODO one relation namespace for dynamic and static observe, does coap allow for multiple uri observe from the same endooint?
     //TODO add refresh observe feature
     /**
      * The relation that has been established
@@ -91,8 +90,8 @@ public class Observer extends Source< InputStream, CoAPResponseAttributes >
         {
             throw new StartException( this + " failed to start, invalid uri. ", e );
         }
-        relation= new ObserveRelation( this.toString(), client.getCoapClient(), requestBuilder, ( requestUri, requestCode, response ) -> {
-            client.processMuleFlow( requestUri, requestCode, response, sourceCallback );
+        relation= new ObserveRelation( this.toString(), client.getCoapClient(), requestBuilder, ( requestUri, requestType, requestCode, response ) -> {
+            client.processMuleFlow( requestUri, requestType, requestCode, response, sourceCallback );
         } );
         relation.start();
         logger.info( this + " started." );

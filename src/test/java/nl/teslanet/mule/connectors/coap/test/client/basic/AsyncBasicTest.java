@@ -145,8 +145,10 @@ public class AsyncBasicTest extends AbstractClientTestCase
         response= (Message) spy.getEvents().get( 0 ).getContent();
         assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
         CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertEquals( "wrong message type", "CONFIRMABLE", attributes.getRequestType() );
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong response type", "ACKNOWLEDGEMENT", attributes.getResponseType() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
         assertArrayEquals(
             "wrong response payload",

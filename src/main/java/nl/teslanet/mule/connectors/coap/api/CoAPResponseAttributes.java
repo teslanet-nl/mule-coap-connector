@@ -37,14 +37,14 @@ import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 public class CoAPResponseAttributes
 {
     /**
+     * The CoAP request type that was issued.
+     */
+    protected String requestType= null;
+
+    /**
      * The CoAP request code that was issued.
      */
     protected String requestCode= null;
-
-    /**
-     * When true, the request issued was confirmable.
-     */
-    protected boolean confirmable= false;
 
     /**
      * The client address the request was issued from. 
@@ -67,6 +67,11 @@ public class CoAPResponseAttributes
     protected boolean success= false;
 
     /**
+     * The CoAP response type of the server response.
+     */
+    protected String responseType= null;
+
+    /**
      * The CoAP response code of the server response.
      */
     protected String responseCode= null;
@@ -87,6 +92,14 @@ public class CoAPResponseAttributes
     protected ResponseOptionsAttributes options= null;
 
     /**
+     * @return The requestType
+     */
+    public String getRequestType()
+    {
+        return requestType;
+    }
+
+    /**
      * @return The requestCode
      */
     public String getRequestCode()
@@ -94,13 +107,6 @@ public class CoAPResponseAttributes
         return requestCode;
     }
 
-    /**
-     * @return the confirmable
-     */
-    public Boolean getConfirmable()
-    {
-        return confirmable;
-    }
 
     /**
      * @return the localAddress
@@ -140,6 +146,14 @@ public class CoAPResponseAttributes
     public boolean isNotification()
     {
         return notification;
+    }
+
+    /**
+     * @return The responseType
+     */
+    public String getResponseType()
+    {
+        return responseType;
     }
 
     /**

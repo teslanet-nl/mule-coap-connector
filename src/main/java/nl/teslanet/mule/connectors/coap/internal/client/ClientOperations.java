@@ -70,6 +70,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvide
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
@@ -159,7 +160,7 @@ public class ClientOperations
         {
             throw new EndpointException( client + REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
+        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
         {
             throw new RequestException( client + REQUEST_ERROR_MSG, e );
         }
@@ -216,7 +217,7 @@ public class ClientOperations
         {
             throw new EndpointException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
+        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
             throw new RequestException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
