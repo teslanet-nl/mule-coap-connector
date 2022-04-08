@@ -124,6 +124,15 @@ public final class ETag implements Comparable< ETag >
     }
 
     /**
+     * Constructs an etag from a Integer value.
+     * @param intValue The value to create an ETag from.
+     */
+    public ETag( Integer intValue )
+    {
+        this.value= OptionUtils.toBytes( intValue );
+    }
+
+    /**
      * Constructs an etag from a Long value.
      * @param longValue The value to create an ETag from.
      */
@@ -189,6 +198,16 @@ public final class ETag implements Comparable< ETag >
     public static ETag valueOf( byte[] bytes ) throws InvalidETagException
     {
         return new ETag( bytes );
+    }
+
+    /**
+     * Static function that creates etag from Integer.
+     * @param intValue The integer value to create etag from.
+     * @return The etag object created.
+     */
+    public static ETag valueOf( Integer intValue )
+    {
+        return new ETag( intValue );
     }
 
     /**

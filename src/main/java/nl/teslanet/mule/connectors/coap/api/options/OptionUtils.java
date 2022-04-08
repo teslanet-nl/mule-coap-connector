@@ -200,8 +200,21 @@ public class OptionUtils
     }
 
     /**
-     * Converts an etag value to a Long containing the hexadecimal representation.
-     * Hexadecimal values a-f will be lower case.
+     * Converts an etag value from Integer.
+     * @param intValue The etag value.
+     * @return The string containing the hexadecimal representation.
+     */
+    public static byte[] toBytes( Integer intValue )
+    {
+        if ( intValue == null )
+        {
+            return OptionUtils.EMPTY_BYTES;
+        }
+        return toBytes( (int) intValue );
+    }
+
+    /**
+     * Converts an etag value from Long.
      * @param longValue The etag value.
      * @return The string containing the hexadecimal representation.
      */
