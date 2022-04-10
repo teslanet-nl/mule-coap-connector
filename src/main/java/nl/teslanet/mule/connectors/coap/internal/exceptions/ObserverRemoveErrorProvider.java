@@ -47,6 +47,7 @@ public class ObserverRemoveErrorProvider implements ErrorTypeProvider
     {
         Set< ErrorTypeDefinition > errors= new HashSet<>();
         errors.add( Errors.INVALID_URI );
+        errors.add( Errors.INVALID_OBSERVER );
         return errors;
     }
 }
