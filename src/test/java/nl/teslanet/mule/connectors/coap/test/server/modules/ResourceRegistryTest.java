@@ -55,7 +55,7 @@ public class ResourceRegistryTest
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry;
 
-        registry= new ResourceRegistry( "test_server", root );
+        registry= new ResourceRegistry( root );
         assertNotNull( registry );
         assertEquals( "register should not expose root resource", null, registry.getResource( "" ) );
     }
@@ -64,7 +64,7 @@ public class ResourceRegistryTest
     public void testConstructorWithoutRootResource()
     {
         InternalResourceRegistryException e= assertThrows( InternalResourceRegistryException.class, () -> {
-            new ResourceRegistry( "test_server", null );
+            new ResourceRegistry( null );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct a ResourceRegistry without root resource" ) );
     }
@@ -73,7 +73,7 @@ public class ResourceRegistryTest
     public void testAddResourceWithoutName() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig= new ResourceConfig();
 
         NullPointerException e= assertThrows( NullPointerException.class, () -> {
@@ -86,7 +86,7 @@ public class ResourceRegistryTest
     public void testAddResourceConfig() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -126,7 +126,7 @@ public class ResourceRegistryTest
     public void testAddResourceParams() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceParams resourceParams;
         String uri1= "/resource1";
         String uri2= "/resource1/resource2";
@@ -162,7 +162,7 @@ public class ResourceRegistryTest
     public void testRemoveResource1() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -206,7 +206,7 @@ public class ResourceRegistryTest
     public void testRemoveResource2() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -251,7 +251,7 @@ public class ResourceRegistryTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         OperationalListener listener;
         String uri1= "/resource1";
         String uri2= "/resource1/resource2";
@@ -280,7 +280,7 @@ public class ResourceRegistryTest
     public void testCallBack() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
@@ -353,7 +353,7 @@ public class ResourceRegistryTest
     public void testCallBackWithRequestCodeFlags() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
@@ -393,7 +393,7 @@ public class ResourceRegistryTest
     public void testCallBackWithWildcard1() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         ResourceConfig resourceConfig;
@@ -456,7 +456,7 @@ public class ResourceRegistryTest
     public void testCallBackWithWildcardAndRequestCodeFlags1() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
@@ -534,7 +534,7 @@ public class ResourceRegistryTest
     public void testCallBackWithWildcard2() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
@@ -607,7 +607,7 @@ public class ResourceRegistryTest
     public void testCallBackWithWildcard3() throws InternalResourceUriException, InternalResourceRegistryException, InternalUriPatternException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         TestSourceCallBack callback1= new TestSourceCallBack();
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
@@ -681,7 +681,7 @@ public class ResourceRegistryTest
     public void testGetResourceNonexistent() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -718,7 +718,7 @@ public class ResourceRegistryTest
     public void testGetResource() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -763,7 +763,7 @@ public class ResourceRegistryTest
     public void testFindResources() throws InternalResourceUriException, InternalResourceRegistryException
     {
         CoapResource root= new CoapResource( "" );
-        ResourceRegistry registry= new ResourceRegistry( "test_server", root );
+        ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";

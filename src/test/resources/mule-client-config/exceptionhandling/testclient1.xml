@@ -58,8 +58,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="handler1">
-		<coap:response-handler config-ref="config"
-			handlerName="catching_handler" />
+		<coap:response-listener config-ref="config"
+			responseHandler="catching_handler" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -97,8 +97,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="handler2">
-		<coap:response-handler config-ref="config"
-			handlerName="failing_handler" />
+		<coap:response-listener config-ref="config"
+			responseHandler="failing_handler" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

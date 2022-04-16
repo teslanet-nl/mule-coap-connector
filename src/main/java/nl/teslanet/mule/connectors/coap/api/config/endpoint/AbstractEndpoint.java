@@ -42,7 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl;
 
-
+//TODO NoImplicit ? -> not when implicit endpoint is reused on multiple  clients
 /**
  * Endpoint configuration parameters
  *

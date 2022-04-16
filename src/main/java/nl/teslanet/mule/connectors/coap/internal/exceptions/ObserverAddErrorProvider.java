@@ -46,7 +46,7 @@ public class ObserverAddErrorProvider implements ErrorTypeProvider
     public Set< ErrorTypeDefinition > getErrorTypes()
     {
         Set< ErrorTypeDefinition > errors= new HashSet<>();
-        errors.add( Errors.INVALID_HANDLER_NAME );
+        errors.add( Errors.INVALID_HANDLER );
         errors.add( Errors.INVALID_URI );
         errors.add( Errors.INVALID_OBSERVER );
         return errors;

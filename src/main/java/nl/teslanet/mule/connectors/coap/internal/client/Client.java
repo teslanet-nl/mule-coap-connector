@@ -104,7 +104,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstruction
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -127,7 +127,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
  */
 @Configuration( name= "client" )
 @Sources( value=
-{ Observer.class, ResponseHandler.class } )
+{ Observer.class, ResponseListener.class } )
 @Operations( ClientOperations.class )
 public class Client implements Initialisable, Disposable, Startable, Stoppable
 {
@@ -323,12 +323,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Add handler to process responses.
      * @param handlerName the name of the handler
      * @param callback the source callback that will process the responses
-     * @throws InternalInvalidHandlerNameException 
+     * @throws InternalInvalidHandlerException 
      */
-    synchronized void addHandler( String handlerName, SourceCallback< InputStream, CoAPResponseAttributes > callback ) throws InternalInvalidHandlerNameException
+    synchronized void addHandler( String handlerName, SourceCallback< InputStream, CoAPResponseAttributes > callback ) throws InternalInvalidHandlerException
     {
-        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name not allowed" );
-        if ( handlers.get( handlerName ) != null ) throw new InternalInvalidHandlerNameException( "responsehandler name { " + handlerName + " } not unique" );
+        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException( "empty response handler name not allowed" );
+        if ( handlers.get( handlerName ) != null ) throw new InternalInvalidHandlerException( "responsehandler name { " + handlerName + " } not unique" );
         handlers.put( handlerName, callback );
     }
 
@@ -336,13 +336,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Get handler that can process async responses.
      * @param handlerName the name of the handler
      * @return The handler with given name.
-     * @throws InternalInvalidHandlerNameException When the handler with given name could not be found. 
+     * @throws InternalInvalidHandlerException When the handler with given name could not be found. 
      */
-    private SourceCallback< InputStream, CoAPResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerNameException
+    private SourceCallback< InputStream, CoAPResponseAttributes > getHandler( String handlerName ) throws InternalInvalidHandlerException
     {
-        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerNameException( "empty response handler name is not allowed" );
+        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException( "empty response handler name is not allowed" );
         SourceCallback< InputStream, CoAPResponseAttributes > handler= handlers.get( handlerName );
-        if ( handler == null ) throw new InternalInvalidHandlerNameException( "response handler { " + handlerName + " } not found." );
+        if ( handler == null ) throw new InternalInvalidHandlerException( "response handler { " + handlerName + " } not found." );
         return handler;
     }
 
@@ -472,7 +472,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param options The request options.
      * @param handlerBuilder Builder containing the name of the handle when the response is handled asynchronously
      * @return The result of the request including payload and attributes.
-     * @throws InternalInvalidHandlerNameException  When the handlerName is not null but does not reference an existing handler. 
+     * @throws InternalInvalidHandlerException  When the handlerName is not null but does not reference an existing handler. 
      * @throws InternalRequestException When the Request could not be issued.
      * @throws InternalResponseException When the received response appears to be invalid and cannot be processed.
      * @throws InternalEndpointException When CoAP communication failed.
@@ -485,7 +485,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidMessageTypeException When request message type is invalid.
      */
     Result< InputStream, CoAPResponseAttributes > doRequest( RequestParams requestParams, RequestOptions options, ResponseHandlerParams handlerBuilder )
-        throws InternalInvalidHandlerNameException,
+        throws InternalInvalidHandlerException,
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
@@ -831,11 +831,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @param handlerBuilder The response handler parameters.
      * @throws InternalInvalidObserverException When the observer parameters are invalid.
      * @throws InternalUriException When the uri parameters of the resource to observe are invalid.
-     * @throws InternalInvalidHandlerNameException When the handler parameters are invalid.
+     * @throws InternalInvalidHandlerException When the handler parameters are invalid.
      */
     synchronized void startObserver( ObserverAddParams params, ResponseHandlerParams handlerBuilder ) throws InternalInvalidObserverException,
         InternalUriException,
-        InternalInvalidHandlerNameException
+        InternalInvalidHandlerException
     {
         SourceCallback< InputStream, CoAPResponseAttributes > handler= getHandler( handlerBuilder.getResponseHandler() );
         CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );

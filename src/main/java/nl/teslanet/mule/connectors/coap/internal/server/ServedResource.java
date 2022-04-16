@@ -34,11 +34,15 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
-import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
@@ -54,6 +58,21 @@ import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
  */
 public class ServedResource extends CoapResource
 {
+    /**
+     * This class logger.
+     */
+    private static final Logger logger= LoggerFactory.getLogger( ServedResource.class );
+
+    /**
+     * Marker for logging error responses.
+     */
+    private static final Marker errorResponseMarker= MarkerFactory.getMarker( "ERROR_RESPONSE" );
+
+    /**
+     * No listener message log format.
+     */
+    private static final String noListenerLogFormat= "NO LISTENER for request { {}, {} }";
+
     /**
      * Regular expression for splitting comma separated values.
      */
@@ -338,6 +357,22 @@ public class ServedResource extends CoapResource
         if ( callback == null )
         {
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
+            if ( logger.isWarnEnabled( errorResponseMarker ) )
+            {
+                try
+                {
+                    logger.warn(
+                        errorResponseMarker,
+                        noListenerLogFormat,
+                        AttributeUtils.toRequestCodeAttribute( exchange.advanced().getCurrentRequest().getCode() ),
+                        exchange.advanced().getCurrentRequest().getURI()
+                    );
+                }
+                catch ( InternalInvalidRequestCodeException e )
+                {
+                    logger.warn( errorResponseMarker, noListenerLogFormat, exchange.advanced().getCurrentRequest().getCode(), exchange.advanced().getCurrentRequest().getURI() );
+                }
+            }
             return;
         }
         if ( earlyAck )

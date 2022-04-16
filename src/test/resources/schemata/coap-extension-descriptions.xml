@@ -365,11 +365,11 @@
         </operation>
     </operations>
     <sources>
-        <source name="ResponseHandler">
+        <source name="ResponseListener">
             <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.]]></description>
             <parameters>
-                <parameter name="handlerName">
-                    <description><![CDATA[The name of the handler by which it is referenced by observers and async requestst.]]></description>
+                <parameter name="responseHandler">
+                    <description><![CDATA[The handler that will deliver responses to process of observers and async requests.]]></description>
                 </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>

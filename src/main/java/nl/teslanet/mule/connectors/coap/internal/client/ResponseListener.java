@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
 
@@ -46,14 +46,15 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  * The received CoAP messages are delivered to the handlers mule-flow.
  */
 @MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes >
+public class ResponseListener extends Source< InputStream, CoAPResponseAttributes >
 {
 
     /**
      * The logger of this class.
      */
-    private static final Logger logger= LoggerFactory.getLogger( ResponseHandler.class.getCanonicalName() );
+    private static final Logger logger= LoggerFactory.getLogger( ResponseListener.class.getCanonicalName() );
 
+    //TODO change reference to response handler
     /**
      * The client that owns the handler.
      */
@@ -61,11 +62,11 @@ public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes
     private Client client;
 
     /**
-     * The name of the handler by which it is referenced by observers and async requestst.
+     * The handler that will deliver responses to process of observers and async requests.
      */
     @Parameter
     @Expression(ExpressionSupport.NOT_SUPPORTED)
-    private String handlerName;
+    private String responseHandler;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
@@ -75,9 +76,9 @@ public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes
     {
         try
         {
-            client.addHandler( handlerName, sourceCallback );
+            client.addHandler( responseHandler, sourceCallback );
         }
-        catch ( InternalInvalidHandlerNameException e )
+        catch ( InternalInvalidHandlerException e )
         {
             throw new StartException( this + " failed to start, invalid handler name.", e );
         }
@@ -90,7 +91,7 @@ public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes
     @Override
     public void onStop()
     {
-        client.removeHandler( handlerName );
+        client.removeHandler( responseHandler );
         logger.info( this + " stopped." );
 
     }
@@ -101,6 +102,6 @@ public class ResponseHandler extends Source< InputStream, CoAPResponseAttributes
     @Override
     public String toString()
     {
-        return "CoAP ResponseHandler { " + client.getClientName() + "::" + handlerName + " }";
+        return "CoAP ResponseHandler { " + client.getClientName() + "::" + responseHandler + " }";
     }
 }

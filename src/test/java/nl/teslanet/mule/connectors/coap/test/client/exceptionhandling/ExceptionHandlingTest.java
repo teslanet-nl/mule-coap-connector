@@ -45,7 +45,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -250,7 +250,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
         } );
         assertEquals( "wrong exception message", "CoAP Client { config } failed to execute async request.", e.getMessage() );
-        assertEquals( "wrong exception cause", InvalidHandlerNameException.class, e.getCause().getClass() );
+        assertEquals( "wrong exception cause", InvalidHandlerException.class, e.getCause().getClass() );
     }
 
 }

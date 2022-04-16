@@ -121,8 +121,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="handler">
-		<coap:response-handler config-ref="config"
-			handlerName="handler" />
+		<coap:response-listener config-ref="config"
+			responseHandler="handler" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

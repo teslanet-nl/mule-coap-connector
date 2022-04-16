@@ -57,7 +57,7 @@ import nl.teslanet.mule.connectors.coap.api.RequestParams;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidObserverException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.api.error.NoResponseException;
@@ -69,7 +69,7 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerNameException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
@@ -160,7 +160,7 @@ public class ClientOperations
         {
             throw new EndpointException( client + REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalInvalidHandlerNameException | InternalRequestException e )
+        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalInvalidHandlerException | InternalRequestException e )
         {
             throw new RequestException( client + REQUEST_ERROR_MSG, e );
         }
@@ -221,9 +221,9 @@ public class ClientOperations
         {
             throw new RequestException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidHandlerNameException e )
+        catch ( InternalInvalidHandlerException e )
         {
-            throw new InvalidHandlerNameException( client + ASYNC_REQUEST_ERROR_MSG, e );
+            throw new InvalidHandlerException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
         catch ( InternalUriException e )
         {
@@ -369,9 +369,9 @@ public class ClientOperations
         {
             throw new InvalidObserverException( client + OBSERVER_ADD_ERROR_MSG, e );
         }
-        catch ( InternalInvalidHandlerNameException e )
+        catch ( InternalInvalidHandlerException e )
         {
-            throw new InvalidHandlerNameException( client + OBSERVER_ADD_ERROR_MSG, e );
+            throw new InvalidHandlerException( client + OBSERVER_ADD_ERROR_MSG, e );
         }
     }
 

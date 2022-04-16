@@ -55,17 +55,10 @@ public class ResourceRegistry
     //TODO review concurrency
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
-    private static final String NO_LISTENER_WARNING= "Resource { {}::{} } has no listener for {} requests.";
-    
     /**
      * The root resource on the server.
      */
     Resource root= null;
-
-    /**
-     * The name of the server owning the registry.
-     */
-    private String serverName;
 
     /**
      * Construct a registry. The constructor initializes served resources 
@@ -74,11 +67,10 @@ public class ResourceRegistry
      * @param root Mandatory root resource.
      * @throws InternalResourceRegistryException When the the root resource is null.
      */
-    public ResourceRegistry( String serverName, Resource root ) throws InternalResourceRegistryException
+    public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
     {
         if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
-        this.serverName= serverName;
 
         servedResources= new ConcurrentHashMap<>();
         listeners= new CopyOnWriteArrayList<>();
@@ -263,7 +255,7 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            if ( resource.isHandlingGet()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "GET" );
+            //if ( resource.isHandlingGet()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -273,7 +265,7 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            if ( resource.isHandlingPost()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "POST" );
+            //if ( resource.isHandlingPost()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -283,7 +275,7 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            if ( resource.isHandlingPut()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PUT" );
+            //if ( resource.isHandlingPut()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -293,7 +285,7 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
+            //if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
         }
     }
 
@@ -466,5 +458,4 @@ public class ResourceRegistry
             return Defs.COAP_URI_ROOTRESOURCE;
         }
     }
-
 }

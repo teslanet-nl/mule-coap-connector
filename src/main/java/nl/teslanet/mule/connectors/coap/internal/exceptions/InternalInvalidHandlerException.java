@@ -20,36 +20,32 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.error;
-
-
-import org.mule.runtime.extension.api.exception.ModuleException;
+package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 
 /**
- * InvalidHandlerNameException occurs when a given handler name is invalid.
+ * internal InvalidHandlerException occurs when a given handler name is invalid.
  *
  */
-public class InvalidHandlerNameException extends ModuleException
+public class InternalInvalidHandlerException extends Exception
 {
-
     /**
-     * 
+     * serial version
      */
     private static final long serialVersionUID= 1L;
 
-    public InvalidHandlerNameException( String message )
+    public InternalInvalidHandlerException( String message )
     {
-        super( message, Errors.INVALID_HANDLER_NAME );
+        super( message );
     }
 
-    public InvalidHandlerNameException( Throwable cause )
+    public InternalInvalidHandlerException( Throwable cause )
     {
-        super( Errors.INVALID_HANDLER_NAME, cause );
+        super( cause );
     }
 
-    public InvalidHandlerNameException( String message, Throwable cause )
+    public InternalInvalidHandlerException( String message, Throwable cause )
     {
-        super( message, Errors.INVALID_HANDLER_NAME, cause );
+        super( message, cause );
     }
 }

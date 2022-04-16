@@ -871,12 +871,12 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResponseHandlerType" substitutionGroup="mule:abstract-message-source" name="response-handler">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResponseListenerType" substitutionGroup="mule:abstract-message-source" name="response-listener">
     <xs:annotation>
       <xs:documentation>The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ResponseHandlerType">
+  <xs:complexType name="ResponseListenerType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractMessageSourceType">
         <xs:sequence minOccurs="0" maxOccurs="1">
@@ -888,9 +888,9 @@
             <xs:documentation>Specify which configuration to use for this invocation.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="handlerName">
+        <xs:attribute type="xs:string" use="required" name="responseHandler">
           <xs:annotation>
-            <xs:documentation>The name of the handler by which it is referenced by observers and async requestst.</xs:documentation>
+            <xs:documentation>The handler that will deliver responses to process of observers and async requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
