@@ -50,14 +50,6 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
@@ -73,14 +65,6 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
  */
 @Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
 @Extension(name= "CoAP", vendor= "Teslanet.nl")
-@SubTypeMapping(baseType= AbstractEndpoint.class, subTypes= {
-    UDPEndpoint.class,
-    MulticastUDPEndpoint.class,
-    DTLSEndpoint.class,
-    TCPServerEndpoint.class,
-    TCPClientEndpoint.class,
-    TLSServerEndpoint.class,
-    TLSClientEndpoint.class })
 @SubTypeMapping(baseType= MidTracker.class, subTypes= { NullMidTracker.class, GroupedMidTracker.class, MapBasedMidTracker.class })
 @SubTypeMapping(baseType= CongestionControl.class, subTypes= { Cocoa.class, CocoaStrong.class, BasicRto.class, LinuxRto.class, PeakhopperRto.class })
 @SubTypeMapping(baseType= Deduplicator.class, subTypes= { CropRotation.class, MarkAndSweep.class })

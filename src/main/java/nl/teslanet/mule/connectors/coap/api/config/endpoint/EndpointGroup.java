@@ -68,45 +68,46 @@ public class EndpointGroup
     @Summary( value= "DTLS endpoint configuration." )
     public DTLSEndpoint dtlsEndpoint;
 
-    /**
-     * TCP server endpoint configuration.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
-    @Summary( value= "TCP server endpoint configuration. (configure one endpoint type only) " )
-    public TCPServerEndpoint tcpServerEndpoint;
-
-    /**
-     * TCP client endpoint configuration.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
-    @Summary( value= "TCP client endpoint configuration. (configure one endpoint type only) " )
-    public TCPClientEndpoint tcpClientEndpoint;
-
-    /**
-     * TCP server endpoint configuration.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
-    @Summary( value= "TLS server endpoint configuration. (configure one endpoint type only) " )
-    public TLSServerEndpoint tlsServerEndpoint;
-
-    /**
-     * TLS client endpoint configuration.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
-    @Summary( value= "TLS client endpoint configuration. (configure one endpoint type only) " )
-    public TLSClientEndpoint tlsClientEndpoint;
+    //  TODO add tests
+    //    /**
+    //     * TCP server endpoint configuration.
+    //     */
+    //    @Parameter
+    //    @Optional
+    //    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    //    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
+    //    @Summary( value= "TCP server endpoint configuration. (configure one endpoint type only) " )
+    //    public TCPServerEndpoint tcpServerEndpoint;
+    //
+    //    /**
+    //     * TCP client endpoint configuration.
+    //     */
+    //    @Parameter
+    //    @Optional
+    //    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    //    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
+    //    @Summary( value= "TCP client endpoint configuration. (configure one endpoint type only) " )
+    //    public TCPClientEndpoint tcpClientEndpoint;
+    //
+    //    /**
+    //     * TCP server endpoint configuration.
+    //     */
+    //    @Parameter
+    //    @Optional
+    //    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    //    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
+    //    @Summary( value= "TLS server endpoint configuration. (configure one endpoint type only) " )
+    //    public TLSServerEndpoint tlsServerEndpoint;
+    //
+    //    /**
+    //     * TLS client endpoint configuration.
+    //     */
+    //    @Parameter
+    //    @Optional
+    //    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    //    @ParameterDsl( allowInlineDefinition= true, allowReferences= true )
+    //    @Summary( value= "TLS client endpoint configuration. (configure one endpoint type only) " )
+    //    public TLSClientEndpoint tlsClientEndpoint;
 
     /**
      * @return the endpoint that is configured.
@@ -116,10 +117,10 @@ public class EndpointGroup
         if ( udpEndpoint != null ) return udpEndpoint;
         if ( dtlsEndpoint != null ) return dtlsEndpoint;
         if ( multicastUdpEndpoint != null ) return multicastUdpEndpoint;
-        if ( tcpClientEndpoint != null ) return tcpClientEndpoint;
-        if ( tcpServerEndpoint != null ) return tcpServerEndpoint;
-        if ( tlsClientEndpoint != null ) return tlsClientEndpoint;
-        if ( tlsServerEndpoint != null ) return tlsServerEndpoint;
+//        if ( tcpClientEndpoint != null ) return tcpClientEndpoint;
+//        if ( tcpServerEndpoint != null ) return tcpServerEndpoint;
+//        if ( tlsClientEndpoint != null ) return tlsClientEndpoint;
+//        if ( tlsServerEndpoint != null ) return tlsServerEndpoint;
         return null;
     }
 

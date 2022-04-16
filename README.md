@@ -14,29 +14,33 @@ The complete Mule CoAP Connector documentation can be found at [Teslanet.nl](htt
 * Mule 4.1+
 
 ## Implemented CoAP specifications
-The CoAP protocol is supported as defined in: 
+The CoAP protocol is supported as defined in:
+
 * [IETF rfc 6690](https://www.rfc-editor.org/rfc/rfc6690)
 * [IETF rfc 7252](https://www.rfc-editor.org/rfc/rfc7252)
 * [IETF rfc 7641](https://www.rfc-editor.org/rfc/rfc7641)
 * [IETF rfc 7959](https://www.rfc-editor.org/rfc/rfc7959)
 
-## Dependencies
+## Uses
+
 * [Californium](https://www.eclipse.org/californium/) 2.7.2
 
 ## Installation
 
 To use Mule CoAP Connector in your Mule 4 application, 
-add following dependency to your `pom.xml`.
+add following dependency to your `pom.xml`:
+
 ```xml
   
     <dependency>
         <groupId>nl.teslanet.mule.connectors.coap</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.0.0-M10</version>
+        <version>2.0.0-RC1</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
 ```
+
 After updating dependencies in Anypoint Studio, all CoAP tools (message-sources and message-processors) will be shown in the Anypoint Studio panel - _Mule Palette_.
 
 ## Reporting Issues
