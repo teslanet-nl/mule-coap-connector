@@ -749,6 +749,32 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
@@ -757,10 +783,234 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="securityParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="endpointGroup">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="multicastParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="securityParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="tlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="securityParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="tcpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="udpParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="socketParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="blockwiseParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notificationParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="congestionControl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logHealthStatus">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="logCoapMessages">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
