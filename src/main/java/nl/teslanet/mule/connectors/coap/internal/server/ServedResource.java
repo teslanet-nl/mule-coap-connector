@@ -61,17 +61,17 @@ public class ServedResource extends CoapResource
     /**
      * This class logger.
      */
-    private static final Logger logger= LoggerFactory.getLogger( ServedResource.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ServedResource.class );
 
     /**
      * Marker for logging error responses.
      */
-    private static final Marker errorResponseMarker= MarkerFactory.getMarker( "ERROR_RESPONSE" );
+    private static final Marker ERROR_RESPONSE_MARKER= MarkerFactory.getMarker( "ERROR_RESPONSE" );
 
     /**
      * No listener message log format.
      */
-    private static final String noListenerLogFormat= "NO LISTENER for request { {}, {} }";
+    private static final String NO_LISTENER_LOG_FORMAT= "NO LISTENER for request { {}, {} }";
 
     /**
      * Regular expression for splitting comma separated values.
@@ -357,20 +357,25 @@ public class ServedResource extends CoapResource
         if ( callback == null )
         {
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
-            if ( logger.isWarnEnabled( errorResponseMarker ) )
+            if ( LOGGER.isWarnEnabled( ERROR_RESPONSE_MARKER ) )
             {
                 try
                 {
-                    logger.warn(
-                        errorResponseMarker,
-                        noListenerLogFormat,
+                    LOGGER.warn(
+                        ERROR_RESPONSE_MARKER,
+                        NO_LISTENER_LOG_FORMAT,
                         AttributeUtils.toRequestCodeAttribute( exchange.advanced().getCurrentRequest().getCode() ),
                         exchange.advanced().getCurrentRequest().getURI()
                     );
                 }
                 catch ( InternalInvalidRequestCodeException e )
                 {
-                    logger.warn( errorResponseMarker, noListenerLogFormat, exchange.advanced().getCurrentRequest().getCode(), exchange.advanced().getCurrentRequest().getURI() );
+                    LOGGER.warn(
+                        ERROR_RESPONSE_MARKER,
+                        NO_LISTENER_LOG_FORMAT,
+                        exchange.advanced().getCurrentRequest().getCode(),
+                        exchange.advanced().getCurrentRequest().getURI()
+                    );
                 }
             }
             return;

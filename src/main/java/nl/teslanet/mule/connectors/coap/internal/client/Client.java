@@ -1103,9 +1103,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * Constructor using RequestBuilder and client defaults.
          * @param params Provides request parameters.
          * @return The constructed UriBuilder object.
-         * @throws InternalInvalidRequestCodeException 
          */
-        public CoapRequestBuilderImpl( RequestParams params ) throws InternalInvalidRequestCodeException
+        public CoapRequestBuilderImpl( RequestParams params )
         {
             this( (AbstractResourceRequestParams) params );
             requestCode= params.getRequestCode();

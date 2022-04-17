@@ -122,8 +122,8 @@ public class AttributeUtils
     }
 
     /**
-     * Translate Cf request Code to requestCode attribute.
-     * @param requestCodeAttribute to convert
+     * Translate Cf request Code to requestCode attribute value.
+     * @param code to convert
      * @return the converted requestCode
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */

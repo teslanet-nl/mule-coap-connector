@@ -63,7 +63,6 @@ public class ResourceRegistry
     /**
      * Construct a registry. The constructor initializes served resources 
      * and listener repositories. 
-     * @param serverName The name of the CoAP server owning the resource.
      * @param root Mandatory root resource.
      * @throws InternalResourceRegistryException When the the root resource is null.
      */

@@ -30,7 +30,7 @@
 	<parent>
 		<groupId>org.mule.extensions</groupId>
 		<artifactId>mule-modules-parent</artifactId>
-		<version>1.1.8</version>
+		<version>1.1.9</version>
 	</parent>
 
 	<groupId>nl.teslanet.mule.connectors.coap</groupId>
@@ -39,6 +39,7 @@
 	<packaging>mule-extension</packaging>
 	
 	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Mule CoAP Connector is a Mule extension that enables Mule 4 applications to implement IoT services and/or IoT clients that use the CoAP protocol.</description>
 	<url>http://www.teslanet.nl</url>
 	<organization>
 		<name>Teslanet.nl</name>
@@ -258,7 +259,7 @@ Contributors:
 			<artifactId>mule-java-module</artifactId>
 			<version>1.2.9</version>
 			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
@@ -346,5 +347,4 @@ Contributors:
 			</build>
 		</profile>
 	</profiles>
-	<description>Mule extension that enables Mule 4 applications to implement IoT services and/or IoT clients that use the CoAP protocol. </description>
 </project>
