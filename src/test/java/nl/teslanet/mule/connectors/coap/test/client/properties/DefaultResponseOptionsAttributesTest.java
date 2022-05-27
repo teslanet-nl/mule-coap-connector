@@ -36,8 +36,8 @@ import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -52,7 +52,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsA
 public class DefaultResponseOptionsAttributesTest
 {
     @Test
-    public void testOptionContentFormat() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionContentFormat() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer format= 41;
@@ -66,7 +66,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionMaxAge() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionMaxAge() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Long maxage= new Long( 120 );
@@ -80,7 +80,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetETag() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetETag() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -91,14 +91,14 @@ public class DefaultResponseOptionsAttributesTest
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
 
-        ETag etag= attributes.getEtag();
+        EntityTag etag= attributes.getEtag();
 
         assertNotNull( etag );
-        assertEquals( "coap.opt.etag: wrong etag value", new ETag( etagValue1 ), etag );
+        assertEquals( "coap.opt.etag: wrong etag value", new EntityTag( etagValue1 ), etag );
     }
 
     @Test
-    public void testOptionSetLocationPath() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetLocationPath() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] values= { "this", "is", "some location" };
@@ -120,7 +120,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionLocationQuery() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionLocationQuery() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] keys= { "this", "is", "some", "some" };
@@ -145,7 +145,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize2() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSize2() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer size= new Integer( 120 );
@@ -159,7 +159,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize1() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSize1() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer size= new Integer( 120 );
@@ -173,7 +173,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionObserve() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionObserve() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer seqnum= new Integer( 120 );
@@ -187,7 +187,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionOther() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionOther() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[][] values= {

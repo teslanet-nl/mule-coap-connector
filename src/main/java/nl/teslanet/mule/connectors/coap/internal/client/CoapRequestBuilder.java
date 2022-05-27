@@ -27,8 +27,8 @@ import java.net.URI;
 
 import org.eclipse.californium.core.coap.Request;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPMessageType;
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
@@ -74,11 +74,11 @@ public interface CoapRequestBuilder
      * Build the message type of the request.
      * @return The message type of the request to build.
      */
-    public CoAPMessageType buildMessageType();
+    public CoapMessageType buildMessageType();
 
     /**
      * Build the code of the request.
      * @return The requestCode of the request to build.
      */
-    public CoAPRequestCode buildRequestCode();
+    public CoapRequestCode buildRequestCode();
 }

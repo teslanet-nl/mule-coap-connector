@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -131,8 +131,8 @@ public class QueryTest extends AbstractServerTestCase
         assertEquals( "wrong spy activation count", 1, spy.getEvents().size() );
 
         Message received= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", received.getAttributes().getValue() instanceof CoAPRequestAttributes );
-        CoAPRequestAttributes attributes= (CoAPRequestAttributes) received.getAttributes().getValue();
+        assertTrue( "wrong attributes class", received.getAttributes().getValue() instanceof CoapRequestAttributes );
+        CoapRequestAttributes attributes= (CoapRequestAttributes) received.getAttributes().getValue();
         assertEquals( "wrong request code", requestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedUri, attributes.getRequestUri() );
         assertEquals( "wrong query params", expectedQuery, queryString( attributes.getOptions().getUriQuery() ) );

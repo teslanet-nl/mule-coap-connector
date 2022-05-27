@@ -27,14 +27,14 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
 /**
- * The attributes of a CoAP response that was received from a server.
- *
- */
-public class CoAPResponseAttributes
+* The attributes of a CoAP request that was received from a client.
+*
+*/
+public class CoapRequestAttributes
 {
     /**
      * The CoAP request type that was issued.
@@ -47,7 +47,7 @@ public class CoAPResponseAttributes
     protected String requestCode= null;
 
     /**
-     * The client address the request was issued from. 
+     * The server address the request was issued on. 
      */
     protected String localAddress= null;
 
@@ -57,42 +57,22 @@ public class CoAPResponseAttributes
     protected String requestUri= null;
 
     /**
-     * The address of the server that issued the response.
+     * The address of the client that issued the request.
      */
     protected String remoteAddress= null;
 
     /**
-     * True when response is received and indicates success.
+     * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
      */
-    protected boolean success= false;
+    protected String relation= null;
 
     /**
-     * The CoAP response type of the server response.
+     * The CoAP options that accompanied the request.
      */
-    protected String responseType= null;
+    protected RequestOptionsAttributes options= null;
 
     /**
-     * The CoAP response code of the server response.
-     */
-    protected String responseCode= null;
-
-    /**
-     * True when response is a notification.
-     */
-    protected boolean notification= false;
-
-    /**
-     * The uri of the resource that has been created. 
-     */
-    protected String locationUri= null;
-
-    /**
-     * The CoAP options that accompanied the response.
-     */
-    protected ResponseOptionsAttributes options= null;
-
-    /**
-     * @return The requestType
+     * @return The requestType.
      */
     public String getRequestType()
     {
@@ -100,7 +80,7 @@ public class CoAPResponseAttributes
     }
 
     /**
-     * @return The requestCode
+     * @return The requestCode.
      */
     public String getRequestCode()
     {
@@ -109,7 +89,7 @@ public class CoAPResponseAttributes
 
 
     /**
-     * @return the localAddress
+     * @return The localAddress.
      */
     public String getLocalAddress()
     {
@@ -125,7 +105,15 @@ public class CoAPResponseAttributes
     }
 
     /**
-     * @return the remoteAddress
+     * @return The relation
+     */
+    public String getRelation()
+    {
+        return relation;
+    }
+
+    /**
+     * @return The remoteHost.
      */
     public String getRemoteAddress()
     {
@@ -133,50 +121,9 @@ public class CoAPResponseAttributes
     }
 
     /**
-     * @return the success
+     * @return The options.
      */
-    public boolean isSuccess()
-    {
-        return success;
-    }
-
-    /**
-     * @return the notification
-     */
-    public boolean isNotification()
-    {
-        return notification;
-    }
-
-    /**
-     * @return The responseType
-     */
-    public String getResponseType()
-    {
-        return responseType;
-    }
-
-    /**
-     * @return the responseCode
-     */
-    public String getResponseCode()
-    {
-        return responseCode;
-    }
-
-    /**
-     * The location of a created resource.
-     * @return the location Uri derived from the location options.
-     */
-    public String getLocationUri()
-    {
-        return locationUri;
-    }
-
-    /**
-     * @return The options
-     */
-    public ResponseOptionsAttributes getOptions()
+    public RequestOptionsAttributes getOptions()
     {
         return options;
     }

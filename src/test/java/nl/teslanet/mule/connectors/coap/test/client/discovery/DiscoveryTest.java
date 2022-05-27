@@ -41,7 +41,7 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -355,8 +355,8 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "post";
         result= flowRunner( flowName ).withPayload( "dynamic_resource" ).run();
         response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not create resource", "CREATED", attributes.getResponseCode() );
 
         //check resource is there
@@ -371,8 +371,8 @@ public class DiscoveryTest extends AbstractClientTestCase
         flowName= "delete";
         result= flowRunner( flowName ).withVariable( "host", "127.0.0.1" ).withVariable( "port", "5683" ).withVariable( "path", "/service/dynamic_resource" ).run();
         response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "could not delete resource", "DELETED", attributes.getResponseCode() );
 
         //check resource is not there

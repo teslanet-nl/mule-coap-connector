@@ -52,6 +52,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:endpoint multicastUdpEndpoint="Multicast_udp_endpoint" />
 	</coap:client-config>
 	
+    <coap:response-handler name="handler" />
+
 	<flow name="get_me">
 		<coap:request-async config-ref="config"
 			responseHandler="handler" requestCode="GET" path="/basic/get_me"
@@ -120,9 +122,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</coap:request-async>
 	</flow>
 
-	<flow name="handler">
-		<coap:response-listener config-ref="config"
-			responseHandler="handler" />
+	<flow name="listener-flow">
+		<coap:response-listener	responseHandler="handler" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestType;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestType;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.query.QueryConfig;
 
@@ -57,7 +57,7 @@ public class ObserverConfig
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 1 )
     //@Summary( "When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.\nWhen Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.\nWhen DEFAULT the client default is used." )
-    private CoAPRequestType type= CoAPRequestType.DEFAULT;
+    private CoapRequestType type= CoapRequestType.DEFAULT;
 
     /**
      * The hostname or ip of the server to access.
@@ -111,7 +111,7 @@ public class ObserverConfig
     /**
      * @return the confirmable
      */
-    public CoAPRequestType getType()
+    public CoapRequestType getType()
     {
         return type;
     }
@@ -119,7 +119,7 @@ public class ObserverConfig
     /**
      * @param type the message type to set
      */
-    public void setType( CoAPRequestType type )
+    public void setType( CoapRequestType type )
     {
         this.type= type;
     }

@@ -20,26 +20,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.error;
+package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- *  Exception that is thrown when an attempt is made to construct an invalid ETag object.
+ * The available request types.
  */
-public class InvalidETagException extends Exception
+public enum CoapRequestType
 {
-
-    /**
-     * serial version id
-     */
-    private static final long serialVersionUID= 1L;
-
-    /**
-     * Construct exception with given 
-     * @param message
-     */
-    public InvalidETagException( String message )
-    {
-        super( message );
-    }
+    DEFAULT, CONFIRMABLE, NON_CONFIRMABLE
 }

@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * Parametergroup for endpoint configuration. Exactly one endpoint needs to be configured in the group.
  */
 @ExclusiveOptionals( isOneRequired= true )
-public class EndpointGroup
+public class EndpointConfig
 {
     /**
      * UDP endpoint configuration.
@@ -117,10 +117,10 @@ public class EndpointGroup
         if ( udpEndpoint != null ) return udpEndpoint;
         if ( dtlsEndpoint != null ) return dtlsEndpoint;
         if ( multicastUdpEndpoint != null ) return multicastUdpEndpoint;
-//        if ( tcpClientEndpoint != null ) return tcpClientEndpoint;
-//        if ( tcpServerEndpoint != null ) return tcpServerEndpoint;
-//        if ( tlsClientEndpoint != null ) return tlsClientEndpoint;
-//        if ( tlsServerEndpoint != null ) return tlsServerEndpoint;
+        //        if ( tcpClientEndpoint != null ) return tcpClientEndpoint;
+        //        if ( tcpServerEndpoint != null ) return tcpServerEndpoint;
+        //        if ( tlsClientEndpoint != null ) return tlsClientEndpoint;
+        //        if ( tlsServerEndpoint != null ) return tlsServerEndpoint;
         return null;
     }
 

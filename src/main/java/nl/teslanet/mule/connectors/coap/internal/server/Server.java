@@ -60,7 +60,7 @@ import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
-import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
+import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
@@ -186,7 +186,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void initialise() throws InitialisationException
     {
-        CoAPConnector.setSchedulerService( schedulerService, schedulerConfig );
+        CoapConnector.setSchedulerService( schedulerService, schedulerConfig );
         NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
         if ( protocolStageThreadCount != null )
         {

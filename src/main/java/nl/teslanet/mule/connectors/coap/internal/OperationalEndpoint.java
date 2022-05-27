@@ -299,8 +299,8 @@ public final class OperationalEndpoint
         if ( registry.isEmpty() )
         {
             //Schedulers are not needed any more, so stop them
-            CoAPConnector.stopIoScheduler();
-            CoAPConnector.stopLightScheduler();
+            CoapConnector.stopIoScheduler();
+            CoapConnector.stopLightScheduler();
         }
     }
 
@@ -332,7 +332,7 @@ public final class OperationalEndpoint
         config.accept( visitor );
         this.configName= visitor.getEndpointName();
         this.coapEndpoint= visitor.getEndpointBuilder().build();
-        this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
+        this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
     }
 
     /**
@@ -347,7 +347,7 @@ public final class OperationalEndpoint
         config.accept( visitor );
         this.configName= visitor.getEndpointName();
         this.coapEndpoint= visitor.getEndpointBuilder().build();
-        this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
+        this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
     }
 
     /**
@@ -395,7 +395,7 @@ public final class OperationalEndpoint
             endpointBuilder.setNetworkConfig( visitor.getNetworkConfig() );
             endpointBuilder.setConnector( dtlsConnector );
             this.coapEndpoint= endpointBuilder.build();
-            this.coapEndpoint.setExecutors( CoAPConnector.getIoScheduler(), CoAPConnector.getLightScheduler() );
+            this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
 
         }
         catch ( Exception e )

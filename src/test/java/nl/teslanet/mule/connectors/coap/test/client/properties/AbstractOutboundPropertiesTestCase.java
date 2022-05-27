@@ -41,10 +41,10 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -61,10 +61,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         return Arrays.asList(
             new Object [] []
             {
-                { CoAPRequestCode.GET, ResponseCode.CONTENT },
-                { CoAPRequestCode.POST, ResponseCode.CHANGED },
-                { CoAPRequestCode.PUT, ResponseCode.CHANGED },
-                { CoAPRequestCode.DELETE, ResponseCode.DELETED } }
+                { CoapRequestCode.GET, ResponseCode.CONTENT },
+                { CoapRequestCode.POST, ResponseCode.CHANGED },
+                { CoapRequestCode.PUT, ResponseCode.CHANGED },
+                { CoapRequestCode.DELETE, ResponseCode.DELETED } }
         );
     }
 
@@ -72,7 +72,7 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Request code to test
      */
     @Parameter( 0 )
-    public CoAPRequestCode requestCode;
+    public CoapRequestCode requestCode;
 
     /**
      * The expected response code.
@@ -116,9 +116,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     /**
      * The property value to set on outbound test
      * @return the value to set
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      */
-    protected Object getOutboundPropertyValue() throws InvalidETagException
+    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
     {
         return new String( getPropertyName() + "_test_value" );
     }
@@ -128,10 +128,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Default implementation inserts the Option using getOutboundPropertyValue()
      * Needs to be overridden when other properties than an option is to be inserted
      * @param options the attributes to insert the property in
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      */
     @Deprecated
-    protected void insertOutboundProperty( HashMap< String, Object > options ) throws InvalidETagException
+    protected void insertOutboundProperty( HashMap< String, Object > options ) throws InvalidEntityTagException
     {
         options.put( getPropertyName(), getOutboundPropertyValue() );
     }
@@ -158,9 +158,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Implement this method to specify the strategy the coap test server has to use
      * in the test.
      * @return the Options strategy to use
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      */
-    protected abstract OptionStrategy getStrategy() throws InvalidETagException;
+    protected abstract OptionStrategy getStrategy() throws InvalidEntityTagException;
 
     /**
      * Override this method when a specific flow has to be used. 
@@ -199,14 +199,14 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         {
             result= runFlow();
             Message response= result.getMessage();
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
 
-            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
         }
     }
 
-    private Event runFlow() throws InvalidETagException, Exception
+    private Event runFlow() throws InvalidEntityTagException, Exception
     {
         return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
             "host",

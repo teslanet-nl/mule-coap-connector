@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 
 
 /**
@@ -200,7 +200,7 @@ public class DiscoveredResourceTest
     }
 
     @Test
-    public void testCompareTo() throws InvalidETagException
+    public void testCompareTo() throws InvalidEntityTagException
     {
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -234,7 +234,7 @@ public class DiscoveredResourceTest
     }
 
     @Test
-    public void testCompareTo2() throws InvalidETagException
+    public void testCompareTo2() throws InvalidEntityTagException
     {
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -268,7 +268,7 @@ public class DiscoveredResourceTest
     }
 
     @Test
-    public void testHashCode() throws InvalidETagException
+    public void testHashCode() throws InvalidEntityTagException
     {
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
@@ -291,7 +291,7 @@ public class DiscoveredResourceTest
     }
 
     @Test
-    public void testHashCode2() throws InvalidETagException
+    public void testHashCode2() throws InvalidEntityTagException
     {
         DiscoveredResource resource1= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
         DiscoveredResource resource2= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );

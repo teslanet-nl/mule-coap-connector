@@ -56,10 +56,10 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseParams;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
@@ -80,7 +80,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 @Alias( "listener" )
 @EmitsResponse
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
-public class Listener extends Source< InputStream, CoAPRequestAttributes >
+public class Listener extends Source< InputStream, CoapRequestAttributes >
 {
     private static final Logger logger= LoggerFactory.getLogger( Listener.class );
 
@@ -145,7 +145,7 @@ public class Listener extends Source< InputStream, CoAPRequestAttributes >
     OperationalListener operationalListener= null;
 
     @Override
-    public void onStart( SourceCallback< InputStream, CoAPRequestAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback ) throws MuleException
     {
         try
         {
@@ -178,10 +178,10 @@ public class Listener extends Source< InputStream, CoAPRequestAttributes >
     ) throws InternalInvalidByteArrayValueException,
         InternalInvalidResponseCodeException,
         IOException,
-        InvalidETagException,
+        InvalidEntityTagException,
         InternalInvalidOptionValueException
     {
-        CoAPResponseCode defaultCoapResponseCode= (CoAPResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
+        CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
         Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
         //TODO give user control
         TypedValue< Object > responsePayload= response.getResponsePayload();

@@ -50,8 +50,8 @@ import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
@@ -71,7 +71,7 @@ public class QueryTest extends AbstractClientTestCase
     {
         ArrayList< Object[] > tests= new ArrayList< Object[] >();
 
-        for ( CoAPRequestCode code : CoAPRequestCode.values() )
+        for ( CoapRequestCode code : CoapRequestCode.values() )
         {
             tests.add( new Object []{ code } );
         }
@@ -82,7 +82,7 @@ public class QueryTest extends AbstractClientTestCase
      * The request code that is expected.
      */
     @Parameter( 0 )
-    public CoAPRequestCode requestCode;
+    public CoapRequestCode requestCode;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -108,7 +108,7 @@ public class QueryTest extends AbstractClientTestCase
         return uri.toString();
     }
 
-    private String expectedPayload( CoAPRequestCode code, List< ? extends AbstractQueryParam > params ) throws URISyntaxException
+    private String expectedPayload( CoapRequestCode code, List< ? extends AbstractQueryParam > params ) throws URISyntaxException
     {
         URI uri= new URI( "coap", null, "localhost", -1, "/query/test", queryString( params ), null );
         return requestCode.toString() + " called on: " + uri.toString();
@@ -139,8 +139,8 @@ public class QueryTest extends AbstractClientTestCase
         // assertions...
         //assertTrue( "wrong response payload type", response.getPayload().getDataType().isCompatibleWith( DataType.BYTE_ARRAY ) );
         assertNotNull( "no mule event", response );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( params ), attributes.getRequestUri() );
 
@@ -176,8 +176,8 @@ public class QueryTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( params ), attributes.getRequestUri() );
         assertArrayEquals( "wrong response payload", expectedPayload( requestCode, params ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
@@ -213,8 +213,8 @@ public class QueryTest extends AbstractClientTestCase
         // assertions...
         //assertTrue( "wrong response payload type", response.getPayload().getDataType().isCompatibleWith( DataType.BYTE_ARRAY ) );
         assertNotNull( "no mule event", response );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
 
@@ -259,8 +259,8 @@ public class QueryTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
         assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
@@ -299,8 +299,8 @@ public class QueryTest extends AbstractClientTestCase
         // assertions...
         //assertTrue( "wrong response payload type", response.getPayload().getDataType().isCompatibleWith( DataType.BYTE_ARRAY ) );
         assertNotNull( "no mule event", response );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
 
@@ -351,8 +351,8 @@ public class QueryTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
         assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
@@ -391,8 +391,8 @@ public class QueryTest extends AbstractClientTestCase
         // assertions...
         //assertTrue( "wrong response payload type", response.getPayload().getDataType().isCompatibleWith( DataType.BYTE_ARRAY ) );
         assertNotNull( "no mule event", response );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
 
@@ -443,8 +443,8 @@ public class QueryTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
         assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
@@ -483,8 +483,8 @@ public class QueryTest extends AbstractClientTestCase
         // assertions...
         //assertTrue( "wrong response payload type", response.getPayload().getDataType().isCompatibleWith( DataType.BYTE_ARRAY ) );
         assertNotNull( "no mule event", response );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "request failed", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
 
@@ -535,8 +535,8 @@ public class QueryTest extends AbstractClientTestCase
         } );
         // assertions...
         response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
         assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );

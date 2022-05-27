@@ -33,8 +33,8 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
@@ -57,8 +57,8 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             try
             {
-                List< ETag > tmpIfMatch= ETag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= tmpIfMatch.removeIf( ETag::isEmpty );
+                List< EntityTag > tmpIfMatch= EntityTag.getList( optionSet.getIfMatch() );
+                boolean emptyPresent= tmpIfMatch.removeIf( EntityTag::isEmpty );
                 if ( emptyPresent )
                 {
                     ifExists= true;
@@ -68,7 +68,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
                     ifMatch= Collections.unmodifiableList( tmpIfMatch );
                 }
             }
-            catch ( InvalidETagException e )
+            catch ( InvalidEntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
             }
@@ -81,9 +81,9 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             try
             {
-                etags= Collections.unmodifiableList( ETag.getList( optionSet.getETags() ) );
+                etags= Collections.unmodifiableList( EntityTag.getList( optionSet.getETags() ) );
             }
-            catch ( InvalidETagException e )
+            catch ( InvalidEntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
             }

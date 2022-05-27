@@ -23,8 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 
 
 /**
@@ -36,16 +36,16 @@ public class OptEtagListOutbound3Test extends AbstractOutboundPropertiesTestCase
     /**
      * test property value
      */
-    private ETag value;
+    private EntityTag value;
 
     /**
      * Constructor
-     * @throws InvalidETagException
+     * @throws InvalidEntityTagException
      */
-    public OptEtagListOutbound3Test() throws InvalidETagException
+    public OptEtagListOutbound3Test() throws InvalidEntityTagException
     {
         super();
-        value= new ETag( 0x68656C6C6FL );
+        value= new EntityTag( 0x68656C6C6FL );
     }
 
     /* (non-Javadoc)

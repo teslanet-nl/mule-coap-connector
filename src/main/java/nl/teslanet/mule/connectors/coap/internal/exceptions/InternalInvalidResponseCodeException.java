@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.internal.exceptions;
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 
 
 /**
@@ -71,7 +71,7 @@ public class InternalInvalidResponseCodeException extends Exception
      * Construct exception with given 
      * @param reponseCodeAttribute
      */
-    public InternalInvalidResponseCodeException( CoAPResponseCode reponseCodeAttribute )
+    public InternalInvalidResponseCodeException( CoapResponseCode reponseCodeAttribute )
     {
         super( MSG_PREFIX + reponseCodeAttribute.name() + MSG_POSTFIX );
     }

@@ -65,6 +65,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			<coap:query-config key="test" value="async" />
 		</coap:query-configs>
 	</coap:client-config>
+	
+	<coap:response-handler name="handler" />
 
 	<flow name="get_me">
 		<coap:request-async config-ref="config"
@@ -133,8 +135,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</coap:request-async>
 	</flow>
 
-	<flow name="handler">
-		<coap:response-listener config-ref="config"
+	<flow name="listener">
+		<coap:response-listener 
 			responseHandler="handler" />
 
 		<java:new doc:name="New spy"

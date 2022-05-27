@@ -45,12 +45,12 @@ public abstract class AbstractResourceRequestParams extends AbstractResourcePara
     @Optional( defaultValue= "DEFAULT" )
     @Expression( ExpressionSupport.SUPPORTED )
     @Placement( order= 1 )
-    private CoAPRequestType type= CoAPRequestType.DEFAULT;
+    private CoapRequestType type= CoapRequestType.DEFAULT;
 
     /**
      * @return the confirmable
      */
-    public CoAPRequestType getType()
+    public CoapRequestType getType()
     {
         return type;
     }
@@ -58,7 +58,7 @@ public abstract class AbstractResourceRequestParams extends AbstractResourcePara
     /**
      * @param type the message type to set
      */
-    public void setType( CoAPRequestType type )
+    public void setType( CoapRequestType type )
     {
         this.type= type;
     }

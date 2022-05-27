@@ -50,6 +50,14 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:endpoint udpEndpoint="Udp_Endpoint" />
 	</coap:client-config>
 	
+    
+    <coap:response-handler name="handler_temporary" />
+    <coap:response-handler name="handler_temporary1" />
+    <coap:response-handler name="handler_temporary2" />
+    <coap:response-handler name="handler_maxage1" />
+    <coap:response-handler name="handler_maxage1_nonotify" />
+    <coap:response-handler name="handler_maxage4_nonotify" />
+
 	<!-- when cf supports NON: type="#[vars.msgType default 'CONFIRMABLE']" -->
 
 	<flow name="start_temporary">
@@ -71,7 +79,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_temporary">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener
 			responseHandler="handler_temporary" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -110,7 +118,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_temporary1">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener 
 			responseHandler="handler_temporary1" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -163,7 +171,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_temporary2">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener 
 			responseHandler="handler_temporary2" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -196,7 +204,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_maxage1">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener
 			responseHandler="handler_maxage1" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -229,7 +237,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_maxage1_nonotify">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener
 			responseHandler="handler_maxage1_nonotify" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -263,7 +271,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="observe_handler_maxage4_nonotify">
-		<coap:response-listener config-ref="config"
+		<coap:response-listener
 			responseHandler="handler_maxage4_nonotify" />
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

@@ -48,7 +48,7 @@ public class RequestParams extends AbstractResourceRequestParams
     @Placement(order = 11)
     @Example( value= "GET" )
     @Summary( "The CoAP request code specifying the requested action on the resource on the server." )
-    private CoAPRequestCode requestCode= null;
+    private CoapRequestCode requestCode= null;
 
     @Parameter
     @Content( primary= true )
@@ -69,7 +69,7 @@ public class RequestParams extends AbstractResourceRequestParams
     /**
      * @return the requestCode
      */
-    public CoAPRequestCode getRequestCode()
+    public CoapRequestCode getRequestCode()
     {
         return requestCode;
     }
@@ -77,7 +77,7 @@ public class RequestParams extends AbstractResourceRequestParams
     /**
      * @param requestCode the requestCode to set
      */
-    public void setRequestCode( CoAPRequestCode requestCode )
+    public void setRequestCode( CoapRequestCode requestCode )
     {
         this.requestCode= requestCode;
     }

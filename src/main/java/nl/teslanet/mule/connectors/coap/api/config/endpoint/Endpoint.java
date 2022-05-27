@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
@@ -32,31 +31,30 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class Endpoint
 {
-    @ParameterGroup( name= "Define one of the endpoint types" )
-    @Summary( value= "Endpoint configuration." )
-    private EndpointGroup endpointGroup;
+    @ParameterGroup( name= "Configure one of the endpoint types" )
+    private EndpointConfig endpointConfig;
 
     /**
-     * @return the endpoint group
+     * @return The endpoint configuration.
      */
-    public EndpointGroup getEndpointGroup()
+    public EndpointConfig getEndpointConfig()
     {
-        return endpointGroup;
+        return endpointConfig;
     }
 
     /**
-     * @param endpointGroup the endpoint group to set
+     * @param endpointConfig The endpoint configuration to set.
      */
-    public void setEndpointGroup( EndpointGroup endpointGroup )
+    public void setEndpointConfig( EndpointConfig endpointConfig )
     {
-        this.endpointGroup= endpointGroup;
+        this.endpointConfig= endpointConfig;
     }
 
     /**
-     * @return the endpoint that is configured.
+     * @return The endpoint that is configured.
      */
     public AbstractEndpoint getEndpoint()
     {
-        return endpointGroup.getEndpoint();
+        return endpointConfig.getEndpoint();
     }
 }

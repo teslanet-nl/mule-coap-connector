@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.test.utils;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
@@ -71,6 +73,9 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 )
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase
 {
+    @Rule
+    public Timeout globalTimeout= Timeout.seconds( 100 ); // 100 seconds max per method tested
+
     /**
      * Create query part of an uri.
      * @param queryParams

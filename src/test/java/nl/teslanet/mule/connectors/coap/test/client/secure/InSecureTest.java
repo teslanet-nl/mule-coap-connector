@@ -38,8 +38,8 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -56,14 +56,14 @@ public class InSecureTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null },
-                { "do_not_get_me", CoAPRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
-                { "post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/post_me", null, null },
-                { "do_not_post_me", CoAPRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
-                { "put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/put_me", null, null },
-                { "do_not_put_me", CoAPRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
-                { "delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/delete_me", null, null },
-                { "do_not_delete_me", CoAPRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } }
+                { "get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null },
+                { "do_not_get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
+                { "post_me", CoapRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/post_me", null, null },
+                { "do_not_post_me", CoapRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
+                { "put_me", CoapRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/put_me", null, null },
+                { "do_not_put_me", CoapRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
+                { "delete_me", CoapRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/delete_me", null, null },
+                { "do_not_delete_me", CoapRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } }
         );
     }
 
@@ -125,8 +125,8 @@ public class InSecureTest extends AbstractClientTestCase
         Event result= flowRunner( flowName ).withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

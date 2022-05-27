@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -50,7 +50,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  */
 @Alias( "observer" )
 @MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
-public class Observer extends Source< InputStream, CoAPResponseAttributes >
+public class Observer extends Source< InputStream, CoapResponseAttributes >
 {
     /**
      * The logger.
@@ -79,9 +79,10 @@ public class Observer extends Source< InputStream, CoAPResponseAttributes >
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< InputStream, CoAPResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
     {
-        CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( observerConfig );;
+        CoapRequestBuilder requestBuilder= client.new CoapRequestBuilderImpl( observerConfig );
+        final String localAdress= client.getLocalAddress();
         try
         {
             uri= requestBuilder.buildResourceUri();
@@ -91,7 +92,7 @@ public class Observer extends Source< InputStream, CoAPResponseAttributes >
             throw new StartException( this + " failed to start, invalid uri. ", e );
         }
         relation= new ObserveRelation( this.toString(), client.getCoapClient(), requestBuilder, ( requestUri, requestType, requestCode, response ) -> {
-            client.processMuleFlow( requestUri, requestType, requestCode, response, sourceCallback );
+            ResponseProcessor.processMuleFlow( localAdress, requestUri, requestType, requestCode, response, sourceCallback );
         } );
         relation.start();
         logger.info( this + " started." );

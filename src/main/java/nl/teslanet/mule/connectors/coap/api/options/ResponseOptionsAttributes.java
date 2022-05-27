@@ -38,7 +38,7 @@ public class ResponseOptionsAttributes
 
     protected Long maxAge= null;
 
-    protected ETag etag= null;
+    protected EntityTag etag= null;
 
     protected List< String > locationPath= null;
 
@@ -55,7 +55,7 @@ public class ResponseOptionsAttributes
     /**
      * @return The etag option.
      */
-    public ETag getEtag()
+    public EntityTag getEtag()
     {
         return etag;
     }

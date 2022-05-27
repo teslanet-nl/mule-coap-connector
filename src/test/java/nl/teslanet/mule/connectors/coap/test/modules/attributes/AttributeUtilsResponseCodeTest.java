@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 
@@ -56,36 +56,36 @@ public class AttributeUtilsResponseCodeTest
         return Arrays.asList(
             new Object [] []
             {
-                { CoAPResponseCode.CREATED, ResponseCode.CREATED },
-                { CoAPResponseCode.DELETED, ResponseCode.DELETED },
-                { CoAPResponseCode.VALID, ResponseCode.VALID },
-                { CoAPResponseCode.CHANGED, ResponseCode.CHANGED },
-                { CoAPResponseCode.CONTENT, ResponseCode.CONTENT },
-                { CoAPResponseCode.CONTINUE, ResponseCode.CONTINUE },
+                { CoapResponseCode.CREATED, ResponseCode.CREATED },
+                { CoapResponseCode.DELETED, ResponseCode.DELETED },
+                { CoapResponseCode.VALID, ResponseCode.VALID },
+                { CoapResponseCode.CHANGED, ResponseCode.CHANGED },
+                { CoapResponseCode.CONTENT, ResponseCode.CONTENT },
+                { CoapResponseCode.CONTINUE, ResponseCode.CONTINUE },
 
                 //client error
-                { CoAPResponseCode.BAD_REQUEST, ResponseCode.BAD_REQUEST },
-                { CoAPResponseCode.UNAUTHORIZED, ResponseCode.UNAUTHORIZED },
-                { CoAPResponseCode.BAD_OPTION, ResponseCode.BAD_OPTION },
-                { CoAPResponseCode.FORBIDDEN, ResponseCode.FORBIDDEN },
-                { CoAPResponseCode.NOT_FOUND, ResponseCode.NOT_FOUND },
-                { CoAPResponseCode.METHOD_NOT_ALLOWED, ResponseCode.METHOD_NOT_ALLOWED },
-                { CoAPResponseCode.NOT_ACCEPTABLE, ResponseCode.NOT_ACCEPTABLE },
-                { CoAPResponseCode.REQUEST_ENTITY_INCOMPLETE, ResponseCode.REQUEST_ENTITY_INCOMPLETE },
-                { CoAPResponseCode.CONFLICT, ResponseCode.CONFLICT },
-                { CoAPResponseCode.PRECONDITION_FAILED, ResponseCode.PRECONDITION_FAILED },
-                { CoAPResponseCode.REQUEST_ENTITY_TOO_LARGE, ResponseCode.REQUEST_ENTITY_TOO_LARGE },
-                { CoAPResponseCode.UNSUPPORTED_CONTENT_FORMAT, ResponseCode.UNSUPPORTED_CONTENT_FORMAT },
-                { CoAPResponseCode.UNPROCESSABLE_ENTITY, ResponseCode.UNPROCESSABLE_ENTITY },
-                { CoAPResponseCode.TOO_MANY_REQUESTS, ResponseCode.TOO_MANY_REQUESTS },
+                { CoapResponseCode.BAD_REQUEST, ResponseCode.BAD_REQUEST },
+                { CoapResponseCode.UNAUTHORIZED, ResponseCode.UNAUTHORIZED },
+                { CoapResponseCode.BAD_OPTION, ResponseCode.BAD_OPTION },
+                { CoapResponseCode.FORBIDDEN, ResponseCode.FORBIDDEN },
+                { CoapResponseCode.NOT_FOUND, ResponseCode.NOT_FOUND },
+                { CoapResponseCode.METHOD_NOT_ALLOWED, ResponseCode.METHOD_NOT_ALLOWED },
+                { CoapResponseCode.NOT_ACCEPTABLE, ResponseCode.NOT_ACCEPTABLE },
+                { CoapResponseCode.REQUEST_ENTITY_INCOMPLETE, ResponseCode.REQUEST_ENTITY_INCOMPLETE },
+                { CoapResponseCode.CONFLICT, ResponseCode.CONFLICT },
+                { CoapResponseCode.PRECONDITION_FAILED, ResponseCode.PRECONDITION_FAILED },
+                { CoapResponseCode.REQUEST_ENTITY_TOO_LARGE, ResponseCode.REQUEST_ENTITY_TOO_LARGE },
+                { CoapResponseCode.UNSUPPORTED_CONTENT_FORMAT, ResponseCode.UNSUPPORTED_CONTENT_FORMAT },
+                { CoapResponseCode.UNPROCESSABLE_ENTITY, ResponseCode.UNPROCESSABLE_ENTITY },
+                { CoapResponseCode.TOO_MANY_REQUESTS, ResponseCode.TOO_MANY_REQUESTS },
 
                 //sever error
-                { CoAPResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR },
-                { CoAPResponseCode.NOT_IMPLEMENTED, ResponseCode.NOT_IMPLEMENTED },
-                { CoAPResponseCode.BAD_GATEWAY, ResponseCode.BAD_GATEWAY },
-                { CoAPResponseCode.SERVICE_UNAVAILABLE, ResponseCode.SERVICE_UNAVAILABLE },
-                { CoAPResponseCode.GATEWAY_TIMEOUT, ResponseCode.GATEWAY_TIMEOUT },
-                { CoAPResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } }
+                { CoapResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR },
+                { CoapResponseCode.NOT_IMPLEMENTED, ResponseCode.NOT_IMPLEMENTED },
+                { CoapResponseCode.BAD_GATEWAY, ResponseCode.BAD_GATEWAY },
+                { CoapResponseCode.SERVICE_UNAVAILABLE, ResponseCode.SERVICE_UNAVAILABLE },
+                { CoapResponseCode.GATEWAY_TIMEOUT, ResponseCode.GATEWAY_TIMEOUT },
+                { CoapResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } }
         );
     }
 
@@ -93,7 +93,7 @@ public class AttributeUtilsResponseCodeTest
      * Actual attributeValue parameter value.
      */
     @Parameter( 0 )
-    public CoAPResponseCode attributeValue;
+    public CoapResponseCode attributeValue;
 
     /**
      * Actual expected value.

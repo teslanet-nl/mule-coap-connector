@@ -48,7 +48,7 @@ public class GetMethodTest extends AbstractServerTestCase
         return "mule-server-config/basic/testserver1.xml";
     };
 
-    @Test(timeout= 5000)
+    @Test
     public void testSuccess() throws ConnectorException, IOException
     {
         String uri= "coap://localhost/basic/get_me";
@@ -85,7 +85,7 @@ public class GetMethodTest extends AbstractServerTestCase
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be CONTENT", ResponseCode.METHOD_NOT_ALLOWED, response.getCode() );
+        assertEquals( "response code should be METHOD_NOT_ALLOWED", ResponseCode.METHOD_NOT_ALLOWED, response.getCode() );
         assertEquals( "response payload has wrong value", "", response.getResponseText() );
     }
 

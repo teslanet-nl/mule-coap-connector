@@ -29,7 +29,7 @@ import java.util.List;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 
 
 /**
@@ -37,13 +37,13 @@ import nl.teslanet.mule.connectors.coap.api.options.ETag;
  */
 public class OptEtagStrategy implements OptionStrategy
 {
-    private ETag value;
+    private EntityTag value;
 
     /**
      * Constructor using single etag
      * @param value the test value
      */
-    public OptEtagStrategy( ETag value )
+    public OptEtagStrategy( EntityTag value )
     {
         this.value= value;
     }

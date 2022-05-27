@@ -29,9 +29,9 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPMessageType;
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
@@ -58,7 +58,7 @@ public class AttributeUtils
      * @return the converted message type
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static Type toMessageType( CoAPMessageType type ) throws InternalInvalidMessageTypeException
+    public static Type toMessageType( CoapMessageType type ) throws InternalInvalidMessageTypeException
     {
         switch ( type )
         {
@@ -81,18 +81,18 @@ public class AttributeUtils
      * @return the converted message attribute
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static CoAPMessageType toMessageTypeAttribute( Type type ) throws InternalInvalidMessageTypeException
+    public static CoapMessageType toMessageTypeAttribute( Type type ) throws InternalInvalidMessageTypeException
     {
         switch ( type )
         {
             case CON:
-                return CoAPMessageType.CONFIRMABLE;
+                return CoapMessageType.CONFIRMABLE;
             case NON:
-                return CoAPMessageType.NON_CONFIRMABLE;
+                return CoapMessageType.NON_CONFIRMABLE;
             case ACK:
-                return CoAPMessageType.ACKNOWLEDGEMENT;
+                return CoapMessageType.ACKNOWLEDGEMENT;
             case RST:
-                return CoAPMessageType.RESET;
+                return CoapMessageType.RESET;
             default:
                 throw new InternalInvalidMessageTypeException( "Invalid message type { " + type + " }" );
         }
@@ -104,7 +104,7 @@ public class AttributeUtils
      * @return the converted requestCode
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static Code toRequestCode( CoAPRequestCode requestCodeAttribute ) throws InternalInvalidRequestCodeException
+    public static Code toRequestCode( CoapRequestCode requestCodeAttribute ) throws InternalInvalidRequestCodeException
     {
         switch ( requestCodeAttribute )
         {
@@ -127,18 +127,18 @@ public class AttributeUtils
      * @return the converted requestCode
      * @throws InternalInvalidRequestCodeException when requestCode cannot be converted
      */
-    public static CoAPRequestCode toRequestCodeAttribute( Code code ) throws InternalInvalidRequestCodeException
+    public static CoapRequestCode toRequestCodeAttribute( Code code ) throws InternalInvalidRequestCodeException
     {
         switch ( code )
         {
             case GET:
-                return CoAPRequestCode.GET;
+                return CoapRequestCode.GET;
             case POST:
-                return CoAPRequestCode.POST;
+                return CoapRequestCode.POST;
             case PUT:
-                return CoAPRequestCode.PUT;
+                return CoapRequestCode.PUT;
             case DELETE:
-                return CoAPRequestCode.DELETE;
+                return CoapRequestCode.DELETE;
             default:
                 throw new InternalInvalidRequestCodeException( "invalid request code { " + code + " }" );
         }
@@ -151,7 +151,7 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute, CoAPResponseCode defaultResponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoapResponseCode reponseCodeAttribute, CoapResponseCode defaultResponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
         if ( reponseCodeAttribute != null )
         {
@@ -169,7 +169,7 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoAPResponseCode reponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoapResponseCode reponseCodeAttribute ) throws InternalInvalidResponseCodeException
     {
         switch ( reponseCodeAttribute )
         {
@@ -241,67 +241,67 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static CoAPResponseCode toResponseCodeAttribute( ResponseCode reponseCode ) throws InternalInvalidResponseCodeException
+    public static CoapResponseCode toResponseCodeAttribute( ResponseCode reponseCode ) throws InternalInvalidResponseCodeException
     {
         switch ( reponseCode )
         {
             //success
             case CREATED:
-                return CoAPResponseCode.CREATED;
+                return CoapResponseCode.CREATED;
             case DELETED:
-                return CoAPResponseCode.DELETED;
+                return CoapResponseCode.DELETED;
             case VALID:
-                return CoAPResponseCode.VALID;
+                return CoapResponseCode.VALID;
             case CHANGED:
-                return CoAPResponseCode.CHANGED;
+                return CoapResponseCode.CHANGED;
             case CONTENT:
-                return CoAPResponseCode.CONTENT;
+                return CoapResponseCode.CONTENT;
             case CONTINUE:
-                return CoAPResponseCode.CONTINUE;
+                return CoapResponseCode.CONTINUE;
 
             //client error
             case BAD_REQUEST:
-                return CoAPResponseCode.BAD_REQUEST;
+                return CoapResponseCode.BAD_REQUEST;
             case UNAUTHORIZED:
-                return CoAPResponseCode.UNAUTHORIZED;
+                return CoapResponseCode.UNAUTHORIZED;
             case BAD_OPTION:
-                return CoAPResponseCode.BAD_OPTION;
+                return CoapResponseCode.BAD_OPTION;
             case FORBIDDEN:
-                return CoAPResponseCode.FORBIDDEN;
+                return CoapResponseCode.FORBIDDEN;
             case NOT_FOUND:
-                return CoAPResponseCode.NOT_FOUND;
+                return CoapResponseCode.NOT_FOUND;
             case METHOD_NOT_ALLOWED:
-                return CoAPResponseCode.METHOD_NOT_ALLOWED;
+                return CoapResponseCode.METHOD_NOT_ALLOWED;
             case NOT_ACCEPTABLE:
-                return CoAPResponseCode.NOT_ACCEPTABLE;
+                return CoapResponseCode.NOT_ACCEPTABLE;
             case REQUEST_ENTITY_INCOMPLETE:
-                return CoAPResponseCode.REQUEST_ENTITY_INCOMPLETE;
+                return CoapResponseCode.REQUEST_ENTITY_INCOMPLETE;
             case CONFLICT:
-                return CoAPResponseCode.CONFLICT;
+                return CoapResponseCode.CONFLICT;
             case PRECONDITION_FAILED:
-                return CoAPResponseCode.PRECONDITION_FAILED;
+                return CoapResponseCode.PRECONDITION_FAILED;
             case REQUEST_ENTITY_TOO_LARGE:
-                return CoAPResponseCode.REQUEST_ENTITY_TOO_LARGE;
+                return CoapResponseCode.REQUEST_ENTITY_TOO_LARGE;
             case UNSUPPORTED_CONTENT_FORMAT:
-                return CoAPResponseCode.UNSUPPORTED_CONTENT_FORMAT;
+                return CoapResponseCode.UNSUPPORTED_CONTENT_FORMAT;
             case UNPROCESSABLE_ENTITY:
-                return CoAPResponseCode.UNPROCESSABLE_ENTITY;
+                return CoapResponseCode.UNPROCESSABLE_ENTITY;
             case TOO_MANY_REQUESTS:
-                return CoAPResponseCode.TOO_MANY_REQUESTS;
+                return CoapResponseCode.TOO_MANY_REQUESTS;
 
             //sever error
             case INTERNAL_SERVER_ERROR:
-                return CoAPResponseCode.INTERNAL_SERVER_ERROR;
+                return CoapResponseCode.INTERNAL_SERVER_ERROR;
             case NOT_IMPLEMENTED:
-                return CoAPResponseCode.NOT_IMPLEMENTED;
+                return CoapResponseCode.NOT_IMPLEMENTED;
             case BAD_GATEWAY:
-                return CoAPResponseCode.BAD_GATEWAY;
+                return CoapResponseCode.BAD_GATEWAY;
             case SERVICE_UNAVAILABLE:
-                return CoAPResponseCode.SERVICE_UNAVAILABLE;
+                return CoapResponseCode.SERVICE_UNAVAILABLE;
             case GATEWAY_TIMEOUT:
-                return CoAPResponseCode.GATEWAY_TIMEOUT;
+                return CoapResponseCode.GATEWAY_TIMEOUT;
             case PROXY_NOT_SUPPORTED:
-                return CoAPResponseCode.PROXY_NOT_SUPPORTED;
+                return CoapResponseCode.PROXY_NOT_SUPPORTED;
             default:
                 throw new InternalInvalidResponseCodeException( reponseCode );
         }

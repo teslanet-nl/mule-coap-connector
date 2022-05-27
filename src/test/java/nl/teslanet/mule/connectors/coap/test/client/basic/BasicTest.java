@@ -43,7 +43,7 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
@@ -132,8 +132,8 @@ public class BasicTest extends AbstractClientTestCase
 
         assertNotNull( "no mule event", response );
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong message type", "CONFIRMABLE", attributes.getRequestType() );
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
@@ -158,8 +158,8 @@ public class BasicTest extends AbstractClientTestCase
 
         assertNotNull( "no mule event", response );
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong message type", "NON_CONFIRMABLE", attributes.getRequestType() );
         assertEquals( "wrong request code", expectedRequestCode, attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

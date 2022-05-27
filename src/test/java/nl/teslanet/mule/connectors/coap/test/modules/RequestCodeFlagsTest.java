@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 
 
@@ -99,7 +99,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testConstructorAndGetters() throws InvalidETagException
+    public void testConstructorAndGetters() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         assertNotNull( "no object constructed", flags );
@@ -116,7 +116,7 @@ public class RequestCodeFlagsTest
 }
 
     @Test
-    public void testCopyConstructor() throws InvalidETagException
+    public void testCopyConstructor() throws InvalidEntityTagException
     {
         RequestCodeFlags originalFlags= new RequestCodeFlags( get, post, put, delete );
         assertNotNull( "no object constructed", originalFlags );
@@ -146,7 +146,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testCopyConstructorNull() throws InvalidETagException
+    public void testCopyConstructorNull() throws InvalidEntityTagException
     {
         RequestCodeFlags originalFlags= null;
         assertNull( "should no object be constructed", originalFlags );
@@ -161,7 +161,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testSetterFromDefault1() throws InvalidETagException
+    public void testSetterFromDefault1() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags();
         assertNotNull( "no object constructed", flags );
@@ -183,7 +183,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testSetterFromDefault2() throws InvalidETagException
+    public void testSetterFromDefault2() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags();
         assertNotNull( "no object constructed", flags );
@@ -205,7 +205,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testSetter1() throws InvalidETagException
+    public void testSetter1() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         assertNotNull( "no object constructed", flags );
@@ -222,7 +222,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testSetter2() throws InvalidETagException
+    public void testSetter2() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         assertNotNull( "no object constructed", flags );
@@ -239,7 +239,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testToString() throws InvalidETagException
+    public void testToString() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
 
@@ -250,7 +250,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testEquals() throws InvalidETagException
+    public void testEquals() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         RequestCodeFlags flags0= new RequestCodeFlags( get, post, put, delete );
@@ -271,14 +271,14 @@ public class RequestCodeFlagsTest
 
     @SuppressWarnings("unlikely-arg-type")
     @Test
-    public void testEqualsToWrongClass() throws InvalidETagException
+    public void testEqualsToWrongClass() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         assertFalse( "flags wrongfully equals other class", flags.equals( Boolean.TRUE ) );
     }
 
     @Test
-    public void testCompareTo() throws InvalidETagException
+    public void testCompareTo() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         RequestCodeFlags flags0= new RequestCodeFlags( get, post, put, delete );
@@ -298,7 +298,7 @@ public class RequestCodeFlagsTest
     }
 
     @Test
-    public void testHashCode() throws InvalidETagException
+    public void testHashCode() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete );
         RequestCodeFlags flags0= new RequestCodeFlags( get, post, put, delete );

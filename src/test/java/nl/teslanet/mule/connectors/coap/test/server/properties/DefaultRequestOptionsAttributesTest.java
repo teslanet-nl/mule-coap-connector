@@ -37,8 +37,8 @@ import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -52,7 +52,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAt
 public class DefaultRequestOptionsAttributesTest
 {
     @Test
-    public void testOptionSetifExists() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetifExists() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= {};
@@ -60,7 +60,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< ETag > list= attributes.getIfMatch();
+        List< EntityTag > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNull( list );
@@ -68,7 +68,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetifExistsMultiple() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetifExistsMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= {};
@@ -81,19 +81,19 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< ETag > list= attributes.getIfMatch();
+        List< EntityTag > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNotNull( list );
         assertTrue( "coap.opt.if_match.any: wrong value", ifExists );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
-        assertFalse( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue3 ) ) );
+        assertFalse( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
     }
 
     @Test
-    public void testOptionSetIfMatch() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetIfMatch() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -102,16 +102,16 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< ETag > list= attributes.getIfMatch();
+        List< EntityTag > list= attributes.getIfMatch();
 
         assertNotNull( list );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue2 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue2 ) ) );
     }
 
     @Test
-    public void testOptionSetIfMatchMultiple() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetIfMatchMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -123,17 +123,17 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< ETag > list= attributes.getIfMatch();
+        List< EntityTag > list= attributes.getIfMatch();
 
         assertNotNull( list );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 2, list.size() );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new ETag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new ETag( etagValue3 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
     }
 
     @Test
-    public void testOptionUrihost() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionUrihost() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String host= "testhost";
@@ -147,7 +147,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionETagMultiple() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionETagMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -159,17 +159,17 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< ETag > list= attributes.getEtags();
+        List< EntityTag > list= attributes.getEtags();
 
         assertNotNull( list );
         assertEquals( "coap.opt.etag.list: wrong number of etags", 2, list.size() );
-        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new ETag( etagValue1 ) ) );
-        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new ETag( etagValue2 ) ) );
-        assertFalse( "coap.opt.etag.list: etag not expected", list.contains( new ETag( etagValue3 ) ) );
+        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
+        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
+        assertFalse( "coap.opt.etag.list: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
     }
 
     @Test
-    public void testOptionIfNoneMatch() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionIfNoneMatch() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         set.setIfNoneMatch( new Boolean( true ) );
@@ -188,7 +188,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionUriPort() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionUriPort() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer port= 5536;
@@ -202,7 +202,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetUriPath() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetUriPath() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String value1= "this";
@@ -225,7 +225,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionContentFormat() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionContentFormat() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer format= 41;
@@ -239,7 +239,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetUriQuery() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSetUriQuery() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] keys= { "this", "is", "some", "some" };
@@ -264,7 +264,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionAccept() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionAccept() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer format= new Integer( 41 );
@@ -278,7 +278,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize2() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSize2() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer size= new Integer( 0 );
@@ -292,7 +292,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionProxyUri() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionProxyUri() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String uri= "testproxyuri";
@@ -306,7 +306,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionProxyScheme() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionProxyScheme() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String scheme= "testproxyscheme";
@@ -320,7 +320,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize1() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionSize1() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer size= new Integer( 120 );
@@ -334,7 +334,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionObserve() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionObserve() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer seqnum= new Integer( 120 );
@@ -348,7 +348,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionOther() throws InvalidETagException, InternalInvalidOptionValueException
+    public void testOptionOther() throws InvalidEntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[][] values= {

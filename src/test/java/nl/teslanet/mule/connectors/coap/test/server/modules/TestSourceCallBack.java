@@ -30,21 +30,21 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 
 
 /**
  * Test class for testing connector modules that use SourceCallBack instances.
  *
  */
-public class TestSourceCallBack implements SourceCallback< InputStream, CoAPRequestAttributes >
+public class TestSourceCallBack implements SourceCallback< InputStream, CoapRequestAttributes >
 {
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.SourceCallback#handle(org.mule.runtime.extension.api.runtime.operation.Result)
      */
     @Override
-    public void handle( Result< InputStream, CoAPRequestAttributes > result )
+    public void handle( Result< InputStream, CoapRequestAttributes > result )
     {
         // not needed for test
     }
@@ -53,7 +53,7 @@ public class TestSourceCallBack implements SourceCallback< InputStream, CoAPRequ
      * @see org.mule.runtime.extension.api.runtime.source.SourceCallback#handle(org.mule.runtime.extension.api.runtime.operation.Result, org.mule.runtime.extension.api.runtime.source.SourceCallbackContext)
      */
     @Override
-    public void handle( Result< InputStream, CoAPRequestAttributes > result, SourceCallbackContext context )
+    public void handle( Result< InputStream, CoapRequestAttributes > result, SourceCallbackContext context )
     {
         // not needed for test         
     }

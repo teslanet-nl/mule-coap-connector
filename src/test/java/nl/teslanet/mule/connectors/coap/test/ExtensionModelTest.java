@@ -51,7 +51,7 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
+import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 
 
 @SmallTest
@@ -69,7 +69,7 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
     @Before
     public void before()
     {
-        extensionModel= loadExtension( CoAPConnector.class );
+        extensionModel= loadExtension( CoapConnector.class );
     }
 
     @SuppressWarnings("unchecked")

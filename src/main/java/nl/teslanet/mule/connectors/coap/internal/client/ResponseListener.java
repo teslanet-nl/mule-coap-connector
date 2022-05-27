@@ -28,7 +28,6 @@ import java.io.InputStream;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.runtime.source.Source;
@@ -36,7 +35,8 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.ResponseHandler;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -45,38 +45,34 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
  * The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications.
  * The received CoAP messages are delivered to the handlers mule-flow.
  */
-@MediaType(value= MediaType.APPLICATION_OCTET_STREAM, strict= false)
-public class ResponseListener extends Source< InputStream, CoAPResponseAttributes >
+@MediaType( value= MediaType.APPLICATION_OCTET_STREAM, strict= false )
+public class ResponseListener extends Source< InputStream, CoapResponseAttributes >
 {
-
     /**
      * The logger of this class.
      */
     private static final Logger logger= LoggerFactory.getLogger( ResponseListener.class.getCanonicalName() );
 
-    //TODO change reference to response handler
     /**
-     * The client that owns the handler.
-     */
-    @Config
-    private Client client;
-
-    /**
-     * The handler that will deliver responses to process of observers and async requests.
+     * The handler that will deliver responses and notifications to process.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    private String responseHandler;
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    private ResponseHandler responseHandler;
+
+    private SourceCallback< InputStream, CoapResponseAttributes > sourceCallback= null;
 
     /* (non-Javadoc)
      * @see org.mule.runtime.extension.api.runtime.source.Source#onStart(org.mule.runtime.extension.api.runtime.source.SourceCallback)
      */
     @Override
-    public void onStart( SourceCallback< InputStream, CoAPResponseAttributes > sourceCallback ) throws MuleException
+    public void onStart( SourceCallback< InputStream, CoapResponseAttributes > sourceCallback ) throws MuleException
     {
+        this.sourceCallback= sourceCallback;
         try
         {
-            client.addHandler( responseHandler, sourceCallback );
+            ResponseProcessor processor= ResponseProcessor.getResponseProcessor( responseHandler.getHandlerName() );
+            processor.addListener( this.sourceCallback );
         }
         catch ( InternalInvalidHandlerException e )
         {
@@ -91,9 +87,17 @@ public class ResponseListener extends Source< InputStream, CoAPResponseAttribute
     @Override
     public void onStop()
     {
-        client.removeHandler( responseHandler );
+        try
+        {
+            ResponseProcessor processor= ResponseProcessor.getResponseProcessor( responseHandler.getHandlerName() );
+            processor.removeListener( sourceCallback );
+        }
+        catch ( InternalInvalidHandlerException e )
+        {
+            logger.error( this + " cannot remove listener" );
+        }
+        sourceCallback= null;
         logger.info( this + " stopped." );
-
     }
 
     /**
@@ -102,6 +106,6 @@ public class ResponseListener extends Source< InputStream, CoAPResponseAttribute
     @Override
     public String toString()
     {
-        return "CoAP ResponseHandler { " + client.getClientName() + "::" + responseHandler + " }";
+        return "CoAP Response Listener on { " + responseHandler.getHandlerName() + " }";
     }
 }

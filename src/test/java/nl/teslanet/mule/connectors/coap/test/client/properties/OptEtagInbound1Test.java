@@ -23,9 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 
 
 /**
@@ -38,11 +38,11 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      */
-    private ETag getValue() throws InvalidETagException
+    private EntityTag getValue() throws InvalidEntityTagException
     {
-        return new ETag( 0x1122334455667788L);
+        return new EntityTag( 0x1122334455667788L);
     }
 
     @Override
@@ -58,19 +58,19 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object getExpectedInboundPropertyValue() throws InvalidETagException
+    protected Object getExpectedInboundPropertyValue() throws InvalidEntityTagException
     {
         return getValue();
     }
 
     @Override
-    protected OptionStrategy getStrategy() throws InvalidETagException
+    protected OptionStrategy getStrategy() throws InvalidEntityTagException
     {
         return new OptEtagStrategy( getValue() );
     }
 
     @Override
-    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
         return attributes.getOptions().getEtag();
     }

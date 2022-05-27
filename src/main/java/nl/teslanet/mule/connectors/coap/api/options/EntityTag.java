@@ -28,18 +28,18 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 
 
 /**
- * Implementation of the Etag concept for convenience.
+ * Implementation of the Entity-tag concept for convenience.
  * It eases the handling of Etag values in Mule flows. 
  * Etags can be constructed from long, byte array as well as from strings that 
  * contain a hexadecimal representation. 
  * An etag object is immutable and comparable to other etags.
  */
-public final class ETag implements Comparable< ETag >
+public final class EntityTag implements Comparable< EntityTag >
 {
     /**
      * The etag value
@@ -54,7 +54,7 @@ public final class ETag implements Comparable< ETag >
     /**
      * Default constructor that create empty etag.
      */
-    public ETag()
+    public EntityTag()
     {
         this.value= OptionUtils.EMPTY_BYTES;
     }
@@ -62,9 +62,9 @@ public final class ETag implements Comparable< ETag >
     /**
      * Constructs an etag from a byte array value.
      * @param bytes byte array containing the etag value
-     * @throws InvalidETagException when given array has a length greater than 8 bytes
+     * @throws InvalidEntityTagException when given array has a length greater than 8 bytes
      */
-    public ETag( byte[] bytes ) throws InvalidETagException
+    public EntityTag( byte[] bytes ) throws InvalidEntityTagException
     {
         if ( bytes == null || bytes.length == 0 )
         {
@@ -72,7 +72,7 @@ public final class ETag implements Comparable< ETag >
         }
         else if ( bytes.length > 8 )
         {
-            throw new InvalidETagException( "ETag length is invalid, must be between 0..8 bytes. Given length is: " + bytes.length );
+            throw new InvalidEntityTagException( "ETag length is invalid, must be between 0..8 bytes. Given length is: " + bytes.length );
         }
         else
         {
@@ -83,9 +83,9 @@ public final class ETag implements Comparable< ETag >
     /**
      * Constructs an etag from a string using UTF-8 encoding.
      * @param string contains the string representation of the etag value.
-     * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
+     * @throws InvalidEntityTagException when given string does not represent a etag length of 0..8 bytes
      */
-    public ETag( String string ) throws InvalidETagException
+    public EntityTag( String string ) throws InvalidEntityTagException
     {
         try
         {
@@ -93,16 +93,16 @@ public final class ETag implements Comparable< ETag >
         }
         catch ( InvalidOptionValueException e )
         {
-            throw new InvalidETagException( "Cannot construct etag value of: " + string );
+            throw new InvalidEntityTagException( "Cannot construct etag value of: " + string );
         }
     }
 
     /**
      * Constructs an etag from string interpreted as number using given radix.
      * @param string contains the string representation of the etag value.
-     * @throws InvalidETagException when given string does not represent a etag length of 0..8 bytes
+     * @throws InvalidEntityTagException when given string does not represent a etag length of 0..8 bytes
      */
-    public ETag( String string, int radix ) throws InvalidETagException
+    public EntityTag( String string, int radix ) throws InvalidEntityTagException
     {
         if ( string == null || string.length() <= 0 )
         {
@@ -117,7 +117,7 @@ public final class ETag implements Comparable< ETag >
             }
             catch ( NumberFormatException e )
             {
-                throw new InvalidETagException( "Cannot construct etag value of { " + string + " } using radix {" + radix + " }" );
+                throw new InvalidEntityTagException( "Cannot construct etag value of { " + string + " } using radix {" + radix + " }" );
             }
             this.value= OptionUtils.toBytes( longValue );
         }
@@ -127,7 +127,7 @@ public final class ETag implements Comparable< ETag >
      * Constructs an etag from a Integer value.
      * @param intValue The value to create an ETag from.
      */
-    public ETag( Integer intValue )
+    public EntityTag( Integer intValue )
     {
         this.value= OptionUtils.toBytes( intValue );
     }
@@ -136,7 +136,7 @@ public final class ETag implements Comparable< ETag >
      * Constructs an etag from a Long value.
      * @param longValue The value to create an ETag from.
      */
-    public ETag( Long longValue )
+    public EntityTag( Long longValue )
     {
         this.value= OptionUtils.toBytes( longValue );
     }
@@ -193,11 +193,11 @@ public final class ETag implements Comparable< ETag >
      * Static function that creates etag from byte array.
      * @param bytes The byte array containing etag value.
      * @return The etag object created.
-     * @throws InvalidETagException when the number of bytes > 8
+     * @throws InvalidEntityTagException when the number of bytes > 8
      */
-    public static ETag valueOf( byte[] bytes ) throws InvalidETagException
+    public static EntityTag valueOf( byte[] bytes ) throws InvalidEntityTagException
     {
-        return new ETag( bytes );
+        return new EntityTag( bytes );
     }
 
     /**
@@ -205,9 +205,9 @@ public final class ETag implements Comparable< ETag >
      * @param intValue The integer value to create etag from.
      * @return The etag object created.
      */
-    public static ETag valueOf( Integer intValue )
+    public static EntityTag valueOf( Integer intValue )
     {
-        return new ETag( intValue );
+        return new EntityTag( intValue );
     }
 
     /**
@@ -215,45 +215,45 @@ public final class ETag implements Comparable< ETag >
      * @param longValue The long value to create etag from.
      * @return The etag object created.
      */
-    public static ETag valueOf( Long longValue )
+    public static EntityTag valueOf( Long longValue )
     {
-        return new ETag( longValue );
+        return new EntityTag( longValue );
     }
 
     /**
      * Static function that creates etag from string using utf-8 representation.
      * @param string the  string to create etag from.
      * @return The etag object created.
-     * @throws InvalidETagException when given string cannot be converted. 
+     * @throws InvalidEntityTagException when given string cannot be converted. 
      */
-    public static ETag valueOf( String string ) throws InvalidETagException
+    public static EntityTag valueOf( String string ) throws InvalidEntityTagException
     {
-        return new ETag( string );
+        return new EntityTag( string );
     }
 
     /**
      * Static function that creates etag from string interpreted as number using given radix.
      * @param string the string to create etag from.
      * @return The etag object created.
-     * @throws InvalidETagException when given string cannot be converted. 
+     * @throws InvalidEntityTagException when given string cannot be converted. 
      */
-    public static ETag valueOf( String string, int radix ) throws InvalidETagException
+    public static EntityTag valueOf( String string, int radix ) throws InvalidEntityTagException
     {
-        return new ETag( string, radix );
+        return new EntityTag( string, radix );
     }
 
     /**
      * Convenience method to create a list of etags form a list of byte arrays.
      * @param bytesList The List of Byte arrays to make a list of etags from.
      * @return The list of etags. 
-     * @throws InvalidETagException when the etag could not be created from bytes
+     * @throws InvalidEntityTagException when the etag could not be created from bytes
      */
-    public static List< ETag > getList( List< byte[] > bytesList ) throws InvalidETagException
+    public static List< EntityTag > getList( List< byte[] > bytesList ) throws InvalidEntityTagException
     {
-        LinkedList< ETag > result= new LinkedList<>();
+        LinkedList< EntityTag > result= new LinkedList<>();
         for ( byte[] bytes : bytesList )
         {
-            result.add( new ETag( bytes ) );
+            result.add( new EntityTag( bytes ) );
         }
         return result;
     }
@@ -264,7 +264,7 @@ public final class ETag implements Comparable< ETag >
      * @param etags The collection of etags to check.
      * @return True when the etag is found in the collection, otherwise false.
      */
-    public boolean isIn( Collection< ETag > etags )
+    public boolean isIn( Collection< EntityTag > etags )
     {
         if ( etags == null ) return false;
         return etags.contains( this );
@@ -283,7 +283,7 @@ public final class ETag implements Comparable< ETag >
      * Compares this object with the specified object for order.
      */
     @Override
-    public int compareTo( ETag other )
+    public int compareTo( EntityTag other )
     {
         if ( other == null ) return 1;
         if ( this == other ) return 0;
@@ -303,10 +303,7 @@ public final class ETag implements Comparable< ETag >
     @Override
     public int hashCode()
     {
-        final int prime= 31;
-        int result= 1;
-        result= prime * result + Arrays.hashCode( value );
-        return result;
+        return Arrays.hashCode( value );
     }
 
     /**
@@ -319,11 +316,11 @@ public final class ETag implements Comparable< ETag >
         {
             return true;
         }
-        if ( !( obj instanceof ETag ) )
+        if ( !( obj instanceof EntityTag ) )
         {
             return false;
         }
-        ETag other= (ETag) obj;
+        EntityTag other= (EntityTag) obj;
         return Arrays.equals( value, other.value );
     }
 }

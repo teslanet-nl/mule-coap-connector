@@ -39,11 +39,11 @@ public class RequestOptionsAttributes
      */
     protected boolean ifExists= false;
 
-    protected List< ETag > ifMatch= null;
+    protected List< EntityTag > ifMatch= null;
 
     protected String uriHost= null;
 
-    protected List< ETag > etags= null;
+    protected List< EntityTag > etags= null;
 
     protected boolean ifNoneMatch= false;
 
@@ -82,7 +82,7 @@ public class RequestOptionsAttributes
      * Use getIfMatchValue instead.
      * @return null.
      */
-    public List< ETag > getIfMatch()
+    public List< EntityTag > getIfMatch()
     {
         return ifMatch;
     }
@@ -100,7 +100,7 @@ public class RequestOptionsAttributes
      * Use getEtagsValue instead.
      * @return null.
      */
-    public List< ETag > getEtags()
+    public List< EntityTag > getEtags()
     {
         return etags;
     }

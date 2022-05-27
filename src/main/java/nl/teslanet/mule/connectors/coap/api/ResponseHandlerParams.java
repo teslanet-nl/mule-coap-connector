@@ -26,7 +26,6 @@ package nl.teslanet.mule.connectors.coap.api;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
@@ -37,15 +36,14 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class ResponseHandlerParams
 {
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Example(value= "my_response_handler")
-    @Summary("The handler that will receive the response. This response handler must exist.")
-    public String responseHandler;
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "The handler that will receive the response." )
+    public ResponseHandler responseHandler;
 
     /**
      * @return the responseHandler
      */
-    public String getResponseHandler()
+    public ResponseHandler getResponseHandler()
     {
         return responseHandler;
     }
@@ -53,7 +51,7 @@ public class ResponseHandlerParams
     /**
      * @param responseHandler the responseHandler to set
      */
-    public void setResponseHandler( String responseHandler )
+    public void setResponseHandler( ResponseHandler responseHandler )
     {
         this.responseHandler= responseHandler;
     }

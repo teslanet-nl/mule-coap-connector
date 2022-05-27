@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 
@@ -55,7 +55,7 @@ public class AttributeUtilsRequestCodeTest
     {
         return Arrays.asList(
             new Object [] []
-            { { CoAPRequestCode.GET, Code.GET }, { CoAPRequestCode.POST, Code.POST }, { CoAPRequestCode.PUT, Code.PUT }, { CoAPRequestCode.DELETE, Code.DELETE } }
+            { { CoapRequestCode.GET, Code.GET }, { CoapRequestCode.POST, Code.POST }, { CoapRequestCode.PUT, Code.PUT }, { CoapRequestCode.DELETE, Code.DELETE } }
         );
     }
 
@@ -63,7 +63,7 @@ public class AttributeUtilsRequestCodeTest
      * Actual attributeValue parameter value.
      */
     @Parameter( 0 )
-    public CoAPRequestCode attributeValue;
+    public CoapRequestCode attributeValue;
 
     /**
      * Actual Cf value.

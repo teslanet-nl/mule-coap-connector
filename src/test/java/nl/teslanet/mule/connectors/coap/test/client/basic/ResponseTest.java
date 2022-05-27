@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -142,8 +142,8 @@ public class ResponseTest extends AbstractClientTestCase
 
             assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-            CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload, Defs.COAP_CHARSET ) );

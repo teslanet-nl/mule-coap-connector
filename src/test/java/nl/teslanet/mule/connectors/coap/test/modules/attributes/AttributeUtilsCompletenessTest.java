@@ -31,9 +31,9 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.junit.Test;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPMessageType;
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseCode;
+import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
@@ -53,7 +53,7 @@ public class AttributeUtilsCompletenessTest
     @Test
     public void testToMessageType() throws InternalInvalidMessageTypeException
     {
-        for ( CoAPMessageType type : CoAPMessageType.values() )
+        for ( CoapMessageType type : CoapMessageType.values() )
         {
             assertNotNull( type + " translation to Cf Code failed", AttributeUtils.toMessageType( type ) );
         }
@@ -103,7 +103,7 @@ public class AttributeUtilsCompletenessTest
     @Test
     public void testToRequestCode() throws InternalInvalidRequestCodeException
     {
-        for ( CoAPRequestCode requestCode : CoAPRequestCode.values() )
+        for ( CoapRequestCode requestCode : CoapRequestCode.values() )
         {
             assertNotNull( requestCode + " translation to Cf Code failed", AttributeUtils.toRequestCode( requestCode ) );
         }
@@ -159,7 +159,7 @@ public class AttributeUtilsCompletenessTest
     @Test
     public void toResponseCode() throws InternalInvalidResponseCodeException
     {
-        for ( CoAPResponseCode responseCode : CoAPResponseCode.values() )
+        for ( CoapResponseCode responseCode : CoapResponseCode.values() )
         {
             assertNotNull( responseCode + " translation to Cf ResponseCode failed", AttributeUtils.toResponseCode( responseCode ) );
         }
@@ -212,7 +212,7 @@ public class AttributeUtilsCompletenessTest
     @Test
     public void toResponseCodeUsingDefault() throws InternalInvalidRequestCodeException, InternalInvalidResponseCodeException
     {
-        for ( CoAPResponseCode responseCode : CoAPResponseCode.values() )
+        for ( CoapResponseCode responseCode : CoapResponseCode.values() )
         {
             assertNotNull( responseCode + " translation to Cf ResponseCode failed", AttributeUtils.toResponseCode( responseCode, responseCode ) );
         }
@@ -225,7 +225,7 @@ public class AttributeUtilsCompletenessTest
     @Test
     public void toResponseCodeUsingNullAndDefault() throws InternalInvalidResponseCodeException
     {
-        for ( CoAPResponseCode responseCode : CoAPResponseCode.values() )
+        for ( CoapResponseCode responseCode : CoapResponseCode.values() )
         {
             assertNotNull( responseCode + " default translation to Cf ResponseCode failed", AttributeUtils.toResponseCode( null, responseCode ) );
         }

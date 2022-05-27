@@ -26,17 +26,17 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options ) throws InvalidETagException
+    protected void addOption( OptionSet options ) throws InvalidEntityTagException
     {
-        options.addETag( new ETag( "0011FF" ).getValue() );
+        options.addETag( new EntityTag( "0011FF" ).getValue() );
     }
 
     @Override
@@ -46,10 +46,10 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws InvalidETagException
+    protected Object getExpectedPropertyValue() throws InvalidEntityTagException
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( "0011FF" ) );
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        list.add( new EntityTag( "0011FF" ) );
 
         return Collections.unmodifiableList( list );
     }

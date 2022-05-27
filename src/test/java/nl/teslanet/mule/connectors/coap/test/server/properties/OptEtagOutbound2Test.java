@@ -23,8 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
@@ -43,15 +43,15 @@ public class OptEtagOutbound2Test extends AbstractOutboundPropertyTestcase
     }
 
     @Override
-    protected Object getPropertyValue() throws InvalidETagException
+    protected Object getPropertyValue() throws InvalidEntityTagException
     {
-        return new ETag( 0x0011FFL ).getValue();
+        return new EntityTag( 0x0011FFL ).getValue();
     }
 
     @Override
-    protected Object getExpectedOptionValue() throws InvalidETagException
+    protected Object getExpectedOptionValue() throws InvalidEntityTagException
     {        
-        return new ETag( 0x0011FFL ).getValue();
+        return new EntityTag( 0x0011FFL ).getValue();
     }
 
     @Override

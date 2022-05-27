@@ -50,7 +50,7 @@ public class ResponseParams
     @Placement(tab= "Response", order= 1)
     @Summary("The CoAP response code of the response.")
     @Example("CONTENT")
-    private CoAPResponseCode responseCode;
+    private CoapResponseCode responseCode;
 
     /**
      * The payload of the CoAP response message. 
@@ -64,7 +64,7 @@ public class ResponseParams
     /**
      * @return the responseCode
      */
-    public CoAPResponseCode getResponseCode()
+    public CoapResponseCode getResponseCode()
     {
         return responseCode;
     }
@@ -72,7 +72,7 @@ public class ResponseParams
     /**
      * @param responseCode the responseCode to set
      */
-    public void setResponseCode( CoAPResponseCode responseCode )
+    public void setResponseCode( CoapResponseCode responseCode )
     {
         this.responseCode= responseCode;
     }

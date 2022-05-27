@@ -30,7 +30,7 @@ import java.util.List;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 
 
 /**
@@ -38,15 +38,15 @@ import nl.teslanet.mule.connectors.coap.api.options.ETag;
  */
 public class OptIfMatchListStrategy implements OptionStrategy
 {
-    private List< ETag > values;
+    private List< EntityTag > values;
 
     /**
      * Constructor using single etag
      * @param value the test value
      */
-    public OptIfMatchListStrategy( ETag value )
+    public OptIfMatchListStrategy( EntityTag value )
     {
-        values= new LinkedList< ETag >();
+        values= new LinkedList< EntityTag >();
         values.add( value );
     }
 
@@ -54,7 +54,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
      * Constructor using list
      * @param values of expected etags
      */
-    public OptIfMatchListStrategy( List< ETag > values )
+    public OptIfMatchListStrategy( List< EntityTag > values )
     {
         this.values= values;
     }
@@ -65,7 +65,7 @@ public class OptIfMatchListStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-        for ( ETag etag : values )
+        for ( EntityTag etag : values )
         {
             response.getOptions().addIfMatch( etag.getValue() );
         }

@@ -40,10 +40,10 @@ import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
@@ -81,33 +81,33 @@ public class MessageUtils
         }
         if ( requestOptions.getIfMatch() != null )
         {
-            List< ETag > etags;
+            List< EntityTag > etags;
             try
             {
                 etags= MessageUtils.toEtagList( requestOptions.getIfMatch(), transformationService );
-                for ( ETag etag : etags )
+                for ( EntityTag etag : etags )
                 {
                     optionSet.addIfMatch( etag.getValue() );
                 }
             }
-            catch ( IOException | InvalidETagException e )
+            catch ( IOException | InvalidEntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "If-Match", "", e );
             }
         }
         if ( requestOptions.getEtags() != null )
         {
-            List< ETag > etags;
+            List< EntityTag > etags;
             try
             {
                 etags= MessageUtils.toEtagList( requestOptions.getEtags(), transformationService );
-                for ( ETag etag : etags )
+                for ( EntityTag etag : etags )
                 {
                     if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
                     optionSet.addETag( etag.getValue() );
                 }
             }
-            catch ( IOException | InvalidETagException e )
+            catch ( IOException | InvalidEntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
             }
@@ -150,16 +150,16 @@ public class MessageUtils
      * @param responseOptions to copy from
      * @param optionSet to copy to
      * @throws InternalInvalidOptionValueException 
-     * @throws InvalidETagException when an option containes invalid ETag value
+     * @throws InvalidEntityTagException when an option containes invalid ETag value
      * @throws IOException when an option stream throws an error.
      */
     public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException,
         IOException,
-        InvalidETagException
+        InvalidEntityTagException
     {
         if ( responseOptions.getEtag() != null )
         {
-            ETag etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
+            EntityTag etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
             if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
             optionSet.addETag( etag.getValue() );
         }
@@ -229,9 +229,9 @@ public class MessageUtils
         {
             return ( (String) object ).getBytes( CoAP.UTF8_CHARSET );
         }
-        else if ( object instanceof ETag )
+        else if ( object instanceof EntityTag )
         {
-            return ( (ETag) object ).getValue();
+            return ( (EntityTag) object ).getValue();
         }
         else if ( object instanceof Integer )
         {
@@ -336,44 +336,44 @@ public class MessageUtils
     * @param typedValue The value to construct an ETag from.
     * @return The ETag object that has been constructed.
     * @throws IOException When the value is a stream that could not be read.
-    * @throws InvalidETagException When value cannot be converted to a valid ETag.
+    * @throws InvalidEntityTagException When value cannot be converted to a valid ETag.
     */
-    private static ETag toETag( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidETagException
+    private static EntityTag toETag( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidEntityTagException
     {
         Object object= TypedValue.unwrap( typedValue );
 
         if ( object == null )
         {
-            return new ETag();
+            return new EntityTag();
         }
-        else if ( object instanceof ETag )
+        else if ( object instanceof EntityTag )
         {
-            return (ETag) object;
+            return (EntityTag) object;
         }
         else if ( object instanceof Integer )
         {
-            return new ETag( (Integer) object );
+            return new EntityTag( (Integer) object );
         }
         else if ( object instanceof Long )
         {
-            return new ETag( (Long) object );
+            return new EntityTag( (Long) object );
         }
         else if ( object instanceof String )
         {
-            return new ETag( (String) object );
+            return new EntityTag( (String) object );
         }
         else if ( object instanceof byte[] )
         {
-            return new ETag( (byte[]) object );
+            return new EntityTag( (byte[]) object );
         }
         else if ( object instanceof Byte[] )
         {
-            return new ETag( toPrimitives( (Byte[]) object ) );
+            return new EntityTag( toPrimitives( (Byte[]) object ) );
         }
         else
         {
             //do transform using Mule's transformers.
-            return new ETag( (byte[]) transformationService.transform( typedValue.getValue(), typedValue.getDataType(), BYTE_ARRAY ) );
+            return new EntityTag( (byte[]) transformationService.transform( typedValue.getValue(), typedValue.getDataType(), BYTE_ARRAY ) );
         }
     }
 
@@ -381,13 +381,13 @@ public class MessageUtils
      * Create a list of ETags
      * @param typedValue is the types value to create a list of etags from.
      * @return List of ETags.
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      * @throws IOException 
      */
-    private static List< ETag > toEtagList( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidETagException
+    private static List< EntityTag > toEtagList( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidEntityTagException
     {
         Object object= TypedValue.unwrap( typedValue );
-        LinkedList< ETag > list= new LinkedList<>();
+        LinkedList< EntityTag > list= new LinkedList<>();
 
         if ( object == null )
         {

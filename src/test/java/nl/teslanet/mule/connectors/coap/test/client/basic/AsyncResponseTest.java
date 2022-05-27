@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -130,8 +130,8 @@ public class AsyncResponseTest extends AbstractClientTestCase
             return spy.getEvents().size() == 1;
         } );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         byte[] payload= (byte[]) ( response.getPayload().getValue() );
         if ( expectedResponseCode.name().startsWith( "_" ) )
         {

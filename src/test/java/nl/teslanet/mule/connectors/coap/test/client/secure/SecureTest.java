@@ -37,8 +37,8 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 
 
 @RunnerDelegateTo( Parameterized.class )
@@ -54,14 +54,14 @@ public class SecureTest extends AbstractSecureServerTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
-                { "do_not_get_me", CoAPRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", "empty" },
-                { "post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
-                { "do_not_post_me", CoAPRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", "empty"  },
-                { "put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
-                { "do_not_put_me", CoAPRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", "empty"  },
-                { "delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
-                { "do_not_delete_me", CoAPRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", "empty" } }
+                { "get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
+                { "do_not_get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", "empty" },
+                { "post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
+                { "do_not_post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", "empty"  },
+                { "put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
+                { "do_not_put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", "empty"  },
+                { "delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
+                { "do_not_delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", "empty" } }
         );
     }
 
@@ -75,7 +75,7 @@ public class SecureTest extends AbstractSecureServerTestCase
      * The request code that is expected.
      */
     @Parameter( 1 )
-    public CoAPRequestCode expectedRequestCode;
+    public CoapRequestCode expectedRequestCode;
 
     /**
      * The request uri that is expected.
@@ -116,8 +116,8 @@ public class SecureTest extends AbstractSecureServerTestCase
         Message response= result.getMessage();
         result.getVariables().get( "saved_payload" );
 
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
 
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );

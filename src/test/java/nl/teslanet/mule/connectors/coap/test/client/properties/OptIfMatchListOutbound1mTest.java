@@ -25,8 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 
 
 /**
@@ -38,14 +38,14 @@ public class OptIfMatchListOutbound1mTest extends AbstractOutboundPropertiesTest
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidETagException 
+     * @throws InvalidEntityTagException 
      */
-    private LinkedList< ETag > getValue() throws InvalidETagException
+    private LinkedList< EntityTag > getValue() throws InvalidEntityTagException
     {
-        LinkedList< ETag > list= new LinkedList< ETag >();
-        list.add( new ETag( 0xA0L ) );
-        list.add( new ETag( 0x11FFL ) );
-        list.add( new ETag( 0x1122334455667788L ) );
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        list.add( new EntityTag( 0xA0L ) );
+        list.add( new EntityTag( 0x11FFL ) );
+        list.add( new EntityTag( 0x1122334455667788L ) );
 
         return list;
     }
@@ -63,7 +63,7 @@ public class OptIfMatchListOutbound1mTest extends AbstractOutboundPropertiesTest
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidETagException
+    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
     {
         return getValue();
     }
@@ -72,7 +72,7 @@ public class OptIfMatchListOutbound1mTest extends AbstractOutboundPropertiesTest
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidETagException
+    protected OptionStrategy getStrategy() throws InvalidEntityTagException
     {
         return new OptIfMatchListStrategy( getValue() );
     }

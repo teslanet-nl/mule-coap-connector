@@ -8,15 +8,14 @@ pipeline
     environment
     {
         MVN_SETTINGS = credentials( 'secret-teslanet-maven-settings.xml' )
-        GNUPGHOME = '/var/lib/jenkins/.gnupg/'
+        GNUPGHOME = '/var/lib/jenkins_keys/.gnupg'
     }
     agent
     { 
         dockerfile
         {
-            filename 'Dockerfile.build'
-            args '--network sonar_network'
-        }
+            filename 'AgentDockerfile'
+            args '--network sonar_network --volume jenkins_keys:/var/lib/jenkins_keys --volume "jenkinsagent_mule_plc_connector:/home/jenkins' }
     }
     options
     { 

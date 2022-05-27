@@ -43,8 +43,8 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -169,7 +169,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
      * @param attributes the attributes to fetch the property from
      * @return the property value
      */
-    abstract protected Object fetchInboundProperty( CoAPResponseAttributes attributes );
+    abstract protected Object fetchInboundProperty( CoapResponseAttributes attributes );
 
     /**
      * Test inbound property
@@ -183,9 +183,9 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
             null
         ).withVariable( "path", path + getPathExtension() ).run();
         Message response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
 
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
 
         switch ( getPropertyType() )
@@ -235,19 +235,19 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
             case CollectionOfETag:
             {
                 @SuppressWarnings( "unchecked" )
-                Collection< ETag > property= (Collection< ETag >) fetchInboundProperty( attributes );
+                Collection< EntityTag > property= (Collection< EntityTag >) fetchInboundProperty( attributes );
                 assertNotNull( "property is not found in inbound scope", property );
 
                 @SuppressWarnings( "unchecked" )
-                Collection< ETag > expected= (Collection< ETag >) getExpectedInboundPropertyValue();
+                Collection< EntityTag > expected= (Collection< EntityTag >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 
-                Iterator< ETag > propertyIt= property.iterator();
-                Iterator< ETag > expectedIt= expected.iterator();
+                Iterator< EntityTag > propertyIt= property.iterator();
+                Iterator< EntityTag > expectedIt= expected.iterator();
                 while ( propertyIt.hasNext() && expectedIt.hasNext() )
                 {
-                    ETag optionValue= propertyIt.next();
-                    ETag expectedValue= expectedIt.next();
+                    EntityTag optionValue= propertyIt.next();
+                    EntityTag expectedValue= expectedIt.next();
                     assertTrue( "value in collection not equal", expectedValue.equals( optionValue ) );
                 } ;
             }
@@ -258,7 +258,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
 
             case ETag:
-                assertTrue( "wrong inbound property value", ( (ETag) getExpectedInboundPropertyValue() ).equals( (ETag) fetchInboundProperty( attributes ) ) );
+                assertTrue( "wrong inbound property value", ( (EntityTag) getExpectedInboundPropertyValue() ).equals( (EntityTag) fetchInboundProperty( attributes ) ) );
                 break;
 
             default:

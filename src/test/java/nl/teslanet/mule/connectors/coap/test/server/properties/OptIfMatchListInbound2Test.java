@@ -26,19 +26,19 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options ) throws InvalidETagException
+    protected void addOption( OptionSet options ) throws InvalidEntityTagException
     {
-        options.addIfMatch( new ETag( 0xA0L ).getValue() );
-        options.addIfMatch( new ETag( 0x11FFL ).getValue() );
-        options.addIfMatch( new ETag( 0x1122334455667788L).getValue() );
+        options.addIfMatch( new EntityTag( 0xA0L ).getValue() );
+        options.addIfMatch( new EntityTag( 0x11FFL ).getValue() );
+        options.addIfMatch( new EntityTag( 0x1122334455667788L).getValue() );
     }
 
     @Override
@@ -48,12 +48,12 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws InvalidETagException
+    protected Object getExpectedPropertyValue() throws InvalidEntityTagException
     {
-        LinkedList< ETag > list= new LinkedList<>();
-        list.add( new ETag( 0xA0L ) );
-        list.add( new ETag( 0x11FFL ) );
-        list.add( new ETag( 0x1122334455667788L ) );
+        LinkedList< EntityTag > list= new LinkedList<>();
+        list.add( new EntityTag( 0xA0L ) );
+        list.add( new EntityTag( 0x11FFL ) );
+        list.add( new EntityTag( 0x1122334455667788L ) );
 
         return Collections.unmodifiableList( list );
     }

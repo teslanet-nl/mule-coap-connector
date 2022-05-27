@@ -58,6 +58,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</coap:query-configs>
 	</coap:client-config>
 
+    <coap:response-handler name="handler" />
+
 	<flow name="request-sync">
 		<coap:request config-ref="config"
 			requestCode="#[vars.code]" queryParams="#[vars.query]">
@@ -134,25 +136,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		</coap:request-async>
 	</flow>
 
-	<flow name="handler">
-		<coap:response-listener config-ref="config"
-			responseHandler="handler" />
-
-		<java:new doc:name="New spy"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			constructor="MuleEventSpy(String)" target="spy">
-			<java:args><![CDATA[#[{ arg0: "query-handler" }]]]></java:args>
-		</java:new>
-		<java:invoke doc:name="Invoke" instance="#[vars.spy]"
-			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
-			method="event(Object)">
-			<java:args><![CDATA[#[{ arg0: message }]]]></java:args>
-		</java:invoke>
-	</flow>
-
-	<flow name="handler-with-defaults">
-		<coap:response-listener config-ref="config-with-defaults"
-			responseHandler="handler" />
+	<flow name="listener-flow">
+		<coap:response-listener	responseHandler="handler" />
 
 		<java:new doc:name="New spy"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

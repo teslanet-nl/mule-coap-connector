@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 
 
@@ -42,7 +42,7 @@ public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends A
      * Fetch the inbound property from the response attributes.
      */
     @Override
-    protected Object fetchInboundProperty( CoAPResponseAttributes attributes )
+    protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
         @SuppressWarnings( "unchecked" )
         List< OtherOptionAttribute > options= (List< OtherOptionAttribute >) super.fetchInboundProperty( attributes );

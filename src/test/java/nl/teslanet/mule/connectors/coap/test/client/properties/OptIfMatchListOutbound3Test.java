@@ -23,8 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 
 
 /**
@@ -33,9 +33,9 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
  */
 public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
-    private ETag getValue() throws InvalidETagException
+    private EntityTag getValue() throws InvalidEntityTagException
     {
-        return new ETag( 0x68656C6C6FL );
+        return new EntityTag( 0x68656C6C6FL );
     }
 
     /* (non-Javadoc)
@@ -51,7 +51,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidETagException
+    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
     {
         return Long.valueOf( getValue().getValueAsNumber() );
     }
@@ -60,7 +60,7 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidETagException
+    protected OptionStrategy getStrategy() throws InvalidEntityTagException
     {
         return new OptIfMatchListStrategy( getValue() );
     }

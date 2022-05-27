@@ -44,8 +44,7 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerException;
+import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -162,8 +161,8 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
             return spy1.getEvents().size() == 1 && spy2.getEvents().size() == 1;
         } );
         response= (Message) spy1.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
@@ -172,8 +171,8 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         response= (Message) spy2.getEvents().get( 0 ).getContent();
         //message containing message!!
         response= (Message) response.getPayload().getValue();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
@@ -226,8 +225,8 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
 
         assertEquals( "spy has not been called once", 1, spy3.getEvents().size() );
         response= (Message) spy3.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoAPResponseAttributes );
-        CoAPResponseAttributes attributes= (CoAPResponseAttributes) response.getAttributes().getValue();
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
@@ -244,13 +243,13 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         //exception.expect( hasMessage( containsString( "referenced handler { nonexisting_handler } not found" ) ) );
 
         Exception e= assertThrows( Exception.class, () -> {
-            flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
+            flowRunner( "do_request_no_handler" ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
                 "port",
                 port
             ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
         } );
-        assertEquals( "wrong exception message", "CoAP Client { config } failed to execute async request.", e.getMessage() );
-        assertEquals( "wrong exception cause", InvalidHandlerException.class, e.getCause().getClass() );
+        assertEquals( "wrong exception message", "Element 'non_existent' is not defined in the Mule Registry.", e.getMessage() );
+        assertEquals( "wrong exception cause", org.mule.runtime.core.api.config.ConfigurationException.class, e.getCause().getClass() );
     }
 
 }

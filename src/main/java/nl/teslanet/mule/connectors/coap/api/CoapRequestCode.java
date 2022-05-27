@@ -24,9 +24,9 @@ package nl.teslanet.mule.connectors.coap.api;
 
 
 /**
- * The available message types.
+ * Available request codes.
  */
-public enum CoAPMessageType
+public enum CoapRequestCode
 {
-    CONFIRMABLE, NON_CONFIRMABLE, ACKNOWLEDGEMENT, RESET
+    GET, POST, PUT, DELETE
 }

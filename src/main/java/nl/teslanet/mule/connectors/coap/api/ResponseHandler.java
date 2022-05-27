@@ -25,42 +25,53 @@ package nl.teslanet.mule.connectors.coap.api;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.RefName;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.param.display.Text;
 
 
 /**
- * The parameters of a CoAP discover request.
- *
+ * Configuration of a response handler.
+ * The handler collects responses and notifications resulting from asynchronous requests and observe requests.
+ * Response listeners can register on the handler to process these in Mule flows.
  */
-public class DiscoverParams extends AbstractQueryParams
+@TypeDsl( allowInlineDefinition= false, allowTopLevelDefinition= true )
+public class ResponseHandler
 {
     /**
-     * When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.
-     * When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.
-     * When DEFAULT the client default is used.
+     * Name of the handler.
+     */
+    @RefName
+    private String handlerName= null;
+
+    /**
+     * Description of this handler.
      */
     @Parameter
-    @Optional( defaultValue= "DEFAULT" )
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Placement( order= 1 )
-    //@Summary( "When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request.\nWhen Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed.\nWhen DEFAULT the client default is used." )
-    private CoapRequestType type= CoapRequestType.DEFAULT;
+    @Optional
+    @Text
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Example( "Some usage explanation of this handler." )
+    private String description;
 
     /**
-     * @return the confirmable
+     * @return The handler name.
      */
-    public CoapRequestType getType()
+    public String getHandlerName()
     {
-        return type;
+        return handlerName;
     }
 
-    /**
-     * @param type the message type to set
-     */
-    public void setType( CoapRequestType type )
+    public String getDescription()
     {
-        this.type= type;
+        return description;
+    }
+
+    public void setDescription( String description )
+    {
+        this.description= description;
     }
 }

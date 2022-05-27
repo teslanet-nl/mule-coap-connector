@@ -46,7 +46,7 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-import nl.teslanet.mule.connectors.coap.internal.CoAPConnector;
+import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 
 
 public class ExtensionXsdTest
@@ -62,7 +62,7 @@ public class ExtensionXsdTest
     @Before
     public void before()
     {
-        extensionModel= loadExtension( CoAPConnector.class );
+        extensionModel= loadExtension( CoapConnector.class );
         HashSet< ExtensionModel > models= new HashSet< ExtensionModel >();
         models.add( extensionModel );
         dslContext= new DefaultDslResolvingContext( models );

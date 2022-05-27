@@ -365,29 +365,6 @@
         </operation>
     </operations>
     <sources>
-        <source name="ResponseListener">
-            <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.]]></description>
-            <parameters>
-                <parameter name="responseHandler">
-                    <description><![CDATA[The handler that will deliver responses to process of observers and async requests.]]></description>
-                </parameter>
-                <parameter name="outputMimeType">
-                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
-                </parameter>
-                <parameter name="outputEncoding">
-                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
-                </parameter>
-                <parameter name="primaryNodeOnly">
-                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
-                </parameter>
-                <parameter name="streamingStrategy">
-                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
-                </parameter>
-                <parameter name="redeliveryPolicy">
-                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
-                </parameter>
-            </parameters>
-        </source>
         <source name="observer">
             <description><![CDATA[The Observer message source observes a CoAP resource on a server. The CoAP notifications received from the server are delivered to the flow. The resource is observed during runtime of the flow. When an observe relation with the server could not be established or is lost, the flow is notified of the error and the observe request is retried continuously.]]></description>
             <parameters>
@@ -467,9 +444,32 @@
                 </parameter>
             </parameters>
         </source>
+        <source name="ResponseListener">
+            <description><![CDATA[The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.]]></description>
+            <parameters>
+                <parameter name="responseHandler">
+                    <description><![CDATA[The handler that will deliver responses and notifications to process.]]></description>
+                </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="outputEncoding">
+                    <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="primaryNodeOnly">
+                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
+                </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
+                </parameter>
+                <parameter name="redeliveryPolicy">
+                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
+                </parameter>
+            </parameters>
+        </source>
     </sources>
     <types>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoAPRequestAttributes">
+        <type name="nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="localAddress">
@@ -495,7 +495,7 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoAPResponseAttributes">
+        <type name="nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="localAddress">
@@ -672,6 +672,14 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.ResponseHandler">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="description">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.ResponseParams">
             <description><![CDATA[]]></description>
             <parameters>
@@ -778,7 +786,7 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="endpointGroup">
+                <parameter name="endpointConfig">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -821,7 +829,7 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="endpointGroup">
+                <parameter name="endpointConfig">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1035,7 +1043,7 @@
             <description><![CDATA[]]></description>
             <parameters/>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.options.ETag">
+        <type name="nl.teslanet.mule.connectors.coap.api.options.EntityTag">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="empty">

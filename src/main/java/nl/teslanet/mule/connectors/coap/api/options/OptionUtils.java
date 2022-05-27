@@ -27,7 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import nl.teslanet.mule.connectors.coap.api.Defs;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidETagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 
 
@@ -232,7 +232,7 @@ public class OptionUtils
      * @param hexString The string representing the bytes value.
      * @param maxLength The maximum allowed length of the resulting byte array.
      * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
      */
     public static byte[] toBytesFromHex( String hexString, int maxLength ) throws InvalidOptionValueException
     {
@@ -275,7 +275,7 @@ public class OptionUtils
      * Converts a hexadecimal representation of an option to byte array.
      * @param hexString The string representing the bytes value.
      * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
      */
     public static byte[] toBytesFromHex( String hexString ) throws InvalidOptionValueException
     {
@@ -288,7 +288,7 @@ public class OptionUtils
      * @param string The string representing the bytes value.
      * @param maxLength The maximum allowed length of the resulting byte arnray.
      * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
      */
     public static byte[] toBytes( String string, int maxLength ) throws InvalidOptionValueException
     {
@@ -314,7 +314,7 @@ public class OptionUtils
      * The bytes are written using UTF-8 encoding.
      * @param hexString The string representing the bytes value.
      * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidETagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
      */
     public static byte[] toBytes( String hexString ) throws InvalidOptionValueException
     {

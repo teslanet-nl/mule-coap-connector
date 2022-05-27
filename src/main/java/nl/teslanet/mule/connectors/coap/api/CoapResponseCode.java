@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.api;
  * Available response codes.
  *
  */
-public enum CoAPResponseCode
+public enum CoapResponseCode
 {
     CONTENT,
     CREATED,

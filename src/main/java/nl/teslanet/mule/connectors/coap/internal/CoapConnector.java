@@ -29,6 +29,7 @@ import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
+import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
@@ -63,8 +64,9 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
 import nl.teslanet.mule.connectors.coap.api.error.Errors;
-import nl.teslanet.mule.connectors.coap.api.options.ETag;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
+import nl.teslanet.mule.connectors.coap.internal.client.ResponseListener;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
 
@@ -87,14 +89,16 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @SubTypeMapping(baseType= RemoteEndpoint.class, subTypes= { SharedServer.class, Proxy.class })
 @SubTypeMapping(baseType= RemoteEndpointConfig.class, subTypes= { SharedServerConfig.class, ProxyConfig.class })
 @Configurations({ Server.class, Client.class })
-@Export(classes= { ETag.class })
+@Sources( value=
+{ ResponseListener.class } )
+@Export(classes= { EntityTag.class })
 @ErrorTypes(Errors.class)
-public class CoAPConnector
+public class CoapConnector
 {
     /**
      * The logger.
      */
-    private static final Logger logger= LoggerFactory.getLogger( CoAPConnector.class );
+    private static final Logger logger= LoggerFactory.getLogger( CoapConnector.class );
 
     /**
      * The Scheduler service.
@@ -119,7 +123,7 @@ public class CoAPConnector
     /**
      * No instances needed.
      */
-    private CoAPConnector()
+    private CoapConnector()
     {
         //NOOP
     }
