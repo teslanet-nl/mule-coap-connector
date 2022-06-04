@@ -48,7 +48,10 @@
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
         
         <!-- Cf scandium logger -->
-        <AsyncLogger name="org.eclipse.californium.scandium" level="INFO" additivity="true"/>
+        <AsyncLogger name="org.eclipse.californium.scandium" level="INFO"/>
+        
+        <!-- Test loggers -->
+        <AsyncLogger name="nl.teslanet.mule.connectors.coap.test" level="WARN"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>

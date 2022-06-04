@@ -64,8 +64,9 @@ public class OutgoingMulticastConfig
      * {@code true}, to disable loopback mode, {@code false}, otherwise.
      */
     @Parameter
-    @Summary( value= "When True loopback mode is diabled." )
+    @Optional( defaultValue = "false" )
+    @Summary( value= "When True loopback mode is diabled. Default is false." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
-    public Boolean disableLoopback= Boolean.FALSE;
+    public boolean disableLoopback= false;
 }

@@ -86,7 +86,6 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
         assertEquals( "schemata/" + resource.getPath(), descriptionPath );
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( descriptionPath ).openStream() );
         String content= new String( resource.getContent() );
-        logger.info( "\n---\n" + content + "\n---" );
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( content ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()
@@ -104,6 +103,10 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
                 //.withDocumentBuilerFactory(factory)
                 .ignoreElementContentWhitespace().build();
 
+        if ( diff.hasDifferences() )
+        {
+            logger.error( "\n---\n" + content + "\n---" );
+        }
         assertFalse( diff.toString(), diff.hasDifferences() );
 
     }

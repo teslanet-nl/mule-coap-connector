@@ -32,6 +32,9 @@
                 <parameter name="throwExceptionOnErrorResponse">
                     <description><![CDATA[When true synchronous operations will throw an exception when CoAP error codes are received or a timeout has occurred. Otherwise a result is returned in these cases with attribute.success set to False.]]></description>
                 </parameter>
+                <parameter name="name">
+                    <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
+                </parameter>
                 <parameter name="confirmable">
                     <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
                 </parameter>
@@ -73,6 +76,9 @@
                 <parameter name="protocolStageThreadCount">
                     <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
                 </parameter>
+                <parameter name="name">
+                    <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
+                </parameter>
             </parameters>
         </config>
     </configs>
@@ -85,6 +91,9 @@
         <operation name="discover">
             <description><![CDATA[The Discover processor retrieves information about CoAP resources of a server.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
@@ -111,6 +120,9 @@
         <operation name="observerAdd">
             <description><![CDATA[The ObserverAdd processor creates an observer. A request to observe the specified resource is sent to the server. The client defaults are used to issue the request.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -134,6 +146,9 @@
         <operation name="observerExists">
             <description><![CDATA[Establish whether an observer with given parameters exists.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
@@ -160,6 +175,12 @@
         <operation name="observerList">
             <description><![CDATA[This processor returns a list of observers. The list contains the uri's of the active observers of the CoAP client.]]></description>
             <parameters>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
                 </parameter>
@@ -171,6 +192,9 @@
         <operation name="observerRemove">
             <description><![CDATA[The ObserverRemove processor removes an observer. A request to terminate observe the specified resource is sent to the server. The client defaults are used to issue the request.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to reach.]]></description>
                 </parameter>
@@ -191,6 +215,9 @@
         <operation name="ping">
             <description><![CDATA[The Ping processor checks whether a CoAP server is reachable.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="remoteEndpointParams">
                     <description><![CDATA[The address of the remote endpoint to ping. When empty the client request defaults are used.]]></description>
                 </parameter>
@@ -213,6 +240,9 @@
                 </parameter>
                 <parameter name="outputEncoding">
                     <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
                 </parameter>
                 <parameter name="streamingStrategy">
                     <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
@@ -258,6 +288,9 @@
                 <parameter name="requestOptions">
                     <description><![CDATA[The CoAP options to send with the request.]]></description>
                 </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="responseHandler">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -296,11 +329,17 @@
                 <parameter name="pathPattern">
                     <description><![CDATA[The path pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
                 </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
             </parameters>
         </operation>
         <operation name="resourceAdd">
             <description><![CDATA[The Resource Add processor dynamically adds a new resource to the CoAP server. The uri needs to be a complete resource-path, including all parent resource(s). All parent resources in the path must exist already. The resource is available to clients immediately, provided there is a listener configured which has an uri pattern that applies to it.]]></description>
             <parameters>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="resourcePath">
                     <description><![CDATA[The absolute path of the resource that will be used to identify it in CoAP uri's.]]></description>
                 </parameter>
@@ -333,6 +372,9 @@
                 <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
                 </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
                 </parameter>
@@ -347,6 +389,12 @@
                 <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".]]></description>
                 </parameter>
+                <parameter name="outputMimeType">
+                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
                 </parameter>
@@ -356,10 +404,13 @@
             </parameters>
         </operation>
         <operation name="resourceRemove">
-            <description><![CDATA[The  Resource Remove processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
+            <description><![CDATA[The Resource Remove processor removes resources from the CoAP server. All resources that apply to the uri pattern will be removed. Clients that observe a removed resource will be notified.]]></description>
             <parameters>
                 <parameter name="pathPattern">
                     <description><![CDATA[The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -373,6 +424,9 @@
                 </parameter>
                 <parameter name="outputEncoding">
                     <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
                 </parameter>
                 <parameter name="primaryNodeOnly">
                     <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
@@ -426,6 +480,9 @@
                 </parameter>
                 <parameter name="outputEncoding">
                     <description><![CDATA[The encoding of the payload that this operation outputs.]]></description>
+                </parameter>
+                <parameter name="config-ref">
+                    <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
                 </parameter>
                 <parameter name="primaryNodeOnly">
                     <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
