@@ -23,12 +23,16 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.mule.runtime.extension.api.annotation.NoImplicit;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
 
 /**
- * Endpoint configuration
+ * Endpoint configuration.
+ * Implicit configuration by Mule is prohibited to give clients and servers 
+ * control over defaults.
  */
+@NoImplicit
 public class Endpoint
 {
     @ParameterGroup( name= "Configure one of the endpoint types" )

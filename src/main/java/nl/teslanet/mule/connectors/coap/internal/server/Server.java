@@ -29,6 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -60,6 +61,7 @@ import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
@@ -102,7 +104,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional
-    //TODO @NoImplicit
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( value= "Main endpoint the server uses." )
@@ -213,8 +214,8 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         else if ( additionalEndpoints.isEmpty() )
         {
             // user wants default endpoint
-            configuredEndpoints.add( new DefaultServerEndpoint( this.toString() + "-endpoint" ) );
-            logger.info( this + " using default udp endpoint." );
+            configuredEndpoints.add( new UDPEndpoint( this.toString() + " default", CoAP.DEFAULT_COAP_PORT ) );
+            logger.info( this + " is using default udp endpoint." );
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {

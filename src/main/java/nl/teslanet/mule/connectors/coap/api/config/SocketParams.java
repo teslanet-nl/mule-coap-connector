@@ -43,10 +43,10 @@ public class SocketParams implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Summary("The hostname or IP address the CoAP endpoint binds to. If empty anyLocalAddress is used (typically 0.0.0.0 or ::0)")
-    @Example(value= "0.0.0.0")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( "The hostname or IP address the CoAP endpoint binds to. If empty anyLocalAddress is used (typically 0.0.0.0 or ::0)" )
+    @Example( value= "0.0.0.0" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public String bindToHost= null;
 
     /**
@@ -56,8 +56,8 @@ public class SocketParams implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer bindToPort= null;
 
     /* (non-Javadoc)
@@ -67,5 +67,37 @@ public class SocketParams implements VisitableConfig
     public void accept( ConfigVisitor visitor )
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @return the bindToHost
+     */
+    public String getBindToHost()
+    {
+        return bindToHost;
+    }
+
+    /**
+     * @param bindToHost the bindToHost to set
+     */
+    public void setBindToHost( String bindToHost )
+    {
+        this.bindToHost= bindToHost;
+    }
+
+    /**
+     * @return the bindToPort
+     */
+    public Integer getBindToPort()
+    {
+        return bindToPort;
+    }
+
+    /**
+     * @param bindToPort the bindToPort to set
+     */
+    public void setBindToPort( Integer bindToPort )
+    {
+        this.bindToPort= bindToPort;
     }
 }

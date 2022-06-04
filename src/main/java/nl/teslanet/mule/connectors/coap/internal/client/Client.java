@@ -93,6 +93,7 @@ import nl.teslanet.mule.connectors.coap.api.RequestParams;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
@@ -204,6 +205,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private ConcurrentHashMap< URI, ObserveRelation > observeRelations= new ConcurrentHashMap<>();
 
     /**
+     * Default endpoint. 
+     * Can be used by multiple clients that have no explicit endpoint configuration (reference).
+     */
+    private static UDPEndpoint defaultEndpoint= null;
+
+    /**
      * Start the client. After starting the client is ready for issuing requests.
      */
     @Override
@@ -242,7 +249,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         if ( endpoint == null )
         {
             //user wants default endpoint
-            abstractEndpoint= new DefaultClientEndpoint( this.toString() + " endpoint" );
+            abstractEndpoint= getDefaultEndpoint();
         }
         else
         {
@@ -292,6 +299,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     CoapClient getCoapClient()
     {
         return coapClient;
+    }
+
+    /**
+     * Get the default client endpoint, lazily initialized.
+     * @return the defaultEndpoint
+     */
+    public static synchronized UDPEndpoint getDefaultEndpoint()
+    {
+        if ( defaultEndpoint == null )
+        {
+            defaultEndpoint= new UDPEndpoint( "default" );
+        }
+        return defaultEndpoint;
     }
 
     /**

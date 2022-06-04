@@ -42,7 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl;
 
-//TODO NoImplicit ? -> not when implicit endpoint is reused on multiple  clients
+
 /**
  * Endpoint configuration parameters
  *
@@ -133,7 +133,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
-     * @param name the manually set name of the endpoint
+     * @param name The manually set name of the endpoint
      */
     protected AbstractEndpoint( String name )
     {
@@ -143,6 +143,18 @@ public abstract class AbstractEndpoint implements VisitableConfig
         exchangeParams= new ExchangeParams();
         blockwiseParams= new BlockwiseParams();
         notificationParams= new NotificationParams();
+    }
+
+    /**
+     * Constructor for manually constructing the endpoint.
+     * (Mule uses default constructor and sets Nullsafe params.)
+     * @param name The manually set name of the endpoint
+     * @param port The manually set port to bind to.
+     */
+    protected AbstractEndpoint( String name, int port )
+    {
+        this( name );
+        socketParams.setBindToPort( port );
     }
 
     /* (non-Javadoc)
