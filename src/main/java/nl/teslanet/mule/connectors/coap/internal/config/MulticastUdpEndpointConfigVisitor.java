@@ -88,7 +88,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     {
         super.visit( toVisit );
         joinMulticastGroups= toVisit.join;
-        disableLoopback= toVisit.outgoingMulticastConfig.disableLoopback;
+        disableLoopback= toVisit.disableLoopback;
         outgoingInterface= toVisit.outgoingMulticastConfig.outgoingInterface;
         outgoingAddress= toVisit.outgoingMulticastConfig.outgoingAddress;
     }

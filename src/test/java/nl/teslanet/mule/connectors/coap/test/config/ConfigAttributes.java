@@ -237,7 +237,7 @@ public class ConfigAttributes
             case probingRate:
                 return new ConfigAttributeDesc( ConfigParamName.probingRate, NetworkConfig.Keys.PROBING_RATE, null, "1.0", "3.15", "3.15" );
             case useRandomMidStart:
-                return new ConfigAttributeDesc( ConfigParamName.useRandomMidStart, NetworkConfig.Keys.USE_RANDOM_MID_START, null, "true", "false", "false" );
+                return new ConfigAttributeDesc( ConfigParamName.useRandomMidStart, NetworkConfig.Keys.USE_RANDOM_MID_START, "true", "true", "false", "false" );
             case midTracker:
                 return new ConfigAttributeDesc( ConfigParamName.midTracker, NetworkConfig.Keys.MID_TRACKER, "GroupedMidTracker", "GROUPED", "MapBasedMidTracker", "MAPBASED" );
             case midTrackerGroups:
