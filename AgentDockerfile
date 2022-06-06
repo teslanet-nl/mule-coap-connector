@@ -15,12 +15,17 @@ ARG user=jenkins
 ARG group=jenkins
 ARG uid=800
 ARG gid=800
-RUN groupadd -g ${gid} ${group} 
-RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user} # <--- the '-m' create a user home directory
-
-#set volumes
-VOLUME /home/jenkins
-VOLUME /var/lib/jenkins_keys
+RUN groupadd -g ${gid} ${group} \
+    && useradd -u ${uid} -g ${group} -s /bin/sh -m ${user} # <--- the '-m' create a user home directory
 
 # Switch to user
 USER ${uid}:${gid}
+
+RUN mkdir /home/jenkins/.m2 \
+    && mkdir /home/jenkins/.m2/repository
+
+#set volumes
+VOLUME /home/jenkins
+VOLUME /home/jenkins/.m2/repository
+VOLUME /var/lib/jenkins_keys
+

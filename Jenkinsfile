@@ -15,7 +15,7 @@ pipeline
         dockerfile
         {
             filename 'AgentDockerfile'
-            args '--network sonar_network --volume jenkins_keys:/var/lib/jenkins_keys --volume "jenkinsagent_mule_plc_connector:/home/jenkins' }
+            args '--network sonar_network --volume jenkins_keys:/var/lib/jenkins_keys --volume "jenkinsagent_m2repo:/home/jenkins/.m2/repository' }
     }
     options
     { 
@@ -91,6 +91,18 @@ pipeline
             {
                sh 'mvn -B -s $MVN_SETTINGS release:perform'
             }
+        }
+    }
+    post
+    {
+        // Clean after build
+        always
+        {
+            cleanWs( cleanWhenNotBuilt: false,
+                     deleteDirs: true,
+                     disableDeferredWipeout: true,
+                     notFailBuild: true
+                   )
         }
     }
 }
