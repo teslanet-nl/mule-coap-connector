@@ -154,7 +154,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         }
         catch ( InternalResourceUriException | InternalUriPatternException e )
         {
-            new DefaultMuleException( this + " start failed.", e );
+            throw new DefaultMuleException( this + " start failed.", e );
         }
         logger.info( this + " started." );
     }
