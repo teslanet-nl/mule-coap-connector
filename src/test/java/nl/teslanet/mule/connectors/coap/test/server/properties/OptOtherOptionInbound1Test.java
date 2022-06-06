@@ -76,7 +76,7 @@ public class OptOtherOptionInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected String getConfigResources()
     {
-        return "mule-server-config/properties/testserver-options-other65012.xml";
+        return "mule-server-config/properties/testserver-options-other65012-inbound.xml";
     };
 
 }

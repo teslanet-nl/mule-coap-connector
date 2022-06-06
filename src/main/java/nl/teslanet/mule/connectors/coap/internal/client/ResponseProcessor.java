@@ -141,7 +141,7 @@ public class ResponseProcessor
      * @param requestUri The Uri of the request that caused the response.
      * @param requestCode The code of the request that caused the response.
      * @param response The coap response to process.
-     * @param callback The callback method of the muleflow.
+     * @param processor The processor method of the muleflow.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
     public static void processMuleFlow(
@@ -165,17 +165,27 @@ public class ResponseProcessor
         }
         for ( SourceCallback< InputStream, CoapResponseAttributes > callback : processor.getListeners() )
         {
-            callMuleFlow(responseAttributes, response, callback);
+            callMuleFlow( responseAttributes, response, callback );
         }
     }
 
+    /**
+     * Passes asynchronous response to the muleflow.
+     * @param localAddress The local address of the endpoint that has received the response.
+     * @param requestUri The Uri of the request that caused the response.
+     * @param requestCode The code of the request that caused the response.
+     * @param response The coap response to process.
+     * @param callback The callback method of the muleflow.
+     * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
+     */
     public static void processMuleFlow(
         String localAddress,
         String requestUri,
         CoapMessageType requestType,
         CoapRequestCode requestCode,
         CoapResponse response,
-        SourceCallback< InputStream, CoapResponseAttributes > callback    ) throws InternalResponseException
+        SourceCallback< InputStream, CoapResponseAttributes > callback
+    ) throws InternalResponseException
 
     {
         DefaultResponseAttributes responseAttributes;
@@ -187,47 +197,47 @@ public class ResponseProcessor
         {
             throw new InternalResponseException( "cannot proces received response", e );
         }
-        callMuleFlow(responseAttributes, response, callback);
+        callMuleFlow( responseAttributes, response, callback );
     }
-    
+
     /**
      * Call Muleflow to hand over the response.
      * @param responseAttributes The response attributes giving context o.f the response.
      * @param response The CoAP response received.
      * @param callback The callback that will handle the response.
      */
-    private static void callMuleFlow( DefaultResponseAttributes responseAttributes, CoapResponse response,
-        SourceCallback< InputStream, CoapResponseAttributes > callback ) 
+    private static void callMuleFlow( DefaultResponseAttributes responseAttributes, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
+    {
+        SourceCallbackContext requestcontext= callback.createContext();
+        //not needed yet: requestcontext.addVariable( "CoapExchange", exchange );
+        if ( response != null )
         {
-            SourceCallbackContext requestcontext= callback.createContext();
-            //not needed yet: requestcontext.addVariable( "CoapExchange", exchange );
-            if ( response != null )
+            byte[] responsePayload= response.getPayload();
+            if ( responsePayload != null )
             {
-                byte[] responsePayload= response.getPayload();
-                if ( responsePayload != null )
-                {
-                    callback.handle(
-                        Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
-                            MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                        ).build(),
-                        requestcontext
-                    );
-                }
-                else
-                {
-                    callback.handle(
-                        Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType(
-                            MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                        ).build(),
-                        requestcontext
-                    );
-                }
+                callback.handle(
+                    Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
             else
             {
-                callback.handle( Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
+                callback.handle(
+                    Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType(
+                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
+                    ).build(),
+                    requestcontext
+                );
             }
+        }
+        else
+        {
+            callback.handle( Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
+        }
     }
+
     /**
      * Create response attributes that describe a response that is received.
      * @param localAddress The local address of the endpoint that has received the response.

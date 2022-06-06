@@ -248,7 +248,7 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
                 port
             ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
         } );
-        assertEquals( "wrong exception message", "Element 'non_existent' is not defined in the Mule Registry.", e.getMessage() );
+        assertEquals( "wrong exception message", "Element 'non_existent' is not defined in the Mule Registry", e.getMessage() );
         assertEquals( "wrong exception cause", org.mule.runtime.core.api.config.ConfigurationException.class, e.getCause().getClass() );
     }
 

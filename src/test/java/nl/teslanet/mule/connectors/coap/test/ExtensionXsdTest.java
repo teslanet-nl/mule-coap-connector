@@ -77,7 +77,6 @@ public class ExtensionXsdTest
 
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( SCHEMA_PATH ).openStream() );
 
-        logger.info( "\n---\n" + schema + "\n---" );
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( schema ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()
@@ -95,6 +94,10 @@ public class ExtensionXsdTest
                 //.withDocumentBuilerFactory(factory)
                 .ignoreElementContentWhitespace().build();
 
+        if ( diff.hasDifferences() )
+        {
+            logger.error( "\n---\n" + schema + "\n---" );
+        }
         assertFalse( diff.toString(), diff.hasDifferences() );
 
     }

@@ -134,13 +134,15 @@ public class MuleEventSpy
         }
     }
 
+    //TODO remove deprecation
     /**
      * When msg is a stream it is consumed so t can be stored
      * @param msg to consume
      * @return
      * @throws IOException 
      */
-    private Object consume( Object msg ) throws IOException
+    @SuppressWarnings("deprecation")
+	private Object consume( Object msg ) throws IOException
     {
         Object result= null;
         if ( msg != null )

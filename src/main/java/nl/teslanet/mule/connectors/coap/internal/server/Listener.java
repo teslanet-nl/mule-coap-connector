@@ -62,6 +62,7 @@ import nl.teslanet.mule.connectors.coap.api.ResponseParams;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalExchangeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
@@ -144,6 +145,9 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
      */
     OperationalListener operationalListener= null;
 
+    /**
+     * Called by Mule to start the listener.
+     */
     @Override
     public void onStart( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback ) throws MuleException
     {
@@ -154,11 +158,23 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         }
         catch ( InternalResourceUriException | InternalUriPatternException e )
         {
-            new DefaultMuleException( this + " start failed.", e );
+            throw new DefaultMuleException( this + " start failed.", e );
         }
         logger.info( this + " started." );
     }
 
+    /**
+     * Called when processing incoming request was successful.
+     * @param response
+     * @param responseOptions
+     * @param callbackContext
+     * @throws InternalInvalidByteArrayValueException
+     * @throws InternalInvalidResponseCodeException
+     * @throws IOException
+     * @throws InvalidEntityTagException
+     * @throws InternalInvalidOptionValueException
+     * @throws InternalExchangeException 
+     */
     @OnSuccess
     @MediaType( value= "*/*", strict= false )
     public void onSuccess(
@@ -179,9 +195,12 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         InternalInvalidResponseCodeException,
         IOException,
         InvalidEntityTagException,
-        InternalInvalidOptionValueException
+        InternalInvalidOptionValueException,
+        InternalExchangeException
     {
-        CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).get();
+        CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext.getVariable( "defaultCoAPResponseCode" ).orElseThrow(
+            () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" )
+        );
         Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
         //TODO give user control
         TypedValue< Object > responsePayload= response.getResponsePayload();
@@ -199,30 +218,52 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         {
             throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
         }
-        ( (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get() ).respond( coapResponse );
+        if ( callbackContext.getVariable( "CoapExchange" ).isPresent() )
+        {
+            ( (CoapExchange) callbackContext.getVariable( "CoapExchange" ).get() ).respond( coapResponse );
+        }
+        else
+        {
+            throw new InternalExchangeException( "Not able to issue CoAP response: no exchange object provided." );
+        }
     }
 
+    /**
+     * Returns internal server error when needed.
+     * @param sourceResult Provides processing context.
+     * @throws InternalExchangeException When the exchange object was absent.
+     */
     @OnTerminate
-    public void onTerminate( SourceResult sourceResult )
+    public void onTerminate( SourceResult sourceResult ) throws InternalExchangeException
     {
         if ( !sourceResult.isSuccess() )
         {
-            CoapExchange exchange= (CoapExchange) sourceResult.getSourceCallbackContext().getVariable( "CoapExchange" ).get();
-            if ( sourceResult.getInvocationError().isPresent() )
+            if ( sourceResult.getSourceCallbackContext().getVariable( "CoapExchange" ).isPresent() )
             {
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );
-            }
-            else if ( sourceResult.getResponseError().isPresent() )
-            {
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING FLOW" );
+                CoapExchange exchange= (CoapExchange) sourceResult.getSourceCallbackContext().getVariable( "CoapExchange" ).get();
+                if ( sourceResult.getInvocationError().isPresent() )
+                {
+                    exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );
+                }
+                else if ( sourceResult.getResponseError().isPresent() )
+                {
+                    exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING FLOW" );
+                }
+                else
+                {
+                    exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR" );
+                }
             }
             else
             {
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR" );
+                throw new InternalExchangeException( "Not able to issue CoAP internal server error response: no exchange object provided." );
             }
         }
     }
 
+    /**
+     * Called by Mule when stopping the listener.
+     */
     @Override
     public void onStop()
     {

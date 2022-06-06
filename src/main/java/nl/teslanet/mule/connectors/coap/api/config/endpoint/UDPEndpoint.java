@@ -67,11 +67,23 @@ public class UDPEndpoint extends AbstractEndpoint
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
-     * @param name the name of the endpoint.
+     * @param name The manually set name of the endpoint
      */
     public UDPEndpoint( String name )
     {
         super( name );
+        udpParams= new UdpParams( new GroupedMidTracker() );
+    }
+
+    /**
+     * Constructor for manually constructing the endpoint.
+     * (Mule uses default constructor and sets Nullsafe params.)
+     * @param name The manually set name of the endpoint
+     * @param port The manually set port to bind to.
+     */
+    public UDPEndpoint( String name, int port )
+    {
+        super( name, port );
         udpParams= new UdpParams( new GroupedMidTracker() );
     }
 

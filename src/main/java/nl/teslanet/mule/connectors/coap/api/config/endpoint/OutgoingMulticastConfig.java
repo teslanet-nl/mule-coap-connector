@@ -33,7 +33,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Excusive optional specification of the interface to use for outgoing multicast.
+ * Exclusive optional specification of the interface to use for outgoing multicast.
  */
 @ExclusiveOptionals( isOneRequired= false )
 public class OutgoingMulticastConfig
@@ -59,13 +59,4 @@ public class OutgoingMulticastConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
     public String outgoingAddress= null;
-
-    /**
-     * {@code true}, to disable loopback mode, {@code false}, otherwise.
-     */
-    @Parameter
-    @Summary( value= "When True loopback mode is diabled." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
-    public Boolean disableLoopback= Boolean.FALSE;
 }

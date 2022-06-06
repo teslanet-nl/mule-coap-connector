@@ -50,7 +50,7 @@ public class UdpParams implements VisitableConfig
     @Summary( value= "When true the message IDs will start at a random index. Otherwise the first message ID returned will be 0." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Boolean useRandomMidStart= null;
+    public boolean useRandomMidStart= true;
 
     /**
      * The message identity tracker used. The tracker maintains the administration

@@ -208,7 +208,7 @@ public class CfNetworkConfigVisitor implements ConfigVisitor
     @Override
     public void visit( UdpParams toVisit )
     {
-        if ( toVisit.useRandomMidStart != null ) networkConfig.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, toVisit.useRandomMidStart );
+        networkConfig.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, toVisit.useRandomMidStart );
         if ( toVisit.receiverThreadCount != null )
             networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, toVisit.receiverThreadCount );
         if ( toVisit.senderThreadCount != null ) networkConfig.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, toVisit.senderThreadCount );

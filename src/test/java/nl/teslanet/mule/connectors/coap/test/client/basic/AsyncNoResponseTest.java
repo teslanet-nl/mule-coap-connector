@@ -83,13 +83,13 @@ public class AsyncNoResponseTest extends AbstractClientTestCase
      * The response code that is expected.
      */
     @Parameter( 2 )
-    public ResponseCode expectedResponseCode;
+    public String expectedResponseCode;
 
     /**
      * The response payload that is expected.
      */
     @Parameter( 3 )
-    public String expectedResponsePayload;
+    public byte[] expectedResponsePayload;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()

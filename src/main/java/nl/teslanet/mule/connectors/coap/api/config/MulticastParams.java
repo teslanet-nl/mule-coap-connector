@@ -52,6 +52,16 @@ public class MulticastParams implements VisitableConfig
     public OutgoingMulticastConfig outgoingMulticastConfig;
     
     /**
+     * {@code true}, to disable loopback mode, {@code false}, otherwise.
+     */
+    @Parameter
+    @Optional( defaultValue = "false" )
+    @Summary( value= "When True loopback mode is disabled. Default is false." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
+    public boolean disableLoopback= false;
+
+    /**
     * The list of multi-cast groups the endpint supports.
     */
     @Parameter
