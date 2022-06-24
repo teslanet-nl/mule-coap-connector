@@ -43,21 +43,26 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			<coap:resource resourceName="basic">
 				<coap:sub-resources>
 					<coap:resource resourceName="get_me" get="true" />
-					<coap:resource resourceName="do_not_get_me"
-						get="false" />
-					<coap:resource resourceName="do_not_get_me2" />
+					<coap:resource resourceName="do_not_get_me"	get="false" />
+					<coap:resource resourceName="do_not_get_me2" />				
 					<coap:resource resourceName="put_me" put="true" />
-					<coap:resource resourceName="do_not_put_me"
-						put="false" />
-					<coap:resource resourceName="do_not_put_me2" />
+					<coap:resource resourceName="do_not_put_me"	put="false" />
+					<coap:resource resourceName="do_not_put_me2" />			
 					<coap:resource resourceName="post_me" post="true" />
-					<coap:resource resourceName="do_not_post_me"
-						post="false" />
-					<coap:resource resourceName="do_not_post_me2" />
-					<coap:resource resourceName="delete_me" delete="true" />
-					<coap:resource resourceName="do_not_delete_me"
-						delete="false" />
-					<coap:resource resourceName="do_not_delete_me2" />
+					<coap:resource resourceName="do_not_post_me" post="false" />
+					<coap:resource resourceName="do_not_post_me2" />       
+                    <coap:resource resourceName="delete_me" delete="true" />
+                    <coap:resource resourceName="do_not_delete_me" delete="false" />
+                    <coap:resource resourceName="do_not_delete_me2" />
+                    <coap:resource resourceName="fetch_me" fetch="true" />
+                    <coap:resource resourceName="do_not_fetch_me" fetch="false" />
+                    <coap:resource resourceName="do_not_fetch_me2" />
+                    <coap:resource resourceName="patch_me" patch="true" />
+                    <coap:resource resourceName="do_not_patch_me" patch="false" />
+                    <coap:resource resourceName="do_not_patch_me2" />
+                    <coap:resource resourceName="ipatch_me" ipatch="true" />
+                    <coap:resource resourceName="do_not_ipatch_me" ipatch="false" />
+                    <coap:resource resourceName="do_not_ipatch_me2" />
 				</coap:sub-resources>
 			</coap:resource>
 		</coap:resources>
@@ -65,7 +70,8 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 	<flow name="listen-all">
 		<coap:listener config-ref="config" get="true"
-			post="true" put="true" delete="true">
+			post="true" put="true" delete="true"
+			fetch="true" patch="true" ipatch="true">
 			<coap:response />
 		</coap:listener>
 

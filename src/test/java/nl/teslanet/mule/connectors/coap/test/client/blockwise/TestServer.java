@@ -142,6 +142,24 @@ public class TestServer extends CoapServer
             handleRequest( exchange, ResponseCode.DELETED, ResponseCode.BAD_REQUEST );
         }
 
+        @Override
+        public void handleFETCH( CoapExchange exchange )
+        {
+            handleRequest( exchange, ResponseCode.CONTENT, ResponseCode.BAD_REQUEST );
+        }
+
+        @Override
+        public void handlePATCH( CoapExchange exchange )
+        {
+            handleRequest( exchange, ResponseCode.CHANGED, ResponseCode.BAD_REQUEST );
+        }
+
+        @Override
+        public void handleIPATCH( CoapExchange exchange )
+        {
+            handleRequest( exchange, ResponseCode.CHANGED, ResponseCode.BAD_REQUEST );
+        }
+
         /**
          * Generic handler
          * @param exchange

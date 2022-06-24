@@ -51,71 +51,110 @@ public class PayloadTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters( name= "flowName= {0}, resourcePath= {1}, requestPayloadSize= {2}, expectedResponseCode= {3}, expectedResponsePayloadSize= {4}" )
+    @Parameters( name= "flowName= {0}, request= {1}, resourcePath= {2}, requestPayloadSize= {3}, expectedResponseCode= {4}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
             new Object [] []
             {
-                { "do_get", "/blockwise/rq0", -1, "CONTENT", 2, false },
-                { "do_post", "/blockwise/rq0", -1, "CREATED", 2, false },
-                { "do_put", "/blockwise/rq0", -1, "CHANGED", 2, false },
-                { "do_delete", "/blockwise/rq0", -1, "DELETED", 2, false },
+                { "do_request", "GET", "/blockwise/rq0", -1, "CONTENT", 2, false },
+                { "do_request", "POST", "/blockwise/rq0", -1, "CREATED", 2, false },
+                { "do_request", "PUT", "/blockwise/rq0", -1, "CHANGED", 2, false },
+                { "do_request", "DELETE", "/blockwise/rq0", -1, "DELETED", 2, false },
+                { "do_request", "FETCH", "/blockwise/rq0", -1, "CONTENT", 2, false },
+                { "do_request", "PATCH", "/blockwise/rq0", -1, "CHANGED", 2, false },
+                { "do_request", "iPATCH", "/blockwise/rq0", -1, "CHANGED", 2, false },
 
-                { "do_get", "/blockwise/rq0", 0, "CONTENT", 2, false },
-                { "do_post", "/blockwise/rq0", 0, "CREATED", 2, false },
-                { "do_put", "/blockwise/rq0", 0, "CHANGED", 2, false },
-                { "do_delete", "/blockwise/rq0", 0, "DELETED", 2, false },
+                { "do_request", "GET", "/blockwise/rq0", 0, "CONTENT", 2, false },
+                { "do_request", "POST", "/blockwise/rq0", 0, "CREATED", 2, false },
+                { "do_request", "PUT", "/blockwise/rq0", 0, "CHANGED", 2, false },
+                { "do_request", "DELETE", "/blockwise/rq0", 0, "DELETED", 2, false },
+                { "do_request", "FETCH", "/blockwise/rq0", 0, "CONTENT", 2, false },
+                { "do_request", "PATCH", "/blockwise/rq0", 0, "CHANGED", 2, false },
+                { "do_request", "iPATCH", "/blockwise/rq0", 0, "CHANGED", 2, false },
 
-                { "do_get", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
-                { "do_post", "/blockwise/rsp0", 2, "CREATED", -1, false },
-                { "do_put", "/blockwise/rsp0", 2, "CHANGED", -1, false },
-                { "do_delete", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "GET", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "POST", "/blockwise/rsp0", 2, "CREATED", -1, false },
+                { "do_request", "PUT", "/blockwise/rsp0", 2, "CHANGED", -1, false },
+                { "do_request", "DELETE", "/blockwise/rsp0", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "FETCH", "/blockwise/rsp0", 2, "CONTENT", -1, false },
+                { "do_request", "PATCH", "/blockwise/rsp0", 2, "CHANGED", -1, false },
+                { "do_request", "iPATCH", "/blockwise/rsp0", 2, "CHANGED", -1, false },
 
-                { "do_get", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
-                { "do_get", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
-                { "do_post", "/blockwise/rq10", 10, "CREATED", 2, false },
-                { "do_post", "/blockwise/rsp10", 2, "CREATED", 10, false },
-                { "do_put", "/blockwise/rq10", 10, "CHANGED", 2, false },
-                { "do_put", "/blockwise/rsp10", 2, "CHANGED", 10, false },
-                { "do_delete", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
-                { "do_delete", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
+                { "do_request", "GET", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
+                { "do_request", "GET", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
+                { "do_request", "POST", "/blockwise/rq10", 10, "CREATED", 2, false },
+                { "do_request", "POST", "/blockwise/rsp10", 2, "CREATED", 10, false },
+                { "do_request", "PUT", "/blockwise/rq10", 10, "CHANGED", 2, false },
+                { "do_request", "PUT", "/blockwise/rsp10", 2, "CHANGED", 10, false },
+                { "do_request", "DELETE", "/blockwise/rq10", 10, "BAD_REQUEST", 2, true },
+                { "do_request", "DELETE", "/blockwise/rsp10", 2, "BAD_REQUEST", 10, true },
+                { "do_request", "FETCH", "/blockwise/rq10", 10, "CONTENT", 2, false },
+                { "do_request", "FETCH", "/blockwise/rsp10", 2, "CONTENT", 10, false },
+                { "do_request", "PATCH", "/blockwise/rq10", 10, "CHANGED", 2, false },
+                { "do_request", "PATCH", "/blockwise/rsp10", 2, "CHANGED", 10, false },
+                { "do_request", "iPATCH", "/blockwise/rq10", 10, "CHANGED", 2, false },
+                { "do_request", "iPATCH", "/blockwise/rsp10", 2, "CHANGED", 10, false },
 
-                { "do_get", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
-                { "do_get", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
-                { "do_post", "/blockwise/rq8192", 8192, "CREATED", 2, false },
-                { "do_post", "/blockwise/rsp8192", 2, "CREATED", 8192, false },
-                { "do_put", "/blockwise/rq8192", 8192, "CHANGED", 2, false },
-                { "do_put", "/blockwise/rsp8192", 2, "CHANGED", 8192, false },
-                { "do_delete", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
-                { "do_delete", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
+                { "do_request", "GET", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
+                { "do_request", "GET", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
+                { "do_request", "POST", "/blockwise/rq8192", 8192, "CREATED", 2, false },
+                { "do_request", "POST", "/blockwise/rsp8192", 2, "CREATED", 8192, false },
+                { "do_request", "PUT", "/blockwise/rq8192", 8192, "CHANGED", 2, false },
+                { "do_request", "PUT", "/blockwise/rsp8192", 2, "CHANGED", 8192, false },
+                { "do_request", "DELETE", "/blockwise/rq8192", 8192, "BAD_REQUEST", 2, true },
+                { "do_request", "DELETE", "/blockwise/rsp8192", 2, "BAD_REQUEST", 8192, true },
+                { "do_request", "FETCH", "/blockwise/rq8192", 8192, "CONTENT", 2, false },
+                { "do_request", "FETCH", "/blockwise/rsp8192", 2, "CONTENT", 8192, false },
+                { "do_request", "PATCH", "/blockwise/rq8192", 8192, "CHANGED", 2, false },
+                { "do_request", "PATCH", "/blockwise/rsp8192", 2, "CHANGED", 8192, false },
+                { "do_request", "iPATCH", "/blockwise/rq8192", 8192, "CHANGED", 2, false },
+                { "do_request", "iPATCH", "/blockwise/rsp8192", 2, "CHANGED", 8192, false },
 
-                { "do_get", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
-                { "do_get", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
-                { "do_post", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
-                { "do_post", "/blockwise/rsp16000", 2, null, -1, true },
-                { "do_put", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
-                { "do_put", "/blockwise/rsp16000", 2, null, -1, true },
-                { "do_delete", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
-                { "do_delete", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "GET", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
+                { "do_request", "GET", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "POST", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request", "POST", "/blockwise/rsp16000", 2, null, -1, true },
+                { "do_request", "PUT", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request", "PUT", "/blockwise/rsp16000", 2, null, -1, true },
+                { "do_request", "DELETE", "/blockwise/rq16000", 16000, "BAD_REQUEST", -1, true },
+                { "do_request", "DELETE", "/blockwise/rsp16000", 2, "BAD_REQUEST", -1, true },
+                { "do_request", "FETCH", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request", "FETCH", "/blockwise/rsp16000", 2, null, -1, true },
+                { "do_request", "PATCH", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request", "PATCH", "/blockwise/rsp16000", 2, null, -1, true },
+                { "do_request", "iPATCH", "/blockwise/rq16000", 16000, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request", "iPATCH", "/blockwise/rsp16000", 2, null, -1, true },
 
-                { "do_get2", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
-                { "do_get2", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
-                { "do_post2", "/blockwise/rq16000", 16000, "CREATED", 2, false },
-                { "do_post2", "/blockwise/rsp16000", 2, "CREATED", 16000, false },
-                { "do_put2", "/blockwise/rq16000", 16000, "CHANGED", 2, false },
-                { "do_put2", "/blockwise/rsp16000", 2, "CHANGED", 16000, false },
-                { "do_delete2", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
-                { "do_delete2", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
+                { "do_request2", "GET", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
+                { "do_request2", "GET", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
+                { "do_request2", "POST", "/blockwise/rq16000", 16000, "CREATED", 2, false },
+                { "do_request2", "POST", "/blockwise/rsp16000", 2, "CREATED", 16000, false },
+                { "do_request2", "PUT", "/blockwise/rq16000", 16000, "CHANGED", 2, false },
+                { "do_request2", "PUT", "/blockwise/rsp16000", 2, "CHANGED", 16000, false },
+                { "do_request2", "DELETE", "/blockwise/rq16000", 16000, "BAD_REQUEST", 2, true },
+                { "do_request2", "DELETE", "/blockwise/rsp16000", 2, "BAD_REQUEST", 16000, true },
+                { "do_request2", "FETCH", "/blockwise/rq16000", 16000, "CONTENT", 2, false },
+                { "do_request2", "FETCH", "/blockwise/rsp16000", 2, "CONTENT", 16000, false },
+                { "do_request2", "PATCH", "/blockwise/rq16000", 16000, "CHANGED", 2, false },
+                { "do_request2", "PATCH", "/blockwise/rsp16000", 2, "CHANGED", 16000, false },
+                { "do_request2", "iPATCH", "/blockwise/rq16000", 16000, "CHANGED", 2, false },
+                { "do_request2", "iPATCH", "/blockwise/rsp16000", 2, "CHANGED", 16000, false },
 
-                { "do_get2", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
-                { "do_get2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true },
-                { "do_post2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
-                { "do_post2", "/blockwise/rsp16001", 2, null, -1, true },
-                { "do_put2", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
-                { "do_put2", "/blockwise/rsp16001", 2, null, -1, true },
-                { "do_delete2", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
-                { "do_delete2", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true } }
+                { "do_request2", "GET", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
+                { "do_request2", "GET", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true },
+                { "do_request2", "POST", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request2", "POST", "/blockwise/rsp16001", 2, null, -1, true },
+                { "do_request2", "PUT", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request2", "PUT", "/blockwise/rsp16001", 2, null, -1, true },
+                { "do_request2", "DELETE", "/blockwise/rq16001", 16001, "BAD_REQUEST", -1, true },
+                { "do_request2", "DELETE", "/blockwise/rsp16001", 2, "BAD_REQUEST", -1, true },
+                { "do_request2", "FETCH", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request2", "FETCH", "/blockwise/rsp16001", 2, null, -1, true },
+                { "do_request2", "PATCH", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request2", "PATCH", "/blockwise/rsp16001", 2, null, -1, true },
+                { "do_request2", "iPATCH", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", -1, true },
+                { "do_request2", "iPATCH", "/blockwise/rsp16001", 2, null, -1, true } }
         );
     }
 
@@ -126,33 +165,39 @@ public class PayloadTest extends AbstractClientTestCase
     public String flowName;
 
     /**
-     * The path of the resource to call.
+     * The request.
      */
     @Parameter( 1 )
+    public String request;
+
+    /**
+     * The path of the resource to call.
+     */
+    @Parameter( 2 )
     public String resourcePath;
 
     /**
      * The request payload size to test.
      */
-    @Parameter( 2 )
+    @Parameter( 3 )
     public Integer requestPayloadSize;
 
     /**
      * The response code that is expected.
      */
-    @Parameter( 3 )
+    @Parameter( 4 )
     public String expectedResponseCode;
 
     /**
      * The response payload size to test.
      */
-    @Parameter( 4 )
+    @Parameter( 5 )
     public Integer expectedResponsePayloadSize;
 
     /**
      * True when response is Too Large to process
      */
-    @Parameter( 5 )
+    @Parameter( 6 )
     public boolean expectFailure;
 
     /* (non-Javadoc)
@@ -184,10 +229,13 @@ public class PayloadTest extends AbstractClientTestCase
     @Test( timeout= 100000 )
     public void testPayload() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( flowName );
+        String spyName= flowName + request + resourcePath;
+        MuleEventSpy spy= new MuleEventSpy( spyName );
         spy.clear();
 
-        flowRunner( flowName ).withVariable( "path", resourcePath ).withPayload( Data.getContent( requestPayloadSize ) ).run();
+        flowRunner( flowName ).withVariable( "requestCode", request ).withVariable( "path", resourcePath ).withVariable( "spyName", spyName ).withPayload(
+            Data.getContent( requestPayloadSize )
+        ).run();
 
         assertEquals( "spy has wrong number of events", 1, spy.getEvents().size() );
 

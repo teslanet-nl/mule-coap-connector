@@ -110,7 +110,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     @Parameter
     @Optional( defaultValue= "false" )
     @DisplayName( "Accept Get requests" )
-    @Summary( "The listener will only receive GET requests." )
+    @Summary( "The listener will receive GET requests." )
     private boolean get;
 
     /**
@@ -119,7 +119,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     @Parameter
     @Optional( defaultValue= "false" )
     @DisplayName( "Accept Post requests" )
-    @Summary( "The listener will only receive POST requests." )
+    @Summary( "The listener will receive POST requests." )
     private boolean post;
 
     /**
@@ -128,7 +128,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     @Parameter
     @Optional( defaultValue= "false" )
     @DisplayName( "Accept Put requests" )
-    @Summary( "The listener will only receive PUT requests." )
+    @Summary( "The listener will receive PUT requests." )
     private boolean put;
 
     /**
@@ -137,8 +137,35 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     @Parameter
     @Optional( defaultValue= "false" )
     @DisplayName( "Accept Delete requests" )
-    @Summary( "The listener will only receive DELETE requests." )
+    @Summary( "The listener will receive DELETE requests." )
     private boolean delete;
+
+    /**
+     * The listener listens out for Fetch requests.
+     */
+    @Parameter
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Fetch requests" )
+    @Summary( "The listener will receive FETCH requests." )
+    private boolean fetch;
+
+    /**
+     * The listener listens out for Patch requests.
+     */
+    @Parameter
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept Patch requests" )
+    @Summary( "The listener will receive PATCH requests." )
+    private boolean patch;
+
+    /**
+     * The listener listens out for iPatch requests.
+     */
+    @Parameter
+    @Optional( defaultValue= "false" )
+    @DisplayName( "Accept iPatch requests" )
+    @Summary( "The listener will receive iPATCH requests." )
+    private boolean ipatch;
 
     /**
      * The operational listener that will handle requests.
@@ -153,7 +180,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     {
         try
         {
-            operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete ), sourceCallback );
+            operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch ), sourceCallback );
             server.addListener( operationalListener );
         }
         catch ( InternalResourceUriException | InternalUriPatternException e )
@@ -320,6 +347,30 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     public boolean isPut()
     {
         return put;
+    }
+
+    /**
+     * @return true if the listener listens on Fetch requests, false otherwise.
+     */
+    public boolean isFetch()
+    {
+        return fetch;
+    }
+
+    /**
+     * @return true if the listener listens on Patch requests, false otherwise.
+     */
+    public boolean isPatch()
+    {
+        return patch;
+    }
+
+    /**
+     * @return true if the listener listens on iPatch requests, false otherwise.
+     */
+    public boolean isIpatch()
+    {
+        return ipatch;
     }
 
     /**

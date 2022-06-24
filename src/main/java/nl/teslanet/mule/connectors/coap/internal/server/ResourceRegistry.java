@@ -208,10 +208,16 @@ public class ResourceRegistry
         OperationalListener bestPostListener= null;
         OperationalListener bestPutListener= null;
         OperationalListener bestDeleteListener= null;
+        OperationalListener bestFetchListener= null;
+        OperationalListener bestPatchListener= null;
+        OperationalListener bestIpatchListener= null;
         int maxGetMatchlevel= 0;
         int maxPostMatchlevel= 0;
         int maxPutMatchlevel= 0;
         int maxDeleteMatchlevel= 0;
+        int maxFetchMatchlevel= 0;
+        int maxPatchMatchlevel= 0;
+        int maxIpatchMatchlevel= 0;
         for ( OperationalListener listener : listeners )
         {
             int matchLevel;
@@ -244,6 +250,21 @@ public class ResourceRegistry
             {
                 maxDeleteMatchlevel= matchLevel;
                 bestDeleteListener= listener;
+            }
+            if ( matchLevel > maxFetchMatchlevel && listener.requestCodeFlags.isFetch() )
+            {
+                maxFetchMatchlevel= matchLevel;
+                bestFetchListener= listener;
+            }
+            if ( matchLevel > maxPatchMatchlevel && listener.requestCodeFlags.isPatch() )
+            {
+                maxPatchMatchlevel= matchLevel;
+                bestPatchListener= listener;
+            }
+            if ( matchLevel > maxIpatchMatchlevel && listener.requestCodeFlags.isIpatch() )
+            {
+                maxIpatchMatchlevel= matchLevel;
+                bestIpatchListener= listener;
             }
         }
         // set the Get callback to the best found listener
@@ -285,6 +306,36 @@ public class ResourceRegistry
         {
             resource.setDeleteCallback( null );
             //if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
+        }
+        // set the Fetch callback to the best found listener
+        if ( bestFetchListener != null )
+        {
+            resource.setFetchCallback( bestFetchListener.getCallback() );
+        }
+        else
+        {
+            resource.setFetchCallback( null );
+            //if ( resource.isHandlingFetch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "FETCH" );
+        }
+        // set the Patch callback to the best found listener
+        if ( bestPatchListener != null )
+        {
+            resource.setPatchCallback( bestPatchListener.getCallback() );
+        }
+        else
+        {
+            resource.setPatchCallback( null );
+            //if ( resource.isHandlingPatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PATCH" );
+        }
+        // set the iPatch callback to the best found listener
+        if ( bestIpatchListener != null )
+        {
+            resource.setIpatchCallback( bestIpatchListener.getCallback() );
+        }
+        else
+        {
+            resource.setIpatchCallback( null );
+            //if ( resource.isHandlingIpatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "iPATCH" );
         }
     }
 

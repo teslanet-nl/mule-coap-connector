@@ -76,6 +76,12 @@ public class BasicTestServer extends CoapServer
         getRoot().getChild( "basic" ).add( new NoneResource( "do_not_post_me" ) );
         getRoot().getChild( "basic" ).add( new DeleteResource( "delete_me" ) );
         getRoot().getChild( "basic" ).add( new NoneResource( "do_not_delete_me" ) );
+        getRoot().getChild( "basic" ).add( new FetchResource( "fetch_me" ) );
+        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_fetch_me" ) );
+        getRoot().getChild( "basic" ).add( new PatchResource( "patch_me" ) );
+        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_patch_me" ) );
+        getRoot().getChild( "basic" ).add( new IpatchResource( "ipatch_me" ) );
+        getRoot().getChild( "basic" ).add( new NoneResource( "do_not_ipatch_me" ) );
     }
 
     /**
@@ -184,6 +190,69 @@ public class BasicTestServer extends CoapServer
         {
             // respond to the request
             exchange.respond( ResponseCode.DELETED, "DELETE called on: " + exchange.advanced().getRequest().getURI() );
+        }
+    }
+
+    /**
+     * Resource that allows FETCH only
+     */
+    class FetchResource extends CoapResource
+    {
+        public FetchResource( String name )
+        {
+            // set resource name
+            super( name );
+            // set display name
+            getAttributes().setTitle( name );
+        }
+
+        @Override
+        public void handleFETCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CONTENT, "FETCH called on: " + exchange.advanced().getRequest().getURI() );
+        }
+    }
+
+    /**
+     * Resource that allows PATCH only
+     */
+    class PatchResource extends CoapResource
+    {
+        public PatchResource( String name )
+        {
+            // set resource name
+            super( name );
+            // set display name
+            getAttributes().setTitle( name );
+        }
+
+        @Override
+        public void handlePATCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CREATED, "PATCH called on: " + exchange.advanced().getRequest().getURI() );
+        }
+    }
+
+    /**
+     * Resource that allows IPATCH only
+     */
+    class IpatchResource extends CoapResource
+    {
+        public IpatchResource( String name )
+        {
+            // set resource name
+            super( name );
+            // set display name
+            getAttributes().setTitle( name );
+        }
+
+        @Override
+        public void handleIPATCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CHANGED, "IPATCH called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 }

@@ -47,7 +47,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 						<coap:resource resourceName="get_me" get="true" />
 						<coap:resource resourceName="put_me" put="true" />
 						<coap:resource resourceName="post_me" post="true" />
-						<coap:resource resourceName="delete_me" delete="true" />
+                        <coap:resource resourceName="delete_me" delete="true" />
+                        <coap:resource resourceName="fetch_me" fetch="true" />
+                        <coap:resource resourceName="patch_me" patch="true" />
+                        <coap:resource resourceName="ipatch_me" ipatch="true" />
 					</coap:sub-resources>
 				</coap:resource>
 			</coap:resources>
@@ -68,6 +71,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 						<coap:resource resourceName="put_me" put="true" />
 						<coap:resource resourceName="post_me" post="true" />
 						<coap:resource resourceName="delete_me" delete="true" />
+                        <coap:resource resourceName="fetch_me" fetch="true" />
+                        <coap:resource resourceName="patch_me" patch="true" />
+                        <coap:resource resourceName="ipatch_me" ipatch="true" />
 					</coap:sub-resources>
 				</coap:resource>
 			</coap:resources>
@@ -75,7 +81,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 
 	<flow name="listen1">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config1">
+		<coap:listener get="true" post="true" put="true" delete="true" fetch="true" patch="true" ipatch="true" pathPattern="/service/*" config-ref="config1">
 		</coap:listener>
 		<java:new doc:name="New spy" doc:id="5bb95d63-aab2-4453-95c7-fa180f548484"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
@@ -91,7 +97,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	</flow>
 
 	<flow name="listen2">
-		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config2"/>
+		<coap:listener get="true" post="true" put="true" delete="true" fetch="true" patch="true" ipatch="true" pathPattern="/service/*" config-ref="config2"/>
 
 		<java:new doc:name="New spy" doc:id="014fd2f6-7f4d-4c39-9dc0-6f44cd2bee01"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

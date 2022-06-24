@@ -54,86 +54,115 @@ import org.eclipse.californium.elements.exception.ConnectorException;
 
 
 //TODO add null payload test
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class PayloadTest extends AbstractServerTestCase
 {
-    @Parameters(name= "Request= {0}, path= {2}, contentSize= {3}, service= {6}")
+    @Parameters( name= "Request= {0}, path= {2}, contentSize= {3}, service= {6}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
                 { Code.GET, 5683, "/service/get_me", 10, true, false, "listen1" },
                 { Code.PUT, 5683, "/service/put_me", 10, false, false, "listen1" },
                 { Code.POST, 5683, "/service/post_me", 10, false, false, "listen1" },
                 { Code.DELETE, 5683, "/service/delete_me", 10, true, false, "listen1" },
+                { Code.FETCH, 5683, "/service/fetch_me", 10, false, false, "listen1" },
+                { Code.PATCH, 5683, "/service/patch_me", 10, false, false, "listen1" },
+                { Code.IPATCH, 5683, "/service/ipatch_me", 10, false, false, "listen1" },
+
                 { Code.GET, 5683, "/service/get_me", 8192, true, false, "listen1" },
                 { Code.PUT, 5683, "/service/put_me", 8192, false, false, "listen1" },
                 { Code.POST, 5683, "/service/post_me", 8192, false, false, "listen1" },
                 { Code.DELETE, 5683, "/service/delete_me", 8192, true, false, "listen1" },
+                { Code.FETCH, 5683, "/service/fetch_me", 8192, false, false, "listen1" },
+                { Code.PATCH, 5683, "/service/patch_me", 8192, false, false, "listen1" },
+                { Code.IPATCH, 5683, "/service/ipatch_me", 8192, false, false, "listen1" },
+
                 { Code.GET, 5683, "/service/get_me", 16000, true, true, "listen1" },
                 { Code.PUT, 5683, "/service/put_me", 16000, false, true, "listen1" },
                 { Code.POST, 5683, "/service/post_me", 16000, false, true, "listen1" },
                 { Code.DELETE, 5683, "/service/delete_me", 16000, true, true, "listen1" },
+                { Code.FETCH, 5683, "/service/fetch_me", 16000, false, true, "listen1" },
+                { Code.PATCH, 5683, "/service/patch_me", 16000, false, true, "listen1" },
+                { Code.IPATCH, 5683, "/service/ipatch_me", 16000, false, true, "listen1" },
+
                 //16000 maxResourceBodySize on server
                 { Code.GET, 5685, "/service/get_me", 10, true, false, "listen2" },
                 { Code.PUT, 5685, "/service/put_me", 10, false, false, "listen2" },
                 { Code.POST, 5685, "/service/post_me", 10, false, false, "listen2" },
                 { Code.DELETE, 5685, "/service/delete_me", 10, true, false, "listen2" },
+                { Code.FETCH, 5685, "/service/fetch_me", 10, false, false, "listen2" },
+                { Code.PATCH, 5685, "/service/patch_me", 10, false, false, "listen2" },
+                { Code.IPATCH, 5685, "/service/ipatch_me", 10, false, false, "listen2" },
+
                 { Code.GET, 5685, "/service/get_me", 8192, true, false, "listen2" },
                 { Code.PUT, 5685, "/service/put_me", 8192, false, false, "listen2" },
                 { Code.POST, 5685, "/service/post_me", 8192, false, false, "listen2" },
                 { Code.DELETE, 5685, "/service/delete_me", 8192, true, false, "listen2" },
+                { Code.FETCH, 5685, "/service/fetch_me", 8192, false, false, "listen2" },
+                { Code.PATCH, 5685, "/service/patch_me", 8192, false, false, "listen2" },
+                { Code.IPATCH, 5685, "/service/ipatch_me", 8192, false, false, "listen2" },
+
                 { Code.GET, 5685, "/service/get_me", 16000, true, false, "listen2" },
                 { Code.PUT, 5685, "/service/put_me", 16000, false, false, "listen2" },
                 { Code.POST, 5685, "/service/post_me", 16000, false, false, "listen2" },
                 { Code.DELETE, 5685, "/service/delete_me", 16000, true, false, "listen2" },
+                { Code.FETCH, 5685, "/service/fetch_me", 16000, false, false, "listen2" },
+                { Code.PATCH, 5685, "/service/patch_me", 16000, false, false, "listen2" },
+                { Code.IPATCH, 5685, "/service/ipatch_me", 16000, false, false, "listen2" },
+
                 { Code.GET, 5685, "/service/get_me", 16001, true, true, "listen2" },
                 { Code.PUT, 5685, "/service/put_me", 16001, false, true, "listen2" },
                 { Code.POST, 5685, "/service/post_me", 16001, false, true, "listen2" },
-                { Code.DELETE, 5685, "/service/delete_me", 16001, true, true, "listen2" }, } );
+                { Code.DELETE, 5685, "/service/delete_me", 16001, true, true, "listen2" },
+                { Code.FETCH, 5685, "/service/fetch_me", 16001, false, true, "listen2" },
+                { Code.PATCH, 5685, "/service/patch_me", 16001, false, true, "listen2" },
+                { Code.IPATCH, 5685, "/service/ipatch_me", 16001, false, true, "listen2" } }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
      * Test server port
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public int port;
 
     /**
      * Test resource to call
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String resourcePath;
 
     /**
      * Test message content size
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public int contentSize;
 
     /**
      * True when request is not supposed to have a payload, but does
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public boolean unintendedPayload;
 
     /**
      * True when response should be 4.13 Request Entity Too Large
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public boolean expectTooLarge;
 
     /**
      * The Id used for spying the Mule flow
      */
-    @Parameter(6)
+    @Parameter( 6 )
     public String spyId;
 
     /**
@@ -198,7 +227,7 @@ public class PayloadTest extends AbstractServerTestCase
         assertTrue( "wrong payload in response", Data.validateContent( response.getPayload(), contentSize ) );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testInboundRequest() throws Exception
     {
         //spyRequestMessage();
@@ -216,7 +245,7 @@ public class PayloadTest extends AbstractServerTestCase
         validateInboundResponse( response, spy );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testInboundRequestEarlyNegotiation() throws Exception
     {
         //spyRequestMessage();
@@ -233,7 +262,7 @@ public class PayloadTest extends AbstractServerTestCase
         validateInboundResponse( response, spy );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testOutboundRequest() throws URISyntaxException, ConnectorException, IOException
     {
         //mockResponseMessage();
@@ -249,7 +278,7 @@ public class PayloadTest extends AbstractServerTestCase
         validateOutboundResponse( response, spy );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testOutboundRequestEarlyNegotiation() throws URISyntaxException, ConnectorException, IOException
     {
         //mockResponseMessage();
