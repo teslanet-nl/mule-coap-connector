@@ -1723,6 +1723,9 @@
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="post"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="put"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="delete"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="fetch"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="patch"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="ipatch"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="observable"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="coreInfoConfig"></xs:attribute>
@@ -1779,6 +1782,21 @@
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="delete">
           <xs:annotation>
             <xs:documentation>The listener listens out for Delete requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="fetch">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Fetch requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="patch">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for Patch requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="ipatch">
+          <xs:annotation>
+            <xs:documentation>The listener listens out for iPatch requests.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
@@ -1911,6 +1929,21 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="delete">
           <xs:annotation>
             <xs:documentation>When true, Delete requests are allowed on the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="fetch">
+          <xs:annotation>
+            <xs:documentation>When true, Fetch requests are allowed on the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="patch">
+          <xs:annotation>
+            <xs:documentation>When true, Patch requests are allowed on the resource.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ipatch">
+          <xs:annotation>
+            <xs:documentation>When true, iPatch requests are allowed on the resource.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="observable">
@@ -2100,6 +2133,9 @@
           <xs:enumeration value="POST"></xs:enumeration>
           <xs:enumeration value="PUT"></xs:enumeration>
           <xs:enumeration value="DELETE"></xs:enumeration>
+          <xs:enumeration value="FETCH"></xs:enumeration>
+          <xs:enumeration value="PATCH"></xs:enumeration>
+          <xs:enumeration value="iPATCH"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType>
