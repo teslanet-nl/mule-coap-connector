@@ -81,6 +81,30 @@ public class ResourceParams
     private boolean delete= false;
 
     /**
+     * When true, Fetch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Summary("When true, FETCH requests are allowed on the resource")
+    private boolean fetch= false;
+
+    /**
+     * When true, Patch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Summary("When true, PATCH requests are allowed on the resource")
+    private boolean patch= false;
+
+    /**
+     * When true, iPatch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression(ExpressionSupport.SUPPORTED)
+    @Summary("When true, iPATCH requests are allowed on the resource")
+    private boolean ipatch= false;
+
+    /**
      * When true, the resource can be observed by clients.
      */
     @Parameter
@@ -183,6 +207,54 @@ public class ResourceParams
     public void setDelete( boolean delete )
     {
         this.delete= delete;
+    }
+
+    /**
+     * @return the fetch
+     */
+    public boolean isFetch()
+    {
+        return fetch;
+    }
+
+    /**
+     * @param fetch the fetch to set
+     */
+    public void setFetch( boolean fetch )
+    {
+        this.fetch= fetch;
+    }
+
+    /**
+     * @return the patch
+     */
+    public boolean isPatch()
+    {
+        return patch;
+    }
+
+    /**
+     * @param patch the patch to set
+     */
+    public void setPatch( boolean patch )
+    {
+        this.patch= patch;
+    }
+
+    /**
+     * @return the ipatch
+     */
+    public boolean isIpatch()
+    {
+        return ipatch;
+    }
+
+    /**
+     * @param ipatch the ipatch to set
+     */
+    public void setIpatch( boolean ipatch )
+    {
+        this.ipatch= ipatch;
     }
 
     /**

@@ -37,6 +37,12 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
 
     private static final int DELETE_FLAG= 0x8;
 
+    private static final int FETCH_FLAG= 0x10;
+
+    private static final int PATCH_FLAG= 0x20;
+
+    private static final int IPATCH_FLAG= 0x40;
+
     /**
      * Bitflags indicating which request codes are active.
      */
@@ -62,6 +68,9 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
             setPost( original.isPost() );
             setPut( original.isPut() );
             setDelete( original.isDelete() );
+            setFetch( original.isFetch() );
+            setPatch( original.isPatch() );
+            setIpatch( original.isIpatch() );
         }
     }
 
@@ -71,14 +80,20 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
      * @param postFlag the state of the post flag to set
      * @param putFlag the state of the get put to set
      * @param deleteFlag the state of the delete flag to set
+     * @param fetchFlag the state of the fetch flag to set
+     * @param patchFlag the state of the patch flag to set
+     * @param ipatchFlag the state of the ipatch flag to set
      */
-    public RequestCodeFlags( boolean getFlag, boolean postFlag, boolean putFlag, boolean deleteFlag )
+    public RequestCodeFlags( boolean getFlag, boolean postFlag, boolean putFlag, boolean deleteFlag, boolean fetchFlag, boolean patchFlag, boolean ipatchFlag )
     {
         super();
         setGet( getFlag );
         setPost( postFlag );
         setPut( putFlag );
         setDelete( deleteFlag );
+        setFetch( fetchFlag );
+        setPatch( patchFlag );
+        setIpatch( ipatchFlag );
     }
 
     /**
@@ -210,6 +225,102 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
     }
     
     /**
+     * Set the fetch flag.
+     * @param flag the state of the flag
+     */
+    public void setFetch( boolean flag )
+    {
+        if ( flag )
+        {
+            flags|= FETCH_FLAG;
+        }
+        else
+        {
+            flags&= ~FETCH_FLAG;
+        }
+    }
+
+    /**
+     * @return the state of the fetch flag
+     */
+    public boolean isFetch()
+    {
+        return ( flags & FETCH_FLAG ) != 0;
+    }
+
+    /**
+     * @return the inverse state of the fetch flag
+     */
+    public boolean isNotFetch()
+    {
+        return ( flags & FETCH_FLAG ) == 0;
+    }
+    
+    /**
+     * Set the patch flag.
+     * @param flag the state of the flag
+     */
+    public void setPatch( boolean flag )
+    {
+        if ( flag )
+        {
+            flags|= PATCH_FLAG;
+        }
+        else
+        {
+            flags&= ~PATCH_FLAG;
+        }
+    }
+
+    /**
+     * @return the state of the patch flag
+     */
+    public boolean isPatch()
+    {
+        return ( flags & PATCH_FLAG ) != 0;
+    }
+
+    /**
+     * @return the inverse state of the patch flag
+     */
+    public boolean isNotPatch()
+    {
+        return ( flags & PATCH_FLAG ) == 0;
+    }
+    
+    /**
+     * Set the ipatch flag.
+     * @param flag the state of the flag
+     */
+    public void setIpatch( boolean flag )
+    {
+        if ( flag )
+        {
+            flags|= IPATCH_FLAG;
+        }
+        else
+        {
+            flags&= ~IPATCH_FLAG;
+        }
+    }
+
+    /**
+     * @return the state of the ipatch flag
+     */
+    public boolean isIpatch()
+    {
+        return ( flags & IPATCH_FLAG ) != 0;
+    }
+
+    /**
+     * @return the inverse state of the ipatch flag
+     */
+    public boolean isNotIpatch()
+    {
+        return ( flags & IPATCH_FLAG ) == 0;
+    }
+
+    /**
      * Check on equality to another object. 
      * These are equal when the flags have equal values.  
      * @param other The other object to test for equality
@@ -264,6 +375,12 @@ public class RequestCodeFlags implements Comparable< RequestCodeFlags >
         bfr.append( isPut() ? "PUT" : "put" );
         bfr.append( " " );
         bfr.append( isDelete() ? "DELETE" : "delete" );
+        bfr.append( " " );
+        bfr.append( isFetch() ? "FETCH" : "fetch" );
+        bfr.append( " " );
+        bfr.append( isPatch() ? "PATCH" : "patch" );
+        bfr.append( " " );
+        bfr.append( isIpatch() ? "IPATCH" : "ipatch" );
         bfr.append( " ]" );
         return bfr.toString();
     }

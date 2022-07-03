@@ -138,5 +138,26 @@ public class QueryTestServer extends CoapServer
             // respond to the request
             exchange.respond( ResponseCode.DELETED, "DELETE called on: " + exchange.advanced().getRequest().getURI() );
         }
+
+        @Override
+        public void handleFETCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CONTENT, "FETCH called on: " + exchange.advanced().getRequest().getURI() );
+        }
+
+        @Override
+        public void handlePATCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CHANGED, "PATCH called on: " + exchange.advanced().getRequest().getURI() );
+        }
+
+        @Override
+        public void handleIPATCH( CoapExchange exchange )
+        {
+            // respond to the request
+            exchange.respond( ResponseCode.CHANGED, "iPATCH called on: " + exchange.advanced().getRequest().getURI() );
+        }
     }
 }

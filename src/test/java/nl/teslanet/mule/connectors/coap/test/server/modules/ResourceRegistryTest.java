@@ -257,22 +257,35 @@ public class ResourceRegistryTest
         String uri2= "/resource1/resource2";
         String uri3= "/resource1/resource2/resource3";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( false, false, false, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( true, false, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, false );
-        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, false );
+        String uri5= "/resource1/resource5";
+        String uri6= "/resource1/resource5/resource6";
+        String uri7= "/resource1/resource5/resource6/resource7";
+        String uri8= "/resource1/resource5/resource6/resource8";
+        RequestCodeFlags flags1= new RequestCodeFlags( false, false, false, false, false, false, false );
+        RequestCodeFlags flags2= new RequestCodeFlags( true, false, false, false, false, false, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, false, false, false, false );
+        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, false, false, false, false );
+        RequestCodeFlags flags5= new RequestCodeFlags( true, true, true, true, false, false, false );
+        RequestCodeFlags flags6= new RequestCodeFlags( true, true, true, true, true, false, false );
+        RequestCodeFlags flags7= new RequestCodeFlags( true, true, true, true, true, true, false );
+        RequestCodeFlags flags8= new RequestCodeFlags( true, true, true, true, true, true, true );
 
         //see that no exceptions occur
         listener= new OperationalListener( uri1, flags1, callback );
         registry.add( listener );
-
         listener= new OperationalListener( uri2, flags2, callback );
         registry.add( listener );
-
         listener= new OperationalListener( uri3, flags3, callback );
         registry.add( listener );
-
         listener= new OperationalListener( uri4, flags4, callback );
+        registry.add( listener );
+        listener= new OperationalListener( uri5, flags5, callback );
+        registry.add( listener );
+        listener= new OperationalListener( uri6, flags6, callback );
+        registry.add( listener );
+        listener= new OperationalListener( uri7, flags7, callback );
+        registry.add( listener );
+        listener= new OperationalListener( uri8, flags8, callback );
         registry.add( listener );
     }
 
@@ -294,10 +307,10 @@ public class ResourceRegistryTest
         String uri3= "/resource1/resource2/resource3";
         String name4= "resource4";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags2= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags2= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags3= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true, true, true, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -332,21 +345,33 @@ public class ResourceRegistryTest
         assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getIpatchCallback() );
 
         assertEquals( "resource2 has wrong callback", callback2, registry.getResource( uri2 ).getGetCallback() );
         assertEquals( "resource2 has wrong callback", callback2, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong callback", callback2, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong callback", callback2, registry.getResource( uri2 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong callback", callback2, registry.getResource( uri2 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong callback", callback2, registry.getResource( uri2 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong callback", callback2, registry.getResource( uri2 ).getIpatchCallback() );
 
         assertEquals( "resource3 has wrong callback", callback3, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong callback", callback3, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong callback", callback3, registry.getResource( uri3 ).getPutCallback() );
         assertEquals( "resource3 has wrong callback", callback3, registry.getResource( uri3 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong callback", callback3, registry.getResource( uri3 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong callback", callback3, registry.getResource( uri3 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong callback", callback3, registry.getResource( uri3 ).getIpatchCallback() );
 
         assertEquals( "resource4 has wrong callback", callback4, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong callback", callback4, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong callback", callback4, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong callback", callback4, registry.getResource( uri4 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong callback", callback4, registry.getResource( uri4 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong callback", callback4, registry.getResource( uri4 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong callback", callback4, registry.getResource( uri4 ).getIpatchCallback() );
     }
 
     @Test
@@ -358,13 +383,19 @@ public class ResourceRegistryTest
         TestSourceCallBack callback2= new TestSourceCallBack();
         TestSourceCallBack callback3= new TestSourceCallBack();
         TestSourceCallBack callback4= new TestSourceCallBack();
+        TestSourceCallBack callback5= new TestSourceCallBack();
+        TestSourceCallBack callback6= new TestSourceCallBack();
+        TestSourceCallBack callback7= new TestSourceCallBack();
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, false, false, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( false, false, true, false );
-        RequestCodeFlags flags4= new RequestCodeFlags( false, false, false, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, false, false, false, false, false, false );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false, false, false, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( false, false, true, false, false, false, false );
+        RequestCodeFlags flags4= new RequestCodeFlags( false, false, false, true, false, false, false );
+        RequestCodeFlags flags5= new RequestCodeFlags( false, false, false, false, true, false, false );
+        RequestCodeFlags flags6= new RequestCodeFlags( false, false, false, false, false, true, false );
+        RequestCodeFlags flags7= new RequestCodeFlags( false, false, false, false, false, false, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -383,10 +414,22 @@ public class ResourceRegistryTest
         listener= new OperationalListener( uri1, flags4, callback4 );
         registry.add( listener );
 
+        listener= new OperationalListener( uri1, flags5, callback5 );
+        registry.add( listener );
+
+        listener= new OperationalListener( uri1, flags6, callback6 );
+        registry.add( listener );
+
+        listener= new OperationalListener( uri1, flags7, callback7 );
+        registry.add( listener );
+
         assertEquals( "resource1 has wrong callback", callback1, registry.getResource( uri1 ).getGetCallback() );
         assertEquals( "resource1 has wrong callback", callback2, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong callback", callback3, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong callback", callback4, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong callback", callback5, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong callback", callback6, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong callback", callback7, registry.getResource( uri1 ).getIpatchCallback() );
     }
 
     @Test
@@ -405,8 +448,8 @@ public class ResourceRegistryTest
         String uri3= "/resource1/resource2/resource3";
         String name4= "resource4";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags2= new RequestCodeFlags( true, true, true, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags2= new RequestCodeFlags( true, true, true, true, true, true, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -435,21 +478,33 @@ public class ResourceRegistryTest
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong delete callback", callback1, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri1 ).getIpatchCallback() );
 
         assertEquals( "resource2 has wrong get callback", callback2, registry.getResource( uri2 ).getGetCallback() );
         assertEquals( "resource2 has wrong post callback", callback2, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback2, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback2, registry.getResource( uri2 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback2, registry.getResource( uri2 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback2, registry.getResource( uri2 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback2, registry.getResource( uri2 ).getIpatchCallback() );
 
         assertEquals( "resource3 has wrong get callback", callback1, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback1, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback1, registry.getResource( uri3 ).getPutCallback() );
         assertEquals( "resource3 has wrong delete callback", callback1, registry.getResource( uri3 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri3 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri3 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri3 ).getIpatchCallback() );
 
         assertEquals( "resource4 has wrong get callback", callback1, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback1, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback1, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong delete callback", callback1, registry.getResource( uri4 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri4 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri4 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri4 ).getIpatchCallback() );
     }
 
     @Test
@@ -462,6 +517,9 @@ public class ResourceRegistryTest
         TestSourceCallBack callback3= new TestSourceCallBack();
         TestSourceCallBack callback4= new TestSourceCallBack();
         TestSourceCallBack callback5= new TestSourceCallBack();
+        TestSourceCallBack callback6= new TestSourceCallBack();
+        TestSourceCallBack callback7= new TestSourceCallBack();
+        TestSourceCallBack callback8= new TestSourceCallBack();
         ResourceConfig resourceConfig;
         String name1= "resource1";
         String uri1= "/resource1";
@@ -471,11 +529,14 @@ public class ResourceRegistryTest
         String uri3= "/resource1/resource2/resource3";
         String name4= "resource4";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags2= new RequestCodeFlags( true, false, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( false, true, false, false );
-        RequestCodeFlags flags4= new RequestCodeFlags( false, false, true, false );
-        RequestCodeFlags flags5= new RequestCodeFlags( false, false, false, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags2= new RequestCodeFlags( true, false, false, false, false, false, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( false, true, false, false, false, false, false );
+        RequestCodeFlags flags4= new RequestCodeFlags( false, false, true, false, false, false, false );
+        RequestCodeFlags flags5= new RequestCodeFlags( false, false, false, true, false, false, false );
+        RequestCodeFlags flags6= new RequestCodeFlags( false, false, false, false, true, false, false );
+        RequestCodeFlags flags7= new RequestCodeFlags( false, false, false, false, false, true, false );
+        RequestCodeFlags flags8= new RequestCodeFlags( false, false, false, false, false, false, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -496,38 +557,52 @@ public class ResourceRegistryTest
         OperationalListener listener;
         listener= new OperationalListener( "/*", flags1, callback1 );
         registry.add( listener );
-
         listener= new OperationalListener( uri2, flags2, callback2 );
         registry.add( listener );
-
         listener= new OperationalListener( uri2, flags3, callback3 );
         registry.add( listener );
-
         listener= new OperationalListener( uri2, flags4, callback4 );
         registry.add( listener );
-
         listener= new OperationalListener( uri2, flags5, callback5 );
+        registry.add( listener );
+        listener= new OperationalListener( uri2, flags6, callback6 );
+        registry.add( listener );
+        listener= new OperationalListener( uri2, flags7, callback7 );
+        registry.add( listener );
+        listener= new OperationalListener( uri2, flags8, callback8 );
         registry.add( listener );
 
         assertEquals( "resource1 has wrong get callback", callback1, registry.getResource( uri1 ).getGetCallback() );
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong delete callback", callback1, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri1 ).getIpatchCallback() );
 
         assertEquals( "resource2 has wrong get callback", callback2, registry.getResource( uri2 ).getGetCallback() );
         assertEquals( "resource2 has wrong post callback", callback3, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback4, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback5, registry.getResource( uri2 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback6, registry.getResource( uri2 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback7, registry.getResource( uri2 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback8, registry.getResource( uri2 ).getIpatchCallback() );
 
         assertEquals( "resource3 has wrong get callback", callback1, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback1, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback1, registry.getResource( uri3 ).getPutCallback() );
         assertEquals( "resource3 has wrong delete callback", callback1, registry.getResource( uri3 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri3 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri3 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri3 ).getIpatchCallback() );
 
         assertEquals( "resource4 has wrong get callback", callback1, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback1, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback1, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong delete callback", callback1, registry.getResource( uri4 ).getDeleteCallback() );
+        assertEquals( "resource4 has wrong fetch callback", callback1, registry.getResource( uri4 ).getFetchCallback() );
+        assertEquals( "resource4 has wrong patch callback", callback1, registry.getResource( uri4 ).getPatchCallback() );
+        assertEquals( "resource4 has wrong ipatch callback", callback1, registry.getResource( uri4 ).getIpatchCallback() );
     }
 
     @Test
@@ -548,10 +623,10 @@ public class ResourceRegistryTest
         String uri3= "/resource1/resource2/resource3";
         String name4= "resource4";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, false, true, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, true );
-        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, false, true, false, false, true, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, true, true, false, true );
+        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true, true, true, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -586,21 +661,33 @@ public class ResourceRegistryTest
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong delete callback", callback1, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri1 ).getIpatchCallback() );
 
         assertEquals( "resource2 has wrong get callback", callback1, registry.getResource( uri2 ).getGetCallback() );
         assertEquals( "resource2 has wrong post callback", callback1, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback1, registry.getResource( uri2 ).getPutCallback() );
         assertEquals( "resource2 has wrong delete callback", callback1, registry.getResource( uri2 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri2 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri2 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri2 ).getIpatchCallback() );
 
         assertEquals( "resource3 has wrong get callback", callback3, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback3, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback2, registry.getResource( uri3 ).getPutCallback() ); //note callback2
         assertEquals( "resource3 has wrong delete callback", callback3, registry.getResource( uri3 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback3, registry.getResource( uri3 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback2, registry.getResource( uri3 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback3, registry.getResource( uri3 ).getIpatchCallback() );
 
         assertEquals( "resource4 has wrong get callback", callback4, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback4, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback4, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong delete callback", callback4, registry.getResource( uri4 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback4, registry.getResource( uri4 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback4, registry.getResource( uri4 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback4, registry.getResource( uri4 ).getIpatchCallback() );
     }
 
     @Test
@@ -621,10 +708,10 @@ public class ResourceRegistryTest
         String uri3= "/resource1/resource2/resource3";
         String name4= "resource4";
         String uri4= "/resource1/resource4";
-        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, false, true, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, true );
-        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true );
+        RequestCodeFlags flags1= new RequestCodeFlags( true, true, true, true, true, true, true );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, false, true, false, false, true, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, true, true, false, true );
+        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, true, true, true, true );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setResourceName( name1 );
@@ -659,21 +746,33 @@ public class ResourceRegistryTest
         assertEquals( "resource1 has wrong post callback", callback1, registry.getResource( uri1 ).getPostCallback() );
         assertEquals( "resource1 has wrong put callback", callback1, registry.getResource( uri1 ).getPutCallback() );
         assertEquals( "resource1 has wrong delete callback", callback1, registry.getResource( uri1 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback1, registry.getResource( uri1 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback1, registry.getResource( uri1 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback1, registry.getResource( uri1 ).getIpatchCallback() );
 
         assertEquals( "resource2 has wrong get callback", null, registry.getResource( uri2 ).getGetCallback() );
         assertEquals( "resource2 has wrong post callback", null, registry.getResource( uri2 ).getPostCallback() );
         assertEquals( "resource2 has wrong put callback", callback2, registry.getResource( uri2 ).getPutCallback() ); //note callback2
         assertEquals( "resource2 has wrong delete callback", null, registry.getResource( uri2 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", null, registry.getResource( uri2 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback2, registry.getResource( uri2 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", null, registry.getResource( uri2 ).getIpatchCallback() );
 
         assertEquals( "resource3 has wrong get callback", callback3, registry.getResource( uri3 ).getGetCallback() );
         assertEquals( "resource3 has wrong post callback", callback3, registry.getResource( uri3 ).getPostCallback() );
         assertEquals( "resource3 has wrong put callback", callback2, registry.getResource( uri3 ).getPutCallback() ); //note callback2
         assertEquals( "resource3 has wrong delete callback", callback3, registry.getResource( uri3 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback3, registry.getResource( uri3 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback2, registry.getResource( uri3 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback3, registry.getResource( uri3 ).getIpatchCallback() );
 
         assertEquals( "resource4 has wrong get callback", callback4, registry.getResource( uri4 ).getGetCallback() );
         assertEquals( "resource4 has wrong post callback", callback4, registry.getResource( uri4 ).getPostCallback() );
         assertEquals( "resource4 has wrong put callback", callback4, registry.getResource( uri4 ).getPutCallback() );
         assertEquals( "resource4 has wrong delete callback", callback4, registry.getResource( uri4 ).getDeleteCallback() );
+        assertEquals( "resource1 has wrong fetch callback", callback4, registry.getResource( uri4 ).getFetchCallback() );
+        assertEquals( "resource1 has wrong patch callback", callback4, registry.getResource( uri4 ).getPatchCallback() );
+        assertEquals( "resource1 has wrong ipatch callback", callback4, registry.getResource( uri4 ).getIpatchCallback() );
 
     }
 
@@ -836,7 +935,6 @@ public class ResourceRegistryTest
         assertNotNull( resources );
         assertEquals( "wrong resource count", 0, resources.size() );
         assertEquals( "wrong resources found", 0x0, resourcesPresent( resources ) );
-
     }
 
     /**
@@ -850,6 +948,9 @@ public class ResourceRegistryTest
         final String name2= "resource2";
         final String name3= "resource3";
         final String name4= "resource4";
+        final String name5= "resource5";
+        final String name6= "resource6";
+        final String name7= "resource7";
         int resourceFlags= 0;
 
         for ( ServedResource resource : resources )
@@ -867,6 +968,15 @@ public class ResourceRegistryTest
                     break;
                 case name4:
                     resourceFlags|= 0x8;
+                    break;
+                case name5:
+                    resourceFlags|= 0x10;
+                    break;
+                case name6:
+                    resourceFlags|= 0x20;
+                    break;
+                case name7:
+                    resourceFlags|= 0x40;
                     break;
             }
         }

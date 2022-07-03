@@ -103,6 +103,24 @@ public class ServedResource extends CoapResource
     private SourceCallback< InputStream, CoapRequestAttributes > deleteCallback= null;
 
     /**
+     * The callback of the messagesource for Fetch requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, CoapRequestAttributes > fetchCallback= null;
+
+    /**
+     * The callback of the messagesource for Patch requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, CoapRequestAttributes > patchCallback= null;
+
+    /**
+     * The callback of the messagesource for iPatch requests.
+     * It is used to hand messages over to the Mule flow that should process the request.
+     */
+    private SourceCallback< InputStream, CoapRequestAttributes > ipatchCallback= null;
+
+    /**
      * RequestCode flags indicating which requests the resource accepts.
      */
     private RequestCodeFlags requestCodeFlags= new RequestCodeFlags();
@@ -128,6 +146,9 @@ public class ServedResource extends CoapResource
         requestCodeFlags.setPost( resource.isPost() );
         requestCodeFlags.setPut( resource.isPut() );
         requestCodeFlags.setDelete( resource.isDelete() );
+        requestCodeFlags.setFetch( resource.isFetch() );
+        requestCodeFlags.setPatch( resource.isPatch() );
+        requestCodeFlags.setIpatch( resource.isIpatch() );
         earlyAck= resource.isEarlyAck();
 
         if ( resource.isObservable() )
@@ -200,6 +221,9 @@ public class ServedResource extends CoapResource
         requestCodeFlags.setPost( resource.isPost() );
         requestCodeFlags.setPut( resource.isPut() );
         requestCodeFlags.setDelete( resource.isDelete() );
+        requestCodeFlags.setFetch( resource.isFetch() );
+        requestCodeFlags.setPatch( resource.isPatch() );
+        requestCodeFlags.setIpatch( resource.isIpatch() );
         earlyAck= resource.isEarlyAck();
 
         if ( resource.isObservable() )
@@ -344,6 +368,81 @@ public class ServedResource extends CoapResource
         else
         {
             handleRequest( deleteCallback, exchange, CoapResponseCode.DELETED );
+        }
+    }
+
+    /**
+     * @return True when this resource will handle fetch requests.
+     */
+    boolean isHandlingFetch()
+    {
+        return requestCodeFlags.isFetch();
+    }
+
+    /**
+     * Overide default handler of Cf.
+     */
+    @Override
+    public void handleFETCH( CoapExchange exchange )
+    {
+        if ( requestCodeFlags.isNotFetch() )
+        {
+            // default implementation is to respond METHOD_NOT_ALLOWED
+            super.handleFETCH( exchange );
+        }
+        else
+        {
+            handleRequest( fetchCallback, exchange, CoapResponseCode.CONTENT );
+        }
+    }
+
+    /**
+     * @return True when this resource will handle patch requests.
+     */
+    boolean isHandlingPatch()
+    {
+        return requestCodeFlags.isPatch();
+    }
+
+    /**
+     * Overide default handler of Cf.
+     */
+    @Override
+    public void handlePATCH( CoapExchange exchange )
+    {
+        if ( requestCodeFlags.isNotPatch() )
+        {
+            // default implementation is to respond METHOD_NOT_ALLOWED
+            super.handlePATCH( exchange );
+        }
+        else
+        {
+            handleRequest( patchCallback, exchange, CoapResponseCode.CHANGED );
+        }
+    }
+
+    /**
+     * @return True when this resource will handle patch requests.
+     */
+    boolean isHandlingIpatch()
+    {
+        return requestCodeFlags.isIpatch();
+    }
+
+    /**
+     * Overide default handler of Cf.
+     */
+    @Override
+    public void handleIPATCH( CoapExchange exchange )
+    {
+        if ( requestCodeFlags.isNotIpatch() )
+        {
+            // default implementation is to respond METHOD_NOT_ALLOWED
+            super.handleIPATCH( exchange );
+        }
+        else
+        {
+            handleRequest( ipatchCallback, exchange, CoapResponseCode.CHANGED );
         }
     }
 
@@ -514,5 +613,56 @@ public class ServedResource extends CoapResource
     public SourceCallback< InputStream, CoapRequestAttributes > getDeleteCallback()
     {
         return deleteCallback;
+    }
+
+    /**
+     * set the Mule callback for this resource for Fetch requests.
+     */
+    public void setFetchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
+    {
+        fetchCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Fetch requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, CoapRequestAttributes > getFetchCallback()
+    {
+        return fetchCallback;
+    }
+
+    /**
+     * set the Mule callback for this resource for Patch requests.
+     */
+    public void setPatchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
+    {
+        patchCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Patch requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, CoapRequestAttributes > getPatchCallback()
+    {
+        return patchCallback;
+    }
+
+    /**
+     * set the Mule callback for this resource for Ipatch requests.
+     */
+    public void setIpatchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
+    {
+        ipatchCallback= sourceCallback;
+    }
+
+    /**
+     * Get the Mule MessageSource callback for Ipatch requests.
+     * @return the callback
+     */
+    public SourceCallback< InputStream, CoapRequestAttributes > getIpatchCallback()
+    {
+        return ipatchCallback;
     }
 }

@@ -355,6 +355,15 @@
                 <parameter name="delete">
                     <description><![CDATA[When true, Delete requests are allowed on the resource.]]></description>
                 </parameter>
+                <parameter name="fetch">
+                    <description><![CDATA[When true, Fetch requests are allowed on the resource.]]></description>
+                </parameter>
+                <parameter name="patch">
+                    <description><![CDATA[When true, Patch requests are allowed on the resource.]]></description>
+                </parameter>
+                <parameter name="ipatch">
+                    <description><![CDATA[When true, iPatch requests are allowed on the resource.]]></description>
+                </parameter>
                 <parameter name="observable">
                     <description><![CDATA[When true, the resource can be observed by clients.]]></description>
                 </parameter>
@@ -474,6 +483,15 @@
                 </parameter>
                 <parameter name="delete">
                     <description><![CDATA[The listener listens out for Delete requests.]]></description>
+                </parameter>
+                <parameter name="fetch">
+                    <description><![CDATA[The listener listens out for Fetch requests.]]></description>
+                </parameter>
+                <parameter name="patch">
+                    <description><![CDATA[The listener listens out for Patch requests.]]></description>
+                </parameter>
+                <parameter name="ipatch">
+                    <description><![CDATA[The listener listens out for iPatch requests.]]></description>
                 </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
@@ -693,6 +711,15 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="delete">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="fetch">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="patch">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="ipatch">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="observable">

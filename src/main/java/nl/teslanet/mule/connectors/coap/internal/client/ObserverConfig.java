@@ -99,6 +99,18 @@ public class ObserverConfig
     private List< QueryConfig > queryConfigs= null;
 
     /**
+     * If set a FETCH request is issued to initiate the observe relation.
+     * Otherwise a GET request is used.
+     */
+//    @Parameter
+//    @Optional
+//    @Expression( ExpressionSupport.NOT_SUPPORTED )
+//    @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
+//    @DisplayName( "Use Fetch" )
+//    @Summary( "If set a FETCH request is issued to initiate the observe relation.\nOtherwise a GET request is used." )
+//    private ObserverFetchConfig fetchConfig= null;
+
+    /**
      * The shared server or proxy to address the request to.
      */
     @Parameter
