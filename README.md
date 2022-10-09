@@ -23,7 +23,7 @@ The CoAP protocol is supported as defined in:
 
 ## Uses
 
-* [Californium](https://www.eclipse.org/californium/) 2.7.3
+* [Californium](https://www.eclipse.org/californium/) 2.7.4
 
 ## Installation
 
