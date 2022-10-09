@@ -1,6 +1,7 @@
 FROM maven:3.8.3-adoptopenjdk-8-openj9
 
 RUN apt-get update \
+    && apt-get install -y git \
     && apt-get install -y gpg \
     && apt-get clean
 
