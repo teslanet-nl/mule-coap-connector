@@ -29,24 +29,5 @@ package nl.teslanet.mule.connectors.coap.api;
  */
 public class ObserverAddParams extends AbstractResourceParams
 {
-//    /**
-//     * If set a FETCH request is issued to initiate the observe relation.
-//     * Otherwise a GET request is used.
-//     */
-//    @Parameter
-//    @Optional
-//    @Expression( ExpressionSupport.SUPPORTED )
-//    @ParameterDsl( allowReferences= false, allowInlineDefinition= true )
-//    @Placement( order= 61 )
-//    @Summary( "If set a FETCH request is issued to initiate the observe relation.\nOtherwise a GET request is used." )
-//    private ObserverFetchParams fetchRequest= null;
-//
-//    /**
-//     * @return the fetchRequest
-//     */
-//    public ObserverFetchParams getFetchRequest()
-//    {
-//        return fetchRequest;
-//    }
-
+    //NOOP
 }

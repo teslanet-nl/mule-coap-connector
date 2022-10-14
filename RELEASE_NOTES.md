@@ -1,6 +1,10 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release 2.1.0
+
+* Added support for _Fetch_, _Patch_ and _iPatch_ requests.
+
 ## Release 2.0.2
 
 * Californium 2.7.4 update.
