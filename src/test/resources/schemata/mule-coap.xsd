@@ -2135,7 +2135,7 @@
           <xs:enumeration value="DELETE"></xs:enumeration>
           <xs:enumeration value="FETCH"></xs:enumeration>
           <xs:enumeration value="PATCH"></xs:enumeration>
-          <xs:enumeration value="iPATCH"></xs:enumeration>
+          <xs:enumeration value="IPATCH"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType>

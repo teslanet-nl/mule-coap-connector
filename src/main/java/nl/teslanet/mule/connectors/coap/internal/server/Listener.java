@@ -164,7 +164,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     @Parameter
     @Optional( defaultValue= "false" )
     @DisplayName( "Accept iPatch requests" )
-    @Summary( "The listener will receive iPATCH requests." )
+    @Summary( "The listener will receive iPatch requests." )
     private boolean ipatch;
 
     /**

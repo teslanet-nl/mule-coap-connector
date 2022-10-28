@@ -73,8 +73,8 @@ public class BasicTest extends AbstractClientTestCase
                 { "do_not_fetch_me", "FETCH", "coap://127.0.0.1/basic/do_not_fetch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
                 { "patch_me", "PATCH", "coap://127.0.0.1/basic/patch_me?test=sync", "CREATED", "PATCH called on: coap://localhost/basic/patch_me?test=sync" },
                 { "do_not_patch_me", "PATCH", "coap://127.0.0.1/basic/do_not_patch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "ipatch_me", "iPATCH", "coap://127.0.0.1/basic/ipatch_me?test=sync", "CHANGED", "IPATCH called on: coap://localhost/basic/ipatch_me?test=sync" },
-                { "do_not_ipatch_me", "iPATCH", "coap://127.0.0.1/basic/do_not_ipatch_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
+                { "ipatch_me", "IPATCH", "coap://127.0.0.1/basic/ipatch_me?test=sync", "CHANGED", "IPATCH called on: coap://localhost/basic/ipatch_me?test=sync" },
+                { "do_not_ipatch_me", "IPATCH", "coap://127.0.0.1/basic/do_not_ipatch_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
         );
     }
 

@@ -110,12 +110,12 @@ public class ResourceConfig
     private boolean patch= false;
 
     /**
-     * When true, iPATCH requests are allowed on the resource.
+     * When true, iPatch requests are allowed on the resource.
      */
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, iPATCH requests are allowed on the resource" )
+    @Summary( "When true, iPatch requests are allowed on the resource" )
     private boolean ipatch= false;
 
     /**

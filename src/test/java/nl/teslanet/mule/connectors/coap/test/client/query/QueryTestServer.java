@@ -157,7 +157,7 @@ public class QueryTestServer extends CoapServer
         public void handleIPATCH( CoapExchange exchange )
         {
             // respond to the request
-            exchange.respond( ResponseCode.CHANGED, "iPATCH called on: " + exchange.advanced().getRequest().getURI() );
+            exchange.respond( ResponseCode.CHANGED, "IPATCH called on: " + exchange.advanced().getRequest().getURI() );
         }
     }
 }

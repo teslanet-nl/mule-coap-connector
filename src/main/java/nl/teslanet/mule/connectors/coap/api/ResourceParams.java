@@ -101,7 +101,7 @@ public class ResourceParams
      */
     @Parameter
     @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, iPATCH requests are allowed on the resource")
+    @Summary("When true, iPatch requests are allowed on the resource")
     private boolean ipatch= false;
 
     /**

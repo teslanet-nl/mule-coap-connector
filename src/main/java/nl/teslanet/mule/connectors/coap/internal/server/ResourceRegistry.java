@@ -335,7 +335,7 @@ public class ResourceRegistry
         else
         {
             resource.setIpatchCallback( null );
-            //if ( resource.isHandlingIpatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "iPATCH" );
+            //if ( resource.isHandlingIpatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "iPatch" );
         }
     }
 

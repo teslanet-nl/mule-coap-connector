@@ -28,5 +28,5 @@ package nl.teslanet.mule.connectors.coap.api;
  */
 public enum CoapRequestCode
 {
-    GET, POST, PUT, DELETE, FETCH, PATCH, iPATCH
+    GET, POST, PUT, DELETE, FETCH, PATCH, IPATCH
 }

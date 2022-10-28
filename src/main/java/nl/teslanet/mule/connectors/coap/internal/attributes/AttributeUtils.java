@@ -120,7 +120,7 @@ public class AttributeUtils
                 return Code.FETCH;
             case PATCH:
                 return Code.PATCH;
-            case iPATCH:
+            case IPATCH:
                 return Code.IPATCH;
             default:
                 throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCodeAttribute + " }" );
@@ -150,7 +150,7 @@ public class AttributeUtils
             case PATCH:
                 return CoapRequestCode.PATCH;
             case IPATCH:
-                return CoapRequestCode.iPATCH;
+                return CoapRequestCode.IPATCH;
             default:
                 throw new InternalInvalidRequestCodeException( "invalid request code { " + code + " }" );
         }
