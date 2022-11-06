@@ -22,7 +22,9 @@
  */
 package nl.teslanet.mule.connectors.coap.test.server.secure;
 
+import org.junit.Ignore;
 
+@Ignore
 public class SecureClientTest extends AbstractSecureClientTestCase
 {
 
