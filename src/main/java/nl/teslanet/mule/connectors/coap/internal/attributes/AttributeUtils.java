@@ -116,6 +116,12 @@ public class AttributeUtils
                 return Code.PUT;
             case DELETE:
                 return Code.DELETE;
+            case FETCH:
+                return Code.FETCH;
+            case PATCH:
+                return Code.PATCH;
+            case IPATCH:
+                return Code.IPATCH;
             default:
                 throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCodeAttribute + " }" );
         }
@@ -139,6 +145,12 @@ public class AttributeUtils
                 return CoapRequestCode.PUT;
             case DELETE:
                 return CoapRequestCode.DELETE;
+            case FETCH:
+                return CoapRequestCode.FETCH;
+            case PATCH:
+                return CoapRequestCode.PATCH;
+            case IPATCH:
+                return CoapRequestCode.IPATCH;
             default:
                 throw new InternalInvalidRequestCodeException( "invalid request code { " + code + " }" );
         }

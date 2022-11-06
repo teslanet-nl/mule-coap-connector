@@ -59,75 +59,19 @@
 		<coap:endpoint udpEndpoint="Udp_Endpoint2" />
 	</coap:client-config>
 
-	<flow name="do_get">
+	<flow name="do_request">
 		<coap:request doc:name="Request" config-ref="config"
-			requestCode="GET" path="#[vars.path]" forcePayload="true">
+			requestCode="#[vars.requestCode]" path="#[vars.path]" forcePayload="#[vars.forcePayload]">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<set-variable variableName="spyname" value="do_get" />
 		<flow-ref name="spy" />
 	</flow>
 
-	<flow name="do_post">
-		<coap:request doc:name="Request" config-ref="config"
-			requestCode="POST" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_post" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_put">
-		<coap:request doc:name="Request" config-ref="config"
-			requestCode="PUT" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_put" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_delete">
-		<coap:request doc:name="Request" config-ref="config"
-			requestCode="DELETE" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_delete" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_get2">
+	<flow name="do_request2">
 		<coap:request doc:name="Request" config-ref="config2"
-			requestCode="GET" path="#[vars.path]" forcePayload="true">
+			requestCode="#[vars.requestCode]" path="#[vars.path]" forcePayload="#[vars.forcePayload]">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
-		<set-variable variableName="spyname" value="do_get2" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_post2">
-		<coap:request doc:name="Request" config-ref="config2"
-			requestCode="POST" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_post2" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_put2">
-		<coap:request doc:name="Request" config-ref="config2"
-			requestCode="PUT" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_put2" />
-		<flow-ref name="spy" />
-	</flow>
-
-	<flow name="do_delete2">
-		<coap:request doc:name="Request" config-ref="config2"
-			requestCode="DELETE" path="#[vars.path]" forcePayload="true">
-			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
-		</coap:request>
-		<set-variable variableName="spyname" value="do_delete2" />
 		<flow-ref name="spy" />
 	</flow>
 

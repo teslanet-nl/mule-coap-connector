@@ -41,35 +41,35 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * Configuration of a CoAP resource.
  * The configuration is the resource description used to construct resources on a CoAP server.
  */
-@Alias("resource")
+@Alias( "resource" )
 public class ResourceConfig
 {
     /**
     * The name of the resource that will be used to identify it in CoAP uri's.
     */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The name of the resource that will be used to identify it in CoAP uri's.")
-    @Example("my_resource")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The name of the resource that will be used to identify it in CoAP uri's." )
+    @Example( "my_resource" )
     private String resourceName;
 
     /**
      * When true, Get requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true, GET requests are allowed on the resource.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, GET requests are allowed on the resource." )
     private boolean get= false;
 
     /**
      * When true, Post requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true, POST requests are allowed on the resource.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, POST requests are allowed on the resource." )
     private boolean post= false;
 
     /**
@@ -77,27 +77,54 @@ public class ResourceConfig
      */
     @Parameter
     //@ParameterGroup(name= "Methods")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true, PUT requests are allowed on the resource.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, PUT requests are allowed on the resource." )
     private boolean put= false;
 
     /**
      * When true, Delete requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true, DELETE requests are allowed on the resource")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, DELETE requests are allowed on the resource" )
     private boolean delete= false;
+
+    /**
+     * When true, Fetch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, Fetch requests are allowed on the resource" )
+    private boolean fetch= false;
+
+    /**
+     * When true, Patch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, PATCH requests are allowed on the resource" )
+    private boolean patch= false;
+
+    /**
+     * When true, iPatch requests are allowed on the resource.
+     */
+    @Parameter
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, iPatch requests are allowed on the resource" )
+    private boolean ipatch= false;
 
     /**
      * When true, the resource can be observed by clients.
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true, the resource can be observed by clients")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true, the resource can be observed by clients" )
     private boolean observable= false;
 
     /**
@@ -105,17 +132,17 @@ public class ResourceConfig
      * Use this when processing takes longer than the acknowledgment-timeout of the client.  
      */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("When true an acknowledgement is immediately sent to the client, before processing the request.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "When true an acknowledgement is immediately sent to the client, before processing the request." )
     private boolean earlyAck= false;
 
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The CoRE information describing the contrained resource for discovery.")
-    @DisplayName("Discovery CoRE Info")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The CoRE information describing the contrained resource for discovery." )
+    @DisplayName( "Discovery CoRE Info" )
     private ResourceInfoConfig coreInfoConfig;
 
     /**
@@ -124,9 +151,9 @@ public class ResourceConfig
     @Parameter
     @Optional
     @NullSafe
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary(value= "The subordinate resources of the resource.")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "The subordinate resources of the resource." )
     private List< ResourceConfig > subResources;
 
     /**
@@ -207,6 +234,54 @@ public class ResourceConfig
     public void setDelete( boolean delete )
     {
         this.delete= delete;
+    }
+
+    /**
+     * @return the fetch
+     */
+    public boolean isFetch()
+    {
+        return fetch;
+    }
+
+    /**
+     * @param fetch the fetch to set
+     */
+    public void setFetch( boolean fetch )
+    {
+        this.fetch= fetch;
+    }
+
+    /**
+     * @return the patch
+     */
+    public boolean isPatch()
+    {
+        return patch;
+    }
+
+    /**
+     * @param patch the patch to set
+     */
+    public void setPatch( boolean patch )
+    {
+        this.patch= patch;
+    }
+
+    /**
+     * @return the ipatch
+     */
+    public boolean isIpatch()
+    {
+        return ipatch;
+    }
+
+    /**
+     * @param ipatch the ipatch to set
+     */
+    public void setIpatch( boolean ipatch )
+    {
+        this.ipatch= ipatch;
     }
 
     /**

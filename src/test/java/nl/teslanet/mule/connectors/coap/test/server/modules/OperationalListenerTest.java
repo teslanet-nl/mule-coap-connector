@@ -64,7 +64,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/child";
-        flags= new RequestCodeFlags( true, false, false, false );
+        flags= new RequestCodeFlags( true, false, false, false, false, false, false );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
 
@@ -73,7 +73,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "some_resource/child";
-        flags= new RequestCodeFlags( true, true, false, false );
+        flags= new RequestCodeFlags( true, true, false, false, false, false, false );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
@@ -90,7 +90,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, uri, flags, callback );
 
         uri= "/some_resource/child/*";
-        flags= new RequestCodeFlags( true, true, true, false );
+        flags= new RequestCodeFlags( true, true, true, false, false, false, false );
         callback= new TestSourceCallBack();
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
@@ -108,7 +108,7 @@ public class OperationalListenerTest
         assertOperationalListener( listener, "/" + uri, flags, callback );
 
         uri= "/some_resource*";
-        flags= new RequestCodeFlags( true, true, true, true );
+        flags= new RequestCodeFlags( true, true, true, true, false, false, false );
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
 
@@ -119,14 +119,53 @@ public class OperationalListenerTest
         uri= "/some_resource/child/child*";
         listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
         assertOperationalListener( listener, uri, flags, callback );
-    }
+
+        uri= "/some_resource*";
+        flags= new RequestCodeFlags( true, true, true, true, true, false, false );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource*";
+        flags= new RequestCodeFlags( true, true, true, true, true, true, false );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource*";
+        flags= new RequestCodeFlags( true, true, true, true, true, true, true );
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+
+        uri= "/some_resource/child/child*";
+        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
+}
 
     @Test
     public void testConstructorWithInvalidUriNull() throws InternalResourceUriException
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= null;
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
@@ -140,7 +179,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
@@ -154,7 +193,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             @SuppressWarnings("unused")
@@ -168,7 +207,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "**";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -181,7 +220,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/**";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -194,7 +233,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -207,7 +246,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/child/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -220,7 +259,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource/*/child";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -233,7 +272,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/some_resource*/child/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
 
         InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
@@ -246,7 +285,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
         OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
 
         uri= "/some_resource";
@@ -315,7 +354,7 @@ public class OperationalListenerTest
     {
         TestSourceCallBack callback= new TestSourceCallBack();
         String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
         OperationalListener listener= new OperationalListener( uri, flags, callback );
 
         callback= new TestSourceCallBack();

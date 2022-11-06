@@ -68,7 +68,13 @@ public class BasicTest extends AbstractClientTestCase
                 { "put_me", "PUT", "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=sync" },
                 { "do_not_put_me", "PUT", "coap://127.0.0.1/basic/do_not_put_me?test=sync", "METHOD_NOT_ALLOWED", "" },
                 { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me?test=sync", "DELETED", "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
-                { "do_not_delete_me", "DELETE", "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
+                { "do_not_delete_me", "DELETE", "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "fetch_me", "FETCH", "coap://127.0.0.1/basic/fetch_me?test=sync", "CONTENT", "FETCH called on: coap://localhost/basic/fetch_me?test=sync" },
+                { "do_not_fetch_me", "FETCH", "coap://127.0.0.1/basic/do_not_fetch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "patch_me", "PATCH", "coap://127.0.0.1/basic/patch_me?test=sync", "CREATED", "PATCH called on: coap://localhost/basic/patch_me?test=sync" },
+                { "do_not_patch_me", "PATCH", "coap://127.0.0.1/basic/do_not_patch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
+                { "ipatch_me", "IPATCH", "coap://127.0.0.1/basic/ipatch_me?test=sync", "CHANGED", "IPATCH called on: coap://localhost/basic/ipatch_me?test=sync" },
+                { "do_not_ipatch_me", "IPATCH", "coap://127.0.0.1/basic/do_not_ipatch_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
         );
     }
 
@@ -153,7 +159,7 @@ public class BasicTest extends AbstractClientTestCase
     @Test
     public void testNonRequest() throws Exception
     {
-        CoreEvent result= flowRunner( flowName + "_non").keepStreamsOpen().withPayload( "nothing_important" ).run();
+        CoreEvent result= flowRunner( flowName + "_non" ).keepStreamsOpen().withPayload( "nothing_important" ).run();
         Message response= result.getMessage();
 
         assertNotNull( "no mule event", response );

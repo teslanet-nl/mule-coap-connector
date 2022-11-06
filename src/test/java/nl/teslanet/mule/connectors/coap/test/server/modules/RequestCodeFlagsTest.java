@@ -46,84 +46,149 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor1Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor2Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( true, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( true, false, false, false, false, false, false );
 
         assertTrue( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
-
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor3Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, true, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, true, false, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertTrue( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor4Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, true, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, true, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertTrue( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor5Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, true );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, true, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertTrue( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void constructor6Test()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, true );
-
-        assertTrue( "Get flag has wrong value", flags.isGet() );
-        assertTrue( "Post flag has wrong value", flags.isPost() );
-        assertTrue( "Put flag has wrong value", flags.isPut() );
-        assertTrue( "Delete flag has wrong value", flags.isDelete() );
-    }
-
-    @Test
-    public void getSetterTest()
-    {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, true, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertTrue( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void constructor7Test()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, true, false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertTrue( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void constructor8Test()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, true );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertTrue( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void constructor9Test()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, true, true, true, true );
+
+        assertTrue( "Get flag has wrong value", flags.isGet() );
+        assertTrue( "Post flag has wrong value", flags.isPost() );
+        assertTrue( "Put flag has wrong value", flags.isPut() );
+        assertTrue( "Delete flag has wrong value", flags.isDelete() );
+        assertTrue( "Fetch flag has wrong value", flags.isFetch() );
+        assertTrue( "Patch flag has wrong value", flags.isPatch() );
+        assertTrue( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void getSetterTest()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setGet( true );
 
@@ -131,6 +196,9 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setGet( false );
 
@@ -138,17 +206,23 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void postSetterTest()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setPost( true );
 
@@ -156,6 +230,9 @@ public class RequestCodeFlagsTest
         assertTrue( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setPost( false );
 
@@ -163,17 +240,23 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void putSetterTest()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setPut( true );
 
@@ -181,6 +264,9 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertTrue( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setPut( false );
 
@@ -188,17 +274,23 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void deleteSetterTest()
     {
-        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false );
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
 
         assertFalse( "Get flag has wrong value", flags.isGet() );
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setDelete( true );
 
@@ -206,6 +298,9 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertTrue( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
 
         flags.setDelete( false );
 
@@ -213,14 +308,119 @@ public class RequestCodeFlagsTest
         assertFalse( "Post flag has wrong value", flags.isPost() );
         assertFalse( "Put flag has wrong value", flags.isPut() );
         assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void fetchSetterTest()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setFetch( true );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertTrue( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setFetch( false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void patchSetterTest()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setPatch( true );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertTrue( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setPatch( false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+    }
+
+    @Test
+    public void ipatchSetterTest()
+    {
+        RequestCodeFlags flags= new RequestCodeFlags( false, false, false, false, false, false, false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setIpatch( true );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertTrue( "iPatch flag has wrong value", flags.isIpatch() );
+
+        flags.setIpatch( false );
+
+        assertFalse( "Get flag has wrong value", flags.isGet() );
+        assertFalse( "Post flag has wrong value", flags.isPost() );
+        assertFalse( "Put flag has wrong value", flags.isPut() );
+        assertFalse( "Delete flag has wrong value", flags.isDelete() );
+        assertFalse( "Fetch flag has wrong value", flags.isFetch() );
+        assertFalse( "Patch flag has wrong value", flags.isPatch() );
+        assertFalse( "iPatch flag has wrong value", flags.isIpatch() );
     }
 
     @Test
     public void equalsTest()
     {
-        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false );
+        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false, true, true, false );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false, true, true, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false, true, true, false );
 
         assertTrue( "flag 1 equals flag 1 returns wrong result", flags1.equals( flags1 ) );
         assertFalse( "flag 1 equals null returns wrong result", flags1.equals( null ) );
@@ -233,9 +433,9 @@ public class RequestCodeFlagsTest
     @Test
     public void compareTest()
     {
-        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false );
+        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false, true, true, false );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false, true, true, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false, true, true, false );
 
         assertEquals( "flag 1 equals flag 1 returns wrong result", 0, flags1.compareTo( flags1 ) );
         assertEquals( "flag 1 equals null returns wrong result", 1, flags1.compareTo( null ) );
@@ -248,12 +448,12 @@ public class RequestCodeFlagsTest
     @Test
     public void hashCodeTest()
     {
-        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, true, false );
+        RequestCodeFlags flags1= new RequestCodeFlags( false, true, true, false, true, true, false );
+        RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false, true, true, false );
+        RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false, true, true, false );
 
-        assertEquals( "hashcode flag 1 has wrong value", 0x6, flags1.hashCode() );
-        assertEquals( "hashcode flag 2 has wrong value", 0x2, flags2.hashCode() );
-        assertEquals( "hashcode flag 3 has wrong value", 0x7, flags3.hashCode() );
+        assertEquals( "hashcode flag 1 has wrong value", 0x36, flags1.hashCode() );
+        assertEquals( "hashcode flag 2 has wrong value", 0x32, flags2.hashCode() );
+        assertEquals( "hashcode flag 3 has wrong value", 0x36, flags3.hashCode() );
     }
 }

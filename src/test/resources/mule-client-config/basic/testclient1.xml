@@ -178,4 +178,90 @@
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
 	</flow>
+	
+    <flow name="fetch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="FETCH" path="/basic/fetch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_fetch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="FETCH" path="/basic/do_not_fetch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="patch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="PATCH" path="/basic/patch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_patch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="PATCH" path="/basic/do_not_patch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="ipatch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="IPATCH" path="/basic/ipatch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_ipatch_me">
+        <coap:request doc:name="Request" config-ref="config"
+            requestCode="IPATCH" path="/basic/do_not_ipatch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="fetch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="FETCH" path="/basic/fetch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_fetch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="FETCH" path="/basic/do_not_fetch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="patch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="PATCH" path="/basic/patch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_patch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="PATCH" path="/basic/do_not_patch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="ipatch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="IPATCH" path="/basic/ipatch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+    <flow name="do_not_ipatch_me_non">
+        <coap:request doc:name="Request" config-ref="config" type="NON_CONFIRMABLE"
+            requestCode="IPATCH" path="/basic/do_not_ipatch_me">
+            <coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+        </coap:request>
+    </flow>
+
+	
 </mule>
