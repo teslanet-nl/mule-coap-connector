@@ -105,6 +105,9 @@ Contributors:
 					</copyrightOwners>
 					<verbose>false</verbose>
 					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <extraExtensions>
+                        <xsd>xml</xsd>
+                    </extraExtensions>
 				</configuration>
 				<executions>
 					<execution>
