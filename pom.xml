@@ -65,7 +65,7 @@
 	<properties>
 		<category>Community</category>
 		<licensePath>LICENSE.md</licensePath>
-		<californiumVersion>2.7.4</californiumVersion>
+		<californiumVersion>2.8.0</californiumVersion>
 		<commonsLangVersion>3.14.0</commonsLangVersion>
         <slf4jVersion>1.7.36</slf4jVersion>
 	</properties>
@@ -260,7 +260,7 @@ Contributors:
 		<dependency>
 			<groupId>org.eclipse.californium</groupId>
 			<artifactId>demo-certs</artifactId>
-			<version>3.7.0</version>
+			<version>3.9.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
