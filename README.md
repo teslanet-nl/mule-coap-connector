@@ -23,7 +23,7 @@ The CoAP protocol is supported as defined in:
 
 ## Uses
 
-* [Californium](https://www.eclipse.org/californium/) 2.7.4
+* [Californium](https://www.eclipse.org/californium/) 2.8.0
 
 ## Installation
 
@@ -35,7 +35,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors.coap</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
