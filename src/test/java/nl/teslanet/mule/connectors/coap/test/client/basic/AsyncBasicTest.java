@@ -63,13 +63,13 @@ public class AsyncBasicTest extends AbstractClientTestCase
             new Object [] []
             {
                 { "get_me", Code.GET, "coap://127.0.0.1/basic/get_me?test=async", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=async" },
-                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "do_not_get_me", Code.GET, "coap://127.0.0.1/basic/do_not_get_me?test=async", "METHOD_NOT_ALLOWED", "" },
                 { "post_me", Code.POST, "coap://127.0.0.1/basic/post_me?test=async", "CREATED", "POST called on: coap://localhost/basic/post_me?test=async" },
-                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "do_not_post_me", Code.POST, "coap://127.0.0.1/basic/do_not_post_me?test=async", "METHOD_NOT_ALLOWED", "" },
                 { "put_me", Code.PUT, "coap://127.0.0.1/basic/put_me?test=async", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=async" },
-                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me?test=async", "METHOD_NOT_ALLOWED", null },
+                { "do_not_put_me", Code.PUT, "coap://127.0.0.1/basic/do_not_put_me?test=async", "METHOD_NOT_ALLOWED", "" },
                 { "delete_me", Code.DELETE, "coap://127.0.0.1/basic/delete_me?test=async", "DELETED", "DELETE called on: coap://localhost/basic/delete_me?test=async" },
-                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me?test=async", "METHOD_NOT_ALLOWED", null } }
+                { "do_not_delete_me", Code.DELETE, "coap://127.0.0.1/basic/do_not_delete_me?test=async", "METHOD_NOT_ALLOWED", "" } }
         );
     }
 
@@ -150,11 +150,7 @@ public class AsyncBasicTest extends AbstractClientTestCase
         assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
         assertEquals( "wrong response type", "ACKNOWLEDGEMENT", attributes.getResponseType() );
         assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertArrayEquals(
-            "wrong response payload",
-            ( expectedPayload == null ? null : expectedPayload.getBytes( Defs.COAP_CHARSET ) ),
-            (byte[]) response.getPayload().getValue()
-        );
+        assertArrayEquals( "wrong response payload", expectedPayload.getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
     }
 
 }

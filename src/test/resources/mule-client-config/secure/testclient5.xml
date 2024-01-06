@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -22,65 +22,88 @@
   #L%
   -->
 
-<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
    xmlns="http://www.mulesoft.org/schema/mule/core"
-   xmlns:coap-client="http://www.mulesoft.org/schema/mule/coap-client"
-   xmlns:spring="http://www.springframework.org/schema/beans"
-   xmlns:context="http://www.springframework.org/schema/context"
    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/3.9/mule-vm.xsd 
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
-http://www.mulesoft.org/schema/mule/coap-client http://www.teslanet.nl/schema/mule/coap-client/1.0/mule-coap-client.xsd 
-">
-   <description>  Mule CoAP
-      connector test application </description>
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<description>  Mule CoAP connector test application </description>
 
-   <coap-client:config name="config" host="127.0.0.1" logMessages="true"
-      keyStoreLocation="certs/keyStore.jks"
-      keyStorePassword="endPass"
-      privateKeyAlias="clientNON_EXISTENT"
-      trustStoreLocation="certs/trustStore.jks"
-      trustStorePassword="rootPass"
-      trustedRootCertificateAlias="root" 
-      secure="true"/>
+	<coap:dtls-endpoint name="Dtls_endpoint"
+		logCoapMessages="true">
+		<coap:socket-params bindToPort="0" />
+		<coap:security-params>
+			<coap:key-store path="certs/keyStore.jks" password="endPass" privateKeyAlias="clientNON_EXISTENT" privateKeyPassword="endPass" />
+			<coap:trust-store path="certs/trustStore.jks" password="rootPass" rootCertificateAlias="root" />
+		</coap:security-params>
+	</coap:dtls-endpoint>
+
+	<coap:client-config name="config" host="127.0.0.1" port="5684"
+		throwExceptionOnErrorResponse="false">
+		<coap:endpoint dtlsEndpoint="Dtls_endpoint" />
+	</coap:client-config>
+
+	<flow name="get_me">
+		<coap:request config-ref="config" requestCode="GET"
+			path="/secure/get_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="do_not_get_me">
+		<coap:request config-ref="config" requestCode="GET"
+			path="/secure/do_not_get_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="post_me">
+		<coap:request config-ref="config" requestCode="POST"
+			path="/secure/post_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
+
+	<flow name="do_not_post_me">
+		<coap:request config-ref="config" requestCode="POST"
+			path="/secure/do_not_post_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
 
 
-   <sub-flow name="get_me">
-      <coap-client:get config-ref="config" path="/secure/get_me"/>
-   </sub-flow>
+	<flow name="put_me">
+		<coap:request config-ref="config" requestCode="PUT"
+			path="/secure/put_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
 
-   <sub-flow name="do_not_get_me">
-      <coap-client:get config-ref="config" path="/secure/do_not_get_me"/>
-   </sub-flow>
-
-   <sub-flow name="post_me">
-      <coap-client:post config-ref="config" path="/secure/post_me"/>
-   </sub-flow>
-
-   <sub-flow name="do_not_post_me">
-      <coap-client:post config-ref="config" path="/secure/do_not_post_me"/>
-   </sub-flow>
+	<flow name="do_not_put_me">
+		<coap:request config-ref="config" requestCode="PUT"
+			path="/secure/do_not_put_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
 
 
-   <sub-flow name="put_me">
-      <coap-client:put config-ref="config" path="/secure/put_me"/>
-   </sub-flow>
+	<flow name="delete_me">
+		<coap:request config-ref="config" requestCode="DELETE"
+			path="/secure/delete_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
 
-   <sub-flow name="do_not_put_me">
-      <coap-client:put config-ref="config" path="/secure/do_not_put_me"/>
-   </sub-flow>
-
-
-   <sub-flow name="delete_me">
-      <coap-client:delete config-ref="config" path="/secure/delete_me"/>
-   </sub-flow>
-
-   <sub-flow name="do_not_delete_me">
-      <coap-client:delete config-ref="config" path="/secure/do_not_delete_me"/>
-   </sub-flow>
+	<flow name="do_not_delete_me">
+		<coap:request config-ref="config" requestCode="DELETE"
+			path="/secure/do_not_delete_me">
+			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
+		</coap:request>
+	</flow>
 
 </mule>

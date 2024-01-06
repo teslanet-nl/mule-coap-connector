@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,9 +22,7 @@
  */
 package nl.teslanet.mule.connectors.coap.test.server.secure;
 
-import org.junit.Ignore;
 
-@Ignore
 public class SecureClientTest extends AbstractSecureClientTestCase
 {
 

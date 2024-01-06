@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
@@ -165,10 +166,9 @@ public class DiscoveryTest extends AbstractClientTestCase
     //TODO catch error in flow
     /**
      * Test Ping on dynamicly set host and port of not listening server
-     * @throws Exception should not happen in this test
      */
     @Test
-    public void testDynamicUriPingNoResolvableHost() throws Exception
+    public void testDynamicUriPingNoResolvableHost()
     {
         String flowName= "ping_dynamic";
         String host= "dit_bestaat_niet.org";
@@ -179,11 +179,12 @@ public class DiscoveryTest extends AbstractClientTestCase
             () -> flowRunner( flowName ).withVariable( "host", host ).withVariable( "port", port ).withVariable( "path", port ).withPayload( "nothing_important" ).run()
         );
         assertTrue( "wrong exception message", e.getMessage().contains( "failed to execute ping" ) );
-        //assert( "COAP:MALFORMED_URI" );
+        //assert( "COAP:INVALID_URI" );
         assertEquals( "wrong exception cause", e.getCause().getClass(), UriException.class );
     }
 
     @Test
+    @Ignore( "cf3 does not show /.wellknown/core" )
     public void testWellKnownCore() throws Exception
     {
         String flowName= "discover";
@@ -193,7 +194,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         @SuppressWarnings( "unchecked" )
         HashMap< String, DiscoveredResource > links= linkMap( (Set< DiscoveredResource >) response.getPayload().getValue() );
 
-        assertEquals( "wrong number of weblinks", 8, links.size() );
+        assertEquals( "wrong number of weblinks", 7, links.size() );
         DiscoveredResource link= links.get( "/.well-known/core" );
         assertNotNull( "/.well-known/core is missing", link );
     }
@@ -218,7 +219,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         assertEquals( "if length unexpected", 0, link.getIf().size() );
         assertFalse( "obs unexpected", link.isObs() );
         assertEquals( "rt length unexpected", 0, link.getRt().size() );
-        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "sz unexpected", link.getSz() );
         assertNull( "title unexpected", link.getTitle() );
 
     }
@@ -243,7 +244,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         assertEquals( "ct length unexpected", 0, link.getCt().size() );
         assertFalse( "obs unexpected", link.isObs() );
         assertEquals( "rt length unexpected", 0, link.getRt().size() );
-        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "sz unexpected", link.getSz() );
         assertNull( "title unexpected", link.getTitle() );
     }
 
@@ -265,7 +266,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         assertEquals( "ct length unexpected", 0, link.getCt().size() );
         assertEquals( "if length unexpected", 0, link.getIf().size() );
         assertEquals( "rt length unexpected", 0, link.getRt().size() );
-        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "sz unexpected", link.getSz() );
         assertNull( "title unexpected", link.getTitle() );
     }
 
@@ -289,7 +290,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         assertEquals( "ct length unexpected", 0, link.getCt().size() );
         assertEquals( "if length unexpected", 0, link.getIf().size() );
         assertFalse( "obs unexpected", link.isObs() );
-        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "sz unexpected", link.getSz() );
         assertNull( "title unexpected", link.getTitle() );
     }
 
@@ -335,7 +336,7 @@ public class DiscoveryTest extends AbstractClientTestCase
         assertEquals( "if length unexpected", 0, link.getIf().size() );
         assertFalse( "obs unexpected", link.isObs() );
         assertEquals( "rt length unexpected", 0, link.getRt().size() );
-        assertEquals( "sz unexpected", "", link.getSz() );
+        assertNull( "sz unexpected", link.getSz() );
     }
 
     @SuppressWarnings( "unchecked" )

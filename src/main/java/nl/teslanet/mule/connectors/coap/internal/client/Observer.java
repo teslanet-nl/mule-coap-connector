@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -55,7 +55,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     /**
      * The logger.
      */
-    private static final Logger logger= LoggerFactory.getLogger( Observer.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( Observer.class.getCanonicalName() );
 
     /**
      * The client owning the observer.
@@ -91,11 +91,14 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
         {
             throw new StartException( this + " failed to start, invalid uri. ", e );
         }
-        relation= new ObserveRelation( this.toString(), client.getCoapClient(), requestBuilder, ( requestUri, requestType, requestCode, response ) -> {
-            ResponseProcessor.processMuleFlow( localAdress, requestUri, requestType, requestCode, response, sourceCallback );
-        } );
+        relation= new ObserveRelation(
+            this.toString(),
+            client.getCoapClient(),
+            requestBuilder,
+            ( requestUri, requestType, requestCode, response ) -> ResponseProcessor.processMuleFlow( localAdress, requestUri, requestType, requestCode, response, sourceCallback )
+        );
         relation.start();
-        logger.info( this + " started." );
+        LOGGER.info( "{} started.", this );
     }
 
     /* (non-Javadoc)
@@ -107,10 +110,10 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
         if ( relation != null )
         {
             //TODO make type of canceling configurable
-            relation.stop();
+            relation.stop( true );
             relation= null;
         }
-        logger.info( this + " stopped." );
+        LOGGER.info( "{} stopped.", this );
     }
 
     /**

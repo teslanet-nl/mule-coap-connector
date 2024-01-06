@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -32,13 +32,13 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
-import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 
 
 /**
- * UDP coap endpoint configuration
+ * UDP CoAP endpoint configuration
  *
  */
 @TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
@@ -54,6 +54,16 @@ public class UDPEndpoint extends AbstractEndpoint
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public UdpParams udpParams= null;
+
+    /**
+     * When enabled peer response address is checked.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "When enabled peer response address is checked." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public boolean strictResponseMatching= true;
 
     /**
      * Default Constructor used by Mule. 
@@ -72,7 +82,7 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name )
     {
         super( name );
-        udpParams= new UdpParams( new GroupedMidTracker() );
+        udpParams= new UdpParams();
     }
 
     /**
@@ -84,17 +94,18 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name, int port )
     {
         super( name, port );
-        udpParams= new UdpParams( new GroupedMidTracker() );
+        udpParams= new UdpParams();
     }
 
     /**
      * Accept a visitor and pass on.
+     * @throws ConfigException 
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
-        visitor.visit( this );
         udpParams.accept( visitor );
+        visitor.visit( this );
     }
 }

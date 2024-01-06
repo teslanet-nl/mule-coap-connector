@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -48,14 +48,14 @@ public class MulticastParams implements VisitableConfig
     /**
      * Parameters for outgoing multicast traffic.
      */
-    @ParameterGroup(name= "Outgoing")
+    @ParameterGroup( name= "Outgoing" )
     public OutgoingMulticastConfig outgoingMulticastConfig;
-    
+
     /**
      * {@code true}, to disable loopback mode, {@code false}, otherwise.
      */
     @Parameter
-    @Optional( defaultValue = "false" )
+    @Optional( defaultValue= "false" )
     @Summary( value= "When True loopback mode is disabled. Default is false." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
@@ -67,10 +67,10 @@ public class MulticastParams implements VisitableConfig
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "The list of multi-cast groups the endpint supports.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowInlineDefinition= true, allowReferences= false)
-    @DisplayName("Join multicast groups")
+    @Summary( value= "The list of multi-cast groups the endpint supports." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
+    @DisplayName( "Join multicast groups" )
     public List< MulticastGroupConfig > join;
 
     /**
@@ -81,7 +81,7 @@ public class MulticastParams implements VisitableConfig
     {
         //NOOP
     }
-    
+
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
@@ -93,11 +93,11 @@ public class MulticastParams implements VisitableConfig
         outgoingMulticastConfig= new OutgoingMulticastConfig();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

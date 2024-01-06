@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -39,7 +39,7 @@ public class OptSize2Inbound1Test extends AbstractInboundPropertyTestCase
      */
     private Integer getValue()
     {
-        return new Integer( 120 );
+        return Integer.valueOf( 120 );
     }
 
     /* (non-Javadoc)

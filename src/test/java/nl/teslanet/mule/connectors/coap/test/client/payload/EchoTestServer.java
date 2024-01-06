@@ -31,8 +31,8 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.elements.config.Configuration;
 
 
 /**
@@ -44,7 +44,7 @@ public class EchoTestServer extends CoapServer
     /**
      * Network configuration is set to standards 
      */
-    private static NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
+    private static Configuration networkConfig= Configuration.createStandardWithoutFile();
 
     /**
      * Default Constructor for test server.
@@ -77,10 +77,9 @@ public class EchoTestServer extends CoapServer
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
         builder.setInetSocketAddress( new InetSocketAddress( port ) );
-        builder.setNetworkConfig( networkConfig );
+        builder.setConfiguration( networkConfig );
         addEndpoint( builder.build() );
     }
-
 
     /**
      * Resource that allows PUT only

@@ -37,7 +37,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
  */
 public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends AbstractOtherOptionInboundPropertyTestCase
 {
-    abstract protected boolean isUnSafe();
+    abstract protected boolean isUnsafe();
    /**
      * Fetch the inbound property from the response attributes.
      */
@@ -49,7 +49,7 @@ public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends A
         List< Boolean > unsafes= new LinkedList<>();
         for ( OtherOptionAttribute otherOption : options )
         {
-            unsafes.add( otherOption.isUnSafe() );
+            unsafes.add( otherOption.isUnsafe() );
         }
         return Collections.unmodifiableList( unsafes );
     }
@@ -63,7 +63,7 @@ public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends A
         LinkedList< Boolean > unsafes= new LinkedList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
-            unsafes.add( isUnSafe() );
+            unsafes.add( isUnsafe() );
         }
         return Collections.unmodifiableList( unsafes );
     }

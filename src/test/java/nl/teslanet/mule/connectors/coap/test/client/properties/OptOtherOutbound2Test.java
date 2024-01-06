@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import org.eclipse.californium.core.coap.Option;
 
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
+
 
 /**
  * Test outbound other property, string value
@@ -39,7 +41,7 @@ public class OptOtherOutbound2Test extends AbstractOutboundPropertiesTestCase
     private Option getOption()
     {
         byte[] value= "sometestvalue".getBytes();
-        return new Option( 65008, value );
+        return new Option( TestOptions.OTHER_OPTION_65008, value );
     }
 
     /* (non-Javadoc)
@@ -48,7 +50,13 @@ public class OptOtherOutbound2Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other." + getOption().getNumber();
+        return "coap.opt.other";
+    }
+
+    @Override
+    protected int getOutboundOptionNr()
+    {
+        return getOption().getNumber();
     }
 
     /* (non-Javadoc)

@@ -48,8 +48,9 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.exception.ConnectorException;
 
 
@@ -182,10 +183,10 @@ public class PayloadTest extends AbstractServerTestCase
     @Before
     public void additionalSetUp()
     {
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, maxResourceBodySize );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RESOURCE_BODY_SIZE, maxResourceBodySize );
         CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
-        endpointBuilder.setNetworkConfig( config );
+        endpointBuilder.setConfiguration( config );
         client.setEndpoint( endpointBuilder.build() );
         try
         {

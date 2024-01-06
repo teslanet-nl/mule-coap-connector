@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,11 +22,12 @@
  */
 package nl.teslanet.mule.connectors.coap.api;
 
+
 /**
  * The request parameters for stopping an CoAP observer.
  *
  */
-public class ObserverRemoveParams extends AbstractResourceParams
+public class ObserverRemoveParams extends AbstractResourceRequestParams
 {
     //NOOP
 }

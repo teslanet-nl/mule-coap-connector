@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,13 +26,9 @@ package nl.teslanet.mule.connectors.coap.api.config;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
-import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
 
 
 /**
@@ -40,51 +36,23 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
  *
  */
 public class UdpParams implements VisitableConfig
-{ 
+{
     /**
-     * When {@code true} the message IDs will start at a random index. Otherwise the
-     * first message ID returned will be {@code 0}.
+     * Receiver thread pool size. Default value is CORES > 3 ? 2 : 1.
      */
     @Parameter
-    @Optional( defaultValue= "true" )
-    @Summary( value= "When true the message IDs will start at a random index. Otherwise the first message ID returned will be 0." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public boolean useRandomMidStart= true;
-
-    /**
-     * The message identity tracker used. The tracker maintains the administration
-     * of message id's uses in the CoAP exchanges. These use different strategies
-     * like maintaining a map of individual entries or use groups where id's get
-     * cleaned by group. Supported values are {@code NULL}, {@code GROUPED}, or
-     * {@code MAPBASED}.
-     */
-    @Parameter
-    @Optional( )
-    @NullSafe( defaultImplementingType= GroupedMidTracker.class )
-    @Summary( value= "The message identity tracker strategy to use." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public MidTracker midTracker= null;
-
-    /**
-     * Receiver thread pool size. Default value is 1, or equal to the number of
-     * cores on Windows.
-     */
-    @Parameter
-    @Optional
-    @Summary( value= "Receiver thread pool size. Default value is 1, or equal to the number of cores on Windows." )
+    @Optional( defaultValue= "1" )
+    @Summary( value= "Receiver thread pool size. Default value is CORES > 3 ? 2 : 1." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer receiverThreadCount= null;
 
     /**
-     * Sender thread pool size. Default value is 1, or equal to the number of cores
-     * on Windows.
+     * Sender thread pool size. Default value is CORES > 3 ? 2 : 1.
      */
     @Parameter
-    @Optional
-    @Summary( value= "Sender thread pool size. Default value is 1, or equal to the number of cores on Windows." )
+    @Optional( defaultValue= "1" )
+    @Summary( value= "Sender thread pool size. Default value is CORES > 3 ? 2 : 1." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer senderThreadCount= null;
@@ -94,57 +62,28 @@ public class UdpParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "2048" )
-    @Summary( value= "Maximum UDP datagram size [bytes] that can be received." )
+    @Summary( value= "Maximum UDP datagram size [bytes] that can be received. The default size is 2048 bytes and must be at least 64 bytes." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer datagramSize= null;
 
     /**
-     * UDP receive buffer size [bytes].
+     * Maximum number of pending outbound messages. The number is unlimited by default and must be at least 32.
      */
     @Parameter
     @Optional
-    @Summary( value= "UDP receive buffer size [bytes]." )
+    @Summary( value= "Maximum number of pending outbound messages. The number is unlimited by default and must be at least 32." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer receiveBuffer= null;
+    public Integer outCapacity= null;
 
     /**
-     * UDP send buffer size [bytes].
-     */
-    @Parameter
-    @Optional
-    @Summary( value= "UDP send buffer size [bytes]." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public Integer sendBuffer= null;
-
-    /**
-     * Default udp params used by Mule. 
-     * Containing mandatory and Nullsafe params are set by Mule.
-     */
-    public UdpParams()
-    {
-        //noop
-    }
-
-    /**
-     * Constructor for manually constructing the udp params.
-     * @param midTracker The manually set MidTracker.
-     */
-    public UdpParams( MidTracker midTracker )
-    {
-        this.midTracker= midTracker;
-    }
-
-    /**
-     * Accept the visitor. Let the visitor visit this object and its member objects. 
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
-        midTracker.accept( visitor );
     }
 
 }

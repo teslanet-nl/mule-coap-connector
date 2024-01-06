@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.test.modules;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -138,19 +137,18 @@ public class DiscoveredResourceTest
         assertTrue( "toString shows wrong ct value", resource.toString().contains( ct1.toString() ) );
     }
 
-    @SuppressWarnings( "unlikely-arg-type" )
     @Test
     public void testEqualsToWrongClass()
     {
         DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
-        assertFalse( "resource wrongfully equals other class", resource.equals( Boolean.TRUE ) );
+        assertNotEquals( "resource wrongfully equals other class", resource, Boolean.TRUE );
     }
 
     @Test
     public void testEqualsNull()
     {
         DiscoveredResource resource= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct1 );
-        assertFalse( "resource wrongfully equals other class", resource.equals( null ) );
+        assertNotEquals( "resource wrongfully equals other class", resource, null );
     }
 
     @Test
@@ -166,14 +164,14 @@ public class DiscoveredResourceTest
         DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz2, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
-        assertTrue( "resource2 wrongfully equals resource1", resource1.equals( resource2 ) );
-        assertFalse( "resource3 wrongfully equals resource1", resource1.equals( resource3 ) );
-        assertFalse( "resource4 wrongfully equals resource1", resource1.equals( resource4 ) );
-        assertFalse( "resource5 wrongfully equals resource1", resource1.equals( resource5 ) );
-        assertFalse( "resource6 wrongfully equals resource1", resource1.equals( resource6 ) );
-        assertFalse( "resource7 wrongfully equals resource1", resource1.equals( resource7 ) );
-        assertFalse( "resource8 wrongfully equals resource1", resource1.equals( resource8 ) );
-        assertFalse( "resource9 wrongfully equals resource1", resource1.equals( resource9 ) );
+        assertEquals( "resource2 wrongfully equals resource1", resource1, resource2 );
+        assertNotEquals( "resource3 wrongfully equals resource1", resource1, resource3 );
+        assertNotEquals( "resource4 wrongfully equals resource1", resource1, resource4 );
+        assertNotEquals( "resource5 wrongfully equals resource1", resource1, resource5 );
+        assertNotEquals( "resource6 wrongfully equals resource1", resource1, resource6 );
+        assertNotEquals( "resource7 wrongfully equals resource1", resource1, resource7 );
+        assertNotEquals( "resource8 wrongfully equals resource1", resource1, resource8 );
+        assertNotEquals( "resource9 wrongfully equals resource1", resource1, resource9 );
     }
 
     @Test
@@ -189,14 +187,14 @@ public class DiscoveredResourceTest
         DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, null, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
-        assertTrue( "resource2 wrongfully equals resource1", resource1.equals( resource2 ) );
-        assertFalse( "resource3 wrongfully equals resource1", resource1.equals( resource3 ) );
-        assertFalse( "resource4 wrongfully equals resource1", resource1.equals( resource4 ) );
-        assertFalse( "resource5 wrongfully equals resource1", resource1.equals( resource5 ) );
-        assertFalse( "resource6 wrongfully equals resource1", resource1.equals( resource6 ) );
-        assertFalse( "resource7 wrongfully equals resource1", resource1.equals( resource7 ) );
-        assertFalse( "resource8 wrongfully equals resource1", resource1.equals( resource8 ) );
-        assertFalse( "resource9 wrongfully equals resource1", resource1.equals( resource9 ) );
+        assertEquals( "resource2 wrongfully equals resource1", resource1, resource2 );
+        assertNotEquals( "resource3 wrongfully equals resource1", resource1, resource3 );
+        assertNotEquals( "resource4 wrongfully equals resource1", resource1, resource4 );
+        assertNotEquals( "resource5 wrongfully equals resource1", resource1, resource5 );
+        assertNotEquals( "resource6 wrongfully equals resource1", resource1, resource6 );
+        assertNotEquals( "resource7 wrongfully equals resource1", resource1, resource7 );
+        assertNotEquals( "resource8 wrongfully equals resource1", resource1, resource8 );
+        assertNotEquals( "resource9 wrongfully equals resource1", resource1, resource9 );
     }
 
     @Test
@@ -212,7 +210,7 @@ public class DiscoveredResourceTest
         DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz2, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
-        assertTrue( "resource2 wrongfully compares resource1", 0 == resource1.compareTo( resource2 ) );
+        assertEquals( "resource2 wrongfully compares resource1", 0, resource1.compareTo( resource2 ) );
         assertTrue( "resource3 wrongfully compares resource1", 0 > resource1.compareTo( resource3 ) );
         assertTrue( "resource4 wrongfully compares resource1", 0 < resource1.compareTo( resource4 ) );
         assertTrue( "resource5 wrongfully compares resource1", 0 > resource1.compareTo( resource5 ) );
@@ -221,7 +219,7 @@ public class DiscoveredResourceTest
         assertTrue( "resource8 wrongfully compares resource1", 0 > resource1.compareTo( resource8 ) );
         assertTrue( "resource9 wrongfully compares resource1", 0 > resource1.compareTo( resource9 ) );
 
-        assertTrue( "resource2 wrongfully compares resource1", 0 == resource2.compareTo( resource1 ) );
+        assertEquals( "resource2 wrongfully compares resource1", 0, resource2.compareTo( resource1 ) );
         assertTrue( "resource3 wrongfully compares resource1", 0 < resource3.compareTo( resource1 ) );
         assertTrue( "resource4 wrongfully compares resource1", 0 > resource4.compareTo( resource1 ) );
         assertTrue( "resource5 wrongfully compares resource1", 0 < resource5.compareTo( resource1 ) );
@@ -246,7 +244,7 @@ public class DiscoveredResourceTest
         DiscoveredResource resource8= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, null, ct1 );
         DiscoveredResource resource9= new DiscoveredResource( path1, obs1, title1, ifdesc1, rt1, sz1, ct2 );
 
-        assertTrue( "resource2 wrongfully compares resource1", 0 == resource1.compareTo( resource2 ) );
+        assertEquals( "resource2 wrongfully compares resource1", 0, resource1.compareTo( resource2 ) );
         assertTrue( "resource3 wrongfully compares resource1", 0 > resource1.compareTo( resource3 ) );
         assertTrue( "resource4 wrongfully compares resource1", 0 < resource1.compareTo( resource4 ) );
         assertTrue( "resource5 wrongfully compares resource1", 0 > resource1.compareTo( resource5 ) );
@@ -255,7 +253,7 @@ public class DiscoveredResourceTest
         assertTrue( "resource8 wrongfully compares resource1", 0 > resource1.compareTo( resource8 ) );
         assertTrue( "resource9 wrongfully compares resource1", 0 > resource1.compareTo( resource9 ) );
 
-        assertTrue( "resource2 wrongfully compares resource1", 0 == resource2.compareTo( resource1 ) );
+        assertEquals( "resource2 wrongfully compares resource1", 0, resource2.compareTo( resource1 ) );
         assertTrue( "resource3 wrongfully compares resource1", 0 < resource3.compareTo( resource1 ) );
         assertTrue( "resource4 wrongfully compares resource1", 0 > resource4.compareTo( resource1 ) );
         assertTrue( "resource5 wrongfully compares resource1", 0 < resource5.compareTo( resource1 ) );

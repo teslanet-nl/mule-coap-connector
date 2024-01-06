@@ -25,5 +25,5 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 public enum PropertyType
 {
-    ByteArray, CollectionOfByteArray, Object, CollectionOfObject, ETag, CollectionOfETag
+    ByteArray, CollectionOfByteArray, Object, CollectionOfObject, ETag, CollectionOfETag, NoResponse
 }

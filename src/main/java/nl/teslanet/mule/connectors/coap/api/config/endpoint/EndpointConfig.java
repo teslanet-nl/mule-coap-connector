@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -68,7 +68,7 @@ public class EndpointConfig
     @Summary( value= "DTLS endpoint configuration." )
     public DTLSEndpoint dtlsEndpoint;
 
-    //  TODO add tests
+    //  TODO implement tcp
     //    /**
     //     * TCP server endpoint configuration.
     //     */

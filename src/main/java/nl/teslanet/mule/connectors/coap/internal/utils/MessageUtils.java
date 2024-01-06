@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,14 +36,16 @@ import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
@@ -90,7 +92,7 @@ public class MessageUtils
                     optionSet.addIfMatch( etag.getValue() );
                 }
             }
-            catch ( IOException | InvalidEntityTagException e )
+            catch ( EntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "If-Match", "", e );
             }
@@ -107,7 +109,7 @@ public class MessageUtils
                     optionSet.addETag( etag.getValue() );
                 }
             }
-            catch ( IOException | InvalidEntityTagException e )
+            catch ( EntityTagException e )
             {
                 throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
             }
@@ -134,14 +136,7 @@ public class MessageUtils
         }
         for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
         {
-            try
-            {
-                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue(), transformationService ) ) );
-            }
-            catch ( InternalInvalidByteArrayValueException e )
-            {
-                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
-            }
+            optionSet.addOption( toCfOtherOption( otherOption, transformationService ) );
         }
     }
 
@@ -153,14 +148,19 @@ public class MessageUtils
      * @throws InvalidEntityTagException when an option containes invalid ETag value
      * @throws IOException when an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException,
-        IOException,
-        InvalidEntityTagException
+    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
     {
         if ( responseOptions.getEtag() != null )
         {
-            EntityTag etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
-            if ( etag.isEmpty() ) throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
+            EntityTag etag;
+            try
+            {
+                etag= MessageUtils.toETag( responseOptions.getEtag(), transformationService );
+            }
+            catch ( EntityTagException e )
+            {
+                throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
+            }
             optionSet.addETag( etag.getValue() );
         }
         if ( responseOptions.getContentFormat() != null )
@@ -192,15 +192,32 @@ public class MessageUtils
         }
         for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
         {
-            try
-            {
-                optionSet.addOption( new Option( otherOption.getNumber(), toBytes( otherOption.getValue(), transformationService ) ) );
-            }
-            catch ( InternalInvalidByteArrayValueException e )
-            {
-                throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
-            }
+            optionSet.addOption( toCfOtherOption( otherOption, transformationService ) );
         }
+    }
+
+    /**
+     * Convert to Cf other option.
+     * @param otherOption The other option to convert.
+     * @param transformationService The service use for value transformation.
+     * @return The Cf option.
+     * @throws InternalInvalidOptionValueException When the value could not be converted.
+     */
+    private static Option toCfOtherOption( OtherOption otherOption, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    {
+        Option option;
+        try
+        {
+            option= new Option(
+                new OpaqueOptionDefinition( otherOption.getNumber(), String.valueOf( otherOption.getNumber() ), false ),
+                toBytes( otherOption.getValue(), transformationService )
+            );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
+        }
+        return option;
     }
 
     /**
@@ -209,7 +226,7 @@ public class MessageUtils
      * @return Converted object as bytes, or null when the input was null.
      * @throws InternalInvalidByteArrayValueException When object cannot be converted to bytes.
      */
-    public static byte[] toBytes( Object toConvert, TransformationService transformationService ) throws InternalInvalidByteArrayValueException
+    public static byte[] toBytes( Object toConvert, TransformationService transformationService )
     {
         Object object= TypedValue.unwrap( toConvert );
 
@@ -241,43 +258,6 @@ public class MessageUtils
         {
             return OptionUtils.toBytes( (Long) object );
         }
-        //        if ( object instanceof CursorStreamProvider )
-        //        {
-        //            return IOUtils.toByteArray( (CursorStreamProvider) object );
-        //        }
-        //        else if ( object instanceof InputStream )
-        //        {
-        //            byte[] bytes= null;
-        //            try
-        //            {
-        //                bytes= IOUtils.toByteArray( (InputStream) object );
-        //            }
-        //            catch ( RuntimeException e )
-        //            {
-        //                throw new InternalInvalidByteArrayValueException( "Cannot convert InputStream instance to byte[]", e );
-        //            }
-        //            finally
-        //            {
-        //                IOUtils.closeQuietly( (InputStream) object );
-        //            }
-        //            return bytes;
-        //        }
-        //        else if ( object instanceof OutputHandler )
-        //        {
-        //            ByteArrayOutputStream output= new ByteArrayOutputStream();
-        //            try
-        //            {
-        //                ( (OutputHandler) object ).write( null, output );
-        //            }
-        //            catch ( IOException e )
-        //            {
-        //                throw new InternalInvalidByteArrayValueException( "Cannot convert OutputHandler instance to byte[]", e );
-        //            }
-        //            return output.toByteArray();
-        //        }
-        //        else
-        //        {
-
         //do transform using Mule's transformers.
         TypedValue< Object > value= TypedValue.of( toConvert );
         return (byte[]) transformationService.transform( value.getValue(), value.getDataType(), BYTE_ARRAY );
@@ -335,16 +315,15 @@ public class MessageUtils
     * Convert a typed value to ETag.
     * @param typedValue The value to construct an ETag from.
     * @return The ETag object that has been constructed.
-    * @throws IOException When the value is a stream that could not be read.
-    * @throws InvalidEntityTagException When value cannot be converted to a valid ETag.
+    * @throws EntityTagException When value cannot be converted to a valid ETag.
     */
-    private static EntityTag toETag( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidEntityTagException
+    private static EntityTag toETag( TypedValue< Object > typedValue, TransformationService transformationService ) throws EntityTagException
     {
         Object object= TypedValue.unwrap( typedValue );
 
         if ( object == null )
         {
-            return new EntityTag();
+            throw new EntityTagException( "Cannot construct etag value of object { null }" );
         }
         else if ( object instanceof EntityTag )
         {
@@ -372,19 +351,19 @@ public class MessageUtils
         }
         else
         {
-            //do transform using Mule's transformers.
+            //transform using Mule's transformers.
             return new EntityTag( (byte[]) transformationService.transform( typedValue.getValue(), typedValue.getDataType(), BYTE_ARRAY ) );
         }
     }
 
     /**
      * Create a list of ETags
-     * @param typedValue is the types value to create a list of etags from.
-     * @return List of ETags.
-     * @throws InvalidEntityTagException 
-     * @throws IOException 
+     * @param typedValue The value to create the list of etags from.
+     * @param transformationService Transformation service for not recognized value types.
+     * @return The list of entity tags.
+     * @throws EntityTagException When given values are invalid.
      */
-    private static List< EntityTag > toEtagList( TypedValue< Object > typedValue, TransformationService transformationService ) throws IOException, InvalidEntityTagException
+    private static List< EntityTag > toEtagList( TypedValue< Object > typedValue, TransformationService transformationService ) throws EntityTagException
     {
         Object object= TypedValue.unwrap( typedValue );
         LinkedList< EntityTag > list= new LinkedList<>();

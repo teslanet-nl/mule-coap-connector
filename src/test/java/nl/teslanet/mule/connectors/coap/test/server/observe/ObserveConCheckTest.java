@@ -103,6 +103,7 @@ public class ObserveConCheckTest extends AbstractServerTestCase
     public void testConCheckOnCount() throws Exception
     {
         setClientUri( "/service/observe_me" );
+        client.useCONs();
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
         assertTrue( "response nr: 0 indicates failure", response.isSuccess() );
@@ -112,7 +113,10 @@ public class ObserveConCheckTest extends AbstractServerTestCase
         assertTrue( "get response indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
 
-        CoapObserveRelation relation= client.observe( getHandler() );
+        //TDOD cf3 test CON notifications
+        client.useNONs();
+        CoapObserveRelation relation= client.observeAndWait( getHandler() );
+        client.useCONs();
 
         for ( int i= 1; i < contents.size(); i++ )
         {
@@ -141,8 +145,8 @@ public class ObserveConCheckTest extends AbstractServerTestCase
     @Test(timeout= 60000L)
     public void testConCheckOnTime() throws Exception
     {
-
         setClientUri( "/service/observe_me" );
+        client.useCONs();
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
         assertTrue( "response nr: 0 indicates failure", response.isSuccess() );
@@ -152,8 +156,11 @@ public class ObserveConCheckTest extends AbstractServerTestCase
         assertTrue( "get response indicates failure", response.isSuccess() );
         assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
 
-        CoapObserveRelation relation= client.observe( getHandler() );
-
+        //TDOD cf3 test CON notifications
+        client.useNONs();
+        CoapObserveRelation relation= client.observeAndWait( getHandler() );
+        client.useCONs();
+        
         for ( int i= 1; i < contents.size(); i++ )
         {
             Timing.pauze( 350 );

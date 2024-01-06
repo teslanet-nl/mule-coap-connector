@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,23 +35,23 @@ import org.junit.runners.Parameterized.Parameters;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 
 
-@RunWith(Parameterized.class)
+@RunWith( Parameterized.class )
 public class MulticastUDPEndpointConfigTest
 {
     /**
      * @return List of attributes to test.
      */
-    @Parameters(name= "attributeName = {0}")
-    public static ConfigParamName[] propertiesToTest()
+    @Parameters( name= "attributeName = {0}" )
+    public static ConfigParam[] propertiesToTest()
     {
-        return ConfigParamName.values();
+        return ConfigParam.values();
     }
 
     /**
      * The attribute to test.
      */
     @Parameter
-    public ConfigParamName attributeName;
+    public ConfigParam attributeName;
 
     /**
      * Test getter and setter.
@@ -68,9 +68,9 @@ public class MulticastUDPEndpointConfigTest
         String input;
         String output;
 
-        input= ConfigAttributes.getCustomValue( attributeName );
-        ConfigAttributes.setValue( attributeName, config, input );
-        output= ConfigAttributes.getValue( attributeName, config );
+        input= ConfigParams.getCustomValue( attributeName );
+        ConfigParams.setValue( attributeName, config, input );
+        output= ConfigParams.getValue( attributeName, config );
         assertEquals( "get/set failed", input, output );
     }
 
@@ -89,8 +89,8 @@ public class MulticastUDPEndpointConfigTest
         String defaultValue;
         String output;
 
-        defaultValue= ConfigAttributes.getExpectedDefaultValue( attributeName );
-        output= ConfigAttributes.getValue( attributeName, config );
+        defaultValue= ConfigParams.getExpectedDefaultValue( attributeName );
+        output= ConfigParams.getValue( attributeName, config );
         assertEquals( "got wrong default value", defaultValue, output );
     }
 
@@ -106,13 +106,13 @@ public class MulticastUDPEndpointConfigTest
         MulticastUDPEndpoint config= new MulticastUDPEndpoint( "testEndpoint" );
         assertNotNull( "constructor deliverd null", config );
 
-        if ( ConfigAttributes.isNetworkConfig( attributeName ) )
+        if ( ConfigParams.isNetworkConfig( attributeName ) )
         {
             String input;
             String output;
 
-            input= ConfigAttributes.getExpectedDefaultNetworkValue( attributeName );
-            output= ConfigAttributes.getNetworkConfigValue( attributeName, config );
+            input= ConfigParams.getExpectedDefaultNetworkValue( attributeName );
+            output= ConfigParams.getNetworkConfigValue( attributeName, config );
             assertEquals( "got wrong default network value", input, output );
         }
     }
@@ -129,15 +129,15 @@ public class MulticastUDPEndpointConfigTest
         MulticastUDPEndpoint config= new MulticastUDPEndpoint( "testEndpoint" );
         assertNotNull( "constructor deliverd null", config );
 
-        if ( ConfigAttributes.isNetworkConfig( attributeName ) )
+        if ( ConfigParams.isNetworkConfig( attributeName ) )
         {
             String input;
             String output;
 
-            input= ConfigAttributes.getCustomValue( attributeName );
-            ConfigAttributes.setValue( attributeName, config, input );
-            String expected= ConfigAttributes.getExpectedCustomNetworkValue( attributeName );
-            output= ConfigAttributes.getNetworkConfigValue( attributeName, config );
+            input= ConfigParams.getCustomValue( attributeName );
+            ConfigParams.setValue( attributeName, config, input );
+            String expected= ConfigParams.getExpectedCustomNetworkValue( attributeName );
+            output= ConfigParams.getNetworkConfigValue( attributeName, config );
             assertEquals( "got wrong network value", expected, output );
         }
 
@@ -145,37 +145,13 @@ public class MulticastUDPEndpointConfigTest
 
     /**
      * Establish whether the parameter is irrelevant and should not be tested
-     * @param paramName the parameter name
+     * @param param the parameter name
      * @return true when test should be skipped
+     * @throws Exception 
      */
-    private boolean doSkip( ConfigParamName paramName )
+    private boolean doSkip( ConfigParam param ) throws Exception
     {
-        switch ( paramName )
-        {
-            case protocolStageThreadCount:
-
-            case bindToSecurePort:
-            case bindToPort:
-            case dtlsAutoResumeTimeout:
-            case keyStoreLocation:
-            case keyStorePassword:
-            case privateKeyAlias:
-            case privateKeyPassword:
-            case responseMatching:
-            case secureSessionTimeout:
-            case trustStoreLocation:
-            case trustStorePassword:
-            case trustedRootCertificateAlias:
-            case udpConnectorOutCapacity:
-            case leisure:
-            case maxTransmitWait:
-            case probingRate:
-
-            case multicastGroups:
-                return true;
-            default:
-                return false;
-        }
+        return !ConfigParams.getConfigDescription( param ).isRelevant( ConfigDescription.TEST_UDP | ConfigDescription.TEST_MULTICAST );
     }
 
 }

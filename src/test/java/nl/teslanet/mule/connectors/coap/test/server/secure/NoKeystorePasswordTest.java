@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,22 +23,27 @@
 package nl.teslanet.mule.connectors.coap.test.server.secure;
 
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isA;
+import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+
+import org.mule.runtime.api.lifecycle.LifecycleException;
+
+import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractMuleStartTestCase;
 
 
 public class NoKeystorePasswordTest extends AbstractMuleStartTestCase
 {
-    //    @Override
-    //    protected void expectException()
-    //    {
-    //        //TODO connectionexception does not apply
-    //        exception.expect( isA( LifecycleException.class ) );
-    //        exception.expect( hasMessage( containsString( "nl.teslanet.mule.transport.coap.server" ) ) );
-    //        exception.expect( hasCause( isA( ConnectionException.class ) ) );
-    //        exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
-    //        exception.expect( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) );
-    //        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot construct secure endpoint" ) ) ) ) );
-    //    }
+    @Override
+    protected void expectException()
+    {
+        exception.expect( isA( LifecycleException.class ) );
+        exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
+        exception.expect( hasCause( hasCause( isA( EndpointException.class ) ) ) );
+        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load keystore" ) ) ) ) );
+    }
 
     @Override
     protected String getConfigResources()

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -60,44 +60,32 @@ public class SocketParams implements VisitableConfig
     @ParameterDsl( allowReferences= false )
     public Integer bindToPort= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Receive buffer size [bytes].
+     */
+    @Parameter
+    @Optional
+    @Summary( value= "Receive buffer size [bytes]. \nThe size is os-defined by default and must be at least 64 bytes." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public Integer receiveBuffer= null;
+
+    /**
+     * Send buffer size [bytes].
+     */
+    @Parameter
+    @Optional
+    @Summary( value= "Send buffer size [bytes]. \nThe size is os-defined by default and must be at least 64 bytes." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public Integer sendBuffer= null;
+
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
-    }
-
-    /**
-     * @return the bindToHost
-     */
-    public String getBindToHost()
-    {
-        return bindToHost;
-    }
-
-    /**
-     * @param bindToHost the bindToHost to set
-     */
-    public void setBindToHost( String bindToHost )
-    {
-        this.bindToHost= bindToHost;
-    }
-
-    /**
-     * @return the bindToPort
-     */
-    public Integer getBindToPort()
-    {
-        return bindToPort;
-    }
-
-    /**
-     * @param bindToPort the bindToPort to set
-     */
-    public void setBindToPort( Integer bindToPort )
-    {
-        this.bindToPort= bindToPort;
     }
 }

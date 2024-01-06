@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -40,7 +40,16 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
-		<coap:exchange-params exchangeLifetime="1000" />
+        <coap:option-params >
+			<coap:other-option-configs >
+				<coap:other-option-config alias="other-option-65008" number="65008" optionType="OPAQUE" singleValue="false"/>
+				<coap:other-option-config alias="other-option-65010" number="65010" optionType="OPAQUE" singleValue="false"/>
+				<coap:other-option-config alias="other-option-65012" number="65012" optionType="OPAQUE" singleValue="false"/>
+				<coap:other-option-config alias="other-option-65013" number="65013" optionType="OPAQUE" singleValue="false"/>
+				<coap:other-option-config alias="other-option-65308" number="65308" optionType="OPAQUE" singleValue="false"/>
+			</coap:other-option-configs>
+		</coap:option-params>
+        <coap:exchange-params exchangeLifetime="4s" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="config">
@@ -53,5 +62,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			path="#[vars.path]">
 			<coap:request-payload><![CDATA[#[payload]]]></coap:request-payload>
 		</coap:request>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" type="COAP:NO_RESPONSE">
+                <set-payload value="NO_RESPONSE" doc:name="NO_RESPONSE" />
+            </on-error-continue>
+        </error-handler>
 	</flow>
 </mule>

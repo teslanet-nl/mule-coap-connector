@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
@@ -300,17 +299,13 @@ public class ClientOperations
         {
             throw new UriException( client + DISCOVERY_ERROR_MSG, e );
         }
-        catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
+        catch ( InternalClientErrorResponseException | InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
         {
             throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalNoResponseException e )
         {
             throw new NoResponseException( client + DISCOVERY_ERROR_MSG, e );
-        }
-        catch ( InternalClientErrorResponseException e )
-        {
-            throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
@@ -359,7 +354,7 @@ public class ClientOperations
     {
         try
         {
-            client.startObserver( observerAddParams, responseHandlerParams );
+            client.addObserver( observerAddParams, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
@@ -389,7 +384,7 @@ public class ClientOperations
     {
         try
         {
-            client.stopObserver( observerRemoveParams );
+            client.removeObserver( observerRemoveParams );
         }
         catch ( InternalUriException e )
         {
@@ -433,14 +428,6 @@ public class ClientOperations
     public Set< String > observerList( @Config
     Client client )
     {
-        Supplier< ConcurrentSkipListSet< String > > supplier= new Supplier< ConcurrentSkipListSet< String > >()
-            {
-                @Override
-                public ConcurrentSkipListSet< String > get()
-                {
-                    return new ConcurrentSkipListSet<>();
-                }
-            };
-        return client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toCollection( supplier ) );
+        return client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toCollection( ConcurrentSkipListSet< String >::new ) );
     }
 }

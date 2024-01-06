@@ -147,7 +147,7 @@ public class ResponseTest extends AbstractClientTestCase
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload, Defs.COAP_CHARSET ) );
-            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            assertEquals( "wrong success flag", expectedResponseCode.isSuccess(), attributes.isSuccess() );
             //TODO test for property clienterror, servererror
         }
     }

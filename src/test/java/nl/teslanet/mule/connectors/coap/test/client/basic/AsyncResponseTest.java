@@ -144,7 +144,7 @@ public class AsyncResponseTest extends AbstractClientTestCase
         {
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
-            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            assertEquals( "wrong success flag", expectedResponseCode.isSuccess(), attributes.isSuccess() );
         }
     }
 }

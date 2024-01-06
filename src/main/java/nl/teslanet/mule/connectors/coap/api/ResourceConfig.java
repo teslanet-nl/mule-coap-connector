@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -42,7 +42,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * The configuration is the resource description used to construct resources on a CoAP server.
  */
 @Alias( "resource" )
-public class ResourceConfig
+public class ResourceConfig implements ConfigurableResource
 {
     /**
     * The name of the resource that will be used to identify it in CoAP uri's.
@@ -175,6 +175,7 @@ public class ResourceConfig
     /**
      * @return the get
      */
+    @Override
     public boolean isGet()
     {
         return get;
@@ -191,6 +192,7 @@ public class ResourceConfig
     /**
      * @return the post
      */
+    @Override
     public boolean isPost()
     {
         return post;
@@ -207,6 +209,7 @@ public class ResourceConfig
     /**
      * @return the put
      */
+    @Override
     public boolean isPut()
     {
         return put;
@@ -223,6 +226,7 @@ public class ResourceConfig
     /**
      * @return the delete
      */
+    @Override
     public boolean isDelete()
     {
         return delete;
@@ -239,6 +243,7 @@ public class ResourceConfig
     /**
      * @return the fetch
      */
+    @Override
     public boolean isFetch()
     {
         return fetch;
@@ -255,6 +260,7 @@ public class ResourceConfig
     /**
      * @return the patch
      */
+    @Override
     public boolean isPatch()
     {
         return patch;
@@ -271,6 +277,7 @@ public class ResourceConfig
     /**
      * @return the ipatch
      */
+    @Override
     public boolean isIpatch()
     {
         return ipatch;
@@ -287,6 +294,7 @@ public class ResourceConfig
     /**
      * @return the observable
      */
+    @Override
     public boolean isObservable()
     {
         return observable;
@@ -303,6 +311,7 @@ public class ResourceConfig
     /**
      * @return the earlyAck.
      */
+    @Override
     public boolean isEarlyAck()
     {
         return earlyAck;
@@ -319,7 +328,8 @@ public class ResourceConfig
     /**
      * @return the configured CoRE info.
      */
-    public ResourceInfoConfig getCoreInfoConfig()
+    @Override
+    public CoreInfo getCoreInfo()
     {
         return coreInfoConfig;
     }
@@ -348,13 +358,11 @@ public class ResourceConfig
         this.subResources= resources;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * The string representation.
      */
     public String toString()
     {
-        String printName= ( resourceName == null ? "nullName" : resourceName );
-        String printResources= ( subResources == null ? "leaf" : subResources.toString() );
-        return printName + " : " + printResources;
+        return "CoAP Resource config { " + resourceName + " }";
     }
 }

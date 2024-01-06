@@ -42,8 +42,9 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 import org.junit.After;
@@ -60,61 +61,63 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
 //TODO add IPv6 test
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public class MulticastIPv4Test extends AbstractServerTestCase
 {
-    @Parameters(name= "Request= {0}, port= {1}, path= {2}, contentSize= {3}")
+    @Parameters( name= "Request= {0}, port= {1}, path= {2}, contentSize= {3}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
                 { Code.GET, 5683, "/service/get_me", 10, true, false, "listen1" },
                 { Code.PUT, 5683, "/service/put_me", 10, false, false, "listen1" },
                 { Code.POST, 5683, "/service/post_me", 10, false, false, "listen1" },
-                { Code.DELETE, 5683, "/service/delete_me", 10, true, false, "listen1" }, } );
+                { Code.DELETE, 5683, "/service/delete_me", 10, true, false, "listen1" }, }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
      * Test server port
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public int port;
 
     /**
      * Test resource to call
      */
-    @Parameter(2)
+    @Parameter( 2 )
     public String resourcePath;
 
     /**
      * Test message content size
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public int contentSize;
 
     /**
      * True when request is not supposed to have a payload, but does
      */
-    @Parameter(4)
+    @Parameter( 4 )
     public boolean unintendedPayload;
 
     /**
      * True when response should be 4.13 Request Entity Too Large
      */
-    @Parameter(5)
+    @Parameter( 5 )
     public boolean expectTooLarge;
 
     /**
      * The Id used for spying the Mule flow
      */
-    @Parameter(6)
+    @Parameter( 6 )
     public String spyId;
 
     /**
@@ -139,8 +142,8 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         {
             throw new RuntimeException( e );
         }
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, maxResourceBodySize );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RESOURCE_BODY_SIZE, maxResourceBodySize );
 
         //unicast connector
         //UDPConnector udpConnector = new UDPConnector(new InetSocketAddress( "127.0.0.1", port));
@@ -148,16 +151,16 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         //multicast connector
         UdpMulticastConnector.Builder multiCastConnectorBuilder= new UdpMulticastConnector.Builder();
         multiCastConnectorBuilder.setLocalAddress( InetAddress.getByName( "127.0.0.1" ), 0 );
-        multiCastConnectorBuilder.setOutgoingMulticastInterface(NetworkInterface.getByName( "lo" )  );
-        multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ));
+        multiCastConnectorBuilder.setOutgoingMulticastInterface( NetworkInterface.getByName( "lo" ) );
+        multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ) );
         UdpMulticastConnector sender= multiCastConnectorBuilder.build();
         sender.setReuseAddress( true );
         sender.setLoopbackMode( true );
         //endpoint
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        builder.setNetworkConfig( config );
+        builder.setConfiguration( config );
         builder.setConnector( sender );
-        CoapEndpoint endpoint= builder.build(); 
+        CoapEndpoint endpoint= builder.build();
         //endpoint.addMulticastReceiver( receiver );
         endpoint.addInterceptor( new MessageTracer() );
         client.setEndpoint( endpoint );
@@ -193,7 +196,7 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         assertTrue( "wrong payload in response", Data.validateContent( response.getPayload(), contentSize ) );
     }
 
-    @Test(timeout= 20000L)
+    @Test( timeout= 20000L )
     public void testMulticast() throws Exception
     {
         MultiCoapHandler handler= new MultiCoapHandler();

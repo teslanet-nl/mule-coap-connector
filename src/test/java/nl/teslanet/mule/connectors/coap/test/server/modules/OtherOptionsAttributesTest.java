@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -127,7 +128,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -140,7 +141,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertTrue( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -153,7 +154,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -166,7 +167,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         //When Unsafe the option noCacheKey flag has no meaning. 
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
@@ -180,7 +181,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -193,7 +194,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertTrue( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -206,7 +207,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
 
@@ -219,7 +220,7 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute= new OtherOptionAttribute( number, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
-        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnSafe() );
+        assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
         //When Unsafe the option noCacheKey flag has no meaning. 
         assertFalse( "OtherOptionAttribute has wrong noCacheKey trait", attribute.isNoCacheKey() );
     }
@@ -238,16 +239,16 @@ public class OtherOptionsAttributesTest
         OtherOptionAttribute attribute4= new OtherOptionAttribute( number1, value2 );
         OtherOptionAttribute attribute5= new OtherOptionAttribute( number2, value1 );
 
-        assertTrue( "attribute 1 equals attribute 1 returns wrong result", attribute1.equals( attribute1 ) );
-        assertFalse( "attribute 1 equals null returns wrong result", attribute1.equals( null ) );
-        assertFalse( "attribute 1 equals attribute 2 returns wrong result", attribute1.equals( attribute2 ) );
-        assertFalse( "attribute 2 equals attribute 1 returns wrong result", attribute2.equals( attribute1 ) );
-        assertTrue( "attribute 1 equals attribute 3 returns wrong result", attribute1.equals( attribute3 ) );
-        assertTrue( "attribute 3 equals attribute 1 returns wrong result", attribute3.equals( attribute1 ) );
-        assertFalse( "attribute 4 equals attribute 1 returns wrong result", attribute4.equals( attribute1 ) );
-        assertFalse( "attribute 4 equals attribute 2 returns wrong result", attribute4.equals( attribute2 ) );
-        assertFalse( "attribute 5 equals attribute 1 returns wrong result", attribute5.equals( attribute1 ) );
-        assertFalse( "attribute 5 equals attribute 2 returns wrong result", attribute5.equals( attribute2 ) );
+        assertEquals( "attribute 1 equals attribute 1 returns wrong result", attribute1, attribute1 );
+        assertNotEquals( "attribute 1 equals null returns wrong result", attribute1, null );
+        assertNotEquals( "attribute 1 equals attribute 2 returns wrong result", attribute1, attribute2 );
+        assertNotEquals( "attribute 2 equals attribute 1 returns wrong result", attribute2, attribute1 );
+        assertEquals( "attribute 1 equals attribute 3 returns wrong result", attribute1, attribute3 );
+        assertEquals( "attribute 3 equals attribute 1 returns wrong result", attribute3, attribute1 );
+        assertNotEquals( "attribute 4 equals attribute 1 returns wrong result", attribute4, attribute1 );
+        assertNotEquals( "attribute 4 equals attribute 2 returns wrong result", attribute4, attribute2 );
+        assertNotEquals( "attribute 5 equals attribute 1 returns wrong result", attribute5, attribute1 );
+        assertNotEquals( "attribute 5 equals attribute 2 returns wrong result", attribute5, attribute2 );
     }
 
     @Test

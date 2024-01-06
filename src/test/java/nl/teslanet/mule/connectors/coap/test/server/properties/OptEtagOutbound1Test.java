@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+
 import org.eclipse.californium.core.coap.OptionSet;
 
 
@@ -41,28 +42,28 @@ public class OptEtagOutbound1Test extends AbstractOutboundPropertyTestcase
     {
         try
         {
-            return EntityTag.valueOf( options.getETags().get( 0 ));
+            return EntityTag.valueOf( options.getETags().get( 0 ) );
         }
-        catch ( InvalidEntityTagException e )
+        catch ( EntityTagException e )
         {
             return null;
         }
     }
 
     @Override
-    protected Object getPropertyValue() throws InvalidEntityTagException
+    protected Object getPropertyValue()
     {
         return new EntityTag( 0x0011FFL );
     }
 
     @Override
-    protected Object getExpectedOptionValue() throws InvalidEntityTagException
+    protected Object getExpectedOptionValue()
     {
         return EntityTag.valueOf( 0x0011FFL );
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+    /**
+     * Mule configs used in test.
      */
     @Override
     protected String getConfigResources()

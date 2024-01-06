@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -33,16 +33,18 @@ import java.util.List;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
 /**
@@ -52,7 +54,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsA
 public class DefaultResponseOptionsAttributesTest
 {
     @Test
-    public void testOptionContentFormat() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionContentFormat() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer format= 41;
@@ -66,10 +68,10 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionMaxAge() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionMaxAge() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Long maxage= new Long( 120 );
+        Long maxage= Long.valueOf( 120 );
         set.setMaxAge( maxage );
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
@@ -80,7 +82,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetETag() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetETag() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -98,7 +100,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetLocationPath() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetLocationPath() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] values= { "this", "is", "some location" };
@@ -120,7 +122,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionLocationQuery() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionLocationQuery() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] keys= { "this", "is", "some", "some" };
@@ -145,10 +147,10 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize2() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSize2() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer size= new Integer( 120 );
+        Integer size= Integer.valueOf( 120 );
         set.setSize2( size );
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
@@ -159,10 +161,10 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize1() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSize1() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer size= new Integer( 120 );
+        Integer size= Integer.valueOf( 120 );
         set.setSize1( size );
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
@@ -173,10 +175,10 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionObserve() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionObserve() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer seqnum= new Integer( 120 );
+        Integer seqnum= Integer.valueOf( 120 );
         set.setObserve( seqnum );
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
@@ -187,7 +189,7 @@ public class DefaultResponseOptionsAttributesTest
     }
 
     @Test
-    public void testOptionOther() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionOther() throws EntityTagException, InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[][] values= {
@@ -196,13 +198,13 @@ public class DefaultResponseOptionsAttributesTest
             { (byte) 0x01, (byte) 0x02, (byte) 0x05 },
             { (byte) 0xff, (byte) 0x02, (byte) 0x05 } };
 
-        Integer[] optionNrs= { 65000 | 0x01, 65000 | 0x02, 65000 | 0x1c, 65000 | 0x1d };
+        OpaqueOptionDefinition[] optionsDefs= { TestOptions.OTHER_OPTION_65001, TestOptions.OTHER_OPTION_65002, TestOptions.OTHER_OPTION_65028, TestOptions.OTHER_OPTION_65029 };
 
         ArrayList< DefaultOtherOptionAttribute > expected= new ArrayList<>();
         for ( int i= 0; i < 4; i++ )
         {
-            expected.add( new DefaultOtherOptionAttribute( optionNrs[i], values[i].clone() ) );
-            set.addOption( new Option( optionNrs[i], values[i].clone() ) );
+            expected.add( new DefaultOtherOptionAttribute( optionsDefs[i].getNumber(), values[i].clone() ) );
+            set.addOption( new Option( optionsDefs[i], values[i].clone() ) );
         }
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );

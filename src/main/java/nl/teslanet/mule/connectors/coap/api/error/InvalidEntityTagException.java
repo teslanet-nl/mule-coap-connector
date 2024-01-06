@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,10 +23,13 @@
 package nl.teslanet.mule.connectors.coap.api.error;
 
 
+import org.mule.runtime.extension.api.exception.ModuleException;
+
+
 /**
- *  Exception that is thrown when an attempt is made to construct an invalid EntityTag object.
+ *  Exception that is thrown when an invalid EntityTag is encountered.
  */
-public class InvalidEntityTagException extends Exception
+public class InvalidEntityTagException extends ModuleException
 {
 
     /**
@@ -35,11 +38,30 @@ public class InvalidEntityTagException extends Exception
     private static final long serialVersionUID= 1L;
 
     /**
-     * Construct exception with given 
-     * @param message
+     * Construct exception with given message.
+     * @param message The message.
      */
     public InvalidEntityTagException( String message )
     {
-        super( message );
+        super( message, Errors.INVALID_ETAG );
+    }
+
+    /**
+     * Construct exception with given message and cause.
+     * @param cause The cause.
+     */
+    public InvalidEntityTagException( Throwable cause )
+    {
+        super( Errors.INVALID_ETAG, cause );
+    }
+
+    /**
+     * Construct exception with given message and cause.
+     * @param message The message.
+     * @param cause The cause.
+     */
+    public InvalidEntityTagException( String message, Throwable cause )
+    {
+        super( message, Errors.INVALID_ETAG, cause );
     }
 }

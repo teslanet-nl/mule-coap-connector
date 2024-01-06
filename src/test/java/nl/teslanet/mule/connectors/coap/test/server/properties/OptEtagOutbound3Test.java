@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,9 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import org.eclipse.californium.core.coap.OptionSet;
+
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 
 
 public class OptEtagOutbound3Test extends AbstractOutboundPropertyTestcase
@@ -43,13 +43,13 @@ public class OptEtagOutbound3Test extends AbstractOutboundPropertyTestcase
     }
 
     @Override
-    protected Object getPropertyValue() throws InvalidEntityTagException
+    protected Object getPropertyValue()
     {
         return new String( "hello" );
     }
 
     @Override
-    protected Object getExpectedOptionValue() throws InvalidEntityTagException
+    protected Object getExpectedOptionValue()
     {
         return new EntityTag( 0x68656C6C6FL ).getValue();
     }
@@ -59,9 +59,9 @@ public class OptEtagOutbound3Test extends AbstractOutboundPropertyTestcase
     {
         return true;
     }
-    
-    /* (non-Javadoc)
-     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+
+    /**
+     * Mule configs used in test.
      */
     @Override
     protected String getConfigResources()

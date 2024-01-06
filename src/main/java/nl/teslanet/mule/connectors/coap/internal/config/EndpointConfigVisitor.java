@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,19 +24,28 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 
+import org.eclipse.californium.core.coap.option.EmptyOptionDefinition;
+import org.eclipse.californium.core.coap.option.IntegerOptionDefinition;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
+import org.eclipse.californium.core.coap.option.OptionDefinition;
+import org.eclipse.californium.core.coap.option.StringOptionDefinition;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
+import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.endpoint.EndpointOptionRegistry;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
 /**
- * Configuration visitor that collects multi-cast configuration
+ * Endpoint configuration visitor.
  *
  */
-public class EndpointConfigVisitor extends CfNetworkConfigVisitor
+public class EndpointConfigVisitor extends ConfigurationVisitor
 {
     /**
      * The name of the endpont 
@@ -49,16 +58,68 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
     CoapEndpoint.Builder endPointBuilder= new CoapEndpoint.Builder();
 
     /**
-     * Visit Endpoint configuration object.
+     * Visit option parameters configuration object.
      * @param toVisit the object to visit.
      */
     @Override
-    public void visit( AbstractEndpoint toVisit )
+    public void visit( OptionParams toVisit )
+    {
+        ArrayList< OptionDefinition > expectedOtherOptions= new ArrayList<>();
+        toVisit.otherOptionConfigs.forEach( otherOptionConfig -> {
+            switch ( otherOptionConfig.getOptionType() )
+            {
+                case EMPTY:
+                    expectedOtherOptions.add( new EmptyOptionDefinition( otherOptionConfig.getNumber(), otherOptionConfig.getAlias() ) );
+                    break;
+                case INTEGER:
+                    expectedOtherOptions.add(
+                        new IntegerOptionDefinition(
+                            otherOptionConfig.getNumber(),
+                            otherOptionConfig.getAlias(),
+                            otherOptionConfig.isSingleValue(),
+                            otherOptionConfig.getMinBytes(),
+                            otherOptionConfig.getMaxBytes()
+                        )
+                    );
+                    break;
+                case STRING:
+                    expectedOtherOptions.add(
+                        new StringOptionDefinition(
+                            otherOptionConfig.getNumber(),
+                            otherOptionConfig.getAlias(),
+                            otherOptionConfig.isSingleValue(),
+                            otherOptionConfig.getMinBytes(),
+                            otherOptionConfig.getMaxBytes()
+                        )
+                    );
+                    break;
+                default:
+                    expectedOtherOptions.add(
+                        new OpaqueOptionDefinition(
+                            otherOptionConfig.getNumber(),
+                            otherOptionConfig.getAlias(),
+                            otherOptionConfig.isSingleValue(),
+                            otherOptionConfig.getMinBytes(),
+                            otherOptionConfig.getMaxBytes()
+                        )
+                    );
+                    break;
+            }
+        } );
+        endPointBuilder.setOptionRegistry( new EndpointOptionRegistry( expectedOtherOptions.toArray( new OptionDefinition []{} ) ) );
+    }
+
+    /**
+     * Visit Endpoint configuration object.
+     * @param toVisit the object to visit.
+     * @throws ConfigException When visit is not successful.
+     */
+    @Override
+    public void visit( AbstractEndpoint toVisit ) throws ConfigException
     {
         super.visit( toVisit );
         endpointName= toVisit.configName;
     }
-
 
     /**
      * Visit socket parameters.
@@ -94,7 +155,7 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
      */
     public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
     {
-        endPointBuilder.setNetworkConfig( this.getNetworkConfig() );
+        endPointBuilder.setConfiguration( this.getConfiguration() );
         return endPointBuilder;
     }
 }

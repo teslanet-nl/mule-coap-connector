@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -51,7 +51,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 
 public class ExtensionXsdTest
 {
-    private static final Logger logger= LoggerFactory.getLogger( ExtensionXsdTest.class.getCanonicalName());
+    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionXsdTest.class.getCanonicalName() );
 
     private static final String SCHEMA_PATH= "schemata/mule-coap.xsd";
 
@@ -80,23 +80,23 @@ public class ExtensionXsdTest
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( schema ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()
-                //.checkForIdentical() 
-                .ignoreComments().ignoreWhitespace().normalizeWhitespace()
-                //.withComparisonController(ComparisonController) 
-                //.withComparisonFormatter(comparisonFormatter)
-                //.withComparisonListeners(comparisonListeners) 
-                //.withDifferenceEvaluator(differenceEvaluator) 
-                //.withDifferenceListeners(comparisonListeners)
-                //.withNodeMatcher(nodeMatcher) 
-                //.withAttributeFilter(attributeFilter) 
-                //.withNodeFilter(nodeFilter) 
-                //.withNamespaceContext(map)
-                //.withDocumentBuilerFactory(factory)
-                .ignoreElementContentWhitespace().build();
+                        //.checkForIdentical() 
+                        .ignoreComments().ignoreWhitespace().normalizeWhitespace()
+                        //.withComparisonController(ComparisonController) 
+                        //.withComparisonFormatter(comparisonFormatter)
+                        //.withComparisonListeners(comparisonListeners) 
+                        //.withDifferenceEvaluator(differenceEvaluator) 
+                        //.withDifferenceListeners(comparisonListeners)
+                        //.withNodeMatcher(nodeMatcher) 
+                        //.withAttributeFilter(attributeFilter) 
+                        //.withNodeFilter(nodeFilter) 
+                        //.withNamespaceContext(map)
+                        //.withDocumentBuilerFactory(factory)
+                        .ignoreElementContentWhitespace().build();
 
         if ( diff.hasDifferences() )
         {
-            logger.error( "\n---\n" + schema + "\n---" );
+            LOGGER.error( "\n---\n" + schema + "\n---" );
         }
         assertFalse( diff.toString(), diff.hasDifferences() );
 

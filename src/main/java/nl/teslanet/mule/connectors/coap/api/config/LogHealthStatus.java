@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,17 +38,20 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class LogHealthStatus implements VisitableConfig
 {
     /**
-     * The interval of healthStatus logging in seconds [s].
+     * The interval of healthStatus logging.
      */
     @Parameter
-    @Optional(defaultValue= "600")
-    @Summary(value= "The interval of healthStatus logging in seconds [s].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Integer healthStatusInterval= null;
+    @Optional( defaultValue= "10m" )
+    @Summary( value= "The interval of healthStatus logging." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public String healthStatusInterval= null;
 
+    /**
+     * Accept visitor.
+     */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

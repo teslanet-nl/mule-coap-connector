@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,7 +38,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * Information for discovering the resource 
  *
  */
-public class ResourceInfoConfig
+public class ResourceInfoConfig implements CoreInfo
 
 {
     /**
@@ -131,6 +131,7 @@ public class ResourceInfoConfig
     /**
      * @return the title
      */
+    @Override
     public String getTitle()
     {
         return title;
@@ -147,6 +148,7 @@ public class ResourceInfoConfig
     /**
      * @return the ifdesc
      */
+    @Override
     public String getIfdesc()
     {
         return ifdesc;
@@ -163,6 +165,7 @@ public class ResourceInfoConfig
     /**
      * @return the rt
      */
+    @Override
     public String getRt()
     {
         return rt;
@@ -179,6 +182,7 @@ public class ResourceInfoConfig
     /**
      * @return the sz
      */
+    @Override
     public String getSz()
     {
         return sz;
@@ -195,6 +199,7 @@ public class ResourceInfoConfig
     /**
      * @return the ct
      */
+    @Override
     public String getCt()
     {
         return ct;

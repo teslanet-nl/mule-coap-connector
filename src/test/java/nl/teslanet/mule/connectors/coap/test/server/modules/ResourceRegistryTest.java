@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.californium.core.CoapResource;
@@ -79,7 +80,7 @@ public class ResourceRegistryTest
         NullPointerException e= assertThrows( NullPointerException.class, () -> {
             registry.add( null, resourceConfig );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Child must have a name" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "name must not be null!" ) );
     }
 
     @Test
@@ -252,41 +253,32 @@ public class ResourceRegistryTest
         TestSourceCallBack callback= new TestSourceCallBack();
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
-        OperationalListener listener;
-        String uri1= "/resource1";
-        String uri2= "/resource1/resource2";
-        String uri3= "/resource1/resource2/resource3";
-        String uri4= "/resource1/resource4";
-        String uri5= "/resource1/resource5";
-        String uri6= "/resource1/resource5/resource6";
-        String uri7= "/resource1/resource5/resource6/resource7";
-        String uri8= "/resource1/resource5/resource6/resource8";
-        RequestCodeFlags flags1= new RequestCodeFlags( false, false, false, false, false, false, false );
-        RequestCodeFlags flags2= new RequestCodeFlags( true, false, false, false, false, false, false );
-        RequestCodeFlags flags3= new RequestCodeFlags( true, true, false, false, false, false, false );
-        RequestCodeFlags flags4= new RequestCodeFlags( true, true, true, false, false, false, false );
-        RequestCodeFlags flags5= new RequestCodeFlags( true, true, true, true, false, false, false );
-        RequestCodeFlags flags6= new RequestCodeFlags( true, true, true, true, true, false, false );
-        RequestCodeFlags flags7= new RequestCodeFlags( true, true, true, true, true, true, false );
-        RequestCodeFlags flags8= new RequestCodeFlags( true, true, true, true, true, true, true );
+        ArrayList< String > uris= new ArrayList<>();
+        uris.add( "/resource1" );
+        uris.add( "/resource1/resource2" );
+        uris.add( "/resource1/resource2/resource3" );
+        uris.add( "/resource1/resource4" );
+        uris.add( "/resource1/resource5" );
+        uris.add( "/resource1/resource5/resource6" );
+        uris.add( "/resource1/resource5/resource6/resource7" );
+        uris.add( "/resource1/resource5/resource6/resource8" );
+        ArrayList< RequestCodeFlags > flags= new ArrayList<>();
+        flags.add( new RequestCodeFlags( false, false, false, false, false, false, false ) );
+        flags.add( new RequestCodeFlags( true, false, false, false, false, false, false ) );
+        flags.add( new RequestCodeFlags( true, true, false, false, false, false, false ) );
+        flags.add( new RequestCodeFlags( true, true, true, false, false, false, false ) );
+        flags.add( new RequestCodeFlags( true, true, true, true, false, false, false ) );
+        flags.add( new RequestCodeFlags( true, true, true, true, true, false, false ) );
+        flags.add( new RequestCodeFlags( true, true, true, true, true, true, false ) );
+        flags.add( new RequestCodeFlags( true, true, true, true, true, true, true ) );
 
         //see that no exceptions occur
-        listener= new OperationalListener( uri1, flags1, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri2, flags2, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri3, flags3, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri4, flags4, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri5, flags5, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri6, flags6, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri7, flags7, callback );
-        registry.add( listener );
-        listener= new OperationalListener( uri8, flags8, callback );
-        registry.add( listener );
+        for ( int i= 0; i < 8; i++ )
+        {
+            registry.add( new OperationalListener( uris.get( i ), flags.get( i ), callback ) );
+        }
+        //assert
+        assertNotNull( "assert failed", registry );
     }
 
     @Test

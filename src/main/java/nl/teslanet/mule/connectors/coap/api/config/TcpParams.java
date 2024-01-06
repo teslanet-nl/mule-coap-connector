@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -41,37 +41,37 @@ public class TcpParams implements VisitableConfig
      * The number of TCP worker threads. Default value is 1.
      */
     @Parameter
-    @Optional(defaultValue= "1")
-    @Summary(value= "The number of TCP worker threads. Default value is 1.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "1" )
+    @Summary( value= "The number of TCP worker threads. Default value is 1." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer tcpWorkerThreads= null;
 
     /**
      * The default tcp connect timeout in milliseconds [ms].
      */
     @Parameter
-    @Optional(defaultValue= "10000")
-    @Summary(value= "The default tcp connect timeout in milliseconds [ms].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "10000" )
+    @Summary( value= "The default tcp connect timeout in milliseconds [ms]." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer tcpConnectTimeout= null;
 
     /**
      * The default tcp connection idle timeout in seconds [s].
      */
     @Parameter
-    @Optional(defaultValue= "10")
-    @Summary(value= "The default tcp connection idle timeout in seconds [s].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "10" )
+    @Summary( value= "The default tcp connection idle timeout in seconds [s]." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer tcpConnectionIdleTimeout= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

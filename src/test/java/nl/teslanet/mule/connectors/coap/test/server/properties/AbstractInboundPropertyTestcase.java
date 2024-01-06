@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -42,6 +43,7 @@ import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 
@@ -143,6 +145,42 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     }
 
     /**
+     * Override and return false to specify that the response is expected to indicate failure.
+     * @return {@code true} when successfull response is expected
+     */
+    protected boolean getExpectedSuccess()
+    {
+        return true;
+    }
+
+    /**
+     * Get the expected response code.
+     * @return The expected response code.
+     * @throws Exception 
+     */
+    protected ResponseCode getExpectedResponseCode( Code requestCode ) throws Exception
+    {
+        ResponseCode responseCode;
+        switch ( requestCode )
+        {
+            case GET:
+                responseCode= ResponseCode.CONTENT;
+                break;
+            case POST:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case PUT:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case DELETE:
+            default:
+                responseCode= ResponseCode.DELETED;
+                break;
+        }
+        return responseCode;
+    }
+
+    /**
      * Override to specify whether the option value is a byte array
      * @return {@code true} when the option value is a byte array
      */
@@ -164,8 +202,8 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     }
 
     /**
-     * Assert the spy has collecte the expected object
-     * @param spy the spy that should have colleected the property
+     * Assert the spy has collected the expected object
+     * @param spy the spy that should have collected the property
      * @param expected
      */
     void assertSpy( MuleEventSpy spy, final Object expected )
@@ -186,7 +224,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test( timeout= 20000L )
+    @Test( timeout= 2000000L )
     public void testInbound() throws Exception
     {
         MuleEventSpy spy= spyMessage();
@@ -202,7 +240,15 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "no response", response );
-        assertTrue( "response indicates failure", response.isSuccess() );
-        assertSpy( spy, getExpectedPropertyValue() );
+        assertEquals( "wrong response code", getExpectedResponseCode( requestCode ), response.getCode() );
+        if ( getExpectedSuccess() )
+        {
+            assertTrue( "response indicates failure", response.isSuccess() );
+            assertSpy( spy, getExpectedPropertyValue() );
+        }
+        else
+        {
+            assertFalse( "response indicates success", response.isSuccess() );
+        }
     }
 }

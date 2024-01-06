@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -41,9 +41,9 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.core.api.lifecycle.StartException;
-import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.NoImplicit;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -63,7 +63,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
-import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 
@@ -73,13 +73,23 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
  * The endpoints make the server resources available to clients.
  */
 @Configuration( name= "server" )
-//TODO upgrade needed to mule 4.3: @NoImplicit
+@NoImplicit
 @Sources( value=
 { Listener.class } )
 @Operations( ServerOperations.class )
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
-    private static final Logger logger= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+
+    /**
+     * The name of the CoapExchange variable.
+     */
+    public static final String VARNAME_COAP_EXCHANGE= "coapExchange";
+
+    /**
+     * The name of the default response code variable.
+     */
+    public static final String VARNAME_DEFAULT_RESPONSE_CODE= "defaultResponseCode";
 
     /**
      * The name of the server.
@@ -189,12 +199,12 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void initialise() throws InitialisationException
     {
         CoapConnector.setSchedulerService( schedulerService, schedulerConfig );
-        NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
+        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration.createStandardWithoutFile();
         if ( protocolStageThreadCount != null )
         {
-            networkConfig.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
+            config.set( CoapConfig.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
         }
-        coapServer= new CoapServer( networkConfig );
+        coapServer= new CoapServer( config );
         try
         {
             registry= new ResourceRegistry( coapServer.getRoot() );
@@ -215,7 +225,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             // user wants default endpoint
             configuredEndpoints.add( new UDPEndpoint( this.toString() + " default", CoAP.DEFAULT_COAP_PORT ) );
-            logger.info( this + " is using default udp endpoint." );
+            LOGGER.info( "{} is using default udp endpoint.", this );
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
@@ -228,21 +238,21 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             if ( configuredEndpoint.configName == null )
             {
-                // inline endpoint will get this as name
+                // inline endpoint name
                 configuredEndpoint.configName= ( this.toString() + " endpont-" + endpointNr++ );
             }
             try
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 coapServer.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                logger.info( this + " connected to " + operationalEndpoint );
+                LOGGER.info( "{} connected to {}", this, operationalEndpoint );
             }
             catch ( Exception e )
             {
                 throw new InitialisationException( e, this );
             }
         }
-        logger.info( this + " initalised." );
+        LOGGER.info( "{} initalised.", this );
     }
 
     /**
@@ -253,7 +263,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         coapServer.destroy();
         OperationalEndpoint.disposeAll( this );
-        logger.info( this + " disposed." );
+        LOGGER.info( "{} disposed.", this );
     }
 
     /**
@@ -277,7 +287,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new StartException( e, this );
         }
-        logger.info( this + " started." );
+        LOGGER.info( "{} started.", this );
 
     }
 
@@ -288,30 +298,34 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void stop() throws MuleException
     {
+        //notify clients if desired
+        if ( notifyOnShutdown )
+        {
+            //remove all resources from registry before stopping 
+            //to get observing clients notified of the fact that resources 
+            //are not available anymore. 
+            registry.removeAll();
+        }
+        //linger to get notifications sent.
         try
         {
-            if ( notifyOnShutdown )
-            {
-                //remove all resources from registry before stopping 
-                //to get observing clients notified of the fact that resources 
-                //are not available anymore. 
-                registry.remove( "/*" );
-            }
-            //linger to get notifications sent.
             Thread.sleep( lingerOnShutdown );
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+        }
+        finally
+        {
             //stop server
             coapServer.stop();
             if ( !notifyOnShutdown )
             {
                 //cleanup still needed
-                registry.remove( "/*" );
+                registry.removeAll();
             }
+            LOGGER.info( "{} stopped", this );
         }
-        catch ( Exception e )
-        {
-            throw new StopException( e, this );
-        }
-        logger.info( this + " stopped" );
     }
 
     /**

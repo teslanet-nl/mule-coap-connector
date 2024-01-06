@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -37,40 +37,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class Unused implements VisitableConfig
 {
-    // TODO review for removed and new config items in cf3
-    /**
-     * RFC 7252: MAX_TRANSMIT_WAIT is the maximum time from the first transmission
-     * of a Confirmable message to the time when the sender gives up on
-     * receiving an acknowledgement or reset.  Derived from:
-     * {@code ACK_TIMEOUT * ((2 ** (MAX_RETRANSMIT + 1)) - 1) * ACK_RANDOM_FACTOR }  
-     * @see <a href=
-     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-4.8.2">IETF RFC 7252 -
-     *      4.8.2 Time Values Derived from Transmission Parameters</a>
-     */
-    @Parameter
-    @Optional( defaultValue= "93000" )
-    @Summary(
-                    value= "The maximum time (in milliseconds [ms]) between the first transmission of a Confirmable message \nand the sender giving up on receiving an acknowledgement or reset."
-    )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public Long maxTransmitWait= null;
-
-    //TODO used in cf3
-    /**
-     * LEISURE is the period of time (in milliseconds [ms]) of the spreading of responses to a
-     * multicast request, for network congestion prevention.
-     * @see <a href=
-     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-8.2">IETF RFC 7252 -
-     *      8.2. Request/Response Layer</a>
-     */
-    @Parameter
-    @Optional( defaultValue= "5000" )
-    @Summary( value= "Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request, \nfor network congestion prevention." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public Integer leisure= null;
-
     /**
      * PROBING_RATE [byte/s] indicates the maximum average data rate of sending to another endpoint that does not respond.
      * @see <a href=
@@ -82,17 +48,6 @@ public class Unused implements VisitableConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Float probingRate= null;
-
-    //TODO used in cf3
-    /**
-     * Maximum number of pending outbound messages.
-     */
-    @Parameter
-    @Optional( defaultValue= "1000" )
-    @Summary( value= "Maximum number of pending outbound messages. Default" )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public int udpConnectorOutCapacity= 1000;
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)

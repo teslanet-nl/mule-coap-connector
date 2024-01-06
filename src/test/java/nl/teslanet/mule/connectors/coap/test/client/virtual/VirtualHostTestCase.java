@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -57,16 +57,24 @@ public class VirtualHostTestCase extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters( name= "request= {0}  " )
+    @Parameters( name= "request= {0}  flow= {1} " )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
             new Object [] []
             {
-                { Code.GET, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CONTENT },
-                { Code.PUT, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CHANGED },
-                { Code.POST, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.CHANGED },
-                { Code.DELETE, "californium.eclipseprojects.io", 33, "127.0.0.1", 6768, "/echo", ResponseCode.DELETED } }
+                { Code.GET, "do_request", "6768", ResponseCode.CONTENT },
+                { Code.PUT, "do_request", "6768", ResponseCode.CHANGED },
+                { Code.POST, "do_request", "6768", ResponseCode.CHANGED },
+                { Code.DELETE, "do_request", "6768", ResponseCode.DELETED },
+                { Code.GET, "do_request_to_virtual_host", "6767", ResponseCode.CONTENT },
+                { Code.PUT, "do_request_to_virtual_host", "6767", ResponseCode.CHANGED },
+                { Code.POST, "do_request_to_virtual_host", "6767", ResponseCode.CHANGED },
+                { Code.DELETE, "do_request_to_virtual_host", "6767", ResponseCode.DELETED },
+                { Code.GET, "do_request_to_virtual_host_override", "6768", ResponseCode.CONTENT },
+                { Code.PUT, "do_request_to_virtual_host_override", "6768", ResponseCode.CHANGED },
+                { Code.POST, "do_request_to_virtual_host_override", "6768", ResponseCode.CHANGED },
+                { Code.DELETE, "do_request_to_virtual_host_override", "6768", ResponseCode.DELETED } }
         );
     }
 
@@ -80,36 +88,43 @@ public class VirtualHostTestCase extends AbstractClientTestCase
      * The path of the resource to call.
      */
     @Parameter( 1 )
-    public String host;
+    public String flowName;
 
     /**
      * The path of the resource to call.
+     */
+    private String host= "californium.eclipseprojects.io";
+
+    /**
+     * The path of the resource to call.
+     */
+    private Integer port= 33;
+
+    /**
+     * The path of the resource to call.
+     */
+    private String endpointHost= "127.0.0.1";
+
+    /**
+     * The path of the resource to call.
+     */
+    private Integer endpointPort= 6768;
+
+    /**
+     * The path of the resource to call.
+     */
+    private String path= "echo";
+
+    /**
+     * The id of the spy.
      */
     @Parameter( 2 )
-    public Integer port;
-
-    /**
-     * The path of the resource to call.
-     */
-    @Parameter( 3 )
-    public String endpointHost;
-
-    /**
-     * The path of the resource to call.
-     */
-    @Parameter( 4 )
-    public Integer endpointPort;
-
-    /**
-     * The path of the resource to call.
-     */
-    @Parameter( 5 )
-    public String path;
+    public String spyId;
 
     /**
      * The expected response code.
      */
-    @Parameter( 6 )
+    @Parameter( 3 )
     public ResponseCode expectedResponseCode;
 
     /* (non-Javadoc)
@@ -138,12 +153,12 @@ public class VirtualHostTestCase extends AbstractClientTestCase
     @Test
     public void testVirtualHostRequest() throws Exception
     {
-        MuleEventSpy spy= new MuleEventSpy( "6768" );
+        MuleEventSpy spy= new MuleEventSpy( spyId );
         spy.clear();
-        Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", host ).withVariable(
+        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
             port
-        ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
+        ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", "/" + path ).run();
         Message response= result.getMessage();
         assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
@@ -154,55 +169,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
         OptionSet options= (OptionSet) event.getContent();
         assertEquals( "wrong uri host", host, options.getUriHost() );
         assertEquals( "wrong uri port", port, options.getUriPort() );
-    }
-
-    /**
-     * Test inbound property
-     * @throws Exception should not happen in this test
-     */
-    @Test
-    public void testDefaultVirtualHostRequest() throws Exception
-    {
-        MuleEventSpy spy= new MuleEventSpy( "6767" );
-        spy.clear();
-        Event result= flowRunner( "do_request_to_virtual_host" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable(
-            "host",
-            host
-        ).withVariable( "port", port ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
-        Message response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-
-        MuleEventSpy.Event event= spy.getEvents().get( 0 );
-        assertEquals( "wrong options class", OptionSet.class, event.getContent().getClass() );
-        OptionSet options= (OptionSet) event.getContent();
-        assertEquals( "wrong uri host", host, options.getUriHost() );
-        assertEquals( "wrong uri port", port, options.getUriPort() );
-    }
-
-    /**
-     * Test inbound property
-     * @throws Exception should not happen in this test
-     */
-    @Test
-    public void testDefaultVirtualHostOverrideRequest() throws Exception
-    {
-        MuleEventSpy spy= new MuleEventSpy( "6768" );
-        spy.clear();
-        Event result= flowRunner( "do_request_to_virtual_host_override" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable(
-            "host",
-            host
-        ).withVariable( "port", port ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", path ).run();
-        Message response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
-
-        MuleEventSpy.Event event= spy.getEvents().get( 0 );
-        assertEquals( "wrong options class", OptionSet.class, event.getContent().getClass() );
-        OptionSet options= (OptionSet) event.getContent();
-        assertEquals( "wrong uri host", host, options.getUriHost() );
-        assertEquals( "wrong uri port", port, options.getUriPort() );
+        assertEquals( "wrong uri path", 1, options.getUriPath().size() );
+        assertEquals( "wrong uri path", path, options.getUriPath().get( 0 ) );
     }
 }

@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -37,11 +37,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:dtls-endpoint name="Dtls_endpoint2"
 		doc:name="Dtls endpoint" logCoapMessages="true">
-		<coap:dtls-params />
-		<coap:security-params
-			keyStoreLocation="certs/keyStore.jks" keyStorePassword="endPass"
-			privateKeyAlias="server" trustStoreLocation="certs/trustStore.jks"
-			trustStorePassword="rootPass" trustedRootCertificateAlias="root" />
+		<coap:security-params>
+			<coap:key-store path="certs/keyStore.jks" password="endPass" privateKeyAlias="server"/>
+			<coap:trust-store path="certs/trustStore.jks" password="rootPass" rootCertificateAlias="root" />
+		</coap:security-params>
 	</coap:dtls-endpoint>
 
 	<coap:server-config name="config">

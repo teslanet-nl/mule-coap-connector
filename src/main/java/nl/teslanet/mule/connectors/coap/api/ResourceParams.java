@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,80 +36,80 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * Parameters of a CoAP resource.
  */
-public class ResourceParams
+public class ResourceParams implements ConfigurableResource
 {
     /**
     * The absolute path of the resource that will be used to identify it in CoAP uri's.
     */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("The absolute path of the resource to create.")
-    @Example("/my_parent_resource/my_resource")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "The absolute path of the resource to create." )
+    @Example( "/my_parent_resource/my_resource" )
     private String resourcePath;
 
     /**
      * When true, Get requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, GET requests are allowed on the resource.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, GET requests are allowed on the resource." )
     private boolean get;
 
     /**
      * When true, Post requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, POST requests are allowed on the resource.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, POST requests are allowed on the resource." )
     private boolean post= false;
 
     /**
      * When true, Put requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, PUT requests are allowed on the resource.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, PUT requests are allowed on the resource." )
     private boolean put= false;
 
     /**
      * When true, Delete requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, DELETE requests are allowed on the resource")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, DELETE requests are allowed on the resource" )
     private boolean delete= false;
 
     /**
      * When true, Fetch requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, FETCH requests are allowed on the resource")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, FETCH requests are allowed on the resource" )
     private boolean fetch= false;
 
     /**
      * When true, Patch requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, PATCH requests are allowed on the resource")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, PATCH requests are allowed on the resource" )
     private boolean patch= false;
 
     /**
      * When true, iPatch requests are allowed on the resource.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, iPatch requests are allowed on the resource")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, iPatch requests are allowed on the resource" )
     private boolean ipatch= false;
 
     /**
      * When true, the resource can be observed by clients.
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true, the resource can be observed by clients")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true, the resource can be observed by clients" )
     private boolean observable= false;
 
     /**
@@ -117,16 +117,16 @@ public class ResourceParams
      * Use this when processing takes longer than the acknowledgment-timeout of the client.  
      */
     @Parameter
-    @Expression(ExpressionSupport.SUPPORTED)
-    @Summary("When true an acknowledgement is immediately sent to the client, before processing the request.")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary( "When true an acknowledgement is immediately sent to the client, before processing the request." )
     private boolean earlyAck= false;
 
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("The CoRE information describing the contrained resource for discovery.")
-    @DisplayName("Discovery CoRE Info")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "The CoRE information describing the contrained resource for discovery." )
+    @DisplayName( "Discovery CoRE Info" )
     private ResourceInfoParams coreInfo;
 
     /**
@@ -148,6 +148,7 @@ public class ResourceParams
     /**
      * @return the get
      */
+    @Override
     public boolean isGet()
     {
         return get;
@@ -164,6 +165,7 @@ public class ResourceParams
     /**
      * @return the post
      */
+    @Override
     public boolean isPost()
     {
         return post;
@@ -180,6 +182,7 @@ public class ResourceParams
     /**
      * @return the put
      */
+    @Override
     public boolean isPut()
     {
         return put;
@@ -196,6 +199,7 @@ public class ResourceParams
     /**
      * @return the delete
      */
+    @Override
     public boolean isDelete()
     {
         return delete;
@@ -212,6 +216,7 @@ public class ResourceParams
     /**
      * @return the fetch
      */
+    @Override
     public boolean isFetch()
     {
         return fetch;
@@ -228,6 +233,7 @@ public class ResourceParams
     /**
      * @return the patch
      */
+    @Override
     public boolean isPatch()
     {
         return patch;
@@ -244,6 +250,7 @@ public class ResourceParams
     /**
      * @return the ipatch
      */
+    @Override
     public boolean isIpatch()
     {
         return ipatch;
@@ -260,13 +267,14 @@ public class ResourceParams
     /**
      * @return the observable
      */
+    @Override
     public boolean isObservable()
     {
         return observable;
     }
 
     /**
-     * @param observable the observable to set
+     * @param observable the observable to set.
      */
     public void setObservable( boolean observable )
     {
@@ -274,15 +282,16 @@ public class ResourceParams
     }
 
     /**
-     * @return the earlyAck
+     * @return the earlyAck.
      */
+    @Override
     public boolean isEarlyAck()
     {
         return earlyAck;
     }
 
     /**
-     * @param earlyAck the earlyAck to set
+     * @param earlyAck the earlyAck to set.
      */
     public void setEarlyAck( boolean earlyAck )
     {
@@ -290,28 +299,28 @@ public class ResourceParams
     }
 
     /**
-     * @return the discovery coreInfo of the resource
+     * @return the configured CoRE info.
      */
-    public ResourceInfoParams getInfo()
+    @Override
+    public CoreInfo getCoreInfo()
     {
         return coreInfo;
     }
-    
+
     /**
-     * @param coreInfo The discovery coreInfo to add to the resource
+     * @param coreInfo the CoRE info configuration to set.
      */
-    public void setAddInfo( ResourceInfoParams coreInfo )
+    public void setCoreInfo( ResourceInfoParams coreInfo )
     {
         this.coreInfo= coreInfo;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * The string representation.
      */
     @Override
     public String toString()
     {
-        return "resource { " + resourcePath + " }";
+        return "CoAP Resource params { " + resourcePath + " }";
     }
-
 }

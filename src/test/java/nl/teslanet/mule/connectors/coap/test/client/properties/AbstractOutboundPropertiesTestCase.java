@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -44,7 +44,7 @@ import org.mule.test.runner.RunnerDelegateTo;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -58,14 +58,7 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     @Parameters( name= "requestCode= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { CoapRequestCode.GET, ResponseCode.CONTENT },
-                { CoapRequestCode.POST, ResponseCode.CHANGED },
-                { CoapRequestCode.PUT, ResponseCode.CHANGED },
-                { CoapRequestCode.DELETE, ResponseCode.DELETED } }
-        );
+        return Arrays.asList( new Object [] []{ { CoapRequestCode.GET }, { CoapRequestCode.POST }, { CoapRequestCode.PUT }, { CoapRequestCode.DELETE } } );
     }
 
     /**
@@ -73,12 +66,6 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      */
     @Parameter( 0 )
     public CoapRequestCode requestCode;
-
-    /**
-     * The expected response code.
-     */
-    @Parameter( 1 )
-    public ResponseCode expectedResponseCode;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -114,11 +101,20 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     protected abstract String getPropertyName();
 
     /**
+     * The property nr to set on outbound test
+     * @return the nr to set
+     */
+    protected int getOutboundOptionNr()
+    {
+        return 0;
+    }
+
+    /**
      * The property value to set on outbound test
      * @return the value to set
-     * @throws InvalidEntityTagException 
+     * @throws EntityTagException 
      */
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws EntityTagException
     {
         return new String( getPropertyName() + "_test_value" );
     }
@@ -128,10 +124,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Default implementation inserts the Option using getOutboundPropertyValue()
      * Needs to be overridden when other properties than an option is to be inserted
      * @param options the attributes to insert the property in
-     * @throws InvalidEntityTagException 
+     * @throws EntityTagException 
      */
     @Deprecated
-    protected void insertOutboundProperty( HashMap< String, Object > options ) throws InvalidEntityTagException
+    protected void insertOutboundProperty( HashMap< String, Object > options ) throws EntityTagException
     {
         options.put( getPropertyName(), getOutboundPropertyValue() );
     }
@@ -143,6 +139,32 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     protected Exception getExpectedException()
     {
         return null;
+    }
+
+    /**
+     * Override to set the expected responseCode.
+     * @return The expected responseCode.
+     */
+    protected ResponseCode getExpectedResponseCode( CoapRequestCode requestCode )
+    {
+        ResponseCode responseCode;
+        switch ( requestCode )
+        {
+            case GET:
+                responseCode= ResponseCode.CONTENT;
+                break;
+            case POST:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case PUT:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case DELETE:
+            default:
+                responseCode= ResponseCode.DELETED;
+                break;
+        }
+        return responseCode;
     }
 
     /**
@@ -158,9 +180,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Implement this method to specify the strategy the coap test server has to use
      * in the test.
      * @return the Options strategy to use
-     * @throws InvalidEntityTagException 
+     * @throws EntityTagException 
      */
-    protected abstract OptionStrategy getStrategy() throws InvalidEntityTagException;
+    protected abstract OptionStrategy getStrategy() throws EntityTagException, EntityTagException;
 
     /**
      * Override this method when a specific flow has to be used. 
@@ -202,15 +224,15 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
             assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
 
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-            assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+            assertEquals( "wrong response code", getExpectedResponseCode( requestCode ).name(), attributes.getResponseCode() );
         }
     }
 
-    private Event runFlow() throws InvalidEntityTagException, Exception
+    private Event runFlow() throws EntityTagException, Exception
     {
         return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
             "host",
             "127.0.0.1"
-        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).run();
+        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).withVariable( "other", getOutboundOptionNr() ).run();
     }
 }

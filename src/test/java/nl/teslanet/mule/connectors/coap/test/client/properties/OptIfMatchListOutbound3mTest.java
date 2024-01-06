@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,8 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 
 
 /**
@@ -38,9 +38,9 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidEntityTagException 
+     * @throws EntityTagException 
      */
-    private LinkedList< EntityTag > getValue() throws InvalidEntityTagException
+    private LinkedList< EntityTag > getValue() throws EntityTagException
     {
         LinkedList< EntityTag > list= new LinkedList< EntityTag >();
         list.add( new EntityTag( 0x68656C6C6FL ) );
@@ -63,7 +63,7 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws EntityTagException
     {
         LinkedList< Long > propertyValue= new LinkedList<>();
         for ( EntityTag value : getValue() )
@@ -77,7 +77,7 @@ public class OptIfMatchListOutbound3mTest extends AbstractOutboundPropertiesTest
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws EntityTagException
     {
         return new OptIfMatchListStrategy( getValue() );
     }

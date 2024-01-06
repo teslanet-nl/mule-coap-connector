@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -47,12 +47,19 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
  */
 public class ResourceRegistry
 {
+    /**
+     * The Logger of this class.
+     */
     private static final Logger LOGGER= LoggerFactory.getLogger( ResourceRegistry.class );
 
-    //TODO maybe list, depending on validation of duplication of resourcenames
+    /**
+     * The hosted resources.
+     */
     private ConcurrentHashMap< String, ServedResource > servedResources;
 
-    //TODO review concurrency
+    /**
+     * The listeners that are active on the resources.
+     */
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
     /**
@@ -137,6 +144,14 @@ public class ResourceRegistry
     }
 
     /**
+     * Remove all resources from the registry
+     */
+    public void removeAll()
+    {
+        remove( "/*" );
+    }
+
+    /**
      * Remove a resource from the registry
      * @param uriPattern The uri pattern defining the resources to remove
      */
@@ -198,9 +213,9 @@ public class ResourceRegistry
     }
 
     /**
-     * Set the callback of the resource given to the listener that matches best
-     * to the resources uri.
-     * @param toServe the served resource of which the callback is set.
+     * Set the callback of the resource on the listener that matches best
+     * the resources uri.
+     * @param resource The served resource.
      */
     private void setResourceCallBack( ServedResource resource )
     {
@@ -275,7 +290,6 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            //if ( resource.isHandlingGet()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -285,7 +299,6 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            //if ( resource.isHandlingPost()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -295,7 +308,6 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            //if ( resource.isHandlingPut()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -305,7 +317,6 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            //if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
         }
         // set the Fetch callback to the best found listener
         if ( bestFetchListener != null )
@@ -315,7 +326,6 @@ public class ResourceRegistry
         else
         {
             resource.setFetchCallback( null );
-            //if ( resource.isHandlingFetch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "FETCH" );
         }
         // set the Patch callback to the best found listener
         if ( bestPatchListener != null )
@@ -325,7 +335,6 @@ public class ResourceRegistry
         else
         {
             resource.setPatchCallback( null );
-            //if ( resource.isHandlingPatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PATCH" );
         }
         // set the iPatch callback to the best found listener
         if ( bestIpatchListener != null )
@@ -335,7 +344,6 @@ public class ResourceRegistry
         else
         {
             resource.setIpatchCallback( null );
-            //if ( resource.isHandlingIpatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "iPatch" );
         }
     }
 

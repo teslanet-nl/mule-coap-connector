@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -41,27 +41,27 @@ public class TlsParams implements VisitableConfig
      * The tls handshake timeout in milliseconds [ms].
      */
     @Parameter
-    @Optional(defaultValue= "10000")
-    @Summary(value= "The tls handshake timeout in milliseconds [ms].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "10000" )
+    @Summary( value= "The tls handshake timeout in milliseconds [ms]." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer tlsHandshakeTimeout= null;
 
     /**
      * TLS session timeout in seconds [s]. Default value is 60 * 60 * 24 = 86400 s (24 hours).
      */
     @Parameter
-    @Optional(defaultValue= "86400")
-    @Summary(value= "TLS session timeout in seconds [s]. Default value is 24 hours.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Optional( defaultValue= "86400" )
+    @Summary( value= "TLS session timeout in seconds [s]. Default value is 24 hours." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public Integer secureSessionTimeout= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

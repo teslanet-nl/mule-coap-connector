@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,8 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import nl.teslanet.mule.connectors.coap.api.Defs;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 
 
 /**
@@ -46,6 +44,11 @@ public class OptionUtils
      * Empty byte array.
      */
     public static final String EMPTY_STRING= "";
+
+    /**
+     * Length exception message format.
+     */
+    private static final String LENGTH_ERROR_FORMAT= "Given value result in array length {%d}, which is not between {%d}..{%d} bytes.";
 
     /**
      * private constructor
@@ -66,16 +69,6 @@ public class OptionUtils
     }
 
     /**
-     * Checks if option with this number is unsafe.
-     *
-     * @return  {@code true}  if is unsafe
-     */
-    public static boolean isUnSafe( int optionNumber )
-    {
-        return ( optionNumber & 2 ) != 0;
-    }
-
-    /**
      * Checks if option with this number is a NoCacheKey.
      *
      * @return  {@code true} if is NoCacheKey
@@ -83,6 +76,16 @@ public class OptionUtils
     public static boolean isNoCacheKey( int optionNumber )
     {
         return ( optionNumber & 0x1E ) == 0x1C;
+    }
+
+    /**
+     * Checks if option with this number is unsafe.
+     *
+     * @return  {@code true}  if is unsafe
+     */
+    public static boolean isUnsafe( int optionNumber )
+    {
+        return ( optionNumber & 2 ) != 0;
     }
 
     /**
@@ -100,11 +103,37 @@ public class OptionUtils
     public static byte[] toBytes( int value )
     {
         int length= 0;
-        for ( ; length < 4 && ( value < 0 || value >= ( 1 << ( length * 8 ) ) ); length++ );
+        for ( ; length < Integer.BYTES && ( value < 0 || value >= ( 1 << ( length * Byte.SIZE ) ) ); length++ );
         byte[] result= new byte [length];
         for ( int i= 0; i < length; i++ )
         {
             result[length - i - 1]= (byte) ( value >> i * 8 );
+        }
+        return result;
+    }
+
+    /**
+     * Convert an integer value to byte array. 
+     * The resulting bits conforming to the CoAP defined uint format for integer option values, 
+     * where leading zero bytes should be omitted.
+     * 
+     * @see <a href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-3.2">IETF RFC 7252 -
+     *      3.2. Option Value Formats</a>
+     *      
+     * @param value The integer value to convert.
+     * @param minLength The minimum allowed length of the resulting byte array.
+     * @param maxLength The maximum allowed length of the resulting byte array.
+     * @return The converted value as bytes. 
+     * @throws OptionValueException When value cannot be converted to bytes.
+     */
+    public static byte[] toBytes( int value, int minLength, int maxLength ) throws OptionValueException
+    {
+        byte[] result= toBytes( value );
+        int length= result.length;
+        if ( length < minLength || length > maxLength )
+        {
+            throw new OptionValueException( String.format( LENGTH_ERROR_FORMAT, length, minLength, maxLength ) );
         }
         return result;
     }
@@ -124,13 +153,139 @@ public class OptionUtils
     public static byte[] toBytes( long value )
     {
         int length= 0;
-        for ( ; length < 8 && ( value < 0 || value >= ( 1L << ( length * 8 ) ) ); length++ );
+        for ( ; length < Long.BYTES && ( value < 0 || value >= ( 1L << ( length * Byte.SIZE ) ) ); length++ );
         byte[] result= new byte [length];
         for ( int i= 0; i < length; i++ )
         {
             result[length - i - 1]= (byte) ( value >> i * 8 );
         }
         return result;
+    }
+
+    /**
+     * Convert a long value to byte array. 
+     * The resulting bits conforming to the CoAP defined uint format for integer option values, 
+     * where leading zero bytes should be omitted.
+     * 
+     * @see <a href=
+     *      "https://www.rfc-editor.org/rfc/rfc7252.html#section-3.2">IETF RFC 7252 -
+     *      3.2. Option Value Formats</a>
+     *      
+     * @param value The long value to convert.
+     * @param minLength The minimum allowed length of the resulting byte array.
+     * @param maxLength The maximum allowed length of the resulting byte array.
+     * @return The converted value as bytes. 
+     * @throws OptionValueException When value cannot be converted to bytes.
+     */
+    public static byte[] toBytes( long value, int minLength, int maxLength ) throws OptionValueException
+    {
+        byte[] result= toBytes( value );
+        int length= result.length;
+        if ( length < minLength || length > maxLength )
+        {
+            throw new OptionValueException( String.format( LENGTH_ERROR_FORMAT, length, minLength, maxLength ) );
+        }
+        return result;
+    }
+
+    /**
+     * Converts a string representation of an option to byte array.
+     * The bytes are written using UTF-8 encoding.
+     * @param string The string representing the bytes value.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws OptionValueException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     */
+    public static byte[] toBytes( String string ) throws OptionValueException
+    {
+        return toBytes( string, 0, Integer.MAX_VALUE );
+    }
+
+    /**
+     * Converts a string representation of an option to byte array.
+     * The bytes are written using UTF-8 encoding.
+     * @param string The string representing the bytes value.
+     * @param minLength The minimum allowed length of the resulting byte array.
+     * @param maxLength The maximum allowed length of the resulting byte array.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws OptionValueException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     */
+    public static byte[] toBytes( String string, int minLength, int maxLength ) throws OptionValueException
+    {
+        byte[] bytes= OptionUtils.EMPTY_BYTES;
+        if ( string == null || string.isEmpty() )
+        {
+            if ( minLength > 0 )
+            {
+                throw new OptionValueException( "Given string is null or empty." );
+            }
+        }
+        else
+        {
+            bytes= string.getBytes( Defs.COAP_CHARSET );
+        }
+        if ( bytes.length < minLength || bytes.length > maxLength )
+        {
+            throw new OptionValueException( String.format( LENGTH_ERROR_FORMAT, bytes.length, minLength, maxLength ) );
+        }
+        return bytes;
+    }
+
+    /**
+     * Converts a hexadecimal representation of an option to byte array.
+     * @param hexString The string representing the bytes value.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws OptionValueException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     */
+    public static byte[] toBytesFromHex( String hexString ) throws OptionValueException
+    {
+        return toBytesFromHex( hexString, 0, Integer.MAX_VALUE );
+    }
+
+    /**
+     * Converts a hexadecimal representation of an option to byte array.
+     * @param hexString The string representing the bytes value.
+     * @param minLength The minimum allowed length of the resulting byte array.
+     * @param maxLength The maximum allowed length of the resulting byte array.
+     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
+     * @throws OptionValueException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
+     */
+    public static byte[] toBytesFromHex( String hexString, int minLength, int maxLength ) throws OptionValueException
+    {
+        if ( hexString == null || hexString.isEmpty() )
+        {
+            if ( minLength > 0 )
+            {
+                throw new OptionValueException( "Given string is null or empty." );
+            }
+            else
+            {
+                return OptionUtils.EMPTY_BYTES;
+            }
+        }
+        int length= hexString.length() / 2;
+        if ( length * 2 != hexString.length() )
+        {
+            throw new OptionValueException( String.format( "Given hexString must have even number of characters. Actual number is {%d}.", hexString.length() ) );
+        }
+        if ( length < minLength || length > maxLength )
+        {
+            throw new OptionValueException( String.format( LENGTH_ERROR_FORMAT, length, minLength, maxLength ) );
+        }
+        byte[] bytes= new byte [length];
+        try
+        {
+            for ( int i= 0; i < bytes.length; i++ )
+            {
+                int index= i * 2;
+                int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
+                bytes[i]= (byte) v;
+            }
+        }
+        catch ( NumberFormatException e )
+        {
+            throw new OptionValueException( "Cannot parse given value as hexadecimal." );
+        }
+        return bytes;
     }
 
     /**
@@ -151,16 +306,6 @@ public class OptionUtils
             sb.append( String.format( "%02x", b & 0xFF ) );
         }
         return sb.toString();
-    }
-
-    /**
-     * Converts an option value interpreted as UTF-8 string.
-     * @param bytes The option value.
-     * @return The UTF-8 string interpretation.
-     */
-    public static String toString( byte[] bytes )
-    {
-        return new String( bytes, Defs.COAP_CHARSET );
     }
 
     /**
@@ -200,125 +345,19 @@ public class OptionUtils
     }
 
     /**
-     * Converts an etag value from Integer.
-     * @param intValue The etag value.
-     * @return The string containing the hexadecimal representation.
+     * Converts an option value interpreted as UTF-8 string.
+     * @param bytes The option value.
+     * @return The UTF-8 string interpretation.
      */
-    public static byte[] toBytes( Integer intValue )
+    public static String toString( byte[] bytes )
     {
-        if ( intValue == null )
+        if ( bytes == null || bytes.length == 0 )
         {
-            return OptionUtils.EMPTY_BYTES;
-        }
-        return toBytes( (int) intValue );
-    }
-
-    /**
-     * Converts an etag value from Long.
-     * @param longValue The etag value.
-     * @return The string containing the hexadecimal representation.
-     */
-    public static byte[] toBytes( Long longValue )
-    {
-        if ( longValue == null )
-        {
-            return OptionUtils.EMPTY_BYTES;
-        }
-        return toBytes( (long) longValue );
-    }
-
-    /**
-     * Converts a hexadecimal representation of an option to byte array.
-     * @param hexString The string representing the bytes value.
-     * @param maxLength The maximum allowed length of the resulting byte array.
-     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
-     */
-    public static byte[] toBytesFromHex( String hexString, int maxLength ) throws InvalidOptionValueException
-    {
-        if ( hexString == null || hexString.length() <= 0 )
-        {
-            return OptionUtils.EMPTY_BYTES;
+            return OptionUtils.EMPTY_STRING;
         }
         else
         {
-            int length= hexString.length() / 2;
-            if ( length * 2 != hexString.length() )
-            {
-                throw new InvalidOptionValueException( "Given hexString must have even number of characters. Actual number is: " + hexString.length() );
-            }
-            if ( length > maxLength )
-            {
-                throw new InvalidOptionValueException(
-                    "Given hexString is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + length
-                );
-            }
-            byte[] bytes= new byte [length];
-            try
-            {
-                for ( int i= 0; i < bytes.length; i++ )
-                {
-                    int index= i * 2;
-                    int v= Integer.parseInt( hexString.substring( index, index + 2 ).toLowerCase(), 16 );
-                    bytes[i]= (byte) v;
-                }
-            }
-            catch ( NumberFormatException e )
-            {
-                throw new InvalidOptionValueException( "Cannot parse option value as hexadecimal: " + hexString );
-            }
-            return bytes;
+            return new String( bytes, Defs.COAP_CHARSET );
         }
     }
-
-    /**
-     * Converts a hexadecimal representation of an option to byte array.
-     * @param hexString The string representing the bytes value.
-     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
-     */
-    public static byte[] toBytesFromHex( String hexString ) throws InvalidOptionValueException
-    {
-        return toBytesFromHex( hexString, Integer.MAX_VALUE );
-    }
-
-    /**
-     * Converts a string representation of an option to byte array.
-     * The bytes are written using UTF-8 encoding.
-     * @param string The string representing the bytes value.
-     * @param maxLength The maximum allowed length of the resulting byte arnray.
-     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
-     */
-    public static byte[] toBytes( String string, int maxLength ) throws InvalidOptionValueException
-    {
-        if ( string == null || string.length() <= 0 )
-        {
-            return OptionUtils.EMPTY_BYTES;
-        }
-        else
-        {
-            byte[] bytes= string.getBytes( Defs.COAP_CHARSET );
-            if ( bytes.length > maxLength )
-            {
-                throw new InvalidOptionValueException(
-                    "Given string is too large, resulting length must be between 0.." + maxLength + " bytes. Given string results in length {}" + bytes.length
-                );
-            }
-            return bytes;
-        }
-    }
-
-    /**
-     * Converts a string representation of an option to byte array.
-     * The bytes are written using UTF-8 encoding.
-     * @param hexString The string representing the bytes value.
-     * @return The resulting byte array. When given String is empty the length of the byte array will be zero.
-     * @throws InvalidEntityTagException When String does not contain a convertible hexadecimal value or is exceeding maximum length.
-     */
-    public static byte[] toBytes( String hexString ) throws InvalidOptionValueException
-    {
-        return toBytes( hexString, Integer.MAX_VALUE );
-    }
-
 }

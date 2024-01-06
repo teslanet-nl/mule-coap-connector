@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -106,5 +106,27 @@ public class QueryParam extends AbstractQueryParam
     public void setValue( String value )
     {
         this.value= value;
+    }
+
+    /**
+     * @see Object#equals(Object)
+     */
+    @Override
+    public boolean equals( Object object )
+    {
+        if ( object instanceof QueryParam )
+        {
+            return super.equals( object );
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

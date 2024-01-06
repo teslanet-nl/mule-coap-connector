@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,6 +29,7 @@ import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
+import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
@@ -42,6 +43,7 @@ import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.SharedServer;
 import nl.teslanet.mule.connectors.coap.api.SharedServerConfig;
+import nl.teslanet.mule.connectors.coap.api.binary.*;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CocoaStrong;
@@ -51,6 +53,15 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
+import nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
@@ -63,8 +74,8 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.error.Errors;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.client.ResponseListener;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
@@ -73,32 +84,43 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 /**
  * Mule extension that adds the capability for Mule applications to act as CoAP client and/or CoAP server.
  */
-@Xml(prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap")
-@Extension(name= "CoAP", vendor= "Teslanet.nl")
-@SubTypeMapping(baseType= AbstractEndpoint.class, subTypes= {
-    UDPEndpoint.class,
-    MulticastUDPEndpoint.class,
-    DTLSEndpoint.class,
-    TCPServerEndpoint.class,
-    TCPClientEndpoint.class,
-    TLSServerEndpoint.class,
-    TLSClientEndpoint.class })
-@SubTypeMapping(baseType= MidTracker.class, subTypes= { NullMidTracker.class, GroupedMidTracker.class, MapBasedMidTracker.class })
-@SubTypeMapping(baseType= CongestionControl.class, subTypes= { Cocoa.class, CocoaStrong.class, BasicRto.class, LinuxRto.class, PeakhopperRto.class })
-@SubTypeMapping(baseType= Deduplicator.class, subTypes= { CropRotation.class, MarkAndSweep.class })
-@SubTypeMapping(baseType= RemoteEndpoint.class, subTypes= { SharedServer.class, Proxy.class })
-@SubTypeMapping(baseType= RemoteEndpointConfig.class, subTypes= { SharedServerConfig.class, ProxyConfig.class })
-@Configurations({ Server.class, Client.class })
+@Xml( prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap" )
+@Extension( name= "CoAP", vendor= "Teslanet.nl" )
+@SubTypeMapping( baseType= AbstractEndpoint.class, subTypes=
+{ UDPEndpoint.class, MulticastUDPEndpoint.class, DTLSEndpoint.class, TCPServerEndpoint.class, TCPClientEndpoint.class, TLSServerEndpoint.class, TLSClientEndpoint.class } )
+@SubTypeMapping( baseType= DtlsEndpointRole.class, subTypes=
+{ DtlsServerRole.class, DtlsClientRole.class, DtlsClientAndServerRole.class } )
+@SubTypeMapping( baseType= ReplayFilter.class, subTypes=
+{ NoReplayFilter.class, DefaultReplayFilter.class, ExtendedReplayFilter.class } )
+@SubTypeMapping( baseType= MidTracker.class, subTypes=
+{ NullMidTracker.class, GroupedMidTracker.class, MapBasedMidTracker.class } )
+@SubTypeMapping( baseType= CongestionControl.class, subTypes=
+{ Cocoa.class, CocoaStrong.class, BasicRto.class, LinuxRto.class, PeakhopperRto.class } )
+@SubTypeMapping( baseType= Deduplicator.class, subTypes=
+{ CropRotation.class, MarkAndSweep.class, PeersMarkAndSweep.class } )
+@SubTypeMapping( baseType= RemoteEndpoint.class, subTypes=
+{ SharedServer.class, Proxy.class } )
+@SubTypeMapping( baseType= RemoteEndpointConfig.class, subTypes=
+{ SharedServerConfig.class, ProxyConfig.class } )
+@SubTypeMapping( baseType= BytesValue.class, subTypes=
+{ FromBinary.class, EmptyBytes.class, FromHex.class, FromNumber.class, FromString.class } )
+@SubTypeMapping( baseType= BytesConfig.class, subTypes=
+{ EmptyBytesConfig.class, FromHexConfig.class, FromNumberConfig.class, FromStringConfig.class } )
+@Configurations(
+    { Server.class, Client.class }
+)
 @Sources( value=
 { ResponseListener.class } )
-@Export(classes= { EntityTag.class })
-@ErrorTypes(Errors.class)
+@Operations( GlobalOperations.class )
+@Export( classes=
+{ EntityTag.class } )
+@ErrorTypes( Errors.class )
 public class CoapConnector
 {
     /**
      * The logger.
      */
-    private static final Logger logger= LoggerFactory.getLogger( CoapConnector.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( CoapConnector.class );
 
     /**
      * The Scheduler service.
@@ -119,7 +141,7 @@ public class CoapConnector
      * The CPU Light scheduler.
      */
     private static Scheduler lightScheduler= null;
-    
+
     /**
      * No instances needed.
      */
@@ -137,7 +159,7 @@ public class CoapConnector
         {
             schedulerService= schedulerServiceCandidate;
             schedulerConfig= schedulerConfigCandidate;
-            logger.info( "CoAP schedulerService registered" );
+            LOGGER.info( "CoAP schedulerService registered" );
         }
     }
 
@@ -150,7 +172,7 @@ public class CoapConnector
         if ( ioScheduler == null )
         {
             ioScheduler= schedulerService.ioScheduler( schedulerConfig.withName( "CoAP IO scheduler" ) );
-            logger.info( "CoAP IO scheduler is started" );
+            LOGGER.info( "CoAP IO scheduler is started" );
         }
         return ioScheduler;
     }
@@ -164,7 +186,7 @@ public class CoapConnector
         if ( lightScheduler == null )
         {
             lightScheduler= schedulerService.cpuLightScheduler( schedulerConfig.withName( "CoAP Light scheduler" ) );
-            logger.info( "CoAP CPU Light scheduler is started" );
+            LOGGER.info( "CoAP CPU Light scheduler is started" );
         }
         return lightScheduler;
     }
@@ -178,7 +200,7 @@ public class CoapConnector
         {
             ioScheduler.stop();
             ioScheduler= null;
-            logger.info( "CoAP IO scheduler is stopped" );
+            LOGGER.info( "CoAP IO scheduler is stopped" );
         }
     }
 
@@ -191,7 +213,7 @@ public class CoapConnector
         {
             lightScheduler.stop();
             lightScheduler= null;
-            logger.info( "CoAP CPU Light scheduler is stopped" );
+            LOGGER.info( "CoAP CPU Light scheduler is stopped" );
         }
     }
 }

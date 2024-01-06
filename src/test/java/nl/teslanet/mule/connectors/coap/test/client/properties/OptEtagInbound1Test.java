@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,8 +24,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 
 
 /**
@@ -40,9 +40,9 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
      * @return the value to use in test
      * @throws InvalidEntityTagException 
      */
-    private EntityTag getValue() throws InvalidEntityTagException
+    private EntityTag getValue() throws EntityTagException
     {
-        return new EntityTag( 0x1122334455667788L);
+        return new EntityTag( 0x1122334455667788L );
     }
 
     @Override
@@ -58,13 +58,13 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object getExpectedInboundPropertyValue() throws InvalidEntityTagException
+    protected Object getExpectedInboundPropertyValue() throws EntityTagException
     {
         return getValue();
     }
 
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws EntityTagException
     {
         return new OptEtagStrategy( getValue() );
     }

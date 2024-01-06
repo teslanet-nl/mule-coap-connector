@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,15 +34,17 @@ import java.util.List;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
 /**
@@ -52,7 +54,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAt
 public class DefaultRequestOptionsAttributesTest
 {
     @Test
-    public void testOptionSetifExists() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetifExists() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= {};
@@ -68,7 +70,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetifExistsMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetifExistsMultiple() throws InternalInvalidOptionValueException, EntityTagException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= {};
@@ -93,7 +95,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetIfMatch() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetIfMatch() throws InternalInvalidOptionValueException, EntityTagException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -111,7 +113,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetIfMatchMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetIfMatchMultiple() throws InternalInvalidOptionValueException, EntityTagException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -133,7 +135,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionUrihost() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionUrihost() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String host= "testhost";
@@ -147,7 +149,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionETagMultiple() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionETagMultiple() throws InternalInvalidOptionValueException, EntityTagException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -169,17 +171,17 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionIfNoneMatch() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionIfNoneMatch() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        set.setIfNoneMatch( new Boolean( true ) );
+        set.setIfNoneMatch( Boolean.TRUE );
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
         boolean attr= attributes.isIfNoneMatch();
 
         assertTrue( "coap.opt.if_none_match: wrong value", attr );
 
-        set.setIfNoneMatch( new Boolean( false ) );
+        set.setIfNoneMatch( Boolean.FALSE );
         attributes= new DefaultRequestOptionsAttributes( set );
 
         attr= attributes.isIfNoneMatch();
@@ -188,7 +190,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionUriPort() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionUriPort() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer port= 5536;
@@ -202,7 +204,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetUriPath() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetUriPath() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String value1= "this";
@@ -225,7 +227,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionContentFormat() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionContentFormat() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         Integer format= 41;
@@ -239,7 +241,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetUriQuery() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSetUriQuery() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String[] keys= { "this", "is", "some", "some" };
@@ -264,10 +266,10 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionAccept() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionAccept() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer format= new Integer( 41 );
+        Integer format= Integer.valueOf( 41 );
         set.setAccept( format );
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
@@ -278,10 +280,10 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize2() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSize2() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer size= new Integer( 0 );
+        Integer size= Integer.valueOf( 0 );
         set.setSize2( size );
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
@@ -292,7 +294,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionProxyUri() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionProxyUri() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String uri= "testproxyuri";
@@ -306,7 +308,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionProxyScheme() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionProxyScheme() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         String scheme= "testproxyscheme";
@@ -320,10 +322,10 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSize1() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionSize1() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer size= new Integer( 120 );
+        Integer size= Integer.valueOf( 120 );
         set.setSize1( size );
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
@@ -334,10 +336,10 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionObserve() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionObserve() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        Integer seqnum= new Integer( 120 );
+        Integer seqnum= Integer.valueOf( 120 );
         set.setObserve( seqnum );
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
@@ -348,7 +350,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionOther() throws InvalidEntityTagException, InternalInvalidOptionValueException
+    public void testOptionOther() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
         byte[][] values= {
@@ -357,11 +359,11 @@ public class DefaultRequestOptionsAttributesTest
             { (byte) 0x01, (byte) 0x02, (byte) 0x05 },
             { (byte) 0xff, (byte) 0x02, (byte) 0x05 } };
 
-        int[] optionNrs= { 65000 | 0x01, 65000 | 0x02, 65000 | 0x1c, 65000 | 0x1d };
+        OpaqueOptionDefinition[] optionsDefs= { TestOptions.OTHER_OPTION_65001, TestOptions.OTHER_OPTION_65002, TestOptions.OTHER_OPTION_65028, TestOptions.OTHER_OPTION_65029 };
 
         for ( int i= 0; i < 4; i++ )
         {
-            set.addOption( new Option( optionNrs[i], values[i].clone() ) );
+            set.addOption( new Option( optionsDefs[i], values[i].clone() ) );
         }
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
@@ -370,7 +372,7 @@ public class DefaultRequestOptionsAttributesTest
         assertEquals( "coap.opt.other has wrong length", 4, options.size() );
         for ( int i= 0; i < 4; i++ )
         {
-            assertEquals( "coap.opt.other has wrong number", optionNrs[i], options.get( i ).getNumber() );
+            assertEquals( "coap.opt.other has wrong number", optionsDefs[i].getNumber(), options.get( i ).getNumber() );
             assertArrayEquals( "coap.opt.other has wrong value", values[i], IOUtils.toByteArray( options.get( i ).getValue() ) );
         }
     }

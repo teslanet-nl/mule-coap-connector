@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -24,7 +24,7 @@
 <extension-documentation>
     <configs>
         <config name="client">
-            <description><![CDATA[The Client configuration defines the endpoint to use and provides for default request parameters.]]></description>
+            <description><![CDATA[The Client configuration defines the endpoint to use and provides for default request parameters. Clients are light-weight if the endpoint is shared (global reference to one and the same endpoint configuration).]]></description>
             <parameters>
                 <parameter name="endpoint">
                     <description><![CDATA[The endpoint this client uses.]]></description>
@@ -141,6 +141,9 @@
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
+                </parameter>
             </parameters>
         </operation>
         <operation name="observerExists">
@@ -209,6 +212,9 @@
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -420,6 +426,20 @@
                 </parameter>
                 <parameter name="config-ref">
                     <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="entityTag">
+            <description><![CDATA[Operation that constructs an Entity Tag object.]]></description>
+            <parameters>
+                <parameter name="bytes">
+                    <description><![CDATA[The entity tag value.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -797,6 +817,78 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromBinary">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="binaryValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromHex">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="hexValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="hexValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromNumber">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="numberValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="numberValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromString">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="stringValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="stringValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto">
             <description><![CDATA[]]></description>
             <parameters/>
@@ -827,11 +919,18 @@
                 <parameter name="cropRotationPeriod">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
             </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
             <description><![CDATA[]]></description>
-            <parameters/>
+            <parameters>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep">
             <description><![CDATA[]]></description>
@@ -839,15 +938,80 @@
                 <parameter name="markAndSweepInterval">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
             </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="maxMessagesPerPeer">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="markAndSweepInterval">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsServerParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsClientParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsClientParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsServerParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="extendedfilterWindow">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="socketParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -856,7 +1020,10 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -878,19 +1045,28 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="dtlsParams">
+                <parameter name="dtlsRole">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="securityParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="udpParams">
+                <parameter name="responseMatching">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsMessageParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsRetransmissionsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="replayFilter">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="socketParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -899,7 +1075,10 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -927,10 +1106,10 @@
                 <parameter name="udpParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="socketParams">
+                <parameter name="strictResponseMatching">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
+                <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -939,7 +1118,10 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -959,16 +1141,16 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -988,16 +1170,16 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -1023,16 +1205,16 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -1058,16 +1240,16 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -1084,10 +1266,10 @@
                 <parameter name="udpParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="socketParams">
+                <parameter name="strictResponseMatching">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
+                <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -1096,7 +1278,10 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
@@ -1127,7 +1312,7 @@
             <description><![CDATA[]]></description>
             <parameters/>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.options.EntityTag">
+        <type name="nl.teslanet.mule.connectors.coap.api.entity.EntityTag">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="empty">

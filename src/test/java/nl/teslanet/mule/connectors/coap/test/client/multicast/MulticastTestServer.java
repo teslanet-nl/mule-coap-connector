@@ -33,9 +33,9 @@ import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.UDPConnector;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
@@ -49,7 +49,7 @@ public class MulticastTestServer extends CoapServer
     /**
      * Network configuration is set to standards 
      */
-    private static NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
+    private static Configuration networkConfig= Configuration.createStandardWithoutFile();
 
     /**
      * Default Constructor for test server.
@@ -93,22 +93,23 @@ public class MulticastTestServer extends CoapServer
     private void addEndpoints( int port, int multicastPort ) throws UnknownHostException, SocketException
     {
         //unicast connector
-        UDPConnector udpConnector = new UDPConnector(new InetSocketAddress( "127.0.0.1", port));
+        UDPConnector udpConnector = new UDPConnector(new InetSocketAddress( "127.0.0.1", port), networkConfig);
         udpConnector.setReuseAddress(true);
         //multicast connector
         UdpMulticastConnector.Builder multiCastConnectorBuilder= new UdpMulticastConnector.Builder();
         multiCastConnectorBuilder.setLocalAddress( InetAddress.getByName( "224.0.1.187" ), multicastPort );
         multiCastConnectorBuilder.setOutgoingMulticastInterface(InetAddress.getByName( "127.0.0.1" )  );
         multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ));
+        multiCastConnectorBuilder.setMulticastReceiver( true );
         UdpMulticastConnector receiver= multiCastConnectorBuilder.build();
         receiver.setReuseAddress( true );
         receiver.setLoopbackMode( true );
+        udpConnector.addMulticastReceiver( receiver );
         //endpoint
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        builder.setNetworkConfig( networkConfig );
+        builder.setConfiguration( networkConfig );
         builder.setConnector( udpConnector );
         CoapEndpoint endpoint= builder.build(); 
-        endpoint.addMulticastReceiver( receiver );
         endpoint.addInterceptor( new MessageTracer() );
         addEndpoint( endpoint );
     }

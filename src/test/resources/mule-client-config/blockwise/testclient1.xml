@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -37,8 +37,8 @@
 
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
-		<coap:socket-params bindToPort="0" />
-		<coap:exchange-params exchangeLifetime="10000" />
+        <coap:socket-params bindToPort="0" />
+		<coap:exchange-params exchangeLifetime="10s" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="config" host="127.0.0.1"
@@ -48,10 +48,9 @@
 
 	<coap:udp-endpoint name="Udp_Endpoint2"
 		logCoapMessages="true">
-		<coap:socket-params bindToPort="0" />
-		<coap:exchange-params exchangeLifetime="10000" />
-		<coap:blockwise-params
-			maxResourceBodySize="16000" />
+        <coap:socket-params bindToPort="0" />
+        <coap:blockwise-params  maxResourceBodySize="16000" />
+		<coap:exchange-params exchangeLifetime="10s" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="config2" host="127.0.0.1"

@@ -1,9 +1,9 @@
-FROM maven:3.8.3-adoptopenjdk-8-openj9
+FROM maven:3.9.6-eclipse-temurin-8-alpine
 
-RUN apt-get update \
-    && apt-get install -y git \
-    && apt-get install -y gpg \
-    && apt-get clean
+#add packages
+#libgcc adds cyphersuites not available in alpine by default
+#shadow adds useradd and groupadd
+RUN apk --update-cache add libgcc shadow git gpg gpg-agent && apk cache clean
 
 ENV JENKINS_HOME /home/jenkins
 ENV JENKINS_KEYS /var/lib/jenkins_keys

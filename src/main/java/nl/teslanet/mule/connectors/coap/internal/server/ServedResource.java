@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
@@ -41,6 +42,7 @@ import org.slf4j.MarkerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ConfigurableResource;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
@@ -76,7 +78,7 @@ public class ServedResource extends CoapResource
     /**
      * Regular expression for splitting comma separated values.
      */
-    private static final String CSV_REGEX= "\\s*,\\s*";
+    private static final String CSV_REGEX= ",";
 
     /**
      * The callback of the messagesource for Get requests.
@@ -137,64 +139,11 @@ public class ServedResource extends CoapResource
      */
     public ServedResource( ResourceConfig resource )
     {
-        //TODO add / replacement
+        //TODO cf3 catch '/' exception
         super( resource.getResourceName() );
+        configure( resource );
 
-        //TODO make use of visible/invisible?
-
-        requestCodeFlags.setGet( resource.isGet() );
-        requestCodeFlags.setPost( resource.isPost() );
-        requestCodeFlags.setPut( resource.isPut() );
-        requestCodeFlags.setDelete( resource.isDelete() );
-        requestCodeFlags.setFetch( resource.isFetch() );
-        requestCodeFlags.setPatch( resource.isPatch() );
-        requestCodeFlags.setIpatch( resource.isIpatch() );
-        earlyAck= resource.isEarlyAck();
-
-        if ( resource.isObservable() )
-        {
-            setObservable( true );
-            getAttributes().setObservable();
-        }
-        else
-        {
-            setObservable( false );
-        }
-
-        //process info configuration
-        if ( resource.getCoreInfoConfig() != null )
-        {
-            if ( resource.getCoreInfoConfig().getTitle() != null )
-            {
-                getAttributes().setTitle( resource.getCoreInfoConfig().getTitle() );
-            }
-            if ( resource.getCoreInfoConfig().getRt() != null )
-            {
-                for ( String rt : resource.getCoreInfoConfig().getRt().split( CSV_REGEX ) )
-                {
-                    getAttributes().addResourceType( rt );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getIfdesc() != null )
-            {
-                for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( CSV_REGEX ) )
-                {
-                    getAttributes().addInterfaceDescription( ifdesc );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getCt() != null )
-            {
-                for ( String ct : resource.getCoreInfoConfig().getCt().split( CSV_REGEX ) )
-                {
-                    getAttributes().addContentType( Integer.parseInt( ct ) );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getSz() != null )
-            {
-                getAttributes().setMaximumSizeEstimate( resource.getCoreInfoConfig().getSz() );
-            }
-        }
-        //process resource configuration
+        //process subresources
         if ( resource.getSubResources() != null )
         {
             //also create children (recursively) 
@@ -214,9 +163,15 @@ public class ServedResource extends CoapResource
     public ServedResource( ResourceParams resource )
     {
         super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ) );
+        configure( resource );
+    }
 
-        //TODO make use of visible/invisible?
-
+    /**
+     * Configure the resource.
+     * @param resource the configuration to set. 
+     */
+    private void configure( ConfigurableResource resource )
+    {
         requestCodeFlags.setGet( resource.isGet() );
         requestCodeFlags.setPost( resource.isPost() );
         requestCodeFlags.setPut( resource.isPut() );
@@ -237,36 +192,36 @@ public class ServedResource extends CoapResource
         }
 
         //process info configuration
-        if ( resource.getInfo() != null )
+        if ( resource.getCoreInfo() != null )
         {
-            if ( resource.getInfo().getTitle() != null )
+            if ( resource.getCoreInfo().getTitle() != null )
             {
-                getAttributes().setTitle( resource.getInfo().getTitle() );
+                getAttributes().setTitle( resource.getCoreInfo().getTitle() );
             }
-            if ( resource.getInfo().getRt() != null )
+            if ( resource.getCoreInfo().getRt() != null )
             {
-                for ( String rt : resource.getInfo().getRt().split( CSV_REGEX ) )
+                for ( String rt : StringUtils.deleteWhitespace( resource.getCoreInfo().getRt() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             }
-            if ( resource.getInfo().getIfdesc() != null )
+            if ( resource.getCoreInfo().getIfdesc() != null )
             {
-                for ( String ifdesc : resource.getInfo().getIfdesc().split( CSV_REGEX ) )
+                for ( String ifdesc : StringUtils.deleteWhitespace( resource.getCoreInfo().getIfdesc() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             }
-            if ( resource.getInfo().getCt() != null )
+            if ( resource.getCoreInfo().getCt() != null )
             {
-                for ( String ct : resource.getInfo().getCt().split( CSV_REGEX ) )
+                for ( String ct : StringUtils.deleteWhitespace( resource.getCoreInfo().getCt() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }
             }
-            if ( resource.getInfo().getSz() != null )
+            if ( resource.getCoreInfo().getSz() != null )
             {
-                getAttributes().setMaximumSizeEstimate( resource.getInfo().getSz() );
+                getAttributes().setMaximumSizeEstimate( resource.getCoreInfo().getSz() );
             }
         }
     }
@@ -279,8 +234,8 @@ public class ServedResource extends CoapResource
         return requestCodeFlags.isGet();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handleGET(org.eclipse.californium.core.server.resources.CoapExchange)
+    /**
+     * Override default handler of Cf.
      */
     @Override
     public void handleGET( CoapExchange exchange )
@@ -304,8 +259,8 @@ public class ServedResource extends CoapResource
         return requestCodeFlags.isPut();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handlePUT(org.eclipse.californium.core.server.resources.CoapExchange)
+    /**
+     * Override default handler of Cf.
      */
     @Override
     public void handlePUT( CoapExchange exchange )
@@ -329,8 +284,8 @@ public class ServedResource extends CoapResource
         return requestCodeFlags.isPost();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handlePOST(org.eclipse.californium.core.server.resources.CoapExchange)
+    /**
+     * Override default handler of Cf.
      */
     @Override
     public void handlePOST( CoapExchange exchange )
@@ -354,8 +309,8 @@ public class ServedResource extends CoapResource
         return requestCodeFlags.isDelete();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handleDELETE(org.eclipse.californium.core.server.resources.CoapExchange)
+    /**
+     * Override default handler of Cf.
      */
     @Override
     public void handleDELETE( CoapExchange exchange )
@@ -380,7 +335,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handleFETCH( CoapExchange exchange )
@@ -405,7 +360,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handlePATCH( CoapExchange exchange )
@@ -430,7 +385,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handleIPATCH( CoapExchange exchange )
@@ -498,8 +453,8 @@ public class ServedResource extends CoapResource
             return;
         }
         SourceCallbackContext requestcontext= callback.createContext();
-        requestcontext.addVariable( "defaultCoAPResponseCode", defaultCoAPResponseCode );
-        requestcontext.addVariable( "CoapExchange", exchange );
+        requestcontext.addVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE, defaultCoAPResponseCode );
+        requestcontext.addVariable( Server.VARNAME_COAP_EXCHANGE, exchange );
         //TODO add streaming & blockwise cooperation
         byte[] requestPayload= exchange.getRequestPayload();
         if ( requestPayload != null )
@@ -520,7 +475,6 @@ public class ServedResource extends CoapResource
                 requestcontext
             );
         }
-
     }
 
     /**
@@ -543,7 +497,7 @@ public class ServedResource extends CoapResource
         attributes.setRemoteAddress( coapExchange.getSourceSocketAddress().toString() );
         attributes.setRequestUri( exchange.getRequest().getURI() );
         attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
-        attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKey() : null ) );
+        attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKeyToken().toString() : null ) );
         return attributes;
     }
 

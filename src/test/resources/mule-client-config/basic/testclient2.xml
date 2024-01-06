@@ -40,7 +40,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<coap:udp-endpoint name="Udp_Endpoint"
 		logCoapMessages="true">
-		<coap:exchange-params maxRetransmit="0" />
+		<coap:exchange-params maxRetransmit="1" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="config" host="127.0.0.1"

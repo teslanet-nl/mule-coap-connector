@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,12 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 
 
 /**
@@ -39,7 +41,7 @@ public class OptOtherStrategy implements OptionStrategy
     /**
      * option test values
      */
-    private LinkedList<Option> values= new LinkedList<>();
+    private LinkedList< Option > values= new LinkedList<>();
 
     /**
      * Constructor setting one value
@@ -59,7 +61,7 @@ public class OptOtherStrategy implements OptionStrategy
     {
         for ( int i= 0; i < optionValues.length; i++ )
         {
-            values.add( new Option( optionNumber, optionValues[i] ) );
+            values.add( new Option( new OpaqueOptionDefinition( optionNumber, String.valueOf( optionNumber ), false ), optionValues[i] ) );
         }
     }
 
@@ -69,13 +71,14 @@ public class OptOtherStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-        for ( Option option : values ) {
-        response.getOptions().addOption( option );}
+        for ( Option option : values )
+        {
+            response.getOptions().addOption( option );
+        }
     }
 
-
     /**
-     * validate all expected options are contained in the request in the richt order.
+     * validate all expected options are contained in the request in the right order.
      */
     @Override
     public boolean validateOption( Request request )
@@ -87,7 +90,7 @@ public class OptOtherStrategy implements OptionStrategy
             if ( option.getNumber() == optionNumber )
             {
                 Option expected= expectedIterator.next();
-                if ( !option.equals( expected )) return false;
+                if ( !Arrays.equals( expected.getValue(), option.getValue() ) ) return false;
             }
         }
         return !expectedIterator.hasNext();

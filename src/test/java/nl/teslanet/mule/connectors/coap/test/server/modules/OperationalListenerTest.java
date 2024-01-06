@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,11 +25,16 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
@@ -39,312 +44,82 @@ import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
 
 
 /**
- * Test operational listener
+ * Test operational listener.
  *
  */
+@RunWith( Parameterized.class )
 public class OperationalListenerTest
 {
+    /**
+     * The list of tests with their parameters
+     * @return Test parameters.
+     */
+    @Parameters( name= "uri= {0}" )
+    public static Collection< Object[] > data()
+    {
+        return Arrays.asList(
+            new Object [] []
+            {
+                { "/some_resource", new RequestCodeFlags(), new TestSourceCallBack() },
+                { "/some_resource/child", new RequestCodeFlags(), new TestSourceCallBack() },
+                { "/some_resource/child/child", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/child/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/*", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/*", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, false, false, false ), new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, false, false ), new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, false ), new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, false ), new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
+
+            }
+        );
+    }
+
+    /**
+     * Request uri to test
+     */
+    @Parameter( 0 )
+    public String uri;
+
+    /**
+     * The request code flags to test..
+     */
+    @Parameter( 1 )
+    public RequestCodeFlags flags;
+
+    /**
+     * The callback to test..
+     */
+    @Parameter( 2 )
+    public TestSourceCallBack callback;
+
     @Test
     public void testConstructor() throws InternalResourceUriException
     {
-        String uri= "/some_resource";
-        RequestCodeFlags flags= new RequestCodeFlags();
-        OperationalListener listener;
-        TestSourceCallBack callback;
-
-        callback= new TestSourceCallBack();
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        //        Field serverField= listener.getClass().getField( "server" );
-        //        serverField.set( listener, server );
-        //        Field uriPatternField= listener.getClass().getField( "uriPattern" );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child";
-        flags= new RequestCodeFlags( true, false, false, false, false, false, false );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "some_resource";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child";
-        flags= new RequestCodeFlags( true, true, false, false, false, false, false );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child/child";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/*";
-        flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-        callback= new TestSourceCallBack();
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child/*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "/some_resource*";
-        flags= new RequestCodeFlags( true, true, true, true, false, false, false );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource*";
-        flags= new RequestCodeFlags( true, true, true, true, true, false, false );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource*";
-        flags= new RequestCodeFlags( true, true, true, true, true, true, false );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource*";
-        flags= new RequestCodeFlags( true, true, true, true, true, true, true );
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child*";
-        listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        assertOperationalListener( listener, uri, flags, callback );
-}
-
-    @Test
-    public void testConstructorWithInvalidUriNull() throws InternalResourceUriException
-    {
         TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= null;
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            @SuppressWarnings("unused")
-            OperationalListener listener= new OperationalListener( uri, flags, callback );
-        } );
-        assertEquals( "exception has wrong message", "null value is not allowed.", e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriEmpty1() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            @SuppressWarnings("unused")
-            OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern {  }, uri cannot be empty." , e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriEmpty2() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            @SuppressWarnings("unused")
-            OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { / }, uri cannot be empty." , e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard1() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "**";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { ** }, wildcard needs to be last character." , e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard2() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/some_resource/**";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/** }, wildcard needs to be last character." , e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard3() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/some_resource/*/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/* }, wildcard needs to be last character.", e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard4() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/some_resource/*/child/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/child/* }, wildcard needs to be last character.", e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard5() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/some_resource/*/child";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource/*/child }, wildcard needs to be last character.", e.getMessage());
-    }
-
-    @Test
-    public void testConstructorWithInvalidUriMultipleWildcard6() throws InternalResourceUriException
-    {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/some_resource*/child/*";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-
-        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
-            new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-        } );
-        assertEquals( "exception has wrong message", "invalid uriPattern { /some_resource*/child/* }, wildcard needs to be last character.", e.getMessage());
+        OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
+        assertOperationalListener( listener, uri, flags, callback );
     }
 
     @Test
     public void testSetUri() throws InternalResourceUriException
     {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
-        OperationalListener listener= new OperationalListener( uri, new RequestCodeFlags( flags ), callback );
-
-        uri= "/some_resource";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "some_resource";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child/child";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "/*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "some_resource/child/*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, "/" + uri, flags, callback );
-
-        uri= "/some_resource*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child*";
-        listener.setUriPattern( uri );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        uri= "/some_resource/child/child*";
+        String initialUri= "/initial";
+        OperationalListener listener= new OperationalListener( initialUri, new RequestCodeFlags( flags ), callback );
         listener.setUriPattern( uri );
         assertOperationalListener( listener, uri, flags, callback );
     }
@@ -352,25 +127,25 @@ public class OperationalListenerTest
     @Test
     public void testSetCallback() throws InternalResourceUriException
     {
-        TestSourceCallBack callback= new TestSourceCallBack();
-        String uri= "/initial";
-        RequestCodeFlags flags= new RequestCodeFlags( true, true, true, false, false, false, false );
         OperationalListener listener= new OperationalListener( uri, flags, callback );
 
-        callback= new TestSourceCallBack();
-        listener.setCallback( callback );
-        assertOperationalListener( listener, uri, flags, callback );
-
-        callback= new TestSourceCallBack();
-        listener.setCallback( callback );
-        assertOperationalListener( listener, uri, flags, callback );
+        TestSourceCallBack newCallback= new TestSourceCallBack();
+        listener.setCallback( newCallback );
+        assertOperationalListener( listener, uri, flags, newCallback );
     }
 
-    private void assertOperationalListener( OperationalListener listener, String uri, RequestCodeFlags flags, SourceCallback< InputStream, CoapRequestAttributes > callback )
+    private void assertOperationalListener(
+        OperationalListener testListener,
+        String testUri,
+        RequestCodeFlags testFlags,
+        SourceCallback< InputStream, CoapRequestAttributes > testCallback
+    )
     {
-        assertNotNull( "listener construction failed", listener );
-        assertEquals( "listener uri has wrong value", uri, listener.getUriPattern() );
-        assertEquals( "listener callback has wrong value", callback, listener.getCallback() );
-        assertEquals( "listener flags has wrong value", flags, listener.getRequestCodeFlags() );
+        String expectedUri= ( testUri.startsWith( "/" ) ? testUri : "/" + testUri );
+
+        assertNotNull( "listener construction failed", testListener );
+        assertEquals( "listener uri has wrong value", expectedUri, testListener.getUriPattern() );
+        assertEquals( "listener callback has wrong value", testCallback, testListener.getCallback() );
+        assertEquals( "listener flags has wrong value", flags, testListener.getRequestCodeFlags() );
     }
 }

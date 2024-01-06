@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,13 +34,15 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
+import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
-import nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl;
+import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 
 
 /**
@@ -64,16 +66,6 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public SocketParams socketParams;
 
     /**
-     * The coap exchange parameters.
-     */
-    @Parameter
-    @Optional
-    @NullSafe
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public ExchangeParams exchangeParams= null;
-
-    /**
      * The parameters for blockwise transfer.
      */
     @Parameter
@@ -94,13 +86,24 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public NotificationParams notificationParams= null;
 
     /**
-     * Configuration of the congestion control algorithm, if any.
+    * The option parameters.
+    */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public OptionParams optionParams= null;
+
+    /**
+     * The coap exchange parameters.
      */
     @Parameter
     @Optional
+    @NullSafe
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public CongestionControl congestionControl= null;
+    public ExchangeParams exchangeParams= null;
 
     /**
      * When activated logHealthStatus is periodically logged.
@@ -128,6 +131,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     protected AbstractEndpoint()
     {
+        //noop
     }
 
     /**
@@ -140,9 +144,10 @@ public abstract class AbstractEndpoint implements VisitableConfig
         configName= name;
         //initialise nullsafe params
         socketParams= new SocketParams();
-        exchangeParams= new ExchangeParams();
         blockwiseParams= new BlockwiseParams();
         notificationParams= new NotificationParams();
+        optionParams= new OptionParams();
+        exchangeParams= new ExchangeParams( new GroupedMidTracker() );
     }
 
     /**
@@ -154,23 +159,22 @@ public abstract class AbstractEndpoint implements VisitableConfig
     protected AbstractEndpoint( String name, int port )
     {
         this( name );
-        socketParams.setBindToPort( port );
+        socketParams.bindToPort= port;
+        exchangeParams= new ExchangeParams( new GroupedMidTracker() );
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
         socketParams.accept( visitor );
-        exchangeParams.accept( visitor );
         blockwiseParams.accept( visitor );
         notificationParams.accept( visitor );
-        if ( congestionControl != null ) congestionControl.accept( visitor );
+        if ( optionParams != null ) optionParams.accept( visitor );
+        exchangeParams.accept( visitor );
         if ( logHealthStatus != null ) logHealthStatus.accept( visitor );
-
     }
-
 }

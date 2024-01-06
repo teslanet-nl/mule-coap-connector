@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -32,7 +32,8 @@ public interface VisitableConfig
     /**
      * Accept a configuration visitor. 
      * Let the visitor visit this object and its member objects. 
-     * @param visitor the visitor of the configuration object.
+     * @param visitor The visitor of the configuration object.
+     * @throws ConfigException When the visit was not successful.
      */
-    public void accept( ConfigVisitor visitor );
+    public void accept( ConfigVisitor visitor ) throws ConfigException;
 }

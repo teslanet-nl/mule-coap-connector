@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,15 +26,16 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+
 import org.eclipse.californium.core.coap.OptionSet;
 
 
 public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options ) throws InvalidEntityTagException
+    protected void addOption( OptionSet options ) throws EntityTagException
     {
         options.addETag( new EntityTag( "0011FF" ).getValue() );
     }
@@ -46,14 +47,14 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws InvalidEntityTagException
+    protected Object getExpectedPropertyValue() throws EntityTagException
     {
         LinkedList< EntityTag > list= new LinkedList< EntityTag >();
         list.add( new EntityTag( "0011FF" ) );
 
         return Collections.unmodifiableList( list );
     }
-    
+
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */

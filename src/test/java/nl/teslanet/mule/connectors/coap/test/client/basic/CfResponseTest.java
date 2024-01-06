@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
@@ -40,10 +41,11 @@ import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.Endpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
+import org.eclipse.californium.elements.config.Configuration;
 
 
 /**
@@ -52,8 +54,9 @@ import org.eclipse.californium.core.network.interceptors.MessageTracer;
  */
 public class CfResponseTest
 {
-    private static final Logger logger= LoggerFactory.getLogger( CfResponseTest.class.getCanonicalName() );
-   /**
+    private static final Logger LOGGER= LoggerFactory.getLogger( CfResponseTest.class.getCanonicalName() );
+
+    /**
      * Server to get test responses.
      */
     private static BasicTestServer server;
@@ -87,9 +90,9 @@ public class CfResponseTest
     public void testResponse() throws Exception
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -97,11 +100,11 @@ public class CfResponseTest
         client.setEndpoint( (Endpoint) endpoint );
 
         CoapResponse response= client.get();
-        assertTrue( "no response", response != null );
+        assertNotNull( "no response", response );
         assertTrue( "wrong response", response.isSuccess() );
         client.shutdown();
     }
-    
+
     /**
      * Test synchronous request when an error response is returned.
      * @throws Exception should not happen in this test
@@ -110,9 +113,9 @@ public class CfResponseTest
     public void testErrorResponse() throws Exception
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -120,7 +123,7 @@ public class CfResponseTest
         client.setEndpoint( (Endpoint) endpoint );
 
         CoapResponse response= client.get();
-        assertTrue( "no response", response != null );
+        assertNotNull( "no response", response );
         assertFalse( "wrong response", response.isSuccess() );
         client.shutdown();
     }
@@ -133,9 +136,9 @@ public class CfResponseTest
     public void testNoResponse() throws Exception
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -158,9 +161,9 @@ public class CfResponseTest
         AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         AtomicBoolean onErrorCalled= new AtomicBoolean( false );
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -174,14 +177,14 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    logger.info( "onLoad called" );
+                    LOGGER.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    logger.info( "onLoad called" );
+                    LOGGER.info( "onLoad called" );
                 }
             };
 
@@ -192,7 +195,7 @@ public class CfResponseTest
         assertFalse( "onError should not have been called", onErrorCalled.get() );
         client.shutdown();
     }
-    
+
     /**
      * Test asynchronous request when an error response is returned.
      * @throws Exception should not happen in this test
@@ -203,9 +206,9 @@ public class CfResponseTest
         AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         AtomicBoolean onErrorCalled= new AtomicBoolean( false );
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -219,14 +222,14 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    logger.info( "onLoad called" );
+                    LOGGER.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    logger.info( "onLoad called" );
+                    LOGGER.info( "onLoad called" );
                 }
             };
 
@@ -236,7 +239,7 @@ public class CfResponseTest
         assertFalse( "onError should not have been called", onErrorCalled.get() );
         client.shutdown();
     }
-    
+
     /**
      * Test asynchronous request when no response is returned.
      * @throws Exception should not happen in this test
@@ -247,9 +250,9 @@ public class CfResponseTest
         final AtomicBoolean onLoadCalled= new AtomicBoolean( false );
         final AtomicBoolean onErrorCalled= new AtomicBoolean( false );
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( "MAX_RETRANSMIT", 1 );
-        builder.setNetworkConfig( config );
+        Configuration config= Configuration.createStandardWithoutFile();
+        config.set( CoapConfig.MAX_RETRANSMIT, 1 );
+        builder.setConfiguration( config );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
 
@@ -263,17 +266,17 @@ public class CfResponseTest
                 public void onLoad( CoapResponse response )
                 {
                     onLoadCalled.set( true );
-                    logger.info( "onLoad called" );
+                    LOGGER.info( "onLoad called" );
                 }
 
                 @Override
                 public void onError()
                 {
                     onErrorCalled.set( true );
-                    logger.info( "onError called" );
+                    LOGGER.info( "onError called" );
                 }
             };
-        
+
         client.setTimeout( 2000L );
         client.get( handler );
         //wait for async processes to complete

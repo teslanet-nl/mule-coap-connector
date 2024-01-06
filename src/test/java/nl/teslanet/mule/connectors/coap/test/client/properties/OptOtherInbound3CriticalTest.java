@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,7 +52,6 @@ public class OptOtherInbound3CriticalTest extends AbstractOtherOptionInboundProp
     @Override
     protected boolean isCritical()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 }

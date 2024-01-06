@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,11 +26,16 @@ package nl.teslanet.mule.connectors.coap.test.utils;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.coap.option.MapBasedOptionRegistry;
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
+import org.eclipse.californium.core.coap.option.StandardOptionRegistry;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.CoapEndpoint.Builder;
+import org.eclipse.californium.core.network.EndpointManager;
+import org.eclipse.californium.elements.config.Configuration;
 import org.junit.After;
 import org.junit.Before;
-
-import org.eclipse.californium.core.CoapClient;
-import org.eclipse.californium.core.network.EndpointManager;
 
 
 /**
@@ -51,10 +56,16 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
+        OpaqueOptionDefinition[] critical= { TestOptions.OTHER_OPTION_65012, TestOptions.OTHER_OPTION_65013, TestOptions.OTHER_OPTION_65308 };
+
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );
         client.setTimeout( 1000000L );
-        client.setEndpoint( EndpointManager.getEndpointManager().getDefaultEndpoint() );
+        Builder builder= CoapEndpoint.builder();
+        builder.setConfiguration( Configuration.createStandardWithoutFile() );
+        MapBasedOptionRegistry allOptions= new MapBasedOptionRegistry( StandardOptionRegistry.getDefaultOptionRegistry(), critical );
+        builder.setOptionRegistry( allOptions );
+        client.setEndpoint( builder.build() );
     }
 
     /**

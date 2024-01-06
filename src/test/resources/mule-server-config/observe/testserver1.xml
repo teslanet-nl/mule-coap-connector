@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -41,10 +41,10 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 	<coap:udp-endpoint name="udp" logCoapMessages="true">
 		<coap:socket-params bindToPort="5683" />
-		<coap:exchange-params exchangeLifetime="1000"/>
         <coap:notification-params
-			notificationCheckIntervalCount="5"
-			notificationCheckIntervalTime="650" />
+            checkIntervalCount="5"
+            checkIntervalTime="650ms" />
+		<coap:exchange-params exchangeLifetime="1s"/>
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config">

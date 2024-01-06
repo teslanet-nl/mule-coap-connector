@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,10 +31,15 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.coap.option.MapBasedOptionRegistry;
+import org.eclipse.californium.core.coap.option.StandardOptionRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.config.Configuration;
+
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
 /**
@@ -48,7 +53,7 @@ public class PropertiesTestServer extends CoapServer
     /**
      * Network configuration is set to standards 
      */
-    private static NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
+    private static Configuration networkConfig= Configuration.createStandardWithoutFile();
 
     /**
      * Default Constructor for test server.
@@ -84,9 +89,22 @@ public class PropertiesTestServer extends CoapServer
     private void addEndpoints( int port )
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
+        builder.setOptionRegistry(
+            new MapBasedOptionRegistry(
+                StandardOptionRegistry.getDefaultOptionRegistry(),
+                TestOptions.OTHER_OPTION_65008,
+                TestOptions.OTHER_OPTION_65009,
+                TestOptions.OTHER_OPTION_65013,
+                TestOptions.OTHER_OPTION_65016,
+                TestOptions.OTHER_OPTION_65018,
+                TestOptions.OTHER_OPTION_65020,
+                TestOptions.OTHER_OPTION_65304
+            )
+        );
         builder.setInetSocketAddress( new InetSocketAddress( port ) );
-        builder.setNetworkConfig( networkConfig );
+        builder.setConfiguration( networkConfig );
         addEndpoint( builder.build() );
+        getEndpoints().forEach( endpoint -> endpoint.addInterceptor( new MessageTracer() ) );
     }
 
     /**
@@ -139,7 +157,7 @@ public class PropertiesTestServer extends CoapServer
             }
             else
             {
-                exchange.respond( ResponseCode.BAD_OPTION );
+                exchange.respond( ResponseCode.BAD_GATEWAY );
             }
         }
     }

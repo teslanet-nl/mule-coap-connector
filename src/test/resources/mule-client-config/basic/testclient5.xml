@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
    <description>Mule CoAP connector test application</description>
    
 	<coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true" >
-		<coap:exchange-params exchangeLifetime="1000" />
+		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 			  
    <coap:client-config name="config">

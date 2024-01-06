@@ -62,23 +62,10 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-
-            tests.add(
-                new Object []
-                { "GET", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "POST", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "PUT", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "DELETE", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
+            tests.add( new Object []{ "GET", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: " + code.name() } );
+            tests.add( new Object []{ "POST", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: " + code.name() } );
+            tests.add( new Object []{ "PUT", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: " + code.name() } );
+            tests.add( new Object []{ "DELETE", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: " + code.name() } );
         }
         return tests;
     }
@@ -185,7 +172,7 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
-            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            assertEquals( "wrong success flag", expectedResponseCode.isSuccess(), attributes.isSuccess() );
             //TODO test for property clienterror, servererror
         }
     }

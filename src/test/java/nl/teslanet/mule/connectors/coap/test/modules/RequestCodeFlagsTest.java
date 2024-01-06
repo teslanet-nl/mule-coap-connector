@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.test.modules;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -139,13 +138,13 @@ public class RequestCodeFlagsTest
         assertEquals( "wrong patch flag", patch, flags.isPatch() );
         assertEquals( "wrong ipatch flag", ipatch, flags.isIpatch() );
 
-        assertEquals( "wrong not get flag", !get, flags.isNotGet() );
-        assertEquals( "wrong not post flag", !post, flags.isNotPost() );
-        assertEquals( "wrong not put flag", !put, flags.isNotPut() );
-        assertEquals( "wrong not delete flag", !delete, flags.isNotDelete() );
-        assertEquals( "wrong not fetch flag", !fetch, flags.isNotFetch() );
-        assertEquals( "wrong not patch flag", !patch, flags.isNotPatch() );
-        assertEquals( "wrong not ipatch flag", !ipatch, flags.isNotIpatch() );
+        assertNotEquals( "wrong not get flag", get, flags.isNotGet() );
+        assertNotEquals( "wrong not post flag", post, flags.isNotPost() );
+        assertNotEquals( "wrong not put flag", put, flags.isNotPut() );
+        assertNotEquals( "wrong not delete flag", delete, flags.isNotDelete() );
+        assertNotEquals( "wrong not fetch flag", fetch, flags.isNotFetch() );
+        assertNotEquals( "wrong not patch flag", patch, flags.isNotPatch() );
+        assertNotEquals( "wrong not ipatch flag", ipatch, flags.isNotIpatch() );
     }
 
     @Test
@@ -173,13 +172,13 @@ public class RequestCodeFlagsTest
         flags.setPatch( !patch );
         flags.setIpatch( !ipatch );
 
-        assertEquals( "wrongly changed get flag", !get, flags.isGet() );
-        assertEquals( "wrongly changed post flag", !post, flags.isPost() );
-        assertEquals( "wrongly changed put flag", !put, flags.isPut() );
-        assertEquals( "wrongly changed delete flag", !delete, flags.isDelete() );
-        assertEquals( "wrongly changed fetch flag", !fetch, flags.isFetch() );
-        assertEquals( "wrongly changed patch flag", !patch, flags.isPatch() );
-        assertEquals( "wrongly changed ipatch flag", !ipatch, flags.isIpatch() );
+        assertNotEquals( "wrongly changed get flag", get, flags.isGet() );
+        assertNotEquals( "wrongly changed post flag", post, flags.isPost() );
+        assertNotEquals( "wrongly changed put flag", put, flags.isPut() );
+        assertNotEquals( "wrongly changed delete flag", delete, flags.isDelete() );
+        assertNotEquals( "wrongly changed fetch flag", fetch, flags.isFetch() );
+        assertNotEquals( "wrongly changed patch flag", patch, flags.isPatch() );
+        assertNotEquals( "wrongly changed ipatch flag", ipatch, flags.isIpatch() );
 
         assertEquals( "wrongly changed get originalFlag", get, originalFlags.isGet() );
         assertEquals( "wrongly changed post originalFlag", post, originalFlags.isPost() );
@@ -343,25 +342,24 @@ public class RequestCodeFlagsTest
         RequestCodeFlags flags6= new RequestCodeFlags( get, post, put, delete, fetch, !patch, ipatch );
         RequestCodeFlags flags7= new RequestCodeFlags( get, post, put, delete, fetch, patch, !ipatch );
 
-        assertTrue( "flags wrongfully unequal to flags0", flags.equals( flags0 ) );
+        assertEquals( "flags wrongfully unequal to flags0", flags, flags0 );
 
-        assertFalse( "flags wrongfully equal to flags1", flags.equals( flags1 ) );
-        assertFalse( "flags wrongfully equal to flags2", flags.equals( flags2 ) );
-        assertFalse( "flags wrongfully equal to flags3", flags.equals( flags3 ) );
-        assertFalse( "flags wrongfully equal to flags4", flags.equals( flags4 ) );
-        assertFalse( "flags wrongfully equal to flags5", flags.equals( flags5 ) );
-        assertFalse( "flags wrongfully equal to flags6", flags.equals( flags6 ) );
-        assertFalse( "flags wrongfully equal to flags7", flags.equals( flags7 ) );
+        assertNotEquals( "flags wrongfully equal to flags1", flags, flags1 );
+        assertNotEquals( "flags wrongfully equal to flags2", flags, flags2 );
+        assertNotEquals( "flags wrongfully equal to flags3", flags, flags3 );
+        assertNotEquals( "flags wrongfully equal to flags4", flags, flags4 );
+        assertNotEquals( "flags wrongfully equal to flags5", flags, flags5 );
+        assertNotEquals( "flags wrongfully equal to flags6", flags, flags6 );
+        assertNotEquals( "flags wrongfully equal to flags7", flags, flags7 );
 
-        assertFalse( "flags wrongfully equal to null", flags.equals( null ) );
+        assertNotEquals( "flags wrongfully equal to null", flags, null );
     }
 
-    @SuppressWarnings( "unlikely-arg-type" )
     @Test
     public void testEqualsToWrongClass() throws InvalidEntityTagException
     {
         RequestCodeFlags flags= new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch );
-        assertFalse( "flags wrongfully equals other class", flags.equals( Boolean.TRUE ) );
+        assertNotEquals( "flags wrongfully equals other class", flags, Boolean.TRUE );
     }
 
     @Test

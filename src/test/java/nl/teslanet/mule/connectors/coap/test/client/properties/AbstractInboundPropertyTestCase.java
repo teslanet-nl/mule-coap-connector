@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -44,7 +44,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -181,13 +181,22 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
         Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", "127.0.0.1" ).withVariable(
             "port",
             null
-        ).withVariable( "path", path + getPathExtension() ).run();
+        ).withVariable( "path", path + getPathExtension() ).keepStreamsOpen().run();
         Message response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= null;;
 
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        switch ( getPropertyType() )
+        {
+            case NoResponse:
+            {
+                break;
+            }
+            default:
+                assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
 
+                attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+                assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        }
         switch ( getPropertyType() )
         {
             case CollectionOfByteArray:
@@ -248,7 +257,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 {
                     EntityTag optionValue= propertyIt.next();
                     EntityTag expectedValue= expectedIt.next();
-                    assertTrue( "value in collection not equal", expectedValue.equals( optionValue ) );
+                    assertEquals( "value in collection not equal", expectedValue, optionValue );
                 } ;
             }
                 break;
@@ -258,7 +267,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
 
             case ETag:
-                assertTrue( "wrong inbound property value", ( (EntityTag) getExpectedInboundPropertyValue() ).equals( (EntityTag) fetchInboundProperty( attributes ) ) );
+                assertEquals( "wrong inbound property value", (EntityTag) getExpectedInboundPropertyValue(), (EntityTag) fetchInboundProperty( attributes ) );
+                break;
+
+            case NoResponse:
+                assertEquals( "received unexpected response", "NO_RESPONSE", getPayloadAsString( response ) );
                 break;
 
             default:

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,42 +31,101 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.DtlsParams;
-import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsResponseMatching;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsRetransmissionParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 
 
 /**
  * DTLS coap endpoint
  *
  */
-@TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
-public class DTLSEndpoint extends UDPEndpoint
+@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
+public class DTLSEndpoint extends AbstractEndpoint
 {
-
     /**
-     * DTLS auto resumption timeout in milliseconds [ms]. After that period without
-     * exchanged messages, the session is forced to resume.
+     * The DTLS role of the endpoint.
      */
     @Parameter
     @Optional
-    @NullSafe
-    @Summary(value= "DTLS auto resumption timeout in milliseconds [ms]. After that period without exchanged messages, the session is forced to resume.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public DtlsParams dtlsParams;
+    @NullSafe( defaultImplementingType= DtlsClientAndServerRole.class )
+    @Summary( value= "The DTLS role of the endpoint." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @DisplayName( "DTLS Endpoint role" )
+    public DtlsEndpointRole dtlsRole= null;
 
     /**
      * The security parameters.
      */
     @Parameter
-    @Summary(value= "The security parameters.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @DisplayName("Encryption config")
+    @Summary( value= "The security parameters." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @DisplayName( "Encryption config" )
     public SecurityParams securityParams= null;
+
+    /**
+     * The DTLS response matcher defines the algorithm used to correlate responses to requests.
+     */
+    @Parameter
+    @Optional( defaultValue= "STRICT" )
+    @Summary( value= "The DTLS response matcher defines the algorithm used to correlate responses to requests." )
+    @Example( value= "RELAXED" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public DtlsResponseMatching responseMatching= DtlsResponseMatching.STRICT;
+
+    /**
+     * DTLS parameters.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public DtlsParams dtlsParams;
+
+    /**
+     * DTLS message parameters.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public DtlsMessageParams dtlsMessageParams;
+
+    /**
+     * DTLS retransmissions parameters.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public DtlsRetransmissionParams dtlsRetransmissionsParams;
+
+    /**
+     * Anti replay filter.
+     */
+    @Parameter
+    @Optional
+    @NullSafe( defaultImplementingType= DefaultReplayFilter.class )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public ReplayFilter replayFilter= null;
 
     /**
      * Default Constructor used by Mule. 
@@ -85,19 +144,27 @@ public class DTLSEndpoint extends UDPEndpoint
     public DTLSEndpoint( String name )
     {
         super( name );
-        dtlsParams= new DtlsParams();
         securityParams= new SecurityParams();
+        dtlsRole= new DtlsClientAndServerRole();
+        dtlsParams= new DtlsParams();
+        dtlsMessageParams= new DtlsMessageParams();
+        dtlsRetransmissionsParams= new DtlsRetransmissionParams();
+        replayFilter= new DefaultReplayFilter();
     }
 
     /**
-     * Accept the visitor.
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
         visitor.visit( this );
-        dtlsParams.accept( visitor );
         securityParams.accept( visitor );
+        dtlsRole.accept( visitor );
+        dtlsParams.accept( visitor );
+        dtlsMessageParams.accept( visitor );
+        dtlsRetransmissionsParams.accept( visitor );
+        if ( replayFilter != null ) replayFilter.accept( visitor );
     }
 }

@@ -9,3 +9,5 @@ syntax: regexp
 ^\.classpath$
 syntax: regexp
 ^Californium\.properties$
+syntax: regexp
+^\.mule$
