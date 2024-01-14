@@ -64,7 +64,7 @@ public class SignatureAlgorithm
     /**
      * Constructor.
      * @param hashAlgorithm The hash algorithm to use.
-     * @param signatureAlgorithm The signature algorithm to use.
+     * @param algorithm The signature algorithm to use.
      */
     public SignatureAlgorithm( HashAlgorithmName hashAlgorithm, SignatureAlgorithmName algorithm )
     {
