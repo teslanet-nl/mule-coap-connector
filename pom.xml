@@ -73,9 +73,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/teslanet-nl/mule-coap-connector.git</connection>
-		<developerConnection>scm:git:https://github.com/teslanet-nl/mule-coap-connector.git</developerConnection>
-		<url>https://github.com/teslanet-nl/mule-coap-connector/tree/main</url>
+		<connection>${mule-coap-connector.connection}</connection>
+		<developerConnection>${mule-coap-connector.developerConnection}</developerConnection>
+		<url>${mule-coap-connector.url}</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -237,6 +237,7 @@ Contributors:
 				<version>2.5.3</version>
 				<configuration>
 					<username>${release.user}</username>
+					<password>${release.password}</password>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
 					<releaseProfiles>release</releaseProfiles>
