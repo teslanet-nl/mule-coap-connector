@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -77,10 +77,24 @@ public class ResourceRegistryTest
         ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig= new ResourceConfig();
 
-        NullPointerException e= assertThrows( NullPointerException.class, () -> {
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
             registry.add( null, resourceConfig );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "name must not be null!" ) );
+        assertEquals( "exception has wrong message", "name must not be null!", e.getCause().getMessage() );
+    }
+
+    @Test
+    public void testAddResourceWithSlash() throws InternalResourceUriException, InternalResourceRegistryException
+    {
+        CoapResource root= new CoapResource( "" );
+        ResourceRegistry registry= new ResourceRegistry( root );
+        ResourceConfig resourceConfig= new ResourceConfig();
+        resourceConfig.setResourceName( "x/y" );
+
+        InternalResourceUriException e= assertThrows( InternalResourceUriException.class, () -> {
+            registry.add( null, resourceConfig );
+        } );
+        assertEquals( "exception has wrong message", "'/' in 'x/y' is not supported by the implementation!", e.getCause().getMessage() );
     }
 
     @Test
