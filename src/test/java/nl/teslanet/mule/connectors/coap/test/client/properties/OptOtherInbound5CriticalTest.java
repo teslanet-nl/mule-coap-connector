@@ -38,6 +38,12 @@ public class OptOtherInbound5CriticalTest extends AbstractOtherOptionInboundProp
     }
 
     @Override
+    protected String getOptionAlias()
+    {
+        return "option-65010";
+    }
+
+    @Override
     protected int getOptionNumber()
     {
         return 65010;

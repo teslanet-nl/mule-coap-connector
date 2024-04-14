@@ -83,7 +83,7 @@
 				<set-payload value="#[payload.value]" doc:name="value" doc:id="b69dbb47-1633-41cc-8ac9-e5fed610316b" />
 			</when>
 			<when expression="#[vars.out == 'HEX']">
-				<set-payload value="#[payload.valueAsHexString]" doc:name="valueAsHexString" doc:id="5e25698f-379f-4f7b-8146-16050198a36d" />
+				<set-payload value="#[payload.valueAsHex]" doc:name="valueAsHex" doc:id="5e25698f-379f-4f7b-8146-16050198a36d" />
 			</when>
 			<when expression="#[vars.out == 'NUMBER']">
 				<set-payload value="#[payload.valueAsNumber]" doc:name="valueAsNumber" doc:id="14df3641-ea38-4010-a721-04e6dbf2a881" />

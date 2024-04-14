@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -1321,7 +1321,7 @@
                 <parameter name="value">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="valueAsHexString">
+                <parameter name="valueAsHex">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="valueAsNumber">
@@ -1359,7 +1359,7 @@
                 <parameter name="requireResponseSize">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="otherRequestOptions">
+                <parameter name="otherOptions">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1388,7 +1388,7 @@
                 <parameter name="acceptableRequestSize">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="otherResponseOptions">
+                <parameter name="otherOptions">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

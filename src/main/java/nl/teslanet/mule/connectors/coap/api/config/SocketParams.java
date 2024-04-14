@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -79,6 +79,16 @@ public class SocketParams implements VisitableConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer sendBuffer= null;
+
+    /**
+     * Reuse address when true.
+     */
+    @Parameter
+    @Optional( defaultValue= "false" )
+    @Summary( value= "Reuse address when true." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public boolean reuseAddress= false;
 
     /**
      * Accept visitor.

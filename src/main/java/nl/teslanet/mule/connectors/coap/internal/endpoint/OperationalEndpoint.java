@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,9 +30,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
+import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
+import org.mule.runtime.api.scheduler.Scheduler;
+import org.mule.runtime.api.scheduler.SchedulerConfig;
+import org.mule.runtime.api.scheduler.SchedulerService;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
@@ -43,11 +48,10 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPServerEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSClientEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TLSServerEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
-import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.config.DtlsEndpointConfigVisitor;
-import nl.teslanet.mule.connectors.coap.internal.config.EndpointConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.config.MulticastUdpEndpointConfigVisitor;
+import nl.teslanet.mule.connectors.coap.internal.config.UdpEndpointConfigVisitor;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
@@ -81,7 +85,7 @@ public final class OperationalEndpoint
     /**
      * The server using the endpoint
      */
-    private Server server= null;
+    private Optional< Server > server= Optional.empty();
 
     /**
      * The clients using the endpoint
@@ -89,11 +93,21 @@ public final class OperationalEndpoint
     private HashSet< Client > clients= new HashSet<>();
 
     /**
+     * Flag indicating the schedulers are set.
+     */
+    private boolean schedulerIsSet= false;
+
+    /**
+     * Other options that the endpoint expects.
+     */
+    private List< OptionDefinition > otherOptionsDefs;
+
+    /**
      * Create an endpoint not attached to a server or return existing when already created
      * @param config the configuration for the endpoint
+     * @param lightscheduler 
      * @return the endpoint created from the configuration
-     * @throws EndpointConstructionException 
-     * @throws Exception
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
      */
     private static OperationalEndpoint create( AbstractEndpoint config ) throws EndpointConstructionException
     {
@@ -141,29 +155,30 @@ public final class OperationalEndpoint
     /**
      * Create an endpoint attached to a server or return existing when already created
      * @param server the server attached to the endpint
-     * @param config the endpoint configuration
+     * @param config The endpoint configuration.
      * @return the operational endpoint
      * @throws EndpointConstructionException when endpoint cannot be created or used
      */
     public static synchronized OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config ) throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
+        Optional< Server > actualServer= Optional.of( server );
 
         if ( registry.containsKey( config.configName ) )
         {
             // endpoint already created
             operationalEndpoint= registry.get( config.configName );
             // endpoint must match, multiple server usage of the endpoint is not allowed
-            if ( server != null && operationalEndpoint.server != null && server != operationalEndpoint.server )
+            if ( operationalEndpoint.server.isPresent() && !operationalEndpoint.server.equals( actualServer ) )
             {
                 throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " }: usage by multiple servers not allowed." );
             }
-            operationalEndpoint.server= server;
+            operationalEndpoint.server= actualServer;
             return operationalEndpoint;
         }
         // need to create endpoint
         operationalEndpoint= create( config );
-        operationalEndpoint.server= server;
+        operationalEndpoint.server= actualServer;
         registry.put( operationalEndpoint.getConfigName(), operationalEndpoint );
         return operationalEndpoint;
     }
@@ -173,7 +188,7 @@ public final class OperationalEndpoint
      * @param client The client using this endpoint.
      * @param config The endpoint configuration.
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
-     * @throws EndpointConstructionException When client parameter is empty
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
      */
     public static synchronized OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config ) throws EndpointConstructionException
     {
@@ -203,10 +218,11 @@ public final class OperationalEndpoint
      */
     public static List< String > find( Server server )
     {
+        Optional< Server > actualServer= Optional.of( server );
         ArrayList< String > found= new ArrayList<>();
         for ( Entry< String, OperationalEndpoint > entry : registry.entrySet() )
         {
-            if ( entry.getValue().server == server )
+            if ( actualServer.equals( entry.getValue().server ) )
             {
                 found.add( entry.getKey() );
             }
@@ -245,15 +261,14 @@ public final class OperationalEndpoint
             OperationalEndpoint endpoint= registry.get( endpointName );
             if ( endpoint != null )
             {
-                endpoint.server= null;
-                if ( endpoint.clients.isEmpty() && endpoint.server == null )
+                endpoint.server= Optional.empty();
+                if ( endpoint.clients.isEmpty() )
                 {
                     registry.remove( endpointName );
                     endpoint.coapEndpoint.destroy();
                 }
             }
         }
-        freeEndpointResoures();
     }
 
     /**
@@ -271,26 +286,12 @@ public final class OperationalEndpoint
             if ( endpoint != null )
             {
                 endpoint.clients.remove( client );
-                if ( endpoint.clients.isEmpty() && endpoint.server == null )
+                if ( endpoint.clients.isEmpty() && !endpoint.server.isPresent() )
                 {
                     registry.remove( endpointName );
                     endpoint.coapEndpoint.destroy();
                 }
             }
-        }
-        freeEndpointResoures();
-    }
-
-    /**
-     * Frees resources that are used by endpoints when possible.
-     */
-    private static void freeEndpointResoures()
-    {
-        if ( registry.isEmpty() )
-        {
-            //Schedulers are not needed any more, so stop them
-            CoapConnector.stopIoScheduler();
-            CoapConnector.stopLightScheduler();
         }
     }
 
@@ -301,6 +302,14 @@ public final class OperationalEndpoint
     private String getConfigName()
     {
         return configName;
+    }
+
+    /**
+     * @return the otherOptionsConfigs
+     */
+    public List< OptionDefinition > getOtherOptionsDefs()
+    {
+        return otherOptionsDefs;
     }
 
     /**
@@ -318,7 +327,7 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( UDPEndpoint config ) throws EndpointConstructionException
     {
-        EndpointConfigVisitor visitor= new EndpointConfigVisitor();
+        UdpEndpointConfigVisitor visitor= new UdpEndpointConfigVisitor();
         try
         {
             config.accept( visitor );
@@ -328,8 +337,8 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        this.coapEndpoint= visitor.getEndpointBuilder().build();
-        this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
+        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        this.coapEndpoint= visitor.getEndpoint();
     }
 
     /**
@@ -350,14 +359,14 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        this.coapEndpoint= visitor.getEndpointBuilder().build();
-        this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
+        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        this.coapEndpoint= visitor.getEndpoint();
     }
 
     /**
      * Constructor for an operational DTLS endpoint.
-     * @param config the UDP endpoint configuration
-     * @throws EndpointConstructionException 
+     * @param config The endpoint configuration.
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
      */
     private OperationalEndpoint( DTLSEndpoint config ) throws EndpointConstructionException
     {
@@ -371,39 +380,69 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        try
-        {
-            this.coapEndpoint= visitor.getEndpointBuilder().build();
-            this.coapEndpoint.setExecutors( CoapConnector.getIoScheduler(), CoapConnector.getLightScheduler() );
-        }
-        catch ( Exception e )
-        {
-            throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } construction DTLS Endpoint failed.", e );
-        }
+        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        this.coapEndpoint= visitor.getEndpoint();
     }
 
+    /**
+     * Constructor for an operational TCP server endpoint.
+     * @param config The endpoint configuration.
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
+     */
     private OperationalEndpoint( TCPServerEndpoint config ) throws EndpointConstructionException
     {
         throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TCP Server Endpoint NIY." );
     }
 
+    /**
+     * Constructor for an operational TCP client endpoint.
+     * @param config The endpoint configuration.
+     * @throws EndpointConstructionException 
+     */
     private OperationalEndpoint( TCPClientEndpoint config ) throws EndpointConstructionException
     {
         throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TCP Client Endpoint NIY." );
     }
 
+    /**
+     * Constructor for an operational TLS serevr endpoint.
+     * @param config The endpoint configuration.
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
+     */
     private OperationalEndpoint( TLSServerEndpoint config ) throws EndpointConstructionException
     {
         throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TLS Server Endpoint NIY." );
     }
 
+    /**
+     * Constructor for an operational TLS client endpoint.
+     * @param config The endpoint configuration.
+     * @throws EndpointConstructionException When the endpoint could not be constructed.
+     */
     private OperationalEndpoint( TLSClientEndpoint config ) throws EndpointConstructionException
     {
         throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TLS Client Endpoint NIY." );
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * Set the schedulers of the endpoint when needed. 
+     * When the endpoint is used by a server the schedulers will be set by the server.
+     * @param schedulerService The SchedulerService that delivers the schedulers.
+     * @param schedulerConfig The scheduler configuration to use.
+     */
+    public synchronized void setSchedulersIfNeeded( SchedulerService schedulerService, SchedulerConfig schedulerConfig )
+    {
+        if ( !server.isPresent() && !schedulerIsSet )
+        {
+            Scheduler ioScheduler= schedulerService.ioScheduler( schedulerConfig );
+            Scheduler cpuLightScheduler= schedulerService.cpuLightScheduler( schedulerConfig );
+            coapEndpoint.setExecutors( ioScheduler, cpuLightScheduler );
+            schedulerIsSet= true;
+        }
+    }
+
+    /**
+     * String representation of the object.
      */
     public String toString()
     {

@@ -37,6 +37,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
     <coap:udp-endpoint name="udp" logCoapMessages="true">
         <coap:socket-params  bindToPort="5683" />
+        <coap:option-params >
+			<coap:other-option-configs >
+				<coap:other-option-config alias="option-65008" number="65008" format="OPAQUE" singleValue="false"/>
+			</coap:other-option-configs>
+		</coap:option-params>
         <coap:exchange-params exchangeLifetime="1s"/>
     </coap:udp-endpoint>
 
@@ -56,20 +61,14 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
     <flow name="listen">
         <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-                <coap:response-options>
-                    <coap:other-response-options>
-                        <coap:other-option number="65008" value="#[ vars.value ]"/>
-                    </coap:other-response-options>
-                </coap:response-options>
+	        <coap:response-options>
+    	        <coap:other-options>
+	                <coap:other-option alias="option-65008" value="#[ vars.value ]"/>
+                </coap:other-options>
+            </coap:response-options>
         </coap:listener>
         
-        <foreach doc:name="For Each" doc:id="2b27ae43-7acf-4b38-ba2f-33f0e19644f1" collection="#[attributes.options.otherOptions]">
-            <choice doc:name="Choice" doc:id="14e3f234-80e3-4889-8286-e594e2df1ead" >
-                <when expression="#[ payload.number == 65008 ]">
-                    <set-variable value="#[payload.unsafe]" doc:name="Set Variable" doc:id="263696eb-0662-4953-ae83-f06bfbd6276f" variableName="attr"/>
-                </when>
-            </choice>
-        </foreach>
+		<set-variable value="#[attributes.options.other.'option-65008'.unsafe]" doc:name="Set Variable" variableName="attr"/>
 
         <java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
             class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

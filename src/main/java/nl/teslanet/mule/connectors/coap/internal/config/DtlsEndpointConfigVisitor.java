@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -39,13 +39,12 @@ import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
-import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
 import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.TrustStore;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
 
 
@@ -53,18 +52,8 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MuleInputStreamFactory;
  * Configuration visitor that collects multi-cast UDP Endpoint configuration
  *
  */
-public class DtlsEndpointConfigVisitor extends ConfigurationVisitor
+public class DtlsEndpointConfigVisitor extends EndpointConfigVisitor
 {
-    /**
-     * The name of the endpont 
-     */
-    private String endpointName;
-
-    /**
-     * Network interface to use for multicast.
-     */
-    private InetSocketAddress localAddress= null;
-
     /**
      * The pre-shared keys, if any.
      */
@@ -116,38 +105,6 @@ public class DtlsEndpointConfigVisitor extends ConfigurationVisitor
     private char[] trustStorePassword= null;
 
     /**
-     * Visit Endpoint configuration object.
-     * @param toVisit the object to visit.
-     * @throws ConfigException When visit is not successful.
-     */
-    @Override
-    public void visit( AbstractEndpoint toVisit ) throws ConfigException
-    {
-        super.visit( toVisit );
-        endpointName= toVisit.configName;
-    }
-
-    /**
-     * Visit socket parameters.
-     * @param toVisit The object to visit.
-     */
-    @Override
-    public void visit( SocketParams toVisit )
-    {
-        super.visit( toVisit );
-        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : 0 );
-
-        if ( toVisit.bindToHost != null )
-        {
-            localAddress= new InetSocketAddress( toVisit.bindToHost, port );
-        }
-        else
-        {
-            localAddress= new InetSocketAddress( port );
-        }
-    }
-
-    /**
      * Visit security parameters.
      * @param toVisit The object to visit.
      * @throws ConfigException When visit is not successful.
@@ -191,40 +148,44 @@ public class DtlsEndpointConfigVisitor extends ConfigurationVisitor
     }
 
     /**
-     * @return The configured endpoint name.
+     * Build the endpoint using the configuration this visitor has collected.
+     * @return The Endpoint.
+     * @throws EndpointConstructionException When the configuration cannot be used to create an endpoint.
      */
-    public String getEndpointName()
-    {
-        return endpointName;
-    }
-
-    /**
-     * Get the Builder that is ready to build the endpoint.
-     * @return The Endpoint Builder.
-     * @throws GeneralSecurityException 
-     * @throws IOException 
-     * @throws OptionValueException 
-     */
-    public CoapEndpoint.Builder getEndpointBuilder() throws IOException, GeneralSecurityException, OptionValueException
+    @Override
+    public CoapEndpoint getEndpoint() throws EndpointConstructionException
     {
         DtlsConnectorConfig.Builder connectBuilder= new DtlsConnectorConfig.Builder( getConfiguration() );
-        connectBuilder.setAddress( localAddress );
+        connectBuilder.setAddress( getLocalAddress() );
+        connectBuilder.setReuseAddress( isReuseAddress() );
         // Pre-shared secrets
         if ( preSharedKeys != null )
         {
-            //TODO cf3 support for virtual host
+            //TODO cf3 psk file support
             AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
-            for ( PreSharedKey key : preSharedKeys )
+            try
             {
-                if ( key.getHost() == null )
+                for ( PreSharedKey key : preSharedKeys )
                 {
-                    pskStore.setKey( key.getIdentity(), key.getKey().getByteArray() );
+                    if ( key.getHost() == null )
+                    {
+                        pskStore.setKey( key.getIdentity(), key.getKey().getByteArray() );
+                    }
+                    else if ( key.getVirtualHost() != null )
+                    {
+                        InetSocketAddress address= new InetSocketAddress( key.getHost(), key.getPort() );
+                        pskStore.addKnownPeer( address, key.getVirtualHost(), key.getIdentity(), key.getKey().getByteArray() );
+                    }
+                    else
+                    {
+                        InetSocketAddress address= new InetSocketAddress( key.getHost(), key.getPort() );
+                        pskStore.addKnownPeer( address, key.getIdentity(), key.getKey().getByteArray() );
+                    }
                 }
-                else
-                {
-                    InetSocketAddress address= new InetSocketAddress( key.getHost(), key.getPort() );
-                    pskStore.addKnownPeer( address, key.getIdentity(), key.getKey().getByteArray() );
-                }
+            }
+            catch ( OptionValueException e )
+            {
+                throw new EndpointConstructionException( String.format( "DTLS Endpoint { %s } preshared key host error.", getEndpointName() ), e );
             }
             connectBuilder.setAdvancedPskStore( pskStore );
         }
@@ -233,32 +194,43 @@ public class DtlsEndpointConfigVisitor extends ConfigurationVisitor
         if ( keyStoreAvailable )
         {
             // load the key store
-            SslContextUtil.Credentials serverCredentials= SslContextUtil.loadCredentials(
-                streamFactory.getScheme() + keyStoreLocation,
-                privateKeyAlias,
-                keyStorePassword,
-                privateKeyPassword
-            );
-            CertificateProvider identityProvider= new SingleCertificateProvider( serverCredentials.getPrivateKey(), serverCredentials.getPublicKey() );
-            connectBuilder.setCertificateIdentityProvider( identityProvider );
+            SslContextUtil.Credentials serverCredentials;
+
+            try
+            {
+                serverCredentials= SslContextUtil.loadCredentials( streamFactory.getScheme() + keyStoreLocation, privateKeyAlias, keyStorePassword, privateKeyPassword );
+                CertificateProvider identityProvider= new SingleCertificateProvider( serverCredentials.getPrivateKey(), serverCredentials.getPublicKey() );
+                connectBuilder.setCertificateIdentityProvider( identityProvider );
+            }
+            catch ( IOException | GeneralSecurityException e )
+            {
+                throw new EndpointConstructionException( String.format( "DTLS Endpoint { %s } keystore error.", getEndpointName() ), e );
+            }
         }
         if ( trustStoreAvailable )
         {
             //load trust store
-            Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
-                streamFactory.getScheme() + trustStoreLocation,
-                trustedRootCertificateAlias,
-                trustStorePassword
-            );
-            StaticNewAdvancedCertificateVerifier.Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
-            verifierBuilder.setTrustAllRPKs();
-            verifierBuilder.setTrustedCertificates( trustedCertificates );
-            connectBuilder.setAdvancedCertificateVerifier( verifierBuilder.build() );
+            try
+            {
+                Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
+                    streamFactory.getScheme() + trustStoreLocation,
+                    trustedRootCertificateAlias,
+                    trustStorePassword
+                );
+                StaticNewAdvancedCertificateVerifier.Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
+                verifierBuilder.setTrustAllRPKs();
+                verifierBuilder.setTrustedCertificates( trustedCertificates );
+                connectBuilder.setAdvancedCertificateVerifier( verifierBuilder.build() );
+            }
+            catch ( IOException | GeneralSecurityException e )
+            {
+                throw new EndpointConstructionException( String.format( "DTLS Endpoint { %s } truststore error.", getEndpointName() ), e );
+            }
         }
         DTLSConnector dtlsConnector= new DTLSConnector( connectBuilder.build() );
         CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
         endpointBuilder.setConfiguration( getConfiguration() );
         endpointBuilder.setConnector( dtlsConnector );
-        return endpointBuilder;
+        return endpointBuilder.build();
     }
 }

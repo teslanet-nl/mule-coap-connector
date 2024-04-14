@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
  * %%
@@ -135,7 +135,7 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case logCoapMessages:
+            case ENDPOINT_LOGCOAPMESSAGES:
                 result= Boolean.toString( toVisit.logCoapMessages );
                 break;
             case logHealthStatus:
@@ -206,7 +206,7 @@ public class GetValueVisitor implements ConfigVisitor
                     result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.isSingleValue() ).map( Object::toString ).toArray( String[]::new ) );
                     break;
                 case ENDPOINT_OTHEROPTION_TYPE:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getOptionType() ).map( Object::toString ).toArray( String[]::new ) );
+                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getFormat() ).map( Object::toString ).toArray( String[]::new ) );
                     break;
                 default:
                     break;
@@ -705,7 +705,7 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case SUPPORT_CONNECTION_ID:
+            case DTLS_SUPPORT_CONNECTION_ID:
                 result= "true";
                 break;
             case DTLS_CONNECTION_ID_LENGTH:
@@ -1024,14 +1024,17 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case bindToHost:
+            case ENDPOINT_BINDTOHOST:
                 result= toVisit.bindToHost;
                 break;
-            case bindToPort:
+            case ENDPOINT_BINDTOPORT:
                 result= ( toVisit.bindToPort != null ? toVisit.bindToPort.toString() : null );
                 break;
-            case bindToSecurePort:
+            case ENDPOINT_BINDTOSECUREPORT:
                 result= ( toVisit.bindToPort != null ? toVisit.bindToPort.toString() : null );
+                break;
+            case ENDPOINT_REUSEADDRESS:
+                result= String.valueOf( toVisit.reuseAddress );
                 break;
             case UDP_RECEIVE_BUFFER_SIZE:
             case DTLS_RECEIVE_BUFFER_SIZE:

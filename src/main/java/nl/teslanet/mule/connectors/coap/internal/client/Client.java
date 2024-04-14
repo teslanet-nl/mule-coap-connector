@@ -42,6 +42,7 @@ import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
+import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -95,7 +96,6 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
-import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
@@ -113,6 +113,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestExcep
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -213,32 +214,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private static UDPEndpoint defaultEndpoint= null;
 
     /**
-     * Start the client. After starting the client is ready for issuing requests.
+     * Other options that the client expects.
      */
-    @Override
-    public void start() throws MuleException
-    {
-        coapClient= new CoapClient();
-        coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
-        LOGGER.info( "{} connected to Endpoint { {} } ", this, operationalEndpoint );
-        LOGGER.info( "{} started.", this );
-    }
-
-    /**
-     * Stop the client. When stopped no more requests can be sent using this client.
-     */
-    @Override
-    public void stop() throws MuleException
-    {
-        for ( ObserveRelation relation : observeRelations.values() )
-        {
-            relation.stop();
-        }
-        observeRelations.clear();
-        coapClient.shutdown();
-        coapClient= null;
-        LOGGER.info( "{} started.", this );
-    }
+    private ConcurrentHashMap< String, OptionDefinition > otherOptionDefs= new ConcurrentHashMap<>();
 
     /**
      * Intitialise the client. The client is assigned an endpoint, which is created when needed. 
@@ -247,7 +225,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     public void initialise() throws InitialisationException
     {
         AbstractEndpoint abstractEndpoint;
-        CoapConnector.setSchedulerService( schedulerService, schedulerConfig );
         if ( endpoint == null )
         {
             //user wants default endpoint
@@ -273,7 +250,37 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             throw new InitialisationException( e, this );
         }
         scheme= operationalEndpoint.getCoapEndpoint().getUri().getScheme();
+        operationalEndpoint.getOtherOptionsDefs().forEach( optionDef -> otherOptionDefs.put( optionDef.getName(), optionDef ) );
         LOGGER.info( "{} initialised.", this );
+    }
+
+    /**
+     * Start the client. After starting the client is ready for issuing requests.
+     */
+    @Override
+    public void start() throws MuleException
+    {
+        coapClient= new CoapClient();
+        operationalEndpoint.setSchedulersIfNeeded( schedulerService, schedulerConfig );
+        coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
+        LOGGER.info( "{} connected to Endpoint { {} } ", this, operationalEndpoint );
+        LOGGER.info( "{} started.", this );
+    }
+
+    /**
+     * Stop the client. When stopped no more requests can be sent using this client.
+     */
+    @Override
+    public void stop() throws MuleException
+    {
+        for ( ObserveRelation relation : observeRelations.values() )
+        {
+            relation.stop();
+        }
+        observeRelations.clear();
+        coapClient.shutdown();
+        coapClient= null;
+        LOGGER.info( "{} started.", this );
     }
 
     /**
@@ -284,6 +291,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         OperationalEndpoint.disposeAll( this );
         operationalEndpoint= null;
+        otherOptionDefs.clear();
         LOGGER.info( "{} disposed.", this );
     }
 
@@ -293,6 +301,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     public String getClientName()
     {
         return clientName;
+    }
+
+    /**
+     * @return the schedulerService
+     */
+    public SchedulerService getSchedulerService()
+    {
+        return schedulerService;
+    }
+
+    /**
+     * @return the schedulerConfig
+     */
+    public SchedulerConfig getSchedulerConfig()
+    {
+        return schedulerConfig;
     }
 
     /**
@@ -307,11 +331,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * Get the default client endpoint, lazily initialized.
      * @return the defaultEndpoint
      */
-    public static synchronized UDPEndpoint getDefaultEndpoint()
+    private UDPEndpoint getDefaultEndpoint()
     {
-        if ( defaultEndpoint == null )
+        synchronized ( Client.class )
         {
-            defaultEndpoint= new UDPEndpoint( "default" );
+            if ( defaultEndpoint == null )
+            {
+                defaultEndpoint= new UDPEndpoint( "default" );
+            }
         }
         return defaultEndpoint;
     }
@@ -434,9 +461,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Request request= builder.build();
         try
         {
-            MessageUtils.copyOptions( options, request.getOptions(), transformationService );
+            MessageUtils.copyOptions( options, request.getOptions(), transformationService, otherOptionDefs );
         }
-        catch ( InternalInvalidOptionValueException e )
+        catch ( InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {
             throw new InternalRequestException( this + " cannot process request options", e );
         }

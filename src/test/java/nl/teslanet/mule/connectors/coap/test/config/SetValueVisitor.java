@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -72,7 +72,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionType;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmName;
@@ -191,7 +191,7 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case logCoapMessages:
+            case ENDPOINT_LOGCOAPMESSAGES:
                 toVisit.logCoapMessages= Boolean.valueOf( value );
                 break;
             case logHealthStatus:
@@ -278,7 +278,7 @@ public class SetValueVisitor implements ConfigVisitor
                 {
                     nr++;
                     int val= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionType.OPAQUE, true, 1, val ) );
+                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, true, 1, val ) );
                 }
                 break;
             case ENDPOINT_OTHEROPTION_MINBYTES:
@@ -287,7 +287,7 @@ public class SetValueVisitor implements ConfigVisitor
                 {
                     nr++;
                     int val= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionType.OPAQUE, true, val, Integer.MAX_VALUE ) );
+                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, true, val, Integer.MAX_VALUE ) );
                 }
                 break;
             case ENDPOINT_OTHEROPTION_SINGLEVALUE:
@@ -296,7 +296,7 @@ public class SetValueVisitor implements ConfigVisitor
                 {
                     nr++;
                     boolean val= Boolean.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionType.OPAQUE, val, 0, Integer.MAX_VALUE ) );
+                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, val, 0, Integer.MAX_VALUE ) );
                 }
                 break;
             case ENDPOINT_OTHEROPTION_TYPE:
@@ -304,7 +304,7 @@ public class SetValueVisitor implements ConfigVisitor
                 for ( String item : value.split( "," ) )
                 {
                     nr++;
-                    OptionType val= OptionType.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
+                    OptionFormat val= OptionFormat.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
                     toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, val, true, 0, Integer.MAX_VALUE ) );
                 }
                 break;
@@ -878,7 +878,7 @@ public class SetValueVisitor implements ConfigVisitor
             case DTLS_EXTENDED_MASTER_SECRET_MODE:
                 toVisit.extendedMasterSecretMode= ExtendedMasterSecretModeName.valueOf( value );
                 break;
-            case SUPPORT_CONNECTION_ID:
+            case DTLS_SUPPORT_CONNECTION_ID:
                 if ( Boolean.valueOf( value ) ) toVisit.supportConnectionId= new ConnectionId();
                 break;
             case DTLS_CONNECTION_ID_LENGTH:
@@ -901,7 +901,7 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case SUPPORT_CONNECTION_ID:
+            case DTLS_SUPPORT_CONNECTION_ID:
                 toVisit.connectionIdLength= null;
                 break;
             case DTLS_CONNECTION_ID_LENGTH:
@@ -1148,14 +1148,17 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case bindToHost:
+            case ENDPOINT_BINDTOHOST:
                 toVisit.bindToHost= value;
                 break;
-            case bindToPort:
+            case ENDPOINT_BINDTOPORT:
                 toVisit.bindToPort= Integer.valueOf( value );
                 break;
-            case bindToSecurePort:
+            case ENDPOINT_BINDTOSECUREPORT:
                 toVisit.bindToPort= Integer.valueOf( value );
+                break;
+            case ENDPOINT_REUSEADDRESS:
+                toVisit.reuseAddress= Boolean.valueOf( value );
                 break;
             case UDP_RECEIVE_BUFFER_SIZE:
             case DTLS_RECEIVE_BUFFER_SIZE:

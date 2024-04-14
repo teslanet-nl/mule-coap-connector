@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,9 +23,6 @@
 package nl.teslanet.mule.connectors.coap.internal.options;
 
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +32,7 @@ import org.eclipse.californium.core.coap.OptionSet;
 
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
@@ -48,6 +45,11 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptio
  */
 public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
 {
+    /**
+     * Constructor that uses options from given optionSet.
+     * @param optionSet to copy from.
+     * @throws InvalidOptionValueException when given option value could not be copied successfully.
+     */
     public DefaultRequestOptionsAttributes( OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
         super();
@@ -132,9 +134,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             observe= optionSet.getObserve();
         }
-        ArrayList< OtherOptionAttribute > tmpOther= new ArrayList<>();
-        optionSet.getOthers().forEach( option -> tmpOther.add( new DefaultOtherOptionAttribute( option.getNumber(), option.getValue() ) ) );
-        otherOptions= Collections.unmodifiableList( tmpOther );
+        other= AttributeUtils.createOthers( optionSet.getOthers() );
     }
 
     /**
@@ -143,6 +143,6 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
+        return ReflectionToStringBuilder.toString( this, new ToStringStyle() );
     }
 }

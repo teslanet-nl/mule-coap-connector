@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -53,6 +53,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 				<coap:pre-shared-key identity="id-3">
 					<coap:key >
 						<coap:from-hex-config hexValue="736573616d67" />
+					</coap:key>
+				</coap:pre-shared-key>
+				<coap:pre-shared-key identity="id-4" host="localhost" virtualHost="californium.eclipseprojects.io" port="5684" >
+					<coap:key >
+						<coap:from-hex-config hexValue="736573616d68" />
 					</coap:key>
 				</coap:pre-shared-key>
 			</coap:pre-shared-keys>

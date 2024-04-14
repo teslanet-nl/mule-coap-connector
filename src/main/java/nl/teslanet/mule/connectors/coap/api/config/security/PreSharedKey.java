@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,6 +52,16 @@ public class PreSharedKey
     @ParameterDsl( allowReferences= false )
     @Summary( "The hostname of the peer that uses the key. \nNeeded for (client) endpoints that connect to multiple servers." )
     private String host= null;
+
+    /**
+     * The virtual host to use the key for.
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The virtual host to use the key for." )
+    private String virtualHost= null;
 
     /**
      * The port of the peer that uses the key.
@@ -134,6 +144,22 @@ public class PreSharedKey
     public void setHost( String host )
     {
         this.host= host;
+    }
+
+    /**
+     * @return the virtualHost
+     */
+    public String getVirtualHost()
+    {
+        return virtualHost;
+    }
+
+    /**
+     * @param virtualHost the virtualHost to set
+     */
+    public void setVirtualHost( String virtualHost )
+    {
+        this.virtualHost= virtualHost;
     }
 
     /**

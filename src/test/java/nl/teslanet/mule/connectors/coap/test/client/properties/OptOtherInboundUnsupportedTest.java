@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -42,6 +42,12 @@ public class OptOtherInboundUnsupportedTest extends AbstractOtherOptionInboundPr
     }
 
     @Override
+    protected String getOptionAlias()
+    {
+        return "option-65304";
+    }
+
+    @Override
     protected int getOptionNumber()
     {
         return 65304;
@@ -59,7 +65,7 @@ public class OptOtherInboundUnsupportedTest extends AbstractOtherOptionInboundPr
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        //TODO cf3 option in response is ignored silently
+        //TODO option in response is ignored silently  by cf
         return Collections.unmodifiableList( new LinkedList<>() );
     }
 }

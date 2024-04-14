@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,11 +31,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
@@ -367,13 +369,15 @@ public class DefaultRequestOptionsAttributesTest
         }
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
-        List< ? extends OtherOptionAttribute > options= attributes.getOtherOptions();
+        MultiMap< String, OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", 4, options.size() );
-        for ( int i= 0; i < 4; i++ )
+        int i= 0;
+        for ( Entry< String, OtherOptionAttribute > entry : options.entryList() )
         {
-            assertEquals( "coap.opt.other has wrong number", optionsDefs[i].getNumber(), options.get( i ).getNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", values[i], IOUtils.toByteArray( options.get( i ).getValue() ) );
+            assertEquals( "coap.opt.other has wrong number", optionsDefs[i].getNumber(), entry.getValue().getNumber() );
+            assertArrayEquals( "coap.opt.other has wrong value", values[i], IOUtils.toByteArray( entry.getValue().getValue() ) );
+            i++;
         }
     }
 }

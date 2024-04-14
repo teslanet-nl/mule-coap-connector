@@ -36,8 +36,13 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<description>Mule CoAP connector test application</description>
 
 	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:socket-params bindToPort="5683" />
-		<coap:exchange-params exchangeLifetime="1s"/>
+		<coap:socket-params  bindToPort="5683" />
+        <coap:option-params >
+			<coap:other-option-configs>
+				<coap:other-option-config alias="option-65013" number="65013" format="OPAQUE" singleValue="false" maxBytes="200" />
+			</coap:other-option-configs>
+		</coap:option-params>
+        <coap:exchange-params exchangeLifetime="1s"/>
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -57,9 +62,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 				<coap:response-options>
-					<coap:other-response-options>
-						<coap:other-option number="65013" value="#[ vars.value ]"/>
-					</coap:other-response-options>
+					<coap:other-options>
+						<coap:other-option alias="option-65013" value="#[ vars.value ]"/>
+					</coap:other-options>
 				</coap:response-options>
 		</coap:listener>
 		

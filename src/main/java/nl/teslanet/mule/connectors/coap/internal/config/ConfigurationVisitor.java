@@ -804,8 +804,7 @@ public class ConfigurationVisitor implements ConfigVisitor
     @Override
     public void visit( SocketParams toVisit )
     {
-        //TODO cf3 reuse address?
-        //host and port are configured on endpoint
+        //reuse address, host and port are configured on endpoint
         if ( toVisit.receiveBuffer != null )
         {
             config.set( UdpConfig.UDP_RECEIVE_BUFFER_SIZE, toVisit.receiveBuffer );

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,8 +26,11 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
+
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
+import nl.teslanet.mule.connectors.coap.test.utils.TestOtherOptionAttribute;
 
 
 /**
@@ -36,6 +39,8 @@ import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
  */
 public abstract class AbstractOtherOptionInboundPropertyTestCase extends AbstractInboundPropertyTestCase
 {
+    abstract protected String getOptionAlias();
+
     abstract protected int getOptionNumber();
 
     abstract protected byte[][] getOptionValues();
@@ -46,15 +51,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        LinkedList< OtherOptionAttribute > found= new LinkedList<>();
-        for ( OtherOptionAttribute otherOption : attributes.getOptions().getOtherOptions() )
-        {
-            if ( otherOption.getNumber() == getOptionNumber() )
-            {
-                found.add( otherOption );
-            }
-        }
-        return Collections.unmodifiableList( found );
+        return attributes.getOptions().getOther().getAll( getOptionAlias() );
     }
 
     /**
@@ -66,7 +63,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
         LinkedList< OtherOptionAttribute > list= new LinkedList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
-            OtherOptionAttribute otherOption= new OtherOptionAttribute( getOptionNumber(), getOptionValues()[i] );
+            OtherOptionAttribute otherOption= new TestOtherOptionAttribute( new OpaqueOptionDefinition( getOptionNumber(), getOptionAlias() ), getOptionValues()[i] );
             list.add( otherOption );
         }
         return Collections.unmodifiableList( list );
@@ -81,7 +78,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     {
         return PropertyType.CollectionOfObject;
     }
-    
+
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractInboundPropertyTestCase#getStrategy()
      */

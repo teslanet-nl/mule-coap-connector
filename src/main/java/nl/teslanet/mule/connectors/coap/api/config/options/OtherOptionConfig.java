@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -58,15 +58,15 @@ public class OtherOptionConfig
     protected int number;
 
     /**
-     * The type of the other option.
+     * The format of the other option.
      */
     @Parameter
     @Optional( defaultValue= "OPAQUE" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "The type of the other option." )
+    @Summary( "The format of the other option." )
     @Example( "INTEGER" )
-    protected OptionType optionType= OptionType.OPAQUE;
+    protected OptionFormat format= OptionFormat.OPAQUE;
 
     /**
      * The multiplicity of the other option.
@@ -76,7 +76,6 @@ public class OtherOptionConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( "The type of the other option." )
-    @Example( "INTEGER" )
     protected boolean singleValue= true;
 
     /**
@@ -87,8 +86,8 @@ public class OtherOptionConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( "The minimum number of bytes of the option." )
-    @Example( "0" )
-    protected Integer minBytes= 0;
+    @Example( "1" )
+    protected int minBytes= 0;
 
     /**
      * The value of the other option.
@@ -99,7 +98,7 @@ public class OtherOptionConfig
     @ParameterDsl( allowReferences= false )
     @Summary( "The maximum number of bytes of the option." )
     @Example( "4" )
-    protected Integer maxBytes= Integer.MAX_VALUE;
+    protected int maxBytes= Integer.MAX_VALUE;
 
     /**
      * @return The alias.
@@ -134,19 +133,19 @@ public class OtherOptionConfig
     }
 
     /**
-     * @return The optionType.
+     * @return The option format.
      */
-    public OptionType getOptionType()
+    public OptionFormat getFormat()
     {
-        return optionType;
+        return format;
     }
 
     /**
-     * @param optionType The optionType to set.
+     * @param format The option format to set.
      */
-    public void setOptionType( OptionType optionType )
+    public void setFormat( OptionFormat format )
     {
-        this.optionType= optionType;
+        this.format= format;
     }
 
     /**
@@ -176,7 +175,7 @@ public class OtherOptionConfig
     /**
      * @param minBytes The minBytes to set.
      */
-    public void setMinBytes( Integer minBytes )
+    public void setMinBytes( int minBytes )
     {
         this.minBytes= minBytes;
     }
@@ -184,7 +183,7 @@ public class OtherOptionConfig
     /**
      * @return The maxBytes.
      */
-    public Integer getMaxBytes()
+    public int getMaxBytes()
     {
         return maxBytes;
     }
@@ -192,7 +191,7 @@ public class OtherOptionConfig
     /**
      * @param maxBytes The maxBytes to set.
      */
-    public void setMaxBytes( Integer maxBytes )
+    public void setMaxBytes( int maxBytes )
     {
         this.maxBytes= maxBytes;
     }
@@ -218,20 +217,20 @@ public class OtherOptionConfig
     }
 
     /**
-     * Constructor with options.
-     * @param alias
-     * @param number
-     * @param optionType
-     * @param singleValue
-     * @param minBytes
-     * @param maxBytes
+     * Constructor with parameters.
+     * @param alias The option alias.
+     * @param number The option number.
+     * @param format The option format.
+     * @param singleValue The option alias.
+     * @param minBytes The minimum length in bytes, may be null.
+     * @param maxBytes The maximum length in bytes, may be null.
      */
-    public OtherOptionConfig( String alias, int number, OptionType optionType, boolean singleValue, Integer minBytes, Integer maxBytes )
+    public OtherOptionConfig( String alias, int number, OptionFormat format, boolean singleValue, int minBytes, int maxBytes )
     {
         super();
         this.alias= alias;
         this.number= number;
-        this.optionType= optionType;
+        this.format= format;
         this.singleValue= singleValue;
         this.minBytes= minBytes;
         this.maxBytes= maxBytes;

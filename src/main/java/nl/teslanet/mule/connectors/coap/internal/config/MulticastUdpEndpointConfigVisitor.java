@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -36,7 +35,6 @@ import org.eclipse.californium.elements.UdpMulticastConnector;
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
-import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -95,33 +93,14 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     }
 
     /**
-     * Visit socket parameters.
-     * @param toVisit The object to visit.
+     * Build the endpoint using the configuration this visitor has collected.
+     * @return The Endpoint.
+     * @throws EndpointConstructionException When the configuration cannot be used to create an endpoint.
      */
     @Override
-    public void visit( SocketParams toVisit )
+    public CoapEndpoint getEndpoint() throws EndpointConstructionException
     {
-        //Do not call super visit because UDP endpoint bind configuration is not allowed by Cf when connector is set.  
-        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : 0 );
-
-        if ( toVisit.bindToHost != null )
-        {
-            connectorBuilder.setLocalAddress( new InetSocketAddress( toVisit.bindToHost, port ) );
-        }
-        else
-        {
-            connectorBuilder.setLocalAddress( new InetSocketAddress( port ) );
-        }
-    }
-
-    /**
-     * Get the Builder that is ready to build the endpoint.
-     * @return The Endpoint Builder.
-     * @throws EndpointConstructionException  When the configuration cannot be create an endpoint builder.
-     */
-    @Override
-    public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
-    {
+        connectorBuilder.setLocalAddress( getLocalAddress() );
         if ( outgoingInterface != null )
         {
             try
@@ -179,10 +158,10 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                 connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
             }
         }
-        endPointBuilder.setConfiguration( this.getConfiguration() );
+        endpointBuilder.setConfiguration( this.getConfiguration() );
         UdpMulticastConnector connector= connectorBuilder.build();
         connector.setLoopbackMode( disableLoopback );
-        endPointBuilder.setConnector( connector );
-        return endPointBuilder;
+        endpointBuilder.setConnector( connector );
+        return endpointBuilder.build();
     }
 }

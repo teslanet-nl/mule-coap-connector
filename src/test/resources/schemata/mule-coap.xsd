@@ -32,6 +32,7 @@
         <xs:attribute type="mule:substitutableInt" use="optional" name="bindToPort"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="receiveBuffer"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="sendBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="reuseAddress"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -64,7 +65,7 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:attribute type="xs:string" use="required" name="alias"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="required" name="number"></xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.options.OptionTypeEnumType" use="optional" default="OPAQUE" name="optionType"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.options.OptionFormatEnumType" use="optional" default="OPAQUE" name="format"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="singleValue"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="0" name="minBytes"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="maxBytes"></xs:attribute>
@@ -638,6 +639,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="host"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="virtualHost"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="port"></xs:attribute>
         <xs:attribute type="xs:string" use="required" name="identity"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="key"></xs:attribute>
@@ -2031,7 +2033,7 @@
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.OtherOption">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:expressionInt" use="required" name="number"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="alias"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="value"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -2048,7 +2050,7 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="other-request-options">
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
             <xs:complexType>
               <xs:sequence>
                 <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
@@ -2064,7 +2066,7 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="requestSize"></xs:attribute>
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2440,7 +2442,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="other-response-options">
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
             <xs:complexType>
               <xs:sequence>
                 <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
@@ -2455,7 +2457,7 @@
         <xs:attribute type="mule:expressionList" use="optional" name="locationQuery"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="responseSize"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="acceptableRequestSize"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="otherResponseOptions"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2728,7 +2730,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.options.OptionTypeEnumType">
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.options.OptionFormatEnumType">
     <xs:union>
       <xs:simpleType>
         <xs:restriction base="xs:string">

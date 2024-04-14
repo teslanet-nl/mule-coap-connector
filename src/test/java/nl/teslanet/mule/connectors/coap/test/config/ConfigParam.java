@@ -36,11 +36,18 @@ import org.eclipse.californium.scandium.config.DtlsConfig;
  */
 public enum ConfigParam
 {
-    // endpoint
-    logCoapMessages(null),
-    bindToHost(null),
-    bindToPort(null),
-    bindToSecurePort(null),
+    //endpoint
+    ENDPOINT_LOGCOAPMESSAGES(null),
+    ENDPOINT_BINDTOHOST(null),
+    ENDPOINT_BINDTOPORT(null),
+    ENDPOINT_BINDTOSECUREPORT(null),
+    ENDPOINT_REUSEADDRESS(null),
+    ENDPOINT_OTHEROPTION_ALIAS(null),
+    ENDPOINT_OTHEROPTION_NUMBER(null),
+    ENDPOINT_OTHEROPTION_TYPE(null),
+    ENDPOINT_OTHEROPTION_SINGLEVALUE(null),
+    ENDPOINT_OTHEROPTION_MINBYTES(null),
+    ENDPOINT_OTHEROPTION_MAXBYTES(null),
 
     // module COAP
     maxActivePeers(CoapConfig.MAX_ACTIVE_PEERS),
@@ -94,6 +101,10 @@ public enum ConfigParam
     // all deduplicators
     deduplicationAutoReplace(CoapConfig.DEDUPLICATOR_AUTO_REPLACE),
 
+    //coap on endpoint level
+    responseMatching(CoapConfig.RESPONSE_MATCHING),
+    strictEmptyMessageFormat(CoapConfig.STRICT_EMPTY_MESSAGE_FORMAT),
+
     //dtls params
 
     //DTLS_SESSION_TIMEOUT(DtlsConfig.DTLS_SESSION_TIMEOUT), //not supported by cf
@@ -105,7 +116,7 @@ public enum ConfigParam
     DTLS_RETRANSMISSION_INIT_RANDOM(DtlsConfig.DTLS_RETRANSMISSION_INIT_RANDOM),
     DTLS_RETRANSMISSION_TIMEOUT_SCALE(DtlsConfig.DTLS_RETRANSMISSION_TIMEOUT_SCALE),
     DTLS_RETRANSMISSION_BACKOFF(DtlsConfig.DTLS_RETRANSMISSION_BACKOFF),
-    SUPPORT_CONNECTION_ID(DtlsConfig.DTLS_CONNECTION_ID_LENGTH),
+    DTLS_SUPPORT_CONNECTION_ID(DtlsConfig.DTLS_CONNECTION_ID_LENGTH),
     DTLS_SERVER_USE_SESSION_ID(DtlsConfig.DTLS_SERVER_USE_SESSION_ID),
     DTLS_USE_EARLY_STOP_RETRANSMISSION(DtlsConfig.DTLS_USE_EARLY_STOP_RETRANSMISSION),
     DTLS_RECORD_SIZE_LIMIT(DtlsConfig.DTLS_RECORD_SIZE_LIMIT),
@@ -155,10 +166,6 @@ public enum ConfigParam
     DTLS_MAC_ERROR_FILTER_QUIET_TIME(DtlsConfig.DTLS_MAC_ERROR_FILTER_QUIET_TIME),
     DTLS_MAC_ERROR_FILTER_THRESHOLD(DtlsConfig.DTLS_MAC_ERROR_FILTER_THRESHOLD),
 
-    //endpoint level.
-    responseMatching(CoapConfig.RESPONSE_MATCHING),
-    strictEmptyMessageFormat(CoapConfig.STRICT_EMPTY_MESSAGE_FORMAT),
-
     //secure
     pskHost(null),
     pskPort(null),
@@ -174,14 +181,6 @@ public enum ConfigParam
 
     //server
     protocolStageThreadCount(CoapConfig.PROTOCOL_STAGE_THREAD_COUNT),
-
-    //endpoint
-    ENDPOINT_OTHEROPTION_ALIAS(null),
-    ENDPOINT_OTHEROPTION_NUMBER(null),
-    ENDPOINT_OTHEROPTION_TYPE(null),
-    ENDPOINT_OTHEROPTION_SINGLEVALUE(null),
-    ENDPOINT_OTHEROPTION_MINBYTES(null),
-    ENDPOINT_OTHEROPTION_MAXBYTES(null),
 
     //module udp
     UDP_RECEIVER_THREAD_COUNT(UdpConfig.UDP_RECEIVER_THREAD_COUNT),

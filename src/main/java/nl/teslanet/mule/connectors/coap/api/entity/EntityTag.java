@@ -170,7 +170,7 @@ public final class EntityTag implements Comparable< EntityTag >
      * Hexadecimal values a-f will be lower case.
      * @return The string containing the hexadecimal representation or empty string when etag has no value.
      */
-    public String getValueAsHexString()
+    public String getValueAsHex()
     {
         return OptionUtils.toHexString( value );
     }
@@ -181,7 +181,7 @@ public final class EntityTag implements Comparable< EntityTag >
     @Override
     public String toString()
     {
-        return "ETag { " + getValueAsHexString() + " }";
+        return "ETag{ " + getValueAsHex() + " }";
     }
 
     /**

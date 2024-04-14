@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -44,14 +44,15 @@
         <AsyncLogger name="org.quartz" level="WARN"/>
         <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="WARN"/>
 
-        <!-- Mule logger -->
-        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
+        <!-- Mule loggers -->
+        <AsyncLogger name="org.mule.runtime" level="WARN"/>
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="WARN"/>
         
-        <!-- Cf scandium logger -->
-        <AsyncLogger name="org.eclipse.californium.scandium" level="INFO"/>
+        <!-- Cf loggers -->
+        <AsyncLogger name="org.eclipse.californium" level="WARN"/>
         
-        <!-- Test loggers -->
-        <AsyncLogger name="nl.teslanet.mule.connectors.coap.test" level="WARN"/>
+        <!-- Teslanet loggers -->
+        <AsyncLogger name="nl.teslanet" level="WARN"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>

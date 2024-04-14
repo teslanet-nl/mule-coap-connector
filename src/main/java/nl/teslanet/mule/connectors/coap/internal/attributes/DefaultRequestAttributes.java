@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,12 +23,11 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.options.ToStringStyle;
 
 
 /**
@@ -99,6 +98,6 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
+        return ReflectionToStringBuilder.toString( this, new ToStringStyle() );
     }
 }

@@ -40,7 +40,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 
 
 /**
- * Tests the implementation of the Etag class.
+ * Tests the option utils.
  *
  */
 public class OptionUtilsTest

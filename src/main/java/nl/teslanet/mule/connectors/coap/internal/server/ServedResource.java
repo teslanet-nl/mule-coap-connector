@@ -139,7 +139,6 @@ public class ServedResource extends CoapResource
      */
     public ServedResource( ResourceConfig resource )
     {
-        //TODO cf3 catch '/' exception
         super( resource.getResourceName() );
         configure( resource );
 
@@ -410,7 +409,7 @@ public class ServedResource extends CoapResource
     {
         if ( callback == null )
         {
-            exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
+            exchange.respond( ResponseCode.NOT_IMPLEMENTED, "NO LISTENER" );
             if ( LOGGER.isWarnEnabled( ERROR_RESPONSE_MARKER ) )
             {
                 try

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,11 +25,14 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.config.CoapConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -38,6 +41,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.core.api.lifecycle.StartException;
@@ -62,10 +66,10 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
-import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -192,13 +196,17 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     private ResourceRegistry registry= null;
 
+    /**
+     * Other options that the server expects.
+     */
+    private ConcurrentHashMap< String, OptionDefinition > otherOptionDefs= new ConcurrentHashMap<>();
+
     /* (non-Javadoc)
      * @see org.mule.runtime.api.lifecycle.Initialisable#initialise()
      */
     @Override
     public void initialise() throws InitialisationException
     {
-        CoapConnector.setSchedulerService( schedulerService, schedulerConfig );
         org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration.createStandardWithoutFile();
         if ( protocolStageThreadCount != null )
         {
@@ -245,6 +253,21 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 coapServer.addEndpoint( operationalEndpoint.getCoapEndpoint() );
+                for ( OptionDefinition optionDef : operationalEndpoint.getOtherOptionsDefs() )
+                {
+                    if ( otherOptionDefs.containsKey( optionDef.getName() ) )
+                    {
+                        OptionDefinition presentDef= otherOptionDefs.get( optionDef.getName() );
+                        if ( !MessageUtils.isEqual( presentDef, optionDef ) )
+                        {
+                            LOGGER.error( "{} receives conflicting other option {} from endpoint {}", this, optionDef.getName(), operationalEndpoint );
+                        }
+                    }
+                    else
+                    {
+                        otherOptionDefs.put( optionDef.getName(), optionDef );
+                    }
+                }
                 LOGGER.info( "{} connected to {}", this, operationalEndpoint );
             }
             catch ( Exception e )
@@ -262,6 +285,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void dispose()
     {
         coapServer.destroy();
+        otherOptionDefs.clear();
         OperationalEndpoint.disposeAll( this );
         LOGGER.info( "{} disposed.", this );
     }
@@ -272,6 +296,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void start() throws MuleException
     {
+        Scheduler ioScheduler= schedulerService.ioScheduler( schedulerConfig );
+        Scheduler cpuLightScheduler= schedulerService.cpuLightScheduler( schedulerConfig );
+        coapServer.setExecutors( ioScheduler, cpuLightScheduler, true );
         try
         {
             if ( resources != null )
@@ -280,8 +307,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 {
                     registry.add( null, resourceConfig );
                 }
-                coapServer.start();
             }
+
+            coapServer.start();
         }
         catch ( Exception e )
         {
@@ -364,6 +392,14 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     }
 
     /**
+     * @return the otherOptionDefs
+     */
+    public ConcurrentMap< String, OptionDefinition > getOtherOptionDefs()
+    {
+        return otherOptionDefs;
+    }
+
+    /**
      * @return the resources
      */
     public List< ResourceConfig > getResources()
@@ -393,6 +429,22 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void setAdditionalEndpoints( List< AdditionalEndpoint > endpoints )
     {
         this.additionalEndpoints= endpoints;
+    }
+
+    /**
+     * @return the schedulerService
+     */
+    public SchedulerService getSchedulerService()
+    {
+        return schedulerService;
+    }
+
+    /**
+     * @return the schedulerConfig
+     */
+    public SchedulerConfig getSchedulerConfig()
+    {
+        return schedulerConfig;
     }
 
     /**

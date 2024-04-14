@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -41,13 +41,17 @@ import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
  */
 public class OptionParams implements VisitableConfig
 {
-    //TODO cf3 non critical options need to be understood as well. Not suitable for proxy.. 
+    //TODO non critical options need to be understood as well. Not suitable for proxy.. 
     /**
-    * The list of critical other options that the endpoint understands. 
+    * The list of other options that the endpoint understands. 
     * Messages containing critical options that are not understood will be refused.
+    * Elective options that are not understood will be ignored.
     */
     @Parameter
-    @Summary( value= "The critical other options that the endpoint understands. \nMessages containing critical options that are not understood will be rejected." )
+    @Summary(
+                    value= "The other options that the endpoint understands. " + "\nMessages containing critical options that are not understood will be rejected. "
+                        + "\nElective options that are not understood will be ignored."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
     public List< OtherOptionConfig > otherOptionConfigs;

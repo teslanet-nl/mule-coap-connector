@@ -72,18 +72,18 @@ public class ETagTest
         EntityTag etag10= new EntityTag( etagValue1, 16 );
         EntityTag etag11= new EntityTag( etagValue6, 16 );
 
-        assertEquals( "ETag contruction from null String failed", "", etag0.getValueAsHexString() );
-        assertEquals( "ETag contruction from null String failed", "", etag1.getValueAsHexString() );
-        assertEquals( "ETag contruction from null Byte[] failed", "", etag2.getValueAsHexString() );
-        assertEquals( "ETag contruction from null Byte[] failed", "", etag3.getValueAsHexString() );
-        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag7.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag8.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag9.getValueAsHexString() );
-        assertEquals( "ETag contruction with radix from null String failed", "", etag10.getValueAsHexString() );
-        assertEquals( "ETag contruction with radix from empty String failed", "", etag11.getValueAsHexString() );
+        assertEquals( "ETag contruction from null String failed", "", etag0.getValueAsHex() );
+        assertEquals( "ETag contruction from null String failed", "", etag1.getValueAsHex() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag2.getValueAsHex() );
+        assertEquals( "ETag contruction from null Byte[] failed", "", etag3.getValueAsHex() );
+        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHex() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHex() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHex() );
+        assertEquals( "ETag contruction from empty String failed", "", etag7.getValueAsHex() );
+        assertEquals( "ETag contruction from empty String failed", "", etag8.getValueAsHex() );
+        assertEquals( "ETag contruction from empty String failed", "", etag9.getValueAsHex() );
+        assertEquals( "ETag contruction with radix from null String failed", "", etag10.getValueAsHex() );
+        assertEquals( "ETag contruction with radix from empty String failed", "", etag11.getValueAsHex() );
     }
 
     @Test
@@ -241,10 +241,10 @@ public class ETagTest
         String hexValue2= "afb990";
         String hexValue3= "1122334455667788";
 
-        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new EntityTag( etagValue0 ).getValueAsHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new EntityTag( etagValue1 ).getValueAsHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new EntityTag( etagValue2 ).getValueAsHexString() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new EntityTag( etagValue3 ).getValueAsHexString() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue0, new EntityTag( etagValue0 ).getValueAsHex() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new EntityTag( etagValue1 ).getValueAsHex() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new EntityTag( etagValue2 ).getValueAsHex() );
+        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new EntityTag( etagValue3 ).getValueAsHex() );
     }
 
     @Test
@@ -254,10 +254,10 @@ public class ETagTest
         byte[] etagValue1= { (byte) 0x00 };
         byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
         byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
-        String hexValue0= "ETag {  }";
-        String hexValue1= "ETag { 00 }";
-        String hexValue2= "ETag { afb990 }";
-        String hexValue3= "ETag { 1122334455667788 }";
+        String hexValue0= "ETag{  }";
+        String hexValue1= "ETag{ 00 }";
+        String hexValue2= "ETag{ afb990 }";
+        String hexValue3= "ETag{ 1122334455667788 }";
 
         assertEquals( "ETag.toHexString gives wrong value", hexValue0, new EntityTag( etagValue0 ).toString() );
         assertEquals( "ETag.toHexString gives wrong value", hexValue1, new EntityTag( etagValue1 ).toString() );
@@ -285,15 +285,15 @@ public class ETagTest
         EntityTag etag4= EntityTag.valueOf( etagValue4 );
         EntityTag etag5= EntityTag.valueOf( etagValue5 );
 
-        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag0.getValueAsHexString() );
-        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag00.getValueAsHexString() );
-        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag000.getValueAsHexString() );
-        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag0000.getValueAsHexString() );
-        assertEquals( "ETag contruction from String failed", etagValue2, etag1.getValueAsHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", etagValue2, etag2.getValueAsHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", etagValue2, etag3.getValueAsHexString() );
-        assertEquals( "ETag contruction from Long failed", etagValue2, etag4.getValueAsHexString() );
-        assertEquals( "ETag contruction from Long failed", etagValue6, etag5.getValueAsHexString() );
+        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag0.getValueAsHex() );
+        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag00.getValueAsHex() );
+        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag000.getValueAsHex() );
+        assertEquals( "ETag contruction from null failed", OptionUtils.EMPTY_STRING, etag0000.getValueAsHex() );
+        assertEquals( "ETag contruction from String failed", etagValue2, etag1.getValueAsHex() );
+        assertEquals( "ETag contruction from Byte[] failed", etagValue2, etag2.getValueAsHex() );
+        assertEquals( "ETag contruction from Byte[] failed", etagValue2, etag3.getValueAsHex() );
+        assertEquals( "ETag contruction from Long failed", etagValue2, etag4.getValueAsHex() );
+        assertEquals( "ETag contruction from Long failed", etagValue6, etag5.getValueAsHex() );
     }
 
     @Test
@@ -319,16 +319,16 @@ public class ETagTest
         EntityTag etag8= EntityTag.valueOf( etagValue8 );
         EntityTag etag9= EntityTag.valueOf( etagValue9 );
 
-        assertEquals( "ETag contruction from null failed", "", etag1.getValueAsHexString() );
-        assertEquals( "ETag contruction from String failed", "", etag1.getValueAsHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", "", etag2.getValueAsHexString() );
-        assertEquals( "ETag contruction from Byte[] failed", "", etag3.getValueAsHexString() );
-        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHexString() );
-        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHexString() );
-        assertEquals( "ETag contruction from 0 long failed", "", etag7.getValueAsHexString() );
-        assertEquals( "ETag contruction from null Integer failed", "", etag8.getValueAsHexString() );
-        assertEquals( "ETag contruction from 0 int failed", "", etag9.getValueAsHexString() );
+        assertEquals( "ETag contruction from null failed", "", etag1.getValueAsHex() );
+        assertEquals( "ETag contruction from String failed", "", etag1.getValueAsHex() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag2.getValueAsHex() );
+        assertEquals( "ETag contruction from Byte[] failed", "", etag3.getValueAsHex() );
+        assertEquals( "ETag contruction from null Long failed", "", etag4.getValueAsHex() );
+        assertEquals( "ETag contruction from empty Byte[] failed", "", etag5.getValueAsHex() );
+        assertEquals( "ETag contruction from empty String failed", "", etag6.getValueAsHex() );
+        assertEquals( "ETag contruction from 0 long failed", "", etag7.getValueAsHex() );
+        assertEquals( "ETag contruction from null Integer failed", "", etag8.getValueAsHex() );
+        assertEquals( "ETag contruction from 0 int failed", "", etag9.getValueAsHex() );
     }
 
     @Test

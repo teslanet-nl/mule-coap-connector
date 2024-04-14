@@ -217,25 +217,25 @@ public class DifferentListenersTest extends AbstractServerTestCase
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.post( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.put( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.delete();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
     }
     
@@ -254,19 +254,19 @@ public class DifferentListenersTest extends AbstractServerTestCase
         response= client.post( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.put( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.delete();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
     }
 
@@ -279,7 +279,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.post( path, 0 );
@@ -291,13 +291,13 @@ public class DifferentListenersTest extends AbstractServerTestCase
         response= client.put( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.delete();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
     }
 
@@ -310,13 +310,13 @@ public class DifferentListenersTest extends AbstractServerTestCase
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.post( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.put( path, 0 );
@@ -328,7 +328,7 @@ public class DifferentListenersTest extends AbstractServerTestCase
         response= client.delete();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
     }
 
@@ -341,19 +341,19 @@ public class DifferentListenersTest extends AbstractServerTestCase
         CoapResponse response= client.get();
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.post( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.put( path, 0 );
 
         assertNotNull( "get gave no response", response );
-        assertEquals( "response code should be INTERNAL_SERVER_ERROR", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+        assertEquals( "response code should be NOT_IMPLEMENTED", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
         assertEquals( "response payload has wrong value", "NO LISTENER", response.getResponseText() );
 
         response= client.delete();

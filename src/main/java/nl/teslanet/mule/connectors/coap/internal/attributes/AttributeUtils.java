@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,17 +25,21 @@ package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 import java.util.List;
 
+import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
+import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
+import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 
 
 /**
@@ -340,5 +344,21 @@ public class AttributeUtils
             value= parameterString.substring( separatorIndex + 1 );
         }
         list.add( new QueryParamAttribute( key, value ) );
+    }
+
+    /**
+     * Create other option attributes.
+     * @param otherCoapOptions The received other coap options.
+     * @return The Map containing other options attributes.
+     */
+    public static MultiMap< String, OtherOptionAttribute > createOthers( List< Option > otherCoapOptions )
+    {
+        MultiMap< String, OtherOptionAttribute > others= new MultiMap<>();
+        for ( Option other : otherCoapOptions )
+        {
+            DefaultOtherOptionAttribute otherOptionAttribute= new DefaultOtherOptionAttribute( other );
+            others.put( otherOptionAttribute.getAlias(), otherOptionAttribute );
+        }
+        return others.toImmutableMultiMap();
     }
 }

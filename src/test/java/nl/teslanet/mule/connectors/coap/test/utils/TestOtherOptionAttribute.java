@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.options;
+package nl.teslanet.mule.connectors.coap.test.utils;
 
 
 import java.io.InputStream;
@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.option.OptionDefinition;
+import org.mule.runtime.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
@@ -37,14 +38,14 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
- * Default other option attribute. 
+ * Test other option attribute. 
  */
-public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
+public final class TestOtherOptionAttribute implements OtherOptionAttribute
 {
     /**
      * Wrong type exception message format.
      */
-    private static final String FORMAT_WRONG_TYPE= "Option{ %s } is not of type %s.";
+    private final String FORMAT_WRONG_TYPE= "OtherOption { %s } is not of type %s.";
 
     /**
      * The definition of the option.
@@ -53,20 +54,23 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
 
     /**
      * Constructor
-     * @param optionDef The definition of the other option.
-     * @param value The option value.
+     * @param number The number of the option.
+     * @param value The value of the option.
+     * @param optionType 
      */
-    public DefaultOtherOptionAttribute( OptionDefinition optionDef, byte[] value )
+    public TestOtherOptionAttribute( OptionDefinition optionDef, byte[] value )
     {
         super();
         this.option= optionDef.create( value );
     }
 
     /**
-     * Copy constructor from Cf Option
-     * @param option The Cf Option to copy from.
+     * Constructor from Cf Option
+     * @param number The number of the option.
+     * @param value The value of the option.
+     * @param optionType 
      */
-    public DefaultOtherOptionAttribute( Option option )
+    public TestOtherOptionAttribute( Option option )
     {
         super();
         this.option= option;
@@ -74,7 +78,8 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
 
     /**
      * Get the alias of this other option.
-     * @return The option alias.
+     *
+     * @return The option number.
      */
     @Override
     public String getAlias()
@@ -84,6 +89,7 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
 
     /**
      * Get the number of this other option.
+     *
      * @return The option number.
      */
     @Override
@@ -134,6 +140,7 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
 
     /**
      * Get the value of this other option.
+     *
      * @return The option value if any, otherwise null.
      */
     @Override
@@ -151,7 +158,7 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
     {
         if ( option.getDefinition().getFormat() != org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.INTEGER )
             throw new NumberFormatException( String.format( FORMAT_WRONG_TYPE, option.getDefinition().getName(), OptionFormat.INTEGER.toString() ) );
-        return OptionUtils.toLong( option.getValue() );
+        return option.getLongValue();
     }
 
     /**
@@ -179,6 +186,7 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
 
     /**
      * Checks if option is critical.
+     *
      * @return {@code true} if is option critical, otherwise {@code false}.
      */
     @Override
@@ -232,12 +240,12 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
         {
             return true;
         }
-        if ( !( obj instanceof DefaultOtherOptionAttribute ) )
+        if ( !( obj instanceof OtherOptionAttribute ) )
         {
             return false;
         }
-        DefaultOtherOptionAttribute other= (DefaultOtherOptionAttribute) obj;
-        return ( getNumber() == other.getNumber() ) && Arrays.equals( getValueAsBytes(), other.getValueAsBytes() );
+        OtherOptionAttribute other= (OtherOptionAttribute) obj;
+        return ( getNumber() == other.getNumber() ) && Arrays.equals( getValueAsBytes(), IOUtils.toByteArray( getValue() ) );
     }
 
     /**
@@ -247,7 +255,7 @@ public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
     public String toString()
     {
         StringBuilder builder= new StringBuilder();
-        builder.append( "Option{" );
+        builder.append( "TestOption{" );
         builder.append( " alias=" ).append( getAlias() );
         builder.append( ", number=" ).append( getNumber() );
         switch ( option.getDefinition().getFormat() )

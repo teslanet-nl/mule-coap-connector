@@ -171,14 +171,16 @@ public class ConfigParams
         switch ( param )
         {
             //from EndpointConfig
-            case logCoapMessages:
+            case ENDPOINT_LOGCOAPMESSAGES:
                 return new ConfigDescription( param, "false", "false", "true", null, ConfigDescription.TEST_ALL );
-            case bindToHost:
+            case ENDPOINT_BINDTOHOST:
                 return new ConfigDescription( param, null, null, "somehost.org", "somehost.org", ConfigDescription.TEST_ALL );
-            case bindToPort:
+            case ENDPOINT_BINDTOPORT:
                 return new ConfigDescription( param, null, "5683", "9983", "9983", ConfigDescription.TEST_UDP | ConfigDescription.TEST_DTLS );
-            case bindToSecurePort:
-                return new ConfigDescription( param, null, "5684", "9984", "9984", ConfigDescription.TEST_DTLS );
+            case ENDPOINT_BINDTOSECUREPORT:
+                return new ConfigDescription( param, null, "5683", "9983", "9983", ConfigDescription.TEST_UDP | ConfigDescription.TEST_DTLS );
+            case ENDPOINT_REUSEADDRESS:
+                return new ConfigDescription( param, "false", "false", "true", "true", ConfigDescription.TEST_ALL );
             case maxActivePeers:
                 return new ConfigDescription( param, null, "150000", "25", "25", ConfigDescription.TEST_ALL );
             case maxPeerInactivityPeriod:
@@ -334,7 +336,7 @@ public class ConfigParams
                 return new ConfigDescription( param, null, "2.0", "3.3", "3.3", ConfigDescription.TEST_DTLS );
             case DTLS_RETRANSMISSION_BACKOFF:
                 return new ConfigDescription( param, null, null, "3", "3", ConfigDescription.TEST_DTLS );
-            case SUPPORT_CONNECTION_ID:
+            case DTLS_SUPPORT_CONNECTION_ID:
                 return new ConfigDescription( param, null, null, "true", "0", ConfigDescription.TEST_DTLS );
             case DTLS_CONNECTION_ID_LENGTH:
                 return new ConfigDescription( param, null, null, "5", "5", ConfigDescription.TEST_DTLS );

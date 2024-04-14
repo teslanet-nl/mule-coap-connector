@@ -141,7 +141,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     protected AbstractEndpoint( String name )
     {
-        configName= name;
+        this.configName= name;
         //initialise nullsafe params
         socketParams= new SocketParams();
         blockwiseParams= new BlockwiseParams();
@@ -160,7 +160,6 @@ public abstract class AbstractEndpoint implements VisitableConfig
     {
         this( name );
         socketParams.bindToPort= port;
-        exchangeParams= new ExchangeParams( new GroupedMidTracker() );
     }
 
     /**

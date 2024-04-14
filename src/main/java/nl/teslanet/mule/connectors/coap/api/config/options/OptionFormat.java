@@ -22,12 +22,11 @@
  */
 package nl.teslanet.mule.connectors.coap.api.config.options;
 
-
 /**
- * Enum for CoAP Option types.
+ * Enum for CoAP Option Formats.
  *
  */
-public enum OptionType
+public enum OptionFormat
 {
     EMPTY, INTEGER, OPAQUE, STRING
 }

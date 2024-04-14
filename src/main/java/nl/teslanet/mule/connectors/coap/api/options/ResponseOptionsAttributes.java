@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,6 +24,8 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 
 import java.util.List;
+
+import org.mule.runtime.api.util.MultiMap;
 
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
@@ -51,7 +53,7 @@ public class ResponseOptionsAttributes
 
     protected Integer observe= null;
 
-    protected List< OtherOptionAttribute > otherOptions= null;
+    protected MultiMap< String, OtherOptionAttribute > other= null;
 
     /**
      * @return The etag option.
@@ -118,10 +120,10 @@ public class ResponseOptionsAttributes
     }
 
     /**
-     * Get the other options.
+     * Get the other response options.
      */
-    public List< OtherOptionAttribute > getOtherOptions()
+    public MultiMap< String, OtherOptionAttribute > getOther()
     {
-        return otherOptions;
+        return other;
     }
 }

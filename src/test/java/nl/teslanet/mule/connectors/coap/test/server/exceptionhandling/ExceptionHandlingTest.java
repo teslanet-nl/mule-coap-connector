@@ -149,7 +149,7 @@ public class ExceptionHandlingTest extends AbstractServerTestCase
             case NO_HANDLER:
                 assertNotNull( "request gave no response", response );
                 assertFalse( "response does not indicate failure", response.isSuccess() );
-                assertEquals( "wrong responsecode", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+                assertEquals( "wrong responsecode", ResponseCode.NOT_IMPLEMENTED, response.getCode() );
                 assertEquals( "wrong response payload", "NO LISTENER", response.getResponseText() );
                 break;
             default:

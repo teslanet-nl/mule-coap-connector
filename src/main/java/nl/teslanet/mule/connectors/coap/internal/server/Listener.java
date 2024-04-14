@@ -23,7 +23,6 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
@@ -59,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseParams;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalExchangeException;
@@ -67,6 +66,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteA
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -197,10 +197,9 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
      * @param callbackContext
      * @throws InternalInvalidByteArrayValueException
      * @throws InternalInvalidResponseCodeException
-     * @throws IOException
-     * @throws InvalidEntityTagException
-     * @throws InternalInvalidOptionValueException
      * @throws InternalExchangeException 
+     * @throws InternalUnkownOptionException When given option was not defined. 
+     * @throws InvalidOptionValueException When given option value is invalid.
      */
     @OnSuccess
     @MediaType( value= "*/*", strict= false )
@@ -221,7 +220,8 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     ) throws InternalInvalidByteArrayValueException,
         InternalInvalidResponseCodeException,
         InternalInvalidOptionValueException,
-        InternalExchangeException
+        InternalExchangeException,
+        InternalUnkownOptionException
     {
         CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext.getVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE ).orElseThrow(
             () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" )
@@ -231,7 +231,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService, server.getOtherOptionDefs() );
         }
         //TODO add streaming & blockwise cooperation
         try

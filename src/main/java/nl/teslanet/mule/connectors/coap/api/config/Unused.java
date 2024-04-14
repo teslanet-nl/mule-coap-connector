@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -55,7 +55,7 @@ public class Unused implements VisitableConfig
     @Override
     public void accept( ConfigVisitor visitor )
     {
-        //visitor.visit( this );
+        //no visit
     }
 
 }

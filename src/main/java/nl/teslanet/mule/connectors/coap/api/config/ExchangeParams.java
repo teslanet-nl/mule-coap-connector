@@ -184,7 +184,6 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl( allowReferences= false )
     public String maxTransmitWait= null;
 
-    //TODO cf3 move to multicast params?
     /**
      * The expected maximum response delay over all servers 
      * that the client can send a multicast request to. See
@@ -223,7 +222,6 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl( allowReferences= false )
     public Integer tokenSizeLimit= null;
 
-    //TODO cf3 handle values <= 0, differentiate values in multicast-endpoint and udp-endpoint
     /**
      * Base for multicast MID range. Multicast requests use MIDs in the range [base...65536). 
      * A negative or zero value disables multicast requests.
@@ -300,7 +298,6 @@ public class ExchangeParams implements VisitableConfig
     @ParameterDsl( allowReferences= false )
     public Deduplicator deduplicator= null;
 
-    //TODO cf3 move to udp/multicast
     /**
      * Configuration of the congestion control algorithm, if any.
      */

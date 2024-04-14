@@ -1,8 +1,14 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Development milestone 3.0.0-M3
+
+* Development phase 3
+* Californium 3.11.0 upgrade 
+
 ## Development milestone 3.0.0-M2
 
+* Development phase 2
 * Californium 3.10.0 upgrade 
 
 ## Release 2.1.1

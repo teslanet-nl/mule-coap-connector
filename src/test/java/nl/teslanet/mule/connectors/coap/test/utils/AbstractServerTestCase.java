@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -56,7 +56,7 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
-        OpaqueOptionDefinition[] critical= { TestOptions.OTHER_OPTION_65012, TestOptions.OTHER_OPTION_65013, TestOptions.OTHER_OPTION_65308 };
+        OpaqueOptionDefinition[] critical= { TestOptions.OTHER_OPTION_65009, TestOptions.OTHER_OPTION_65012, TestOptions.OTHER_OPTION_65013, TestOptions.OTHER_OPTION_65308 };
 
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );
@@ -77,6 +77,7 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     {
         if ( client != null )
         {
+            client.getEndpoint().destroy();
             client.shutdown();
             client= null;
         }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -101,12 +101,12 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     protected abstract String getPropertyName();
 
     /**
-     * The property nr to set on outbound test
-     * @return the nr to set
+     * The alias of the option to set on outbound test
+     * @return the alias.
      */
-    protected int getOutboundOptionNr()
+    protected String getOutboundOptionAlias()
     {
-        return 0;
+        return null;
     }
 
     /**
@@ -233,6 +233,6 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
             "host",
             "127.0.0.1"
-        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).withVariable( "other", getOutboundOptionNr() ).run();
+        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).withVariable( "other", getOutboundOptionAlias() ).run();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.eclipse.californium.core.coap.Option;
 
+import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 //TDOD cf3 unsupported option is sent.
@@ -55,9 +56,15 @@ public class OptOtherOutboundUnsupportedTest extends AbstractOutboundPropertiesT
     }
 
     @Override
-    protected int getOutboundOptionNr()
+    protected String getOutboundOptionAlias()
     {
-        return getOption().getNumber();
+        return getOption().getDefinition().getName();
+    }
+
+    @Override
+    protected Exception getExpectedException()
+    {
+        return new RequestException( "CoAP Client { config } failed to execute request." );
     }
 
     @Override

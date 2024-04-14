@@ -38,6 +38,12 @@ public class OptOtherInbound3UnsafeTest extends AbstractOtherOptionInboundProper
     }
 
     @Override
+    protected String getOptionAlias()
+    {
+        return "option-65308";
+    }
+
+    @Override
     protected int getOptionNumber()
     {
         return 65308;

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,11 +30,13 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
@@ -203,18 +205,21 @@ public class DefaultResponseOptionsAttributesTest
         ArrayList< DefaultOtherOptionAttribute > expected= new ArrayList<>();
         for ( int i= 0; i < 4; i++ )
         {
-            expected.add( new DefaultOtherOptionAttribute( optionsDefs[i].getNumber(), values[i].clone() ) );
+            expected.add( new DefaultOtherOptionAttribute( optionsDefs[i], values[i].clone() ) );
             set.addOption( new Option( optionsDefs[i], values[i].clone() ) );
         }
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
-        List< OtherOptionAttribute > options= attributes.getOtherOptions();
+        MultiMap< String, OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", expected.size(), options.size() );
-        for ( int i= 0; i < 4; i++ )
+        int j= 0;
+        for ( Entry< String, OtherOptionAttribute > entry : options.entryList() )
         {
-            assertEquals( "coap.opt.other has wrong number", expected.get( i ).getNumber(), options.get( i ).getNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", IOUtils.toByteArray( expected.get( i ).getValue() ), IOUtils.toByteArray( options.get( i ).getValue() ) );
+            assertEquals( "coap.opt.other has wrong number", expected.get( j ).getNumber(), entry.getValue().getNumber() );
+            assertArrayEquals( "coap.opt.other has wrong value", IOUtils.toByteArray( expected.get( j ).getValue() ), IOUtils.toByteArray( entry.getValue().getValue() ) );
+            j++;
         }
+        assertEquals( "wrong option count", 4, j );
     }
 }

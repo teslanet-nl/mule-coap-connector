@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -224,7 +224,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test( timeout= 2000000L )
+    @Test
     public void testInbound() throws Exception
     {
         MuleEventSpy spy= spyMessage();
@@ -234,8 +234,6 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         request.setURI( client.getURI() );
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
-
-        client.setTimeout( 20000L );
 
         CoapResponse response= client.advanced( request );
 

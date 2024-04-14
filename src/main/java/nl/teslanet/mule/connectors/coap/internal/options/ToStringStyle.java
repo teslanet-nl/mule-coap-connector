@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,38 +20,29 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.client.properties;
+package nl.teslanet.mule.connectors.coap.internal.options;
+
+
+import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
 
 
 /**
- * Test inbound other option property
+ * The to string style for attributes.
  *
  */
-public class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTestCase
+public class ToStringStyle extends MultilineRecursiveToStringStyle
 {
-    byte[][] values= { { (byte) 0x12, (byte) 0x00, (byte) 0x45, (byte) 0x33 } };
+    /**
+     * Serial version.
+     */
+    private static final long serialVersionUID= 1L;
 
-    @Override
-    protected String getPropertyName()
+    /**
+     * Constructor.
+     */
+    public ToStringStyle()
     {
-        return "coap.opt.other." + getOptionNumber();
-    }
-
-    @Override
-    protected String getOptionAlias()
-    {
-        return "option-65013";
-    }
-
-    @Override
-    protected int getOptionNumber()
-    {
-        return 65013;
-    }
-
-    @Override
-    protected byte[][] getOptionValues()
-    {
-        return values;
+        this.setUseClassName( false );
+        this.setUseIdentityHashCode( false );
     }
 }

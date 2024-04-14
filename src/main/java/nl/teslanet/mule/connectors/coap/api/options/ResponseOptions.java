@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -195,30 +195,29 @@ public class ResponseOptions
     //    private String oscore= null;
 
     /**
-     * The CoAP other options to send with the request.
+     * The other CoAP options to send with the response.
      */
     @Parameter
     @Optional
     @NullSafe
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The CoAP options to send with the request." )
-    private List< OtherOption > otherResponseOptions;
-    // Mule does not seem to convert multimap key to Integer
+    @Summary( "The other CoAP options to send with the response." )
+    private List< OtherOption > otherOptions;
 
     /**
      * @return the otherResponseOptions
      */
-    public List< OtherOption > getOtherResponseOptions()
+    public List< OtherOption > getOtherOptions()
     {
-        return otherResponseOptions;
+        return otherOptions;
     }
 
     /**
-     * @param otherResponseOptions the otherResponseOptions to set
+     * @param otherOptions the other options to set
      */
-    public void setOtherResponseOptions( List< OtherOption > otherResponseOptions )
+    public void setOtherOptions( List< OtherOption > otherOptions )
     {
-        this.otherResponseOptions= otherResponseOptions;
+        this.otherOptions= otherOptions;
     }
 
     /**

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -33,18 +33,18 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Query Parameter with expression support. 
+ * Other option parameter with expression support. 
  */
 public class OtherOption
 {
     /**
-     * The number of the other option.
+     * The alias of the other option.
      */
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The number of the other option." )
-    @Example( "65001" )
-    protected int number;
+    @Example( "my_option" )
+    protected String alias;
 
     /**
      * The value of the other option.
@@ -57,19 +57,19 @@ public class OtherOption
     protected TypedValue< Object > value= null;
 
     /**
-     * @return The number of the option.
+     * @return The alias of the option.
      */
-    public int getNumber()
+    public String getAlias()
     {
-        return number;
+        return alias;
     }
 
     /**
-     * @param optionNumber The optionNumber to set
+     * @param alias The alias of the option to set
      */
-    public void setNumber( int optionNumber )
+    public void setAlias( String alias )
     {
-        this.number= optionNumber;
+        this.alias= alias;
     }
 
     /**

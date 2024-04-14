@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,20 +27,28 @@ import static org.mule.runtime.api.metadata.DataType.BYTE_ARRAY;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
+import org.eclipse.californium.core.coap.option.EmptyOptionDefinition;
+import org.eclipse.californium.core.coap.option.IntegerOptionDefinition;
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
+import org.eclipse.californium.core.coap.option.OptionDefinition;
+import org.eclipse.californium.core.coap.option.StringOptionDefinition;
 import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
@@ -53,6 +61,7 @@ import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 
 
 /**
@@ -73,9 +82,16 @@ public class MessageUtils
      * Copy options from {@link RequestOptions} to {@link OptionSet}.
      * @param requestOptions to copy from
      * @param optionSet to copy to
-     * @throws InvalidOptionValueException when given option value could not be copied
+     * @throws InternalUnkownOptionException When given option alias was not defined. 
+     * @throws InvalidOptionValueException When given option value could not be copied
      */
-    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    public static void copyOptions(
+        RequestOptions requestOptions,
+        OptionSet optionSet,
+        TransformationService transformationService,
+        Map< String, OptionDefinition > otherOptionDefs
+    ) throws InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
         if ( requestOptions.isIfExists() )
         {
@@ -94,7 +110,7 @@ public class MessageUtils
             }
             catch ( EntityTagException e )
             {
-                throw new InternalInvalidOptionValueException( "If-Match", "", e );
+                throw new InternalInvalidOptionValueException( "If-Match", e.getMessage(), e );
             }
         }
         if ( requestOptions.getEtags() != null )
@@ -134,21 +150,36 @@ public class MessageUtils
         {
             optionSet.setSize1( requestOptions.getRequestSize() );
         }
-        for ( OtherOption otherOption : requestOptions.getOtherRequestOptions() )
+        for ( OtherOption otherOption : requestOptions.getOtherOptions() )
         {
-            optionSet.addOption( toCfOtherOption( otherOption, transformationService ) );
+            OptionDefinition definition= otherOptionDefs.get( otherOption.getAlias() );
+            if ( definition != null )
+            {
+                optionSet.addOption( toCfOtherOption( otherOption, definition, transformationService ) );
+            }
+            else
+            {
+                throw new InternalUnkownOptionException( "Unknown other option: " + otherOption.getAlias() );
+            }
         }
     }
 
     /**
      * Copy options from {@link ResponseOptions} to {@link OptionSet}.
-     * @param responseOptions to copy from
-     * @param optionSet to copy to
-     * @throws InternalInvalidOptionValueException 
-     * @throws InvalidEntityTagException when an option containes invalid ETag value
-     * @throws IOException when an option stream throws an error.
+     * @param responseOptions The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     * @throws InternalUnkownOptionException When given option alias was not defined. 
+     * @throws InvalidEntityTagException When an option contains invalid ETag value.
+     * @throws IOException When an option stream throws an error.
      */
-    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    public static void copyOptions(
+        ResponseOptions responseOptions,
+        OptionSet optionSet,
+        TransformationService transformationService,
+        Map< String, OptionDefinition > otherOptionDefs
+    ) throws InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
         if ( responseOptions.getEtag() != null )
         {
@@ -190,34 +221,106 @@ public class MessageUtils
         {
             optionSet.setSize1( responseOptions.getAcceptableRequestSize() );
         }
-        for ( OtherOption otherOption : responseOptions.getOtherResponseOptions() )
+        for ( OtherOption otherOption : responseOptions.getOtherOptions() )
         {
-            optionSet.addOption( toCfOtherOption( otherOption, transformationService ) );
+            OptionDefinition definition= otherOptionDefs.get( otherOption.getAlias() );
+            if ( definition != null )
+            {
+                optionSet.addOption( toCfOtherOption( otherOption, definition, transformationService ) );
+            }
+            else
+            {
+                throw new InternalUnkownOptionException( "Unknown other option: " + otherOption.getAlias() );
+            }
         }
+    }
+
+    /**
+     * Convert other option configuration to Cf option definition.
+     * @param config The option config to create definition from.
+     * @return The created definition.
+     */
+    public static OptionDefinition toCfOptionDefinition( OtherOptionConfig config )
+    {
+        OptionDefinition definition;
+        switch ( config.getFormat() )
+        {
+            case EMPTY:
+                definition= new EmptyOptionDefinition( config.getNumber(), config.getAlias() );
+                break;
+            case INTEGER:
+                definition= new IntegerOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                break;
+            case STRING:
+                definition= new StringOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                break;
+            case OPAQUE:
+            default:
+                definition= new OpaqueOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                break;
+        }
+        return definition;
+    }
+
+    /**
+     * Establish equality of two option definitions based on their properties.
+     * @param left The first option definition.
+     * @param right The second option definition.
+     * @return {@code true} when the definition are equal otherwise {@code false}
+     */
+    //TODO cf need equals method.
+    @SuppressWarnings( "deprecation" )
+    public static boolean isEqual( OptionDefinition left, OptionDefinition right )
+    {
+        if ( left == right ) return true;
+        if ( left == null || right == null ) return false;
+        return( left.getName().equals( right.getName() ) && left.getFormat() == right.getFormat() && left.getNumber() == right.getNumber()
+            && left.isSingleValue() == right.isSingleValue() && Arrays.equals( left.getValueLengths(), right.getValueLengths() ) );
     }
 
     /**
      * Convert to Cf other option.
      * @param otherOption The other option to convert.
+     * @param definition The definition of the option.
      * @param transformationService The service use for value transformation.
      * @return The Cf option.
      * @throws InternalInvalidOptionValueException When the value could not be converted.
      */
-    private static Option toCfOtherOption( OtherOption otherOption, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    private static Option toCfOtherOption( OtherOption otherOption, OptionDefinition definition, TransformationService transformationService )
+        throws InternalInvalidOptionValueException
     {
         Option option;
         try
         {
-            option= new Option(
-                new OpaqueOptionDefinition( otherOption.getNumber(), String.valueOf( otherOption.getNumber() ), false ),
-                toBytes( otherOption.getValue(), transformationService )
-            );
+            option= new Option( definition, toBytes( otherOption.getValue(), transformationService ) );
         }
         catch ( Exception e )
         {
-            throw new InternalInvalidOptionValueException( "Other-Option", "Number { " + otherOption.getNumber() + " }", e );
+            throw new InternalInvalidOptionValueException( otherOption.getAlias(), e.getMessage(), e );
         }
         return option;
+    }
+
+    /**
+     * Convert Cf format to option format.
+     * @param format The Cf option format.
+     * @return The option format.
+     */
+    public static OptionFormat toOptionFormat( org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat format )
+    {
+        switch ( format )
+        {
+            case EMPTY:
+                return OptionFormat.EMPTY;
+            case INTEGER:
+                return OptionFormat.INTEGER;
+            case STRING:
+                return OptionFormat.STRING;
+            case OPAQUE:
+            case UNKNOWN:
+            default:
+                return OptionFormat.OPAQUE;
+        }
     }
 
     /**

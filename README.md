@@ -26,8 +26,7 @@ and other.
 
 ## Uses
 
-* [Californium](https://www.eclipse.org/californium/) 2.8.0
-* [Californium](https://www.eclipse.org/californium/) 3.10.0 (development)
+* [Californium](https://www.eclipse.org/californium/) 3.11.0
 
 ## Installation
 
@@ -39,21 +38,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors.coap</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.1.1</version>
-        <classifier>mule-plugin</classifier>
-    </dependency>
-  
-```
-
-To use the latest development milestone, 
-add following dependency to your `pom.xml`:
-
-```xml
-  
-    <dependency>
-        <groupId>nl.teslanet.mule.connectors.coap</groupId>
-        <artifactId>mule-coap-connector</artifactId>
-        <version>3.0.0-M2</version>
+        <version>3.0.0-M3</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
