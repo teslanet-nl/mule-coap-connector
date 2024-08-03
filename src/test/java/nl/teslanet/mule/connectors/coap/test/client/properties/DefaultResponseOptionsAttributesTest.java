@@ -23,29 +23,26 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
-import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
@@ -95,10 +92,10 @@ public class DefaultResponseOptionsAttributesTest
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
 
-        EntityTag etag= attributes.getEtag();
+        EntityTagAttribute etag= attributes.getEtag();
 
         assertNotNull( etag );
-        assertEquals( "coap.opt.etag: wrong etag value", new EntityTag( etagValue1 ), etag );
+        assertEquals( "coap.opt.etag: wrong etag value", new DefaultEntityTag( etagValue1 ), etag );
     }
 
     @Test
@@ -210,16 +207,15 @@ public class DefaultResponseOptionsAttributesTest
         }
 
         DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
-        MultiMap< String, OtherOptionAttribute > options= attributes.getOther();
+        List< OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", expected.size(), options.size() );
         int j= 0;
-        for ( Entry< String, OtherOptionAttribute > entry : options.entryList() )
+        for ( OtherOptionAttribute item : options )
         {
-            assertEquals( "coap.opt.other has wrong number", expected.get( j ).getNumber(), entry.getValue().getNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", IOUtils.toByteArray( expected.get( j ).getValue() ), IOUtils.toByteArray( entry.getValue().getValue() ) );
+            assertEquals( "coap.opt.other has wrong number", expected.get( j ).getNumber(), item.getNumber() );
+            assertEquals( "coap.opt.other has wrong value", expected.get( j ).getValueAsHex(), item.getValueAsHex() );
             j++;
         }
-        assertEquals( "wrong option count", 4, j );
     }
 }

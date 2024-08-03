@@ -23,13 +23,14 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.CoAP.Type;
-import org.mule.runtime.api.util.MultiMap;
+import org.eclipse.californium.core.coap.Option;
 
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
@@ -349,16 +350,16 @@ public class AttributeUtils
     /**
      * Create other option attributes.
      * @param otherCoapOptions The received other coap options.
-     * @return The Map containing other options attributes.
+     * @return The list containing other options attributes.
      */
-    public static MultiMap< String, OtherOptionAttribute > createOthers( List< Option > otherCoapOptions )
+    public static List< OtherOptionAttribute > createOthers( List< Option > otherCoapOptions )
     {
-        MultiMap< String, OtherOptionAttribute > others= new MultiMap<>();
+        List< OtherOptionAttribute > others= new ArrayList<>();
         for ( Option other : otherCoapOptions )
         {
             DefaultOtherOptionAttribute otherOptionAttribute= new DefaultOtherOptionAttribute( other );
-            others.put( otherOptionAttribute.getAlias(), otherOptionAttribute );
+            others.add( otherOptionAttribute );
         }
-        return others.toImmutableMultiMap();
+        return Collections.unmodifiableList( others );
     }
 }

@@ -25,7 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 public class OptEtagOutbound2Test extends AbstractOutboundPropertyTestcase
@@ -43,15 +44,15 @@ public class OptEtagOutbound2Test extends AbstractOutboundPropertyTestcase
     }
 
     @Override
-    protected Object getPropertyValue()
+    protected Object getPropertyValue() throws EntityTagException
     {
-        return new EntityTag( 0x0011FFL ).getValue();
+        return new DefaultEntityTag( 0x0011FFL ).getValue();
     }
 
     @Override
-    protected Object getExpectedOptionValue()
+    protected Object getExpectedOptionValue() throws EntityTagException
     {
-        return new EntityTag( 0x0011FFL ).getValue();
+        return new DefaultEntityTag( 0x0011FFL ).getValue();
     }
 
     @Override

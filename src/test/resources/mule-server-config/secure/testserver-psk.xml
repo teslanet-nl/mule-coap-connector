@@ -23,44 +23,55 @@
   -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
 	<coap:dtls-endpoint name="Dtls_endpoint"
-		doc:name="Dtls endpoint" logCoapMessages="true">
+		doc:name="Dtls endpoint" logTraffic="true">
 		<coap:socket-params bindToPort="5684" />
 		<coap:security-params>
-			<coap:pre-shared-keys>
-				<coap:pre-shared-key identity="Client_identity">
-					<coap:key >
-						<coap:from-hex-config hexValue="73656372657450534b" />
-					</coap:key>
-				</coap:pre-shared-key>
-				<coap:pre-shared-key identity="id-2" >
-					<coap:key >
-						<coap:from-hex-config hexValue="736573616d66" />
-					</coap:key>
-				</coap:pre-shared-key>
-				<coap:pre-shared-key identity="id-3">
-					<coap:key >
-						<coap:from-hex-config hexValue="736573616d67" />
-					</coap:key>
-				</coap:pre-shared-key>
-				<coap:pre-shared-key identity="id-4" host="localhost" virtualHost="californium.eclipseprojects.io" port="5684" >
-					<coap:key >
-						<coap:from-hex-config hexValue="736573616d68" />
-					</coap:key>
-				</coap:pre-shared-key>
-			</coap:pre-shared-keys>
+            <coap:pre-shared-key-params>
+				<coap:pre-shared-keys>
+					<coap:pre-shared-key identity="Client_identity">
+						<coap:key >
+							<coap:key-from-hex hexValue="73656372657450534b" />
+						</coap:key>
+					</coap:pre-shared-key>
+					<coap:pre-shared-key identity="id-2" >
+						<coap:key >
+							<coap:key-from-hex hexValue="736573616d66" />
+						</coap:key>
+					</coap:pre-shared-key>
+					<coap:pre-shared-key identity="id-3">
+						<coap:key >
+							<coap:key-from-hex hexValue="736573616d67" />
+						</coap:key>
+					</coap:pre-shared-key>
+					<coap:pre-shared-key identity="id-4" host="localhost" virtualHost="californium.eclipseprojects.io" port="5684" >
+						<coap:key >
+							<coap:key-from-hex hexValue="736573616d68" />
+						</coap:key>
+					</coap:pre-shared-key>
+	                <coap:pre-shared-key identity="extra-1">
+	                    <coap:key >
+	                        <coap:key-from-string stringValue="utf8text" />
+	                    </coap:key>
+	                </coap:pre-shared-key>
+	                <coap:pre-shared-key identity="extra-2">
+	                    <coap:key >
+	                        <coap:key-from-number numberValue="123" />
+	                    </coap:key>
+	                </coap:pre-shared-key>
+				</coap:pre-shared-keys>
+            </coap:pre-shared-key-params>
 		</coap:security-params>
 	</coap:dtls-endpoint>
 

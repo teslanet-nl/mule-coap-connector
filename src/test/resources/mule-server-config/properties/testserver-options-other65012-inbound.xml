@@ -23,19 +23,18 @@
   -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
+	<coap:udp-endpoint name="udp" logTraffic="true">
 		<coap:socket-params  bindToPort="5683" />
         <coap:option-params >
 			<coap:other-option-configs>
@@ -68,7 +67,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			</coap:response-options>
 		</coap:listener>
 		
-		<set-variable value="#[attributes.options.other.'option-65012'.value]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
+		<set-variable value="#[attributes.options.other[?( $.alias == 'option-65012' )].value[0]]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
 
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

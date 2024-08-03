@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.entity;
+package nl.teslanet.mule.connectors.coap.api.options;
 
 
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -30,23 +30,22 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
-import nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes;
 
 
 /**
- * The parameters of an entity tag operation.
+ * The parameters of an option value operation.
  *
  */
-public class EntityTagParams
+public class OptionValueParams
 {
     /**
-     * The entity tag value.
+     * The bytes value of an option.
      */
     @Parameter
     @Placement( order= 1 )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    private BytesValue bytes= new EmptyBytes();
+    private BytesValue bytes= null;
 
     /**
      * @return the bytes

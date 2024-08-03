@@ -44,7 +44,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -244,19 +244,19 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
             case CollectionOfETag:
             {
                 @SuppressWarnings( "unchecked" )
-                Collection< EntityTag > property= (Collection< EntityTag >) fetchInboundProperty( attributes );
+                Collection< DefaultEntityTag > property= (Collection< DefaultEntityTag >) fetchInboundProperty( attributes );
                 assertNotNull( "property is not found in inbound scope", property );
 
                 @SuppressWarnings( "unchecked" )
-                Collection< EntityTag > expected= (Collection< EntityTag >) getExpectedInboundPropertyValue();
+                Collection< DefaultEntityTag > expected= (Collection< DefaultEntityTag >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 
-                Iterator< EntityTag > propertyIt= property.iterator();
-                Iterator< EntityTag > expectedIt= expected.iterator();
+                Iterator< DefaultEntityTag > propertyIt= property.iterator();
+                Iterator< DefaultEntityTag > expectedIt= expected.iterator();
                 while ( propertyIt.hasNext() && expectedIt.hasNext() )
                 {
-                    EntityTag optionValue= propertyIt.next();
-                    EntityTag expectedValue= expectedIt.next();
+                    DefaultEntityTag optionValue= propertyIt.next();
+                    DefaultEntityTag expectedValue= expectedIt.next();
                     assertEquals( "value in collection not equal", expectedValue, optionValue );
                 } ;
             }
@@ -267,7 +267,7 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
 
             case ETag:
-                assertEquals( "wrong inbound property value", (EntityTag) getExpectedInboundPropertyValue(), (EntityTag) fetchInboundProperty( attributes ) );
+                assertEquals( "wrong inbound property value", (DefaultEntityTag) getExpectedInboundPropertyValue(), (DefaultEntityTag) fetchInboundProperty( attributes ) );
                 break;
 
             case NoResponse:

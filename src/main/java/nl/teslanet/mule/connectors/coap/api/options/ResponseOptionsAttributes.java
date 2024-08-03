@@ -25,9 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import org.mule.runtime.api.util.MultiMap;
-
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -41,7 +39,7 @@ public class ResponseOptionsAttributes
 
     protected Long maxAge= null;
 
-    protected EntityTag etag= null;
+    protected EntityTagAttribute etag= null;
 
     protected List< String > locationPath= null;
 
@@ -53,12 +51,12 @@ public class ResponseOptionsAttributes
 
     protected Integer observe= null;
 
-    protected MultiMap< String, OtherOptionAttribute > other= null;
+    protected List< OtherOptionAttribute > other= null;
 
     /**
      * @return The etag option.
      */
-    public EntityTag getEtag()
+    public EntityTagAttribute getEtag()
     {
         return etag;
     }
@@ -122,7 +120,7 @@ public class ResponseOptionsAttributes
     /**
      * Get the other response options.
      */
-    public MultiMap< String, OtherOptionAttribute > getOther()
+    public List< OtherOptionAttribute > getOther()
     {
         return other;
     }

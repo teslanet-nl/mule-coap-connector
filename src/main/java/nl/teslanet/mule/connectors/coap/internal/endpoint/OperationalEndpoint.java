@@ -145,7 +145,7 @@ public final class OperationalEndpoint
         {
             throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
         }
-        if ( config.logCoapMessages )
+        if ( config.logTraffic )
         {
             operationalEndpoint.coapEndpoint.addInterceptor( new MessageTracer() );
         }

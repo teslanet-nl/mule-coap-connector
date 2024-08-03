@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -60,9 +60,9 @@ public class OptOtherOptionInbound3Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Boolean propertyValueIsByteArray()
+    protected boolean propertyValueIsByteArray()
     {
-        return Boolean.TRUE;
+        return true;
     }
 
     @Override

@@ -24,12 +24,10 @@ package nl.teslanet.mule.connectors.coap.test.config;
 
 
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
@@ -37,7 +35,6 @@ import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
-import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.TriState;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
@@ -73,6 +70,7 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmName;
@@ -82,8 +80,13 @@ import nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId;
 import nl.teslanet.mule.connectors.coap.api.config.security.Curve;
 import nl.teslanet.mule.connectors.coap.api.config.security.ExtendedMasterSecretModeName;
 import nl.teslanet.mule.connectors.coap.api.config.security.HashAlgorithmName;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm;
 import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithmName;
@@ -191,8 +194,8 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case ENDPOINT_LOGCOAPMESSAGES:
-                toVisit.logCoapMessages= Boolean.valueOf( value );
+            case ENDPOINT_LOGTRAFFIC:
+                toVisit.logTraffic= Boolean.valueOf( value );
                 break;
             case logHealthStatus:
                 toVisit.logHealthStatus= ( Boolean.parseBoolean( value ) ? new LogHealthStatus() : null );
@@ -781,36 +784,12 @@ public class SetValueVisitor implements ConfigVisitor
         switch ( param )
         {
             case pskHost:
-                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
-                for ( String item : value.split( "," ) )
-                {
-                    String host= item.replaceAll( "[\\[\\]\\s]+", "" );
-                    toVisit.preSharedKeys.add( new PreSharedKey( host + "identity", new FromStringConfig( host ), host, 5684 ) );
-                }
-                break;
             case pskPort:
-                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
-                for ( String item : value.split( "," ) )
-                {
-                    Integer port= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.preSharedKeys.add( new PreSharedKey( "identity" + port, new FromNumberConfig( Long.valueOf( port ) ), "host" + port, port ) );
-                }
-                break;
             case pskIdentity:
-                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
-                for ( String item : value.split( "," ) )
-                {
-                    String identity= item.replaceAll( "[\\[\\]\\s]+", "" );
-                    toVisit.preSharedKeys.add( new PreSharedKey( identity, new FromStringConfig( identity ) ) );
-                }
-                break;
             case pskKey:
-                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
-                for ( String item : value.split( "," ) )
-                {
-                    String key= item.replaceAll( "[\\[\\]\\s]+", "" );
-                    toVisit.preSharedKeys.add( new PreSharedKey( key + "identity", new FromStringConfig( key ) ) );
-                }
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyParams= new PreSharedKeyParams();
                 break;
             case keyStoreLocation:
             case keyStorePassword:
@@ -887,6 +866,95 @@ public class SetValueVisitor implements ConfigVisitor
                 break;
             case DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION:
                 toVisit.truncateCertificatePathForValidation= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PreSharedKeyParams toVisit )
+    {
+        switch ( param )
+        {
+            case pskHost:
+            case pskPort:
+            case pskIdentity:
+            case pskKey:
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyGroup= new PreSharedKeyGroup();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PreSharedKeyGroup toVisit )
+    {
+        switch ( param )
+        {
+            case pskHost:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String host= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys.add( new PreSharedKey( host + "identity", new KeyFromString( host ), host, 5684 ) );
+                }
+                break;
+            case pskPort:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    Integer port= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
+                    toVisit.preSharedKeys.add( new PreSharedKey( "identity" + port, new KeyFromNumber( Long.valueOf( port ) ), "host" + port, port ) );
+                }
+                break;
+            case pskIdentity:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String identity= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys.add( new PreSharedKey( identity, new KeyFromString( identity ) ) );
+                }
+                break;
+            case pskKey:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String key= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys.add( new PreSharedKey( key + "identity", new KeyFromString( key ) ) );
+                }
+                break;
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyStore= new PreSharedKeyStore();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PreSharedKeyStore toVisit )
+    {
+        switch ( param )
+        {
+            case pskKeyFileLocation:
+                toVisit.path= value;
+                break;
+            case pskKeyFilePassword:
+                toVisit.password= value;
                 break;
             default:
                 break;

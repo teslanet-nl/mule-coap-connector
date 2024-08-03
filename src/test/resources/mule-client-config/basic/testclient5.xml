@@ -22,23 +22,22 @@
   #L%
   -->
 
-<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+<mule
 	xmlns="http://www.mulesoft.org/schema/mule/core" 
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" 
+		xmlns:vm="http://www.mulesoft.org/schema/mule/vm" 
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" 
 	xmlns:java="http://www.mulesoft.org/schema/mule/java"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+    xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/vm http://http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+">
 
    <description>Mule CoAP connector test application</description>
    
-	<coap:udp-endpoint name="Udp_Endpoint" logCoapMessages="true" >
+	<coap:udp-endpoint name="Udp_Endpoint" logTraffic="true" >
 		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 			  

@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -145,6 +146,16 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     }
 
     /**
+     * Implement to specify how option should be retrieved from spied event.
+     * @param object where to fetch the option from
+     * @return
+     */
+    protected Object fetchOption( Object object )
+    {
+        return object;
+    }
+
+    /**
      * Override and return false to specify that the response is expected to indicate failure.
      * @return {@code true} when successfull response is expected
      */
@@ -184,9 +195,18 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Override to specify whether the option value is a byte array
      * @return {@code true} when the option value is a byte array
      */
-    protected Boolean propertyValueIsByteArray()
+    protected boolean propertyValueIsByteArray()
     {
-        return Boolean.FALSE;
+        return false;
+    }
+
+    /**
+     * Override to specify whether the option is an collection of objects of which string representations are to compare
+     * @return {@code true} when option is a collection of ByteArray
+     */
+    protected boolean optionValueIsCollectionOfStringable()
+    {
+        return false;
     }
 
     /**
@@ -210,13 +230,33 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     {
         assertEquals( "Spy has collected wrong number of events", 1, spy.getEvents().size() );
         assertEquals( "property has wrong class", expected.getClass(), spy.getEvents().get( 0 ).getContent().getClass() );
+        Object fetched= fetchOption( spy.getEvents().get( 0 ).getContent() );
+
         if ( propertyValueIsByteArray() )
         {
-            assertArrayEquals( "property has wrong value", (byte[]) expected, (byte[]) spy.getEvents().get( 0 ).getContent() );
+            assertArrayEquals( "property has wrong value", (byte[]) expected, (byte[]) fetched );
+        }
+        else if ( optionValueIsCollectionOfStringable() )
+        {
+            @SuppressWarnings( "unchecked" )
+            Collection< Object > actualCollection= (Collection< Object >) fetched;
+            @SuppressWarnings( "unchecked" )
+            Collection< Object > expectedCollection= (Collection< Object >) expected;
+
+            assertEquals( "option value list length differ", expectedCollection.size(), actualCollection.size() );
+
+            Iterator< Object > actualIt= actualCollection.iterator();
+            Iterator< Object > expectedIt= expectedCollection.iterator();
+            while ( actualIt.hasNext() && expectedIt.hasNext() )
+            {
+                Object optionValue= actualIt.next();
+                Object expectedValue= expectedIt.next();
+                assertEquals( "value in collection not equal", expectedValue.toString(), optionValue.toString() );
+            }
         }
         else
         {
-            assertEquals( "property has wrong value", expected, spy.getEvents().get( 0 ).getContent() );
+            assertEquals( "property has wrong value", expected, fetched );
         }
     }
 

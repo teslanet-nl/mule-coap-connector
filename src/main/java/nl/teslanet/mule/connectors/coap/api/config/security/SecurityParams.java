@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.api.config.security;
 
 
 import java.util.List;
-import java.util.Set;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -44,18 +43,17 @@ import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
  *
  */
 public class SecurityParams implements VisitableConfig
-{
-    //TODO support key file.
+{    
     /**
-     * Set of pre-shared keys.
+     * The pre shared key configuration.
      */
     @Parameter
     @Optional
-    @Summary( value= "Set of pre-shared keys." )
+    @Summary( value= "The pre shared key configuration." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Set< PreSharedKey > preSharedKeys= null;
-
+    public PreSharedKeyParams preSharedKeyParams=null;
+    
     /**
      * The keystore configuration.
      */
@@ -198,6 +196,7 @@ public class SecurityParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+        if ( preSharedKeyParams != null ) preSharedKeyParams.accept( visitor );
         if ( keyStore != null ) keyStore.accept( visitor );
         if ( trustStore != null ) trustStore.accept( visitor );
         if ( supportConnectionId != null ) supportConnectionId.accept( visitor );

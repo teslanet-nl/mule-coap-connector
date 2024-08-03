@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,12 +20,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.entitytag;
+package nl.teslanet.mule.connectors.coap.test.options;
 
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -46,22 +46,23 @@ import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
 
 
 @RunnerDelegateTo( Parameterized.class )
-public class FaultyEntityTagOperationTest extends AbstractTestCase
+public class OptionValueOperationTest extends AbstractTestCase
 {
     /**
      * input and output data types to test.
      */
     private enum DataType
     {
+
         EMPTY, BINARY, HEX, NUMBER, STRING;
     }
 
     //testdata
-    private static String hexData= "112233445566778899aabbcc";
+    private static String hexData= "4554";
 
     private static byte[] binData= new BigInteger( hexData, 16 ).toByteArray();;
 
-    private static Long numberData= 0L;
+    private static Long numberData= Long.valueOf( hexData, 16 );
 
     private static String stringData= new String( binData, StandardCharsets.UTF_8 );
 
@@ -77,7 +78,7 @@ public class FaultyEntityTagOperationTest extends AbstractTestCase
         //build list
         for ( DataType inType : DataType.values() )
         {
-            tests.add( new Object []{ inType, getInPayload( inType ) } );
+            tests.add( new Object []{ inType, getInPayload( inType ), getOutPayload( inType ) } );
         }
         return tests;
     }
@@ -93,6 +94,12 @@ public class FaultyEntityTagOperationTest extends AbstractTestCase
      */
     @Parameter( 1 )
     public Object inPayload;
+
+    /**
+     * The output payload that is expected.
+     */
+    @Parameter( 2 )
+    public Object outPayload;
 
     /**
      * Get input payload.
@@ -116,12 +123,29 @@ public class FaultyEntityTagOperationTest extends AbstractTestCase
     };
 
     /**
+     * Get output payload.
+     */
+    private static Object getOutPayload( DataType inType )
+    {
+        switch ( inType )
+        {
+            case BINARY:
+            case HEX:
+            case NUMBER:
+            case STRING:
+                return binData;
+            default:
+                return OptionUtils.EMPTY_BYTES;
+        }
+    };
+
+    /**
      * Mule test application.
      */
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/entitytag/testflow1.xml";
+        return "mule-config/optionvalue/testflow1.xml";
     };
 
     /**
@@ -131,21 +155,12 @@ public class FaultyEntityTagOperationTest extends AbstractTestCase
     @Test
     public void testConRequest() throws Exception
     {
-        CoreEvent result= flowRunner( "testflow" ).withPayload( inPayload ).withVariable( "in", inPayloadType.name() ).withVariable( "out", DataType.BINARY.name() ).run();
+        CoreEvent result= flowRunner( "testflow" ).withPayload( inPayload ).withVariable( "in", inPayloadType.name() ).run();
         Message response= result.getMessage();
 
         assertNotNull( "no mule event", response );
         Object responsePayload= TypedValue.unwrap( response.getPayload() );
-        if ( inPayloadType == DataType.EMPTY || inPayloadType == DataType.NUMBER)
-        {
-            //input always valid
-            assertEquals( "wrong response payload class", byte[].class, responsePayload.getClass() );
-            assertArrayEquals( new byte [0], (byte[]) responsePayload );
-        } 
-        else
-        {
-            assertEquals( "wrong response payload class", String.class, responsePayload.getClass() );
-            assertEquals( "wrong response payload", "INVALID_ETAG", responsePayload );
-        }
+        assertTrue( "wrong response payload class", responsePayload instanceof byte[] );
+        assertArrayEquals( (byte[]) outPayload, (byte[]) responsePayload );
     }
 }

@@ -31,9 +31,9 @@ import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
-import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.EndpointOptionRegistry;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;

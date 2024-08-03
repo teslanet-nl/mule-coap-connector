@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import java.util.LinkedList;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -36,7 +42,7 @@ public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
     /**
      * the value to test
      */
-    private EntityTag value;
+    private DefaultEntityTag value;
 
     /**
      * constructor
@@ -45,7 +51,7 @@ public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
     public OptEtagListOutbound2Test() throws EntityTagException
     {
         super();
-        value= new EntityTag( 0xAA001122L );
+        value= new DefaultEntityTag( 0xAA001122L );
     }
 
     /* (non-Javadoc)
@@ -63,10 +69,14 @@ public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
     @Override
     protected Object getOutboundPropertyValue()
     {
-        return value.getValue();
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        EntityTag etag= new EntityTag();
+        etag.setValue( new TypedValue< Object >( value.getValue(), DataType.fromObject( value.getValue() ) ) );
+        list.add( etag );
+        return list;
     }
 
-    /* (non-Javadoc)
+    /* (non-Javadoc).
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override

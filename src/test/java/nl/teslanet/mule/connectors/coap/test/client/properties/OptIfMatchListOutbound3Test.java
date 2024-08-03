@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import java.util.LinkedList;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -33,9 +39,9 @@ import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
  */
 public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestCase
 {
-    private EntityTag getValue() throws EntityTagException
+    private DefaultEntityTag getValue() throws EntityTagException
     {
-        return new EntityTag( 0x68656C6C6FL );
+        return new DefaultEntityTag( 0x68656C6C6FL );
     }
 
     /* (non-Javadoc)
@@ -53,7 +59,11 @@ public class OptIfMatchListOutbound3Test extends AbstractOutboundPropertiesTestC
     @Override
     protected Object getOutboundPropertyValue() throws EntityTagException
     {
-        return Long.valueOf( getValue().getValueAsNumber() );
+        EntityTag etag= new EntityTag();
+        etag.setValue( new TypedValue< Object >( getValue().getValueAsNumber(), DataType.fromObject( getValue().getValueAsNumber() ) ) );
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        list.add( etag );
+        return list;
     }
 
     /* (non-Javadoc)

@@ -28,17 +28,18 @@ import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options )
+    protected void addOption( OptionSet options ) throws EntityTagException
     {
-        options.addIfMatch( new EntityTag( 0xA0L ).getValue() );
-        options.addIfMatch( new EntityTag( 0x11FFL ).getValue() );
-        options.addIfMatch( new EntityTag( 0x1122334455667788L ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0xA0L ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0x11FFL ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0x1122334455667788L ).getValue() );
     }
 
     @Override
@@ -48,12 +49,12 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue()
+    protected Object getExpectedPropertyValue() throws EntityTagException
     {
-        LinkedList< EntityTag > list= new LinkedList<>();
-        list.add( new EntityTag( 0xA0L ) );
-        list.add( new EntityTag( 0x11FFL ) );
-        list.add( new EntityTag( 0x1122334455667788L ) );
+        LinkedList< DefaultEntityTag > list= new LinkedList<>();
+        list.add( new DefaultEntityTag( 0xA0L ) );
+        list.add( new DefaultEntityTag( 0x11FFL ) );
+        list.add( new DefaultEntityTag( 0x1122334455667788L ) );
 
         return Collections.unmodifiableList( list );
     }

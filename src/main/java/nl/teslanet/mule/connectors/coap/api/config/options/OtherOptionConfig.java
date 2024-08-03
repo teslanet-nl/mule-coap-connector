@@ -25,7 +25,6 @@ package nl.teslanet.mule.connectors.coap.api.config.options;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
@@ -38,12 +37,11 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class OtherOptionConfig
 {
     /**
-     * The name of the other option.
+     * The local name of the other option.
      */
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    @Summary( "The number of the other option." )
+    @Summary( "The local name of the other option." )
     @Example( "myCustomOption" )
     protected String alias;
 
@@ -52,7 +50,6 @@ public class OtherOptionConfig
      */
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
     @Summary( "The number of the other option." )
     @Example( "65001" )
     protected int number;
@@ -63,7 +60,6 @@ public class OtherOptionConfig
     @Parameter
     @Optional( defaultValue= "OPAQUE" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
     @Summary( "The format of the other option." )
     @Example( "INTEGER" )
     protected OptionFormat format= OptionFormat.OPAQUE;
@@ -74,7 +70,6 @@ public class OtherOptionConfig
     @Parameter
     @Optional( defaultValue= "true" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
     @Summary( "The type of the other option." )
     protected boolean singleValue= true;
 
@@ -84,7 +79,6 @@ public class OtherOptionConfig
     @Parameter
     @Optional( defaultValue= "0" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
     @Summary( "The minimum number of bytes of the option." )
     @Example( "1" )
     protected int minBytes= 0;
@@ -95,7 +89,6 @@ public class OtherOptionConfig
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
     @Summary( "The maximum number of bytes of the option." )
     @Example( "4" )
     protected int maxBytes= Integer.MAX_VALUE;

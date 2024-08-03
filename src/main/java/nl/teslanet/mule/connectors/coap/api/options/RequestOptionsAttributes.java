@@ -25,9 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import org.mule.runtime.api.util.MultiMap;
-
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -42,11 +40,11 @@ public class RequestOptionsAttributes
      */
     protected boolean ifExists= false;
 
-    protected List< EntityTag > ifMatch= null;
+    protected List< EntityTagAttribute > ifMatch= null;
 
     protected String uriHost= null;
 
-    protected List< EntityTag > etags= null;
+    protected List< EntityTagAttribute > etags= null;
 
     protected boolean ifNoneMatch= false;
 
@@ -70,7 +68,7 @@ public class RequestOptionsAttributes
 
     protected Integer observe= null;
 
-    protected MultiMap< String, OtherOptionAttribute > other= null;
+    protected List< OtherOptionAttribute > other= null;
 
     /**
      * @return The ifExists option.
@@ -85,7 +83,7 @@ public class RequestOptionsAttributes
      * Use getIfMatchValue instead.
      * @return null.
      */
-    public List< EntityTag > getIfMatch()
+    public List< EntityTagAttribute > getIfMatch()
     {
         return ifMatch;
     }
@@ -103,7 +101,7 @@ public class RequestOptionsAttributes
      * Use getEtagsValue instead.
      * @return null.
      */
-    public List< EntityTag > getEtags()
+    public List< EntityTagAttribute > getEtags()
     {
         return etags;
     }
@@ -199,7 +197,7 @@ public class RequestOptionsAttributes
     /**
      * @return the other request options.
      */
-    public MultiMap< String, OtherOptionAttribute > getOther()
+    public List< OtherOptionAttribute > getOther()
     {
         return other;
     }

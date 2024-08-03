@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,6 +27,7 @@ import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -40,9 +41,9 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
      * @return the value to use in test
      * @throws EntityTagException 
      */
-    private LinkedList< EntityTag > getValue()
+    private LinkedList< DefaultEntityTag > getValue()
     {
-        LinkedList< EntityTag > list= new LinkedList<>();
+        LinkedList< DefaultEntityTag > list= new LinkedList<>();
 
         return list;
     }
@@ -62,7 +63,7 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
     @Override
     protected Object getOutboundPropertyValue() throws EntityTagException
     {
-        return getValue();
+        return new LinkedList< EntityTag >();
     }
 
     /* (non-Javadoc)

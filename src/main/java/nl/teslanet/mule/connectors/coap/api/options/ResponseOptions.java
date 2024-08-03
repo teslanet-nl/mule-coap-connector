@@ -26,15 +26,14 @@ package nl.teslanet.mule.connectors.coap.api.options;
 import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
@@ -103,10 +102,9 @@ public class ResponseOptions
      */
     @Parameter
     @Optional
-    @Content( primary= false )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource." )
-    private TypedValue< Object > etag= null;
+    @Summary( "The entity-tag of the response content is a resource-local identifier for differentiating between representations of the same resource." )
+    private EntityTag entityTag= null;
 
     /**
      * RFC 7252: The Location-Path and Location-Query Options together indicate a
@@ -253,19 +251,19 @@ public class ResponseOptions
     }
 
     /**
-     * @return the etag
+     * @return the Entity-tag
      */
-    public TypedValue< Object > getEtag()
+    public EntityTag getEntityTag()
     {
-        return etag;
+        return entityTag;
     }
 
     /**
-     * @param etag the etag to set
+     * @param entityTag the Entity-tag to set
      */
-    public void setEtag( TypedValue< Object > etag )
+    public void setEntityTag( EntityTag entityTag )
     {
-        this.etag= etag;
+        this.entityTag= entityTag;
     }
 
     /**

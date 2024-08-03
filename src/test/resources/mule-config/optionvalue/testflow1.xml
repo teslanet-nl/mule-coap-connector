@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule
+
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+  
+  http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+	<description>Mule CoAP connector test application</description>
+
+	<flow name="testflow">
+		<choice doc:name="input type" doc:id="52800155-a9f0-47b3-b97e-47261f8ed795" >
+			<when expression="#[vars.in == 'EMPTY']">
+				<coap:set-option-value doc:name="Empty">
+					<coap:bytes>
+                        <coap:from-number numberValue="0" />
+					</coap:bytes>
+				</coap:set-option-value>
+			</when>
+			<when expression="#[vars.in == 'BINARY']">
+				<coap:set-option-value doc:name="Entity tag" >
+					<coap:bytes >
+						<coap:from-binary binaryValue="#[payload]"/>
+					</coap:bytes>
+				</coap:set-option-value>
+			</when>
+			<when expression="#[vars.in == 'HEX']">
+				<coap:set-option-value doc:name="From hex">
+					<coap:bytes>
+						<coap:from-hex hexValue="#[payload]" />
+					</coap:bytes>
+				</coap:set-option-value>
+			</when>
+			<when expression="#[vars.in == 'NUMBER']">
+				<coap:set-option-value doc:name="From number" >
+					<coap:bytes >
+						<coap:from-number numberValue="#[payload]" />
+					</coap:bytes>
+				</coap:set-option-value>
+			</when>
+			<when expression="#[vars.in == 'STRING']">
+				<coap:set-option-value doc:name="Entity tag" >
+					<coap:bytes >
+						<coap:from-string stringValue="#[payload]" />
+					</coap:bytes>
+				</coap:set-option-value>
+			</when>
+		</choice>
+		<error-handler >
+            <on-error-continue enableNotifications="false" logException="false" doc:name="On Error Continue" doc:id="9501823e-9b2f-44aa-8176-a79c6de526b7" type="COAP:INVALID_OPTION_VALUE" when="true">
+                <set-payload value="INVALID_OPTION_VALUE" doc:name="INVALID_OPTION_VALUE" doc:id="dbf5ccbe-376f-4836-a34b-fb44ccf661a4" />
+            </on-error-continue>
+            <on-error-continue enableNotifications="false" logException="false" doc:name="On Error Continue" doc:id="e5d0d7b8-ad21-4742-87d4-6966f3e8dd3e" type="EXPRESSION" when="true">
+                <set-payload value="EXPRESSION" doc:name="EXPRESSION" doc:id="43fe2cc3-b55f-48c9-b0b4-3a5cb91ea998" />
+            </on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

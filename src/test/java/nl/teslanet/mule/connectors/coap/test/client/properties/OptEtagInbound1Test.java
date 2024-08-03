@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,8 +24,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -40,9 +40,9 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
      * @return the value to use in test
      * @throws InvalidEntityTagException 
      */
-    private EntityTag getValue() throws EntityTagException
+    private DefaultEntityTag getValue() throws EntityTagException
     {
-        return new EntityTag( 0x1122334455667788L );
+        return new DefaultEntityTag( 0x1122334455667788L );
     }
 
     @Override

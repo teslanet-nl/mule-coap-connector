@@ -24,24 +24,30 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.util.Set;
+
+import javax.crypto.SecretKey;
 
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.MultiPskFileStore;
 import org.eclipse.californium.scandium.dtls.x509.CertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.util.SecretUtil;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
-import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.TrustStore;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
@@ -105,15 +111,48 @@ public class DtlsEndpointConfigVisitor extends EndpointConfigVisitor
     private char[] trustStorePassword= null;
 
     /**
-     * Visit security parameters.
+     * Pre-shared-file is configured.
+     */
+    private boolean preSharedKeyFileAvailable= false;
+
+    /**
+     * Pre-shared-file location.
+     */
+    private String preSharedKeyStoreLocation= null;
+
+    /**
+     * Pre-shared-file password.
+     */
+    private String preSharedKeyStorePassword= null;
+
+    /**
+     * Visit SecurityParams is NOOP.
+     */
+
+    /**
+     * Visit PreSharedKeyGroup parameters.
      * @param toVisit The object to visit.
      * @throws ConfigException When visit is not successful.
      */
     @Override
-    public void visit( SecurityParams toVisit ) throws ConfigException
+    public void visit( PreSharedKeyGroup toVisit ) throws ConfigException
     {
         super.visit( toVisit );
         preSharedKeys= toVisit.preSharedKeys;
+    }
+
+    /**
+     * Visit pre-shared key file parameters.
+     * @param toVisit The object to visit.
+     * @throws ConfigException When visit is not successful.
+     */
+    @Override
+    public void visit( PreSharedKeyStore toVisit ) throws ConfigException
+    {
+        super.visit( toVisit );
+        preSharedKeyFileAvailable= true;
+        preSharedKeyStoreLocation= toVisit.path;
+        if ( toVisit.password != null ) preSharedKeyStorePassword= toVisit.password;
     }
 
     /**
@@ -155,13 +194,13 @@ public class DtlsEndpointConfigVisitor extends EndpointConfigVisitor
     @Override
     public CoapEndpoint getEndpoint() throws EndpointConstructionException
     {
+        MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
         DtlsConnectorConfig.Builder connectBuilder= new DtlsConnectorConfig.Builder( getConfiguration() );
         connectBuilder.setAddress( getLocalAddress() );
         connectBuilder.setReuseAddress( isReuseAddress() );
         // Pre-shared secrets
         if ( preSharedKeys != null )
         {
-            //TODO cf3 psk file support
             AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
             try
             {
@@ -189,7 +228,32 @@ public class DtlsEndpointConfigVisitor extends EndpointConfigVisitor
             }
             connectBuilder.setAdvancedPskStore( pskStore );
         }
-        MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
+        else if ( preSharedKeyFileAvailable )
+        {
+            MultiPskFileStore pskFile= new MultiPskFileStore();
+            InputStream pskStream;
+            try
+            {
+                pskStream= streamFactory.create( streamFactory.getScheme() + preSharedKeyStoreLocation );
+            }
+            catch ( IOException e )
+            {
+                throw new EndpointConstructionException(
+                    String.format( "DTLS Endpoint { %s } preshared key file { %s } error.", getEndpointName(), preSharedKeyStoreLocation ),
+                    e
+                );
+            }
+            if ( preSharedKeyStorePassword != null )
+            {
+                SecretKey secretKey= SecretUtil.create( preSharedKeyStorePassword.getBytes(), "PASSWORD" );
+                pskFile.loadPskCredentials( pskStream, secretKey );
+            }
+            else
+            {
+                pskFile.loadPskCredentials( pskStream );
+            }
+            connectBuilder.setAdvancedPskStore( pskFile );
+        }
         SslContextUtil.configure( streamFactory.getScheme(), streamFactory );
         if ( keyStoreAvailable )
         {

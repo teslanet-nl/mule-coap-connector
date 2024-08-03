@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+	<description>Mule CoAP connector test application</description>
+
+	<coap:dtls-endpoint name="Dtls_endpoint"
+		doc:name="Dtls endpoint" logTraffic="true">
+		<coap:socket-params bindToPort="5684" />
+		<coap:security-params>
+            <coap:pre-shared-key-params>
+                <coap:pre-shared-key-store path="secrets/pskfile.aes" password="testPassword"/>
+            </coap:pre-shared-key-params>
+		</coap:security-params>
+	</coap:dtls-endpoint>
+
+	<coap:server-config name="config">
+		<coap:endpoint dtlsEndpoint="Dtls_endpoint" /> 
+		<coap:resources>
+			<coap:resource resourceName="service">
+				<coap:sub-resources>
+					<coap:resource resourceName="get_me" get="true" />
+					<coap:resource resourceName="put_me" put="true" />
+					<coap:resource resourceName="post_me" post="true" />
+					<coap:resource resourceName="delete_me" delete="true" />
+				</coap:sub-resources>
+			</coap:resource>
+		</coap:resources>
+	</coap:server-config>
+
+
+	<flow name="listen">
+		<coap:listener get="true" post="true" put="true"
+			delete="true" pathPattern="/service/*" config-ref="config">
+			<coap:response responsePayload="#[vars.replacement]" />
+		</coap:listener>
+		<java:new doc:name="New spy"
+			doc:id="e8b6ab2a-b8bd-4661-8568-404428785a07"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			constructor="MuleEventSpy(String)" target="spy">
+			<java:args><![CDATA[#[{ arg0: "securityTest" }]]]></java:args>
+		</java:new>
+		<java:invoke doc:name="Invoke" target="replacement"
+			doc:id="29d87404-56e8-4d65-bbbe-86932073886d" instance="#[vars.spy]"
+			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+			method="event(Object)">
+			<java:args><![CDATA[#[{ arg0: payload }]]]></java:args>
+		</java:invoke>
+	</flow>
+	
+</mule>

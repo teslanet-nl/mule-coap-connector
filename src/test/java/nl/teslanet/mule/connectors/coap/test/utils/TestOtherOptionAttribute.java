@@ -40,7 +40,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 /**
  * Test other option attribute. 
  */
-public final class TestOtherOptionAttribute implements OtherOptionAttribute
+public final class TestOtherOptionAttribute extends OtherOptionAttribute
 {
     /**
      * Wrong type exception message format.

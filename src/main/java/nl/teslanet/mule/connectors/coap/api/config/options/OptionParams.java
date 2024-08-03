@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config;
+package nl.teslanet.mule.connectors.coap.api.config.options;
 
 
 import java.util.List;
@@ -28,20 +28,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
+import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
+import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 
 
 /**
- * Configuration of multi-cast.
+ * Configuration option parameters.
  *
  */
+@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
 public class OptionParams implements VisitableConfig
 {
     //TODO non critical options need to be understood as well. Not suitable for proxy.. 
+
+    /**
+     * Name of the option parameter configuration.
+     */
+    @RefName
+    private String optionParamsName= null;
+
     /**
     * The list of other options that the endpoint understands. 
     * Messages containing critical options that are not understood will be refused.
@@ -53,7 +64,6 @@ public class OptionParams implements VisitableConfig
                         + "\nElective options that are not understood will be ignored."
     )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
     public List< OtherOptionConfig > otherOptionConfigs;
 
     /**
@@ -71,6 +81,22 @@ public class OptionParams implements VisitableConfig
      * @param otherOptionConfigs List of expected other options.
      */
     public OptionParams( List< OtherOptionConfig > otherOptionConfigs )
+    {
+        this.otherOptionConfigs= otherOptionConfigs;
+    }
+
+    /**
+     * @return the otherOptionConfigs
+     */
+    public List< OtherOptionConfig > getOtherOptionConfigs()
+    {
+        return otherOptionConfigs;
+    }
+
+    /**
+     * @param otherOptionConfigs the otherOptionConfigs to set
+     */
+    public void setOtherOptionConfigs( List< OtherOptionConfig > otherOptionConfigs )
     {
         this.otherOptionConfigs= otherOptionConfigs;
     }

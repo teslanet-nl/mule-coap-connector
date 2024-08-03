@@ -39,10 +39,10 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
-import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 
 
 /**
@@ -92,7 +92,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
     @Optional
     @NullSafe
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
+    @ParameterDsl( allowReferences= true, allowInlineDefinition= true )
     public OptionParams optionParams= null;
 
     /**
@@ -116,14 +116,14 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public LogHealthStatus logHealthStatus= null;
 
     /**
-     * When activated incoming and outgoing CoAP messages are logged.
+     * When activated incoming and outgoing CoAP traffic is logged.
      */
     @Parameter
     @Optional( defaultValue= "false" )
-    @Summary( "When activated incoming and outgoing CoAP messages are logged." )
+    @Summary( "When activated incoming and outgoing CoAP traffic is logged." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public boolean logCoapMessages= false;
+    public boolean logTraffic= false;
 
     /**
      * Default Constructor used by Mule. 

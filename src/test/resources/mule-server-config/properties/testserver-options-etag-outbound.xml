@@ -23,18 +23,16 @@
   -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
 			
-	<coap:udp-endpoint name="udp" logCoapMessages="true" >
+	<coap:udp-endpoint name="udp" logTraffic="true" >
 		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
@@ -55,9 +53,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-			
-				<coap:response-options etag="#[ vars.value ]"></coap:response-options>
-			
+            <coap:response-options>
+                <coap:entity-tag value="#[ vars.value ]" />
+            </coap:response-options>			
 		</coap:listener>
 		<set-variable value="#[attributes]" doc:name="Set attr" doc:id="cf701db0-b668-4e53-8f70-07da14bedfe2" variableName="attr"/>
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"

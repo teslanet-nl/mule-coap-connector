@@ -461,7 +461,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         Request request= builder.build();
         try
         {
-            MessageUtils.copyOptions( options, request.getOptions(), transformationService, otherOptionDefs );
+            MessageUtils.copyOptions( options, request.getOptions(), transformationService );
+            MessageUtils.copyOtherOptions( options, request.getOptions(), otherOptionDefs, transformationService );
         }
         catch ( InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {

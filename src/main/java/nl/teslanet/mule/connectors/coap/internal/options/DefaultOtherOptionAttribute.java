@@ -39,7 +39,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 /**
  * Default other option attribute. 
  */
-public final class DefaultOtherOptionAttribute implements OtherOptionAttribute
+public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
 {
     /**
      * Wrong type exception message format.

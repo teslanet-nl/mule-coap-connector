@@ -33,7 +33,6 @@ import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
-import nl.teslanet.mule.connectors.coap.api.config.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
@@ -64,9 +63,12 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.TrustStore;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
@@ -135,8 +137,8 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
-            case ENDPOINT_LOGCOAPMESSAGES:
-                result= Boolean.toString( toVisit.logCoapMessages );
+            case ENDPOINT_LOGTRAFFIC:
+                result= Boolean.toString( toVisit.logTraffic );
                 break;
             case logHealthStatus:
                 result= Boolean.toString( toVisit.logHealthStatus != null );
@@ -579,6 +581,49 @@ public class GetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
+            case DTLS_RECOMMENDED_CIPHER_SUITES_ONLY:
+                result= Boolean.toString( toVisit.recommendedCipherSuitesOnly );
+                break;
+            case DTLS_RECOMMENDED_CURVES_ONLY:
+                result= Boolean.toString( toVisit.recommendedCurvesOnly );
+                break;
+            case DTLS_RECOMMENDED_SIGNATURE_AND_HASH_ALGORITHMS_ONLY:
+                result= Boolean.toString( toVisit.recommendedSignatureAndHashAlgorithmsOnly );
+                break;
+            case DTLS_PRESELECTED_CIPHER_SUITES:
+                result= ( toVisit.preselectedCipherSuites != null ? toVisit.preselectedCipherSuites.toString() : null );
+                break;
+            case DTLS_CIPHER_SUITES:
+                result= ( toVisit.cipherSuites != null ? toVisit.cipherSuites.toString() : null );
+                break;
+            case DTLS_CURVES:
+                result= ( toVisit.curves != null ? toVisit.curves.toString() : null );
+                break;
+            case DTLS_SIGNATURE_AND_HASH_ALGORITHMS:
+                result= ( toVisit.signatureAlgorithms != null ? toVisit.signatureAlgorithms.toString() : null );
+                break;
+            case DTLS_CERTIFICATE_KEY_ALGORITHMS:
+                result= ( toVisit.certificateKeyAlgorithms != null ? toVisit.certificateKeyAlgorithms.toString() : null );
+                break;
+            case DTLS_EXTENDED_MASTER_SECRET_MODE:
+                result= ( toVisit.extendedMasterSecretMode != null ? toVisit.extendedMasterSecretMode.toString() : null );
+                break;
+            case DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION:
+                result= Boolean.toString( toVisit.truncateCertificatePathForValidation );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+    * Visit configuration.
+    */
+    @Override
+    public void visit( PreSharedKeyGroup toVisit )
+    {
+        switch ( param )
+        {
             case pskHost:
                 if ( toVisit.preSharedKeys != null )
                 {
@@ -662,35 +707,24 @@ public class GetValueVisitor implements ConfigVisitor
                     result= null;
                 }
                 break;
-            case DTLS_RECOMMENDED_CIPHER_SUITES_ONLY:
-                result= Boolean.toString( toVisit.recommendedCipherSuitesOnly );
+            default:
                 break;
-            case DTLS_RECOMMENDED_CURVES_ONLY:
-                result= Boolean.toString( toVisit.recommendedCurvesOnly );
+        }
+    }
+
+    /**
+    * Visit configuration.
+    */
+    @Override
+    public void visit( PreSharedKeyStore toVisit )
+    {
+        switch ( param )
+        {
+            case pskKeyFileLocation:
+                result= toVisit.path;
                 break;
-            case DTLS_RECOMMENDED_SIGNATURE_AND_HASH_ALGORITHMS_ONLY:
-                result= Boolean.toString( toVisit.recommendedSignatureAndHashAlgorithmsOnly );
-                break;
-            case DTLS_PRESELECTED_CIPHER_SUITES:
-                result= ( toVisit.preselectedCipherSuites != null ? toVisit.preselectedCipherSuites.toString() : null );
-                break;
-            case DTLS_CIPHER_SUITES:
-                result= ( toVisit.cipherSuites != null ? toVisit.cipherSuites.toString() : null );
-                break;
-            case DTLS_CURVES:
-                result= ( toVisit.curves != null ? toVisit.curves.toString() : null );
-                break;
-            case DTLS_SIGNATURE_AND_HASH_ALGORITHMS:
-                result= ( toVisit.signatureAlgorithms != null ? toVisit.signatureAlgorithms.toString() : null );
-                break;
-            case DTLS_CERTIFICATE_KEY_ALGORITHMS:
-                result= ( toVisit.certificateKeyAlgorithms != null ? toVisit.certificateKeyAlgorithms.toString() : null );
-                break;
-            case DTLS_EXTENDED_MASTER_SECRET_MODE:
-                result= ( toVisit.extendedMasterSecretMode != null ? toVisit.extendedMasterSecretMode.toString() : null );
-                break;
-            case DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION:
-                result= Boolean.toString( toVisit.truncateCertificatePathForValidation );
+            case pskKeyFilePassword:
+                result= toVisit.password;
                 break;
             default:
                 break;

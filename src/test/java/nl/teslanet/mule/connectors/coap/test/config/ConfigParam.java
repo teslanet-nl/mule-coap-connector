@@ -37,7 +37,7 @@ import org.eclipse.californium.scandium.config.DtlsConfig;
 public enum ConfigParam
 {
     //endpoint
-    ENDPOINT_LOGCOAPMESSAGES(null),
+    ENDPOINT_LOGTRAFFIC(null),
     ENDPOINT_BINDTOHOST(null),
     ENDPOINT_BINDTOPORT(null),
     ENDPOINT_BINDTOSECUREPORT(null),
@@ -171,6 +171,8 @@ public enum ConfigParam
     pskPort(null),
     pskIdentity(null),
     pskKey(null),
+    pskKeyFileLocation(null),
+    pskKeyFilePassword(null),
     keyStoreLocation(null),
     keyStorePassword(null),
     privateKeyAlias(null),

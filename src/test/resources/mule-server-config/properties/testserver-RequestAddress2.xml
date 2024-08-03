@@ -22,18 +22,18 @@
   #L%
   -->
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" 
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
    <description>Mule CoAP connector test application</description>
    
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
+	<coap:udp-endpoint name="udp" logTraffic="true">
         <coap:socket-params bindToHost="127.0.0.1" bindToPort="8883"/>
         <coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
@@ -52,7 +52,7 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:server-config>
 
 
-	<coap:udp-endpoint name="udpLocal" logCoapMessages="true">
+	<coap:udp-endpoint name="udpLocal" logTraffic="true">
 		<coap:socket-params bindToHost="127.0.0.1" bindToPort="9983" />
 		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
@@ -74,33 +74,15 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="996160c2-51b6-44f9-82e0-b70bf430f9fc" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="225f7a91-105d-4e30-853f-3e3b9592b940" >
-
-			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
-				java.lang.String() ) == false )
-				{
-				throw new Exception(&quot;attribute is not a String&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+        <set-payload value="#[attributes.localAddress]"/>
+        <java:validate-type class="java.lang.String" instance="#[payload]"/>
    </flow>
    	<flow name="listen2">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="configLocal">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="05b1bd2c-2fc3-43a9-99a8-1cae0af230c3" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="73818368-43af-4e8b-8eda-a953fd4fdacb" >
-
-			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
-				java.lang.String() ) == false )
-				{
-				throw new Exception(&quot;attribute is not a String&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+        <set-payload value="#[attributes.localAddress]"/>
+        <java:validate-type class="java.lang.String" instance="#[payload]"/>
    </flow>
    
 </mule>

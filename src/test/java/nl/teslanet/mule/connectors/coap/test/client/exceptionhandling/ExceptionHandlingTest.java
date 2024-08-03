@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -62,59 +62,53 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         return Arrays.asList(
             new Object [] []
             {
-                { "do_request", Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me", "Response is: CONTENT".getBytes() },
-                { "do_request", Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
-                { "do_request", Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me", "Response is: CHANGED".getBytes() },
-                { "do_request", Code.DELETE, "127.0.0.1", "8976", "/service/delete_me", "DELETED", "coap://127.0.0.1:8976/service/delete_me", "Response is: DELETED".getBytes() } }
+                { Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me", "Response is: CONTENT".getBytes() },
+                { Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
+                { Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me", "Response is: CHANGED".getBytes() },
+                { Code.DELETE, "127.0.0.1", "8976", "/service/delete_me", "DELETED", "coap://127.0.0.1:8976/service/delete_me", "Response is: DELETED".getBytes() } }
         );
     }
 
     /**
-     * The mule flow to call.
-     */
-    @Parameter( 0 )
-    public String flowName;
-
-    /**
      * The request code that is expected.
      */
-    @Parameter( 1 )
+    @Parameter( 0 )
     public Code expectedRequestCode;
 
     /**
      * The server host to call.
      */
-    @Parameter( 2 )
+    @Parameter( 1 )
     public String host;
 
     /**
      * The server port to call.
      */
-    @Parameter( 3 )
+    @Parameter( 2 )
     public String port;
 
     /**
      * The server path to call.
      */
-    @Parameter( 4 )
+    @Parameter( 3 )
     public String path;
 
     /**
      * The response code that is expected.
      */
-    @Parameter( 5 )
+    @Parameter( 4 )
     public String expectedResponseCode;
 
     /**
      * The request uri that is expected.
      */
-    @Parameter( 6 )
+    @Parameter( 5 )
     public String expectedRequestUri;
 
     /**
      * The payload code that is expected.
      */
-    @Parameter( 7 )
+    @Parameter( 6 )
     public byte[] expectedPayload;
 
     /* (non-Javadoc)
@@ -150,10 +144,10 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         MuleEventSpy spy3= new MuleEventSpy( "spy-me3" );
         spy3.clear();
 
-        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
+        Event result= flowRunner( "do_request_catching_handler").withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
             port
-        ).withVariable( "path", path ).withVariable( "handler", "catching_handler" ).run();
+        ).withVariable( "path", path ).run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
@@ -203,10 +197,10 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         MuleEventSpy spy3= new MuleEventSpy( "spy-me3" );
         spy3.clear();
 
-        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
+        Event result= flowRunner( "do_request_failing_handler" ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
             "port",
             port
-        ).withVariable( "path", path ).withVariable( "handler", "failing_handler" ).run();
+        ).withVariable( "path", path ).run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work

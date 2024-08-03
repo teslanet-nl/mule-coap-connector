@@ -28,7 +28,8 @@ import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
@@ -37,9 +38,16 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options )
     {
-        options.addETag( new EntityTag( 0xA0L ).getValue() );
-        options.addETag( new EntityTag( 0x11FFL ).getValue() );
-        options.addETag( new EntityTag( 0x11223344556677L ).getValue() );
+        try
+        {
+            options.addETag( new DefaultEntityTag( 0xA0L ).getValue() );
+            options.addETag( new DefaultEntityTag( 0x11FFL ).getValue() );
+            options.addETag( new DefaultEntityTag( 0x11223344556677L ).getValue() );
+        }
+        catch ( EntityTagException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     @Override
@@ -49,13 +57,12 @@ public class OptEtagListInbound2Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue()
+    protected Object getExpectedPropertyValue() throws EntityTagException
     {
-        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
-        list.add( new EntityTag( 0xA0L ) );
-        list.add( new EntityTag( 0x11FFL ) );
-        list.add( new EntityTag( 0x11223344556677L ) );
-
+        LinkedList< DefaultEntityTag > list= new LinkedList< DefaultEntityTag >();
+        list.add( new DefaultEntityTag( 0xA0L ) );
+        list.add( new DefaultEntityTag( 0x11FFL ) );
+        list.add( new DefaultEntityTag( 0x11223344556677L ) );
         return Collections.unmodifiableList( list );
     }
 

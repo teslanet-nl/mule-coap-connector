@@ -231,7 +231,8 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService, server.getOtherOptionDefs() );
+            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
+            MessageUtils.copyOtherOptions( responseOptions, coapResponse.getOptions(), server.getOtherOptionDefs(), transformationService );
         }
         //TODO add streaming & blockwise cooperation
         try

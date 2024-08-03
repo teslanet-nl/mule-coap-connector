@@ -34,14 +34,21 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.binary.BytesConfig;
-
 
 /**
  * PSK config. 
  */
 public class PreSharedKey
 {
+    /**
+     * The identity of the key.
+     */
+    @Parameter
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The identity of the key." )
+    private String identity= null;
+
     /**
      * The hostname of the peer that uses the key.
      * Needed for (client) endpoints that connect to multiple servers.
@@ -75,22 +82,13 @@ public class PreSharedKey
     private Integer port= null;
 
     /**
-     * The identity of the key.
-     */
-    @Parameter
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    @Summary( "The identity of the key." )
-    private String identity= null;
-
-    /**
      * The key configuration.
      */
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( "The key configuration." )
-    private BytesConfig key= null;
+    private KeyConfig key= null;
 
     /**
      * Default constructor.
@@ -107,7 +105,7 @@ public class PreSharedKey
      * @param identity The identity of the key.
      * @param key The key in hexadecimal notation.
      */
-    public PreSharedKey( String identity, BytesConfig key )
+    public PreSharedKey( String identity, KeyConfig key )
     {
         this( identity, key, null, null );
     }
@@ -119,7 +117,7 @@ public class PreSharedKey
      * @param host The hostname of the server using the key.
      * @param port The port of the server using the key.
      */
-    public PreSharedKey( String identity, BytesConfig key, String host, Integer port )
+    public PreSharedKey( String identity, KeyConfig key, String host, Integer port )
     {
         super();
         Validate.notEmpty( identity );
@@ -189,7 +187,7 @@ public class PreSharedKey
     /**
      * @return the key
      */
-    public BytesConfig getKey()
+    public KeyConfig getKey()
     {
         return key;
     }

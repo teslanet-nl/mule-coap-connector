@@ -23,21 +23,19 @@
   -->
 
 <mule
-	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
 	<coap:udp-endpoint name="UDP_endpoint"
-		logCoapMessages="true">
+		logTraffic="true">
 		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
@@ -66,13 +64,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-payload value="server response" />
-		<scripting:execute engine="Groovy"
-			doc:name="throw exception"
-			doc:id="c663e99a-47db-4f21-87ac-21c6b08635af">
-			<scripting:code>throw new java.lang.Exception(&quot;test the
-				exception&quot;);</scripting:code>
-		</scripting:execute>
+		<set-payload value="#[ throw exception ]" />
 
 	</flow>
 
@@ -83,18 +75,13 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-payload value="server response" />
 		<try doc:name="Try" doc:id="7c514e9a-ff5b-4115-b817-dc0de0dd58e3">
-			<scripting:execute engine="Groovy"
-				doc:name="throw exception"
-				doc:id="ac9a7d98-4358-49e7-bce8-0ddfec7aeb3b">
-				<scripting:code>throw new java.lang.Exception(&quot;test the exception&quot;);</scripting:code>
-			</scripting:execute>
+            <set-payload value="#[ throw exception ]" />
 			<error-handler>
 				<on-error-continue enableNotifications="true"
 					logException="true" doc:name="On Error Continue"
 					doc:id="4d59f9ac-a41d-4df3-9b06-67d49d1e582f"
-					type="SCRIPTING:EXECUTION">
+					type="MULE:EXPRESSION">
 					<set-payload value="exception catched" />
 				</on-error-continue>
 			</error-handler>

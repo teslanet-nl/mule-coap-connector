@@ -24,11 +24,13 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOtherOptionAttribute;
 
@@ -51,7 +53,27 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getOther().getAll( getOptionAlias() );
+        ArrayList< OtherOptionAttribute > list= new ArrayList<>();
+        for ( OtherOptionAttribute option : attributes.getOptions().getOther() )
+        {
+            if ( getOptionAlias().equals( option.getAlias() ) )
+            {
+                OtherOptionAttribute otherOption;
+                try
+                {
+                    otherOption= new TestOtherOptionAttribute(
+                        new OpaqueOptionDefinition( getOptionNumber(), getOptionAlias() ),
+                        OptionUtils.toBytesFromHex( option.getValueAsHex() )
+                    );
+                }
+                catch ( OptionValueException e )
+                {
+                    throw new RuntimeException( e );
+                }
+                list.add( otherOption );
+            }
+        }
+        return Collections.unmodifiableList( list );
     }
 
     /**
@@ -60,7 +82,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     @Override
     protected Object getExpectedInboundPropertyValue()
     {
-        LinkedList< OtherOptionAttribute > list= new LinkedList<>();
+        ArrayList< OtherOptionAttribute > list= new ArrayList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
             OtherOptionAttribute otherOption= new TestOtherOptionAttribute( new OpaqueOptionDefinition( getOptionNumber(), getOptionAlias() ), getOptionValues()[i] );

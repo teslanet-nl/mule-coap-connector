@@ -136,7 +136,6 @@ public class MuleEventSpy
         }
     }
 
-    //TODO remove deprecation
     /**
      * When msg is a stream it is consumed so t can be stored
      * @param msg to consume

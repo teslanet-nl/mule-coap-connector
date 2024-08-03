@@ -24,14 +24,13 @@ package nl.teslanet.mule.connectors.coap.internal;
 
 
 import org.mule.runtime.extension.api.annotation.error.Throws;
+import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagParams;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.EntityTagErrorProvider;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueParams;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.OptionValueErrorProvider;
 
 
 /**
@@ -40,21 +39,24 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.EntityTagErrorProvid
 public class GlobalOperations
 {
     /**
-     * Operation that constructs an Entity Tag object.
-     * @param entityTagParams The parameters for entity tag construction.
-     * @return The entity tag containing given value.
+     * Operation that constructs an CoAP option byte value.
+     * The resulting byte array is complient to CoAP specifications 
+     * how integer and string values must be converted to bytes.
+     * @param params The parameters for option value construction.
+     * @return The byte array containing given value.
      */
-    @Throws( { EntityTagErrorProvider.class } )
-    public EntityTag entityTag( @ParameterGroup( name= "Entity Tag" )
-    EntityTagParams entityTagParams )
+    @Throws( { OptionValueErrorProvider.class } )
+    @MediaType( strict= false, value= "application/octet-stream")
+    public byte[] setOptionValue( @ParameterGroup( name= "Bytes value" )
+    OptionValueParams params )
     {
         try
         {
-            return EntityTag.valueOf( entityTagParams.getBytes().getByteArray() );
+            return params.getBytes().getByteArray();
         }
-        catch ( EntityTagException | OptionValueException e )
+        catch ( OptionValueException e )
         {
-            throw new InvalidEntityTagException("Invalid entity tag value.", e);
+            throw new InvalidOptionValueException("Invalid option value.", e);
         }
     }
 }

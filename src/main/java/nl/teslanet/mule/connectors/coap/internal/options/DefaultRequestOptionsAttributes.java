@@ -26,17 +26,18 @@ package nl.teslanet.mule.connectors.coap.internal.options;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -46,6 +47,12 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptio
 public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
 {
     /**
+     * Error message.
+     */
+    static final String MSG_CANNOT_CREATE= "cannot create attribute";
+
+    /**
+     * 
      * Constructor that uses options from given optionSet.
      * @param optionSet to copy from.
      * @throws InvalidOptionValueException when given option value could not be copied successfully.
@@ -53,26 +60,24 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
     public DefaultRequestOptionsAttributes( OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
         super();
-        String errorMsg= "cannot create attribute";
 
         if ( !optionSet.getIfMatch().isEmpty() )
         {
             try
             {
-                List< EntityTag > tmpIfMatch= EntityTag.getList( optionSet.getIfMatch() );
-                boolean emptyPresent= tmpIfMatch.removeIf( EntityTag::isEmpty );
-                if ( emptyPresent )
+                Optional< List< DefaultEntityTag > > tmpIfMatch= MessageUtils.getList( optionSet.getIfMatch() );
+                if ( !tmpIfMatch.isPresent() )
                 {
                     ifExists= true;
                 }
-                if ( !tmpIfMatch.isEmpty() )
+                else
                 {
-                    ifMatch= Collections.unmodifiableList( tmpIfMatch );
+                    ifMatch= Collections.unmodifiableList( tmpIfMatch.get() );
                 }
             }
             catch ( EntityTagException e )
             {
-                throw new InternalInvalidOptionValueException( "IfMatch", errorMsg, e );
+                throw new InternalInvalidOptionValueException( "IfMatch", MSG_CANNOT_CREATE, e );
             }
         }
         if ( optionSet.hasUriHost() )
@@ -83,11 +88,19 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         {
             try
             {
-                etags= Collections.unmodifiableList( EntityTag.getList( optionSet.getETags() ) );
+                Optional< List< DefaultEntityTag > > tmpEtags= MessageUtils.getList( optionSet.getETags() );
+                if ( !tmpEtags.isPresent() )
+                {
+                    throw new InternalInvalidOptionValueException( "Entity-Tag option with empty value is invalid", MSG_CANNOT_CREATE );
+                }
+                else
+                {
+                    etags= Collections.unmodifiableList( tmpEtags.get() );
+                }
             }
             catch ( EntityTagException e )
             {
-                throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
+                throw new InternalInvalidOptionValueException( "Entity-Tag option is invalid", MSG_CANNOT_CREATE, e );
             }
         }
         ifNoneMatch= optionSet.hasIfNoneMatch();

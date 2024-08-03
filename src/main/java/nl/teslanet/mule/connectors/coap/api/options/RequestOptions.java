@@ -26,13 +26,13 @@ package nl.teslanet.mule.connectors.coap.api.options;
 import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 
 
 /**
@@ -100,12 +100,11 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Content( primary= false )
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary(
-        "An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource. One or a collection of etag values can be set."
+        "Entity-tags of previously obtained resource content the client wishes to refresh."
     )
-    private TypedValue< Object > etags= null;
+    private List< EntityTag > entityTagOptions= null;
 
     /**
      * RFC 7252: The value of an If-Match option is either an ETag or the empty
@@ -144,10 +143,9 @@ public class RequestOptions
      */
     @Parameter
     @Optional
-    @Content( primary= false )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The If-Match Option makes a request conditional on the resources ETag." )
-    private TypedValue< Object > ifMatch= null;
+    @Summary( "The If-Match Option makes a request conditional on the resources entity tag." )
+    private List< EntityTag > ifMatchOptions= null;
 
     /**
      * RFC 7252: The If-None-Match Option MAY be used to make a request conditional
@@ -242,33 +240,33 @@ public class RequestOptions
      * The If-Match option contains an ETag value or a collection of ETag values.
      * @return The ifMatch options.
      */
-    public TypedValue< Object > getIfMatch()
+    public List< EntityTag > getIfMatchOptions()
     {
-        return ifMatch;
+        return ifMatchOptions;
     }
 
     /**
-     * @param ifMatch the ifMatch value to set.
+     * @param ifMatchOptions the ifMatch options to set.
      */
-    public void setIfMatch( TypedValue< Object > ifMatch )
+    public void setIfMatchOptions( List< EntityTag > ifMatchOptions )
     {
-        this.ifMatch= ifMatch;
+        this.ifMatchOptions= ifMatchOptions;
     }
 
     /**
-     * @return The etags value.
+     * @return The entity tag options.
      */
-    public TypedValue< Object > getEtags()
+    public List< EntityTag > getEntityTagOptions()
     {
-        return etags;
+        return entityTagOptions;
     }
 
     /**
-     * @param etags The etags to set.
+     * @param entityTagOptions The entity tag options to set.
      */
-    public void setEtags( TypedValue< Object > etags )
+    public void setEntityTagOptions( List< EntityTag > entityTagOptions )
     {
-        this.etags= etags;
+        this.entityTagOptions= entityTagOptions;
     }
 
     /**
@@ -366,5 +364,4 @@ public class RequestOptions
     {
         this.otherOptions= otherOptions;
     }
-
 }

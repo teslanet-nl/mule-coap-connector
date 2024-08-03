@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -79,10 +79,14 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromHex;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString;
 import nl.teslanet.mule.connectors.coap.api.error.Errors;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.client.ResponseListener;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
 
@@ -108,9 +112,11 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @SubTypeMapping( baseType= RemoteEndpointConfig.class, subTypes=
 { SharedServerConfig.class, ProxyConfig.class } )
 @SubTypeMapping( baseType= BytesValue.class, subTypes=
-{ FromBinary.class, EmptyBytes.class, FromHex.class, FromNumber.class, FromString.class } )
+{ EmptyBytes.class, FromBinary.class, FromHex.class, FromNumber.class, FromString.class } )
 @SubTypeMapping( baseType= BytesConfig.class, subTypes=
 { EmptyBytesConfig.class, FromHexConfig.class, FromNumberConfig.class, FromStringConfig.class } )
+@SubTypeMapping( baseType= KeyConfig.class, subTypes=
+{ KeyFromHex.class, KeyFromNumber.class, KeyFromString.class } )
 @Configurations(
     { Server.class, Client.class }
 )
@@ -118,7 +124,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 { ResponseListener.class } )
 @Operations( GlobalOperations.class )
 @Export( classes=
-{ EntityTag.class } )
+{ DefaultEntityTag.class } )
 @ErrorTypes( Errors.class )
 public class CoapConnector
 {

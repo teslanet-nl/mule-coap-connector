@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,30 +20,25 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.exceptions;
+package nl.teslanet.mule.connectors.coap.api.config.security;
 
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
-import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
-
-import nl.teslanet.mule.connectors.coap.api.error.Errors;
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 
 
 /**
- * Provider of errors that can be thrown by entity tag operations.
- *
+ * Key config interface.
+ * 
  */
-public class EntityTagErrorProvider implements ErrorTypeProvider
+public interface KeyConfig
 {
-    @SuppressWarnings( "rawtypes" )
-    @Override
-    public Set< ErrorTypeDefinition > getErrorTypes()
+    /**
+     * @return the key as byte array.
+     * @throws OptionValueException When conversion failed.
+     */
+    public default byte[] getByteArray() throws OptionValueException
     {
-        Set< ErrorTypeDefinition > errors= new HashSet<>();
-        errors.add( Errors.INVALID_ETAG );
-        return errors;
+        return OptionUtils.EMPTY_BYTES;
     }
 }

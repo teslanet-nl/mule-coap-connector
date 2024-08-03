@@ -31,21 +31,20 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
-import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
@@ -64,7 +63,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTag > list= attributes.getIfMatch();
+        List< EntityTagAttribute > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNull( list );
@@ -85,15 +84,11 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTag > list= attributes.getIfMatch();
+        List< EntityTagAttribute > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
-        assertNotNull( list );
+        assertNull( list );
         assertTrue( "coap.opt.if_match.any: wrong value", ifExists );
-        assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
-        assertFalse( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
     }
 
     @Test
@@ -106,12 +101,14 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTag > list= attributes.getIfMatch();
+        List< EntityTagAttribute > list= attributes.getIfMatch();
+        boolean ifExists= attributes.isIfExists();
 
         assertNotNull( list );
+        assertFalse( "coap.opt.if_match.ifexistst: wrong value", ifExists );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue2 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue1 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new DefaultEntityTag( etagValue2 ) ) );
     }
 
     @Test
@@ -127,13 +124,15 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTag > list= attributes.getIfMatch();
+        List< EntityTagAttribute > list= attributes.getIfMatch();
+        boolean ifExists= attributes.isIfExists();
 
         assertNotNull( list );
+        assertFalse( "coap.opt.if_match.ifexistst: wrong value", ifExists );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 2, list.size() );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
-        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue1 ) ) );
+        assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue2 ) ) );
+        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new DefaultEntityTag( etagValue3 ) ) );
     }
 
     @Test
@@ -163,13 +162,13 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTag > list= attributes.getEtags();
+        List< EntityTagAttribute > list= attributes.getEtags();
 
         assertNotNull( list );
         assertEquals( "coap.opt.etag.list: wrong number of etags", 2, list.size() );
-        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new EntityTag( etagValue1 ) ) );
-        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new EntityTag( etagValue2 ) ) );
-        assertFalse( "coap.opt.etag.list: etag not expected", list.contains( new EntityTag( etagValue3 ) ) );
+        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new DefaultEntityTag( etagValue1 ) ) );
+        assertTrue( "coap.opt.etag.list: missing etag", list.contains( new DefaultEntityTag( etagValue2 ) ) );
+        assertFalse( "coap.opt.etag.list: etag not expected", list.contains( new DefaultEntityTag( etagValue3 ) ) );
     }
 
     @Test
@@ -369,14 +368,14 @@ public class DefaultRequestOptionsAttributesTest
         }
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
-        MultiMap< String, OtherOptionAttribute > options= attributes.getOther();
+        List< OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", 4, options.size() );
         int i= 0;
-        for ( Entry< String, OtherOptionAttribute > entry : options.entryList() )
+        for ( OtherOptionAttribute item : options )
         {
-            assertEquals( "coap.opt.other has wrong number", optionsDefs[i].getNumber(), entry.getValue().getNumber() );
-            assertArrayEquals( "coap.opt.other has wrong value", values[i], IOUtils.toByteArray( entry.getValue().getValue() ) );
+            assertEquals( "coap.opt.other has wrong number", optionsDefs[i].getNumber(), item.getNumber() );
+            assertArrayEquals( "coap.opt.other has wrong value", values[i], IOUtils.toByteArray( item.getValue() ) );
             i++;
         }
     }

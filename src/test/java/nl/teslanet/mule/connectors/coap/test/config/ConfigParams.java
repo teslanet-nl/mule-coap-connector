@@ -171,7 +171,7 @@ public class ConfigParams
         switch ( param )
         {
             //from EndpointConfig
-            case ENDPOINT_LOGCOAPMESSAGES:
+            case ENDPOINT_LOGTRAFFIC:
                 return new ConfigDescription( param, "false", "false", "true", null, ConfigDescription.TEST_ALL );
             case ENDPOINT_BINDTOHOST:
                 return new ConfigDescription( param, null, null, "somehost.org", "somehost.org", ConfigDescription.TEST_ALL );
@@ -193,6 +193,10 @@ public class ConfigParams
                 return new ConfigDescription( param, null, null, "[pskId1,pskId2,pskId3]", null, ConfigDescription.TEST_DTLS );
             case pskKey:
                 return new ConfigDescription( param, null, null, "[pskKey1,pskKey2,pskKey3]", null, ConfigDescription.TEST_DTLS );
+            case pskKeyFileLocation:
+                return new ConfigDescription( param, null, null, "/tmp/test1", null, ConfigDescription.TEST_DTLS );
+            case pskKeyFilePassword:
+                return new ConfigDescription( param, null, null, "secret1", null, ConfigDescription.TEST_DTLS );
             case keyStoreLocation:
                 return new ConfigDescription( param, null, null, "/tmp/test1", null, ConfigDescription.TEST_DTLS );
             case keyStorePassword:

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
+    xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+  <description>Mule CoAP connector test application</description>
+
+  <coap:udp-endpoint name="udp" logTraffic="true">
+    <coap:socket-params  bindToPort="5683" />
+        <coap:option-params>
+            <coap:other-option-configs>
+                <coap:other-option-config alias="option-65003" number="65003" format="STRING"  maxBytes="200" />
+            </coap:other-option-configs>
+        </coap:option-params>
+        <coap:exchange-params exchangeLifetime="1s"/>
+  </coap:udp-endpoint>
+
+  <coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
+    <coap:resources>
+      <coap:resource resourceName="service">
+        <coap:sub-resources>
+          <coap:resource resourceName="get_me" get="true"/>
+          <coap:resource resourceName="put_me" put="true"/>
+          <coap:resource resourceName="post_me" post="true"/>
+          <coap:resource resourceName="delete_me" delete="true"/>
+        </coap:sub-resources>
+      </coap:resource>
+    </coap:resources>
+
+  </coap:server-config>
+
+  <flow name="listen">
+    <coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
+        <coap:response-options otherOptions="#[ vars.value ]"/>
+    </coap:listener>
+    
+    <set-variable value="#[attributes.options.other[?( $.alias == 'option-65003' )]]" doc:name="Set Variable" doc:id="32565e33-eaa5-45bd-9e99-de66b6e3a42b" variableName="attr"/>
+
+    <java:new doc:name="New spy" doc:id="f05a659d-1f90-43b4-b420-ae20e1ed8e01"
+      class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+      constructor="MuleEventSpy( String )" target="spy">
+      <java:args><![CDATA[#[{ arg0: 'coap.opt.other.65003.list' }]]]></java:args>
+    </java:new>
+
+    <java:invoke doc:name="Invoke" doc:id="30bba214-f053-4bf8-bda7-85a705496019"
+      instance="#[vars.spy]" class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
+      method="event(Object)" target="value">
+      <java:args><![CDATA[#[{ arg0: vars.attr default '' }]]]></java:args>
+    </java:invoke>
+    <set-payload value="nothing_important"/>
+  </flow>
+
+</mule>

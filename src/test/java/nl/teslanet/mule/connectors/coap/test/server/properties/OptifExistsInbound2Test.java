@@ -25,17 +25,18 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 public class OptifExistsInbound2Test extends AbstractInboundPropertyTestcase
 {
 
     @Override
-    protected void addOption( OptionSet options )
+    protected void addOption( OptionSet options ) throws EntityTagException
     {
-        options.addIfMatch( new EntityTag( 0x11FFL ).getValue() );
-        options.addIfMatch( new EntityTag( 0xAABBCCL ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0x11FFL ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0xAABBCCL ).getValue() );
     }
 
     @Override

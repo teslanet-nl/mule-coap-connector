@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,8 +25,12 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -40,12 +44,12 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
      * @return the value to use in test
      * @throws EntityTagException 
      */
-    private LinkedList< EntityTag > getValue() throws EntityTagException
+    private LinkedList< DefaultEntityTag > getValue() throws EntityTagException
     {
-        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
-        list.add( new EntityTag( 0x68656C6C6FL ) );
-        list.add( new EntityTag( 0x6F6C6C61L ) );
-        list.add( new EntityTag( 0x686F69L ) );
+        LinkedList< DefaultEntityTag > list= new LinkedList< DefaultEntityTag >();
+        list.add( new DefaultEntityTag( 0x68656C6C6FL ) );
+        list.add( new DefaultEntityTag( 0x6F6C6C61L ) );
+        list.add( new DefaultEntityTag( 0x686F69L ) );
 
         return list;
     }
@@ -65,12 +69,14 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
     @Override
     protected Object getOutboundPropertyValue() throws EntityTagException
     {
-        LinkedList< Long > propertyValue= new LinkedList<>();
-        for ( EntityTag value : getValue() )
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        for ( DefaultEntityTag value : getValue() )
         {
-            propertyValue.add( value.getValueAsNumber() );
+            EntityTag etag= new EntityTag();
+            etag.setValue( new TypedValue< Object >( value.getValueAsString(), DataType.fromObject( value.getValueAsString() ) ) );
+            list.add( etag );
         }
-        return propertyValue;
+        return list;
     }
 
     /* (non-Javadoc)

@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.coap.option.MapBasedOptionRegistry;
-import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
+import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.coap.option.StandardOptionRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.CoapEndpoint.Builder;
@@ -56,7 +56,12 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
-        OpaqueOptionDefinition[] critical= { TestOptions.OTHER_OPTION_65009, TestOptions.OTHER_OPTION_65012, TestOptions.OTHER_OPTION_65013, TestOptions.OTHER_OPTION_65308 };
+        OptionDefinition[] critical= {
+            TestOptions.OTHER_OPTION_65003,
+            TestOptions.OTHER_OPTION_65009,
+            TestOptions.OTHER_OPTION_65012,
+            TestOptions.OTHER_OPTION_65013,
+            TestOptions.OTHER_OPTION_65308 };
 
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );

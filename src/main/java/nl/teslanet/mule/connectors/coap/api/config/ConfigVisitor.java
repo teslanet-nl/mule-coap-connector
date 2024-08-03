@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -57,8 +57,12 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.TrustStore;
 
@@ -545,6 +549,36 @@ public interface ConfigVisitor
      * @throws ConfigException When the visit is not successful.
      */
     public default void visit( ConnectionId toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit PreSharedKeyGroup configuration object.
+     * @param toVisit The object to visit.
+     * @throws ConfigException When the visit is not successful.
+     */
+    public default void visit( PreSharedKeyParams toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit PreSharedKeyFile configuration object.
+     * @param toVisit The object to visit.
+     * @throws ConfigException When the visit is not successful.
+     */
+    public default void visit( PreSharedKeyStore toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit PreSharedKeytGroup configuration object.
+     * @param toVisit The object to visit.
+     * @throws ConfigException When the visit is not successful.
+     */
+    public default void visit( PreSharedKeyGroup preSharedKeyGroup ) throws ConfigException
     {
         //NOOP
     }

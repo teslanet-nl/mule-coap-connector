@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -49,8 +49,8 @@ import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.tck.core.streaming.DummyByteBufferManager;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.UniqueObject;
@@ -219,7 +219,7 @@ public class PayloadTest extends AbstractClientTestCase
     @Test
     public void testEtagPayload() throws Exception
     {
-        EntityTag requestPayload= new EntityTag( "112233ff" );
+        DefaultEntityTag requestPayload= new DefaultEntityTag( "112233ff" );
         CoreEvent response= (CoreEvent) flowRunner( "do_test" ).keepStreamsOpen().withPayload( (Object) requestPayload ).run();
 
         assertNotNull( "no mule event", response );
@@ -227,7 +227,7 @@ public class PayloadTest extends AbstractClientTestCase
         assertTrue( "request failed", attributes.isSuccess() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getMessage().getPayload() );
-        assertEquals( "wrong response payload contents", requestPayload, EntityTag.valueOf( IOUtils.toByteArray( responsePayload.openCursor() ) ) );
+        assertEquals( "wrong response payload contents", requestPayload, DefaultEntityTag.valueOf( IOUtils.toByteArray( responsePayload.openCursor() ) ) );
     }
 
     /**
