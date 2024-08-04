@@ -53,6 +53,10 @@ pipeline
                 { 
                 	expression { params.DEPLOY_SNAPSHOT }
                 }
+                not
+                { 
+                	expression { params.BUILD_RELEASE }
+                }
             }
             steps
             {
