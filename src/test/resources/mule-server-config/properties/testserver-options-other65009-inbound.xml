@@ -34,12 +34,18 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<description>Mule CoAP connector test application</description>
 
+  <coap:global-config name="others">
+		<coap:other-option-configs>
+			<coap:other-option-config alias="option-65013" number="65013" format="OPAQUE" singleValue="false" maxBytes="200" />
+		</coap:other-option-configs>
+	</coap:global-config>
+
 	<coap:udp-endpoint name="udp" logTraffic="true">
 		<coap:socket-params  bindToPort="5683" />
         <coap:option-params >
-			<coap:other-option-configs>
-				<coap:other-option-config alias="option-65013" number="65013" format="OPAQUE" singleValue="false" maxBytes="200" />
-			</coap:other-option-configs>
+			<coap:accept-other-options>
+				<coap:accept-other-option alias="option-65013" />
+			</coap:accept-other-options>
 		</coap:option-params>
 		<coap:exchange-params exchangeLifetime="1s"/>
 	</coap:udp-endpoint>

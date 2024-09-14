@@ -26,9 +26,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.californium.core.coap.Option;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
@@ -73,9 +72,8 @@ public class OptOtherOutboundUnsupportedCriticalTest extends AbstractOutboundPro
     }
 
     @Override
-    protected ResponseCode getExpectedResponseCode( CoapRequestCode requestCode )
+    protected Exception getExpectedException()
     {
-        //TDOD cf3 unsupported option is sent.
-        return ResponseCode.BAD_OPTION;
+        return new RequestException( "CoAP Client { config } failed to execute request." );
     }
 }

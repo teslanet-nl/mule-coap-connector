@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<description>Mule CoAP connector test application</description>
 
-    <coap:option-params name="optionParams1">
+    <coap:global-config name="optionParams1">
         <coap:other-option-configs >
             <coap:other-option-config alias="option-65008" number="65008" format="OPAQUE" singleValue="false"/>
             <coap:other-option-config alias="option-65010" number="65010" format="OPAQUE" singleValue="false"/>
@@ -44,12 +44,19 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
             <coap:other-option-config alias="option-65013" number="65013" format="OPAQUE" singleValue="false"/>
             <coap:other-option-config alias="option-65308" number="65308" format="OPAQUE" singleValue="false"/>
         </coap:other-option-configs>
-    </coap:option-params>
+    </coap:global-config>
 
 
-	<coap:udp-endpoint name="Udp_Endpoint"
-		logTraffic="true"
-		optionParams="optionParams1">
+	<coap:udp-endpoint name="Udp_Endpoint" logTraffic="true">
+		<coap:option-params >
+			<coap:accept-other-options >
+				<coap:accept-other-option alias="option-65008" />
+				<coap:accept-other-option alias="option-65010" />
+				<coap:accept-other-option alias="option-65012" />
+				<coap:accept-other-option alias="option-65013" />
+				<coap:accept-other-option alias="option-65308" />
+			</coap:accept-other-options>
+		</coap:option-params>
         <coap:exchange-params exchangeLifetime="4s" />
 	</coap:udp-endpoint>
 

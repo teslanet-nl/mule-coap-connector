@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -124,4 +126,42 @@ public class EndpointConfig
         return null;
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        EndpointConfig rhs= (EndpointConfig) obj;
+        EqualsBuilder builder= new EqualsBuilder();
+        builder.append( dtlsEndpoint, rhs.dtlsEndpoint );
+        builder.append( multicastUdpEndpoint, rhs.multicastUdpEndpoint );
+        builder.append( udpEndpoint, rhs.udpEndpoint );
+        return builder.isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        HashCodeBuilder builder= new HashCodeBuilder( 13, 33 );
+        builder.append( dtlsEndpoint );
+        builder.append( multicastUdpEndpoint );
+        builder.append( udpEndpoint );
+        return builder.toHashCode();
+    }
 }

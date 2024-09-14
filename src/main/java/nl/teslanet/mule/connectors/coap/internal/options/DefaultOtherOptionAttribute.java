@@ -30,7 +30,7 @@ import java.util.Objects;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.option.OptionDefinition;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -149,8 +149,13 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
     @Override
     public long getValueAsNumber()
     {
-        if ( option.getDefinition().getFormat() != org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.INTEGER )
-            throw new NumberFormatException( String.format( FORMAT_WRONG_TYPE, option.getDefinition().getName(), OptionFormat.INTEGER.toString() ) );
+        if (
+            option
+                .getDefinition()
+                .getFormat() != org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.INTEGER
+        ) throw new NumberFormatException(
+            String.format( FORMAT_WRONG_TYPE, option.getDefinition().getName(), OptionFormat.INTEGER.toString() )
+        );
         return OptionUtils.toLong( option.getValue() );
     }
 
@@ -172,8 +177,13 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
     @Override
     public String getValueAsString()
     {
-        if ( option.getDefinition().getFormat() != org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.STRING )
-            throw new NumberFormatException( String.format( FORMAT_WRONG_TYPE, option.getDefinition().getName(), OptionFormat.STRING.toString() ) );
+        if (
+            option
+                .getDefinition()
+                .getFormat() != org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.STRING
+        ) throw new NumberFormatException(
+            String.format( FORMAT_WRONG_TYPE, option.getDefinition().getName(), OptionFormat.STRING.toString() )
+        );
         return option.getStringValue();
     }
 

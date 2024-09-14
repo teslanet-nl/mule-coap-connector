@@ -38,7 +38,7 @@ import org.eclipse.californium.core.coap.option.StringOptionDefinition;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 
@@ -48,27 +48,52 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttri
  */
 public class OtherOptionsAttributesTest
 {
-    private void assertAttribute( OtherOptionAttribute attribute, String alias, OptionFormat format, int number, byte[] value, String asHex, Long asNumber, String asString )
+    private void assertAttribute(
+        OtherOptionAttribute attribute,
+        String alias,
+        OptionFormat format,
+        int number,
+        byte[] value,
+        String asHex,
+        Long asNumber,
+        String asString
+    )
     {
         assertEquals( "OtherOptionAttribute has wrong alias", alias, attribute.getAlias() );
         assertEquals( "OtherOptionAttribute has wrong format", format, attribute.getFormat() );
         assertEquals( "OtherOptionAttribute has wrong number", number, attribute.getNumber() );
         assertEquals( "OtherOptionAttribute has wrong length", value.length, attribute.getLength() );
-        assertArrayEquals( "OtherOptionAttribute has wrong bytes value", value, IOUtils.toByteArray( attribute.getValue() ) );
+        assertArrayEquals(
+            "OtherOptionAttribute has wrong bytes value",
+            value,
+            IOUtils.toByteArray( attribute.getValue() )
+        );
         assertEquals( "OtherOptionAttribute has wrong Hex value", asHex, attribute.getValueAsHex() );
         if ( asNumber == null )
         {
             Exception e= assertThrows( NumberFormatException.class, () -> attribute.getValueAsNumber() );
-            assertEquals( "Exception has wrong message", "Option{ " + alias + " } is not of type INTEGER.", e.getMessage() );
+            assertEquals(
+                "Exception has wrong message",
+                "Option{ " + alias + " } is not of type INTEGER.",
+                e.getMessage()
+            );
         }
         else
         {
-            assertEquals( "OtherOptionAttribute has wrong long value", asNumber.longValue(), attribute.getValueAsNumber() );
+            assertEquals(
+                "OtherOptionAttribute has wrong long value",
+                asNumber.longValue(),
+                attribute.getValueAsNumber()
+            );
         }
         if ( asString == null )
         {
             Exception e= assertThrows( NumberFormatException.class, () -> attribute.getValueAsString() );
-            assertEquals( "Exception has wrong message", "Option{ " + alias + " } is not of type STRING.", e.getMessage() );
+            assertEquals(
+                "Exception has wrong message",
+                "Option{ " + alias + " } is not of type STRING.",
+                e.getMessage()
+            );
         }
         else
         {
@@ -243,7 +268,16 @@ public class OtherOptionsAttributesTest
         OptionDefinition def= new OpaqueOptionDefinition( number, alias );
         OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
 
-        assertAttribute( attribute, alias, OptionFormat.OPAQUE, number, value, "54686973206973206120726174686572206c6f6e67206f7074696f6e2076616c75652e", null, null );
+        assertAttribute(
+            attribute,
+            alias,
+            OptionFormat.OPAQUE,
+            number,
+            value,
+            "54686973206973206120726174686572206c6f6e67206f7074696f6e2076616c75652e",
+            null,
+            null
+        );
     }
 
     @Test
@@ -269,7 +303,16 @@ public class OtherOptionsAttributesTest
         OptionDefinition def= new StringOptionDefinition( number, alias );
         OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
 
-        assertAttribute( attribute, alias, OptionFormat.STRING, number, value, "54686973206973206120726174686572206c6f6e67206f7074696f6e2076616c75652e", null, text );
+        assertAttribute(
+            attribute,
+            alias,
+            OptionFormat.STRING,
+            number,
+            value,
+            "54686973206973206120726174686572206c6f6e67206f7074696f6e2076616c75652e",
+            null,
+            text
+        );
     }
 
     @Test

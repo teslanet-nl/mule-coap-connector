@@ -35,6 +35,7 @@ import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -91,7 +92,10 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
                 Optional< List< DefaultEntityTag > > tmpEtags= MessageUtils.getList( optionSet.getETags() );
                 if ( !tmpEtags.isPresent() )
                 {
-                    throw new InternalInvalidOptionValueException( "Entity-Tag option with empty value is invalid", MSG_CANNOT_CREATE );
+                    throw new InternalInvalidOptionValueException(
+                        "Entity-Tag option with empty value is invalid",
+                        MSG_CANNOT_CREATE
+                    );
                 }
                 else
                 {
@@ -120,7 +124,9 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         if ( !optionSet.getUriQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet.getUriQuery().forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
+            optionSet
+                .getUriQuery()
+                .forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
             uriQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasAccept() )
@@ -156,6 +162,6 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, new ToStringStyle() );
+        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
     }
 }

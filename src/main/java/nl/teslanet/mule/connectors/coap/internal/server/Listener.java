@@ -180,7 +180,11 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     {
         try
         {
-            operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch ), sourceCallback );
+            operationalListener= new OperationalListener(
+                pathPattern,
+                new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch ),
+                sourceCallback
+            );
             server.addListener( operationalListener );
         }
         catch ( InternalResourceUriException | InternalUriPatternException e )
@@ -214,7 +218,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         @Alias( "response-options" )
         @Expression( ExpressionSupport.SUPPORTED )
         @Summary( "The CoAP options to send with the response." )
-        @Placement( tab= "Response", order= 2 )
+        @Placement( tab= "Options", order= 1 )
         ResponseOptions responseOptions,
         SourceCallbackContext callbackContext
     ) throws InternalInvalidByteArrayValueException,
@@ -223,16 +227,22 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         InternalExchangeException,
         InternalUnkownOptionException
     {
-        CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext.getVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE ).orElseThrow(
-            () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" )
+        CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext
+            .getVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE )
+            .orElseThrow(
+                () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" )
+            );
+        Response coapResponse= new Response(
+            AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode )
         );
-        Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
         TypedValue< Object > responsePayload= response.getResponsePayload();
-        coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
+        coapResponse
+            .getOptions()
+            .setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
         if ( responseOptions != null )
         {
             MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
-            MessageUtils.copyOtherOptions( responseOptions, coapResponse.getOptions(), server.getOtherOptionDefs(), transformationService );
+            MessageUtils.copyOtherOptions( responseOptions, coapResponse.getOptions(), transformationService );
         }
         //TODO add streaming & blockwise cooperation
         try
@@ -243,9 +253,11 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         {
             throw new InternalInvalidByteArrayValueException( "Cannot convert payload to byte[]", e );
         }
-        ( (CoapExchange) callbackContext.getVariable( Server.VARNAME_COAP_EXCHANGE ).orElseThrow(
-            () -> new InternalExchangeException( "Not able to issue CoAP response: no exchange object provided." )
-        ) ).respond( coapResponse );
+        ( (CoapExchange) callbackContext
+            .getVariable( Server.VARNAME_COAP_EXCHANGE )
+            .orElseThrow(
+                () -> new InternalExchangeException( "Not able to issue CoAP response: no exchange object provided." )
+            ) ).respond( coapResponse );
     }
 
     /**
@@ -258,9 +270,14 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     {
         if ( !sourceResult.isSuccess() )
         {
-            CoapExchange exchange= (CoapExchange) sourceResult.getSourceCallbackContext().getVariable( Server.VARNAME_COAP_EXCHANGE ).orElseThrow(
-                () -> new InternalExchangeException( "Not able to issue CoAP internal server error response: no exchange object provided." )
-            );
+            CoapExchange exchange= (CoapExchange) sourceResult
+                .getSourceCallbackContext()
+                .getVariable( Server.VARNAME_COAP_EXCHANGE )
+                .orElseThrow(
+                    () -> new InternalExchangeException(
+                        "Not able to issue CoAP internal server error response: no exchange object provided."
+                    )
+                );
             if ( sourceResult.getInvocationError().isPresent() )
             {
                 exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );

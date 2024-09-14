@@ -25,8 +25,6 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.io.InputStream;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
-
 
 /**
  * Other option attribute.

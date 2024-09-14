@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.californium.core.coap.BlockOption;
@@ -47,17 +46,18 @@ import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
-import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
+import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
+import nl.teslanet.mule.connectors.coap.internal.GlobalConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
@@ -85,7 +85,11 @@ public class MessageUtils
      * @param transformationService Mule transformation service.
      * @throws InvalidOptionValueException When given option value could not be copied
      */
-    public static void copyOptions( RequestOptions requestOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    public static void copyOptions(
+        RequestOptions requestOptions,
+        OptionSet optionSet,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
     {
         if ( requestOptions.isIfExists() )
         {
@@ -156,22 +160,13 @@ public class MessageUtils
     public static void copyOtherOptions(
         RequestOptions requestOptions,
         OptionSet optionSet,
-        Map< String, OptionDefinition > otherOptionDefs,
         TransformationService transformationService
     ) throws InternalInvalidOptionValueException,
         InternalUnkownOptionException
     {
         for ( OtherOption otherOption : requestOptions.getOtherOptions() )
         {
-            OptionDefinition definition= otherOptionDefs.get( otherOption.getAlias() );
-            if ( definition != null )
-            {
-                optionSet.addOption( toCfOtherOption( otherOption, definition, transformationService ) );
-            }
-            else
-            {
-                throw new InternalUnkownOptionException( "Unknown other option: " + otherOption.getAlias() );
-            }
+            addOption( optionSet, otherOption, transformationService );
         }
     }
 
@@ -182,18 +177,22 @@ public class MessageUtils
      * @param transformationService Mule transformation service.
      * @throws InternalInvalidOptionValueException When given option value is invalid. 
      */
-    public static void copyOptions( ResponseOptions responseOptions, OptionSet optionSet, TransformationService transformationService ) throws InternalInvalidOptionValueException
+    public static void copyOptions(
+        ResponseOptions responseOptions,
+        OptionSet optionSet,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
     {
-        if ( responseOptions.getEntityTag() != null )
+        if ( responseOptions.getEntityTagValue() != null )
         {
             DefaultEntityTag etag;
             try
             {
-                etag= MessageUtils.toETag( responseOptions.getEntityTag(), transformationService );
+                etag= MessageUtils.toETag( responseOptions.getEntityTagValue(), transformationService );
             }
             catch ( EntityTagException e )
             {
-                throw new InternalInvalidOptionValueException( "ETag", "empty etag is not valid" );
+                throw new InternalInvalidOptionValueException( "ETag", "Entity tag value is not valid" );
             }
             optionSet.addETag( etag.getValue() );
         }
@@ -230,54 +229,94 @@ public class MessageUtils
     * Copy other options from {@link RequestOptions} to {@link OptionSet}.
     * @param responseOptions to copy from.
     * @param optionSet to copy to.
-     * @param transformationService 
+    * @param transformationService 
     * @throws InternalInvalidOptionValueException When given option value is not valid.
     * @throws InternalUnkownOptionException When given option alias was not defined. 
     */
     public static void copyOtherOptions(
         ResponseOptions responseOptions,
         OptionSet optionSet,
-        Map< String, OptionDefinition > otherOptionDefs,
         TransformationService transformationService
     ) throws InternalInvalidOptionValueException,
         InternalUnkownOptionException
     {
         for ( OtherOption otherOption : responseOptions.getOtherOptions() )
         {
-            OptionDefinition definition= otherOptionDefs.get( otherOption.getAlias() );
-            if ( definition != null )
-            {
-                optionSet.addOption( toCfOtherOption( otherOption, definition, transformationService ) );
-            }
-            else
-            {
-                throw new InternalUnkownOptionException( "Unknown other option: " + otherOption.getAlias() );
-            }
+            addOption( optionSet, otherOption, transformationService );
         }
     }
 
     /**
+     * Add other option to option set. 
+     * @param optionSet The set to add to.
+     * @param otherOption The other option to add.
+     * @param transformationService Used when the value needs to be transformed.
+     * @throws InternalInvalidOptionValueException When value is invalid.
+     * @throws InternalUnkownOptionException When other option is not configured.
+     */
+    private static void addOption(
+        OptionSet optionSet,
+        OtherOption otherOption,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException,
+        InternalUnkownOptionException
+    {
+        optionSet
+            .addOption(
+                toCfOtherOption(
+                    otherOption,
+                    GlobalConfig
+                        .getOtherOptionDefinition( otherOption.getAlias() )
+                        .orElseThrow(
+                            () -> new InternalUnkownOptionException( "Unknown other option: " + otherOption.getAlias() )
+                        ),
+                    transformationService
+                )
+            );
+    }
+
+    /**
      * Convert other option configuration to Cf option definition.
-     * @param config The option config to create definition from.
+     * @param otherOptionConfig The option config to create definition from.
      * @return The created definition.
      */
-    public static OptionDefinition toCfOptionDefinition( OtherOptionConfig config )
+    public static OptionDefinition toCfOptionDefinition(
+        nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig otherOptionConfig
+    )
     {
         OptionDefinition definition;
-        switch ( config.getFormat() )
+        switch ( otherOptionConfig.getFormat() )
         {
             case EMPTY:
-                definition= new EmptyOptionDefinition( config.getNumber(), config.getAlias() );
+                definition= new EmptyOptionDefinition( otherOptionConfig.getNumber(), otherOptionConfig.getAlias() );
                 break;
             case INTEGER:
-                definition= new IntegerOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                definition= new IntegerOptionDefinition(
+                    otherOptionConfig.getNumber(),
+                    otherOptionConfig.getAlias(),
+                    otherOptionConfig.isSingleValue(),
+                    otherOptionConfig.getMinBytes(),
+                    otherOptionConfig.getMaxBytes()
+                );
                 break;
             case STRING:
-                definition= new StringOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                definition= new StringOptionDefinition(
+                    otherOptionConfig.getNumber(),
+                    otherOptionConfig.getAlias(),
+                    otherOptionConfig.isSingleValue(),
+                    otherOptionConfig.getMinBytes(),
+                    otherOptionConfig.getMaxBytes()
+                );
                 break;
             case OPAQUE:
             default:
-                definition= new OpaqueOptionDefinition( config.getNumber(), config.getAlias(), config.isSingleValue(), config.getMinBytes(), config.getMaxBytes() );
+                definition= new OpaqueOptionDefinition(
+                    otherOptionConfig.getNumber(),
+                    otherOptionConfig.getAlias(),
+                    otherOptionConfig.isSingleValue(),
+                    otherOptionConfig.getMinBytes(),
+                    otherOptionConfig.getMaxBytes()
+                );
                 break;
         }
         return definition;
@@ -295,8 +334,9 @@ public class MessageUtils
     {
         if ( left == right ) return true;
         if ( left == null || right == null ) return false;
-        return( left.getName().equals( right.getName() ) && left.getFormat() == right.getFormat() && left.getNumber() == right.getNumber()
-            && left.isSingleValue() == right.isSingleValue() && Arrays.equals( left.getValueLengths(), right.getValueLengths() ) );
+        return( left.getName().equals( right.getName() ) && left.getFormat() == right.getFormat()
+            && left.getNumber() == right.getNumber() && left.isSingleValue() == right.isSingleValue()
+            && Arrays.equals( left.getValueLengths(), right.getValueLengths() ) );
     }
 
     /**
@@ -307,8 +347,11 @@ public class MessageUtils
      * @return The Cf option.
      * @throws InternalInvalidOptionValueException When the value could not be converted.
      */
-    private static Option toCfOtherOption( OtherOption otherOption, OptionDefinition definition, TransformationService transformationService )
-        throws InternalInvalidOptionValueException
+    private static Option toCfOtherOption(
+        OtherOption otherOption,
+        OptionDefinition definition,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
     {
         Option option;
         try
@@ -323,11 +366,13 @@ public class MessageUtils
     }
 
     /**
-     * Convert Cf format to option format.
+     * Convert Cf format to option  format.
      * @param format The Cf option format.
      * @return The option format.
      */
-    public static OptionFormat toOptionFormat( org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat format )
+    public static OptionFormat toOptionFormat(
+        org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat format
+    )
     {
         switch ( format )
         {
@@ -370,9 +415,9 @@ public class MessageUtils
         {
             return ( (String) object ).getBytes( CoAP.UTF8_CHARSET );
         }
-        else if ( object instanceof DefaultEntityTag )
+        else if ( object instanceof EntityTagAttribute )
         {
-            return ( (DefaultEntityTag) object ).getValue();
+            return ( (EntityTagAttribute) object ).getValue();
         }
         else if ( object instanceof Integer )
         {
@@ -437,13 +482,28 @@ public class MessageUtils
 
     /**
     * Convert a typed value to ETag.
+    * @param etag The EntityTag to construct a DefaultEntityTag from.
+    * @return The ETag object that has been constructed.
+    * @throws EntityTagException When value cannot be converted to a valid ETag.
+    */
+    private static DefaultEntityTag toETag( EntityTag etag, TransformationService transformationService )
+        throws EntityTagException
+    {
+        return toETag( etag.getValue(), transformationService );
+    }
+
+    /**
+    * Convert a typed value to ETag.
     * @param etagValue The value to construct an ETag from.
     * @return The ETag object that has been constructed.
     * @throws EntityTagException When value cannot be converted to a valid ETag.
     */
-    private static DefaultEntityTag toETag( EntityTag etagValue, TransformationService transformationService ) throws EntityTagException
+    private static DefaultEntityTag toETag(
+        TypedValue< Object > etagValue,
+        TransformationService transformationService
+    ) throws EntityTagException
     {
-        Object object= TypedValue.unwrap( etagValue.getValue() );
+        Object object= TypedValue.unwrap( etagValue );
 
         if ( object == null )
         {
@@ -476,7 +536,9 @@ public class MessageUtils
         else
         {
             //transform using Mule's transformers.
-            return new DefaultEntityTag( (byte[]) transformationService.transform( etagValue.getValue().getValue(), etagValue.getValue().getDataType(), BYTE_ARRAY ) );
+            return new DefaultEntityTag(
+                (byte[]) transformationService.transform( etagValue.getValue(), etagValue.getDataType(), BYTE_ARRAY )
+            );
         }
     }
 
@@ -487,7 +549,10 @@ public class MessageUtils
      * @return The list of entity tags.
      * @throws EntityTagException When given values are invalid.
      */
-    private static List< DefaultEntityTag > toEtagList( List< EntityTag > etagValues, TransformationService transformationService ) throws EntityTagException
+    private static List< DefaultEntityTag > toEtagList(
+        List< EntityTag > etagValues,
+        TransformationService transformationService
+    ) throws EntityTagException
     {
         LinkedList< DefaultEntityTag > list= new LinkedList<>();
 
@@ -541,9 +606,15 @@ public class MessageUtils
      * @param queryParams The query parameters.
      * @return The string representation for usage in an URI.
      */
-    public static String queryString( List< ? extends AbstractQueryParam > defaultQueryParams, List< ? extends AbstractQueryParam > queryParams )
+    public static String queryString(
+        List< ? extends AbstractQueryParam > defaultQueryParams,
+        List< ? extends AbstractQueryParam > queryParams
+    )
     {
-        if ( ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams.isEmpty() ) ) return null;
+        if (
+            ( defaultQueryParams == null || defaultQueryParams.isEmpty() )
+                && ( queryParams == null || queryParams.isEmpty() )
+        ) return null;
         StringWriter writer= new StringWriter();
         boolean first= true;
         for ( AbstractQueryParam param : defaultQueryParams )

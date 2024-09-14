@@ -23,12 +23,16 @@
 package nl.teslanet.mule.connectors.coap.api.config.options;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 
 
 /**
@@ -43,7 +47,7 @@ public class OtherOptionConfig
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @Summary( "The local name of the other option." )
     @Example( "myCustomOption" )
-    protected String alias;
+    private String alias;
 
     /**
      * The number of the other option.
@@ -218,7 +222,14 @@ public class OtherOptionConfig
      * @param minBytes The minimum length in bytes, may be null.
      * @param maxBytes The maximum length in bytes, may be null.
      */
-    public OtherOptionConfig( String alias, int number, OptionFormat format, boolean singleValue, int minBytes, int maxBytes )
+    public OtherOptionConfig(
+        String alias,
+        int number,
+        OptionFormat format,
+        boolean singleValue,
+        int minBytes,
+        int maxBytes
+    )
     {
         super();
         this.alias= alias;
@@ -227,5 +238,50 @@ public class OtherOptionConfig
         this.singleValue= singleValue;
         this.minBytes= minBytes;
         this.maxBytes= maxBytes;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        OtherOptionConfig rhs= (OtherOptionConfig) obj;
+        EqualsBuilder builder= new EqualsBuilder();
+        builder.append( alias, rhs.alias );
+        builder.append( format, rhs.format );
+        builder.append( maxBytes, rhs.maxBytes );
+        builder.append( minBytes, rhs.minBytes );
+        builder.append( number, rhs.number );
+        builder.append( singleValue, rhs.singleValue );
+        return builder.isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        HashCodeBuilder builder= new HashCodeBuilder( 9, 29 );
+        builder.append( alias );
+        builder.append( format );
+        builder.append( maxBytes );
+        builder.append( minBytes );
+        builder.append( number );
+        builder.append( singleValue );
+        return builder.toHashCode();
     }
 }

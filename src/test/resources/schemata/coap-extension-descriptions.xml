@@ -55,6 +55,17 @@
                 </parameter>
             </parameters>
         </config>
+        <config name="global-config">
+            <description><![CDATA[Global connector configuration.]]></description>
+            <parameters>
+                <parameter name="otherOptionConfigs">
+                    <description><![CDATA[The list of other options that the endpoint understands. Messages containing critical options that are not understood will be refused. Elective options that are not understood will be ignored.]]></description>
+                </parameter>
+                <parameter name="name">
+                    <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
+                </parameter>
+            </parameters>
+        </config>
         <config name="server">
             <description><![CDATA[The CoAP Server configures resources and one or more endpoints. The endpoints make the server resources available to clients.]]></description>
             <parameters>
@@ -588,6 +599,21 @@
                 <parameter name="requestCode">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="requestType">
                     <description><![CDATA[]]></description>
                 </parameter>
@@ -615,6 +641,21 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="requestType">
@@ -1318,6 +1359,29 @@
             <description><![CDATA[]]></description>
             <parameters/>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="alias">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="number">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="format">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="singleValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="minBytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxBytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
             <description><![CDATA[]]></description>
             <parameters/>
@@ -1387,7 +1451,7 @@
                 <parameter name="maxAge">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="entityTag">
+                <parameter name="entityTagValue">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="locationPath">
@@ -1425,23 +1489,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="value">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="valueAsHex">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="valueAsNumber">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="valueAsString">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

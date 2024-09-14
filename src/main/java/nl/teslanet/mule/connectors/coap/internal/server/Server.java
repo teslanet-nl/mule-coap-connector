@@ -25,14 +25,11 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.config.CoapConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -69,7 +66,6 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
-import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -154,7 +150,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
+    @Summary(
+                    value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @DisplayName( value= "Notify observing clients on shutdown" )
@@ -168,7 +166,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "250" )
-    @Summary( value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms." )
+    @Summary(
+                    value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
@@ -196,18 +196,14 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     private ResourceRegistry registry= null;
 
-    /**
-     * Other options that the server expects.
-     */
-    private ConcurrentHashMap< String, OptionDefinition > otherOptionDefs= new ConcurrentHashMap<>();
-
     /* (non-Javadoc)
      * @see org.mule.runtime.api.lifecycle.Initialisable#initialise()
      */
     @Override
     public void initialise() throws InitialisationException
     {
-        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration.createStandardWithoutFile();
+        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration
+            .createStandardWithoutFile();
         if ( protocolStageThreadCount != null )
         {
             config.set( CoapConfig.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
@@ -225,9 +221,15 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
         if ( endpoint != null )
         {
-            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in main server endpoint." ), this );
+            //TODO cf3
+            if (
+                endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null
+            ) throw new InitialisationException(
+                new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
+                this
+            );
             //add main endpoint config
-            configuredEndpoints.add( endpoint.getEndpoint() );
+            configuredEndpoints.add( endpoint.getEndpointConfig().getEndpoint() );
         }
         else if ( additionalEndpoints.isEmpty() )
         {
@@ -237,8 +239,12 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
-            if ( additionalEndpoint.getEndpoint() == null )
-                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additional server endpoint." ), this );
+            if (
+                additionalEndpoint.getEndpoint() == null
+            ) throw new InitialisationException(
+                new IllegalArgumentException( "Unexpected null value in additional server endpoint." ),
+                this
+            );
             configuredEndpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
@@ -253,21 +259,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 coapServer.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                for ( OptionDefinition optionDef : operationalEndpoint.getOtherOptionsDefs() )
-                {
-                    if ( otherOptionDefs.containsKey( optionDef.getName() ) )
-                    {
-                        OptionDefinition presentDef= otherOptionDefs.get( optionDef.getName() );
-                        if ( !MessageUtils.isEqual( presentDef, optionDef ) )
-                        {
-                            LOGGER.error( "{} receives conflicting other option {} from endpoint {}", this, optionDef.getName(), operationalEndpoint );
-                        }
-                    }
-                    else
-                    {
-                        otherOptionDefs.put( optionDef.getName(), optionDef );
-                    }
-                }
                 LOGGER.info( "{} connected to {}", this, operationalEndpoint );
             }
             catch ( Exception e )
@@ -285,7 +276,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void dispose()
     {
         coapServer.destroy();
-        otherOptionDefs.clear();
         OperationalEndpoint.disposeAll( this );
         LOGGER.info( "{} disposed.", this );
     }
@@ -389,14 +379,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public ResourceRegistry getRegistry()
     {
         return registry;
-    }
-
-    /**
-     * @return the otherOptionDefs
-     */
-    public ConcurrentMap< String, OptionDefinition > getOtherOptionDefs()
-    {
-        return otherOptionDefs;
     }
 
     /**

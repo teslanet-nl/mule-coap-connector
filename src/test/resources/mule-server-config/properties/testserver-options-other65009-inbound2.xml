@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -34,9 +34,10 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<description>Mule CoAP connector test application</description>
 
-    <coap:global-config name="others">
+  <coap:global-config name="others">
 		<coap:other-option-configs>
-			<coap:other-option-config alias="option-65012" number="65012" format="OPAQUE" singleValue="false" maxBytes="200" />
+			<coap:other-option-config alias="option-65009" number="65009" format="OPAQUE" singleValue="false" maxBytes="200" />
+			<coap:other-option-config alias="option-65013" number="65013" format="OPAQUE" singleValue="false" maxBytes="200" />
 		</coap:other-option-configs>
 	</coap:global-config>
 
@@ -44,7 +45,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:socket-params  bindToPort="5683" />
         <coap:option-params >
 			<coap:accept-other-options>
-				<coap:accept-other-option alias="option-65012"/>
+				<coap:accept-other-option alias="option-65013" />
 			</coap:accept-other-options>
 		</coap:option-params>
 		<coap:exchange-params exchangeLifetime="1s"/>
@@ -68,23 +69,23 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response-options>
 				<coap:other-options>
-					<coap:other-option alias="option-65012" value="#[ vars.value ]"/>
+					<coap:other-option alias="option-65009" value="#[ vars.value ]"/>
 				</coap:other-options>
 			</coap:response-options>
 		</coap:listener>
 		
-		<set-variable value="#[attributes.options.other[ ?( $.alias == 'option-65012' )].critical[0]]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
+		<set-variable value="#[attributes.options.other[?( $.alias == 'option-65009' )].value[0]]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
 
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			constructor="MuleEventSpy( String )" target="spy">
-			<java:args><![CDATA[#[{ arg0: 'coap.opt.other.65012.critical' }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: 'coap.opt.other.65009' }]]]></java:args>
 		</java:new>
 
 		<java:invoke doc:name="Invoke" doc:id="53784292-e82f-49df-8bab-5aa0846717d2"
 			instance="#[vars.spy]" class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			method="event(Object)" target="value">
-			<java:args><![CDATA[#[{ arg0: vars.attr }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: vars.attr default '' as Binary }]]]></java:args>
 		</java:invoke>
 		<set-payload value="nothing_important"/>
 	</flow>

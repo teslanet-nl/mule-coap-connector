@@ -37,8 +37,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
@@ -110,29 +110,55 @@ public class OptionDefinitionTest
     @Parameters( name= "alias= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
+        return Arrays
+            .asList( new Object [] []
             {
                 { "option-empty-single", 65001, OptionFormat.EMPTY, true, 0, 0, true, 0, 0 },
                 { "option-empty", 65002, OptionFormat.EMPTY, false, 0, 0, true, 0, 0 },
                 { "option-integer-1-4-single", 65003, OptionFormat.INTEGER, true, 1, 4, true, 1, 4 },
                 { "option-integer-1-4", 65004, OptionFormat.INTEGER, false, 1, 4, false, 1, 4 },
                 { "option-integer-3-3", 65005, OptionFormat.INTEGER, false, 3, 3, false, 3, null },
-                { "option-integer-0-max", 65006, OptionFormat.INTEGER, false, 0, Integer.MAX_VALUE, false, 0, Integer.MAX_VALUE },
+                {
+                    "option-integer-0-max",
+                    65006,
+                    OptionFormat.INTEGER,
+                    false,
+                    0,
+                    Integer.MAX_VALUE,
+                    false,
+                    0,
+                    Integer.MAX_VALUE },
                 { "option-integer-neg", 65007, OptionFormat.INTEGER, false, -3, -4, false, -3, -4 },
                 { "option-string-1-4-single", 65003, OptionFormat.STRING, true, 1, 4, true, 1, 4 },
                 { "option-string-1-4", 65004, OptionFormat.STRING, false, 1, 4, false, 1, 4 },
                 { "option-string-3-3", 65005, OptionFormat.STRING, false, 3, 3, false, 3, null },
-                { "option-string-0-max", 65006, OptionFormat.STRING, false, 0, Integer.MAX_VALUE, false, 0, Integer.MAX_VALUE },
+                {
+                    "option-string-0-max",
+                    65006,
+                    OptionFormat.STRING,
+                    false,
+                    0,
+                    Integer.MAX_VALUE,
+                    false,
+                    0,
+                    Integer.MAX_VALUE },
                 { "option-string-neg", 65007, OptionFormat.STRING, false, -3, -4, false, -3, -4 },
                 { "option-opaque-1-4-single", 65003, OptionFormat.OPAQUE, true, 1, 4, true, 1, 4 },
                 { "option-opaque-1-4", 65004, OptionFormat.OPAQUE, false, 1, 4, false, 1, 4 },
                 { "option-opaque-3-3", 65005, OptionFormat.OPAQUE, false, 3, 3, false, 3, null },
-                { "option-opaque-0-max", 65006, OptionFormat.OPAQUE, false, 0, Integer.MAX_VALUE, false, 0, Integer.MAX_VALUE },
+                {
+                    "option-opaque-0-max",
+                    65006,
+                    OptionFormat.OPAQUE,
+                    false,
+                    0,
+                    Integer.MAX_VALUE,
+                    false,
+                    0,
+                    Integer.MAX_VALUE },
                 { "option-opaque-neg", 65007, OptionFormat.OPAQUE, false, -3, -4, false, -3, -4 },
 
-            }
-        );
+            } );
     }
 
     @SuppressWarnings( "deprecation" )
@@ -144,17 +170,31 @@ public class OptionDefinitionTest
 
         assertEquals( "wrong option definition alias", alias, converted.getName() );
         assertEquals( "wrong option definition number", number, converted.getNumber() );
-        assertEquals( "wrong option definition format", format, MessageUtils.toOptionFormat( converted.getFormat() ) );
+        assertEquals(
+            "wrong option definition format",
+            format,
+            MessageUtils.toOptionFormat( converted.getFormat() )
+        );
         assertEquals( "wrong option definition singleValue", expectedSingleValue, converted.isSingleValue() );
-        assertEquals( "wrong option definition singleValue", minBytes, Integer.valueOf( converted.getValueLengths()[0] ) );
-        assertEquals( "wrong option definition singleValue", maxBytes, Integer.valueOf( converted.getValueLengths().length > 1 ? converted.getValueLengths()[1] : null ) );
+        assertEquals(
+            "wrong option definition singleValue",
+            minBytes,
+            Integer.valueOf( converted.getValueLengths()[0] )
+        );
+        assertEquals(
+            "wrong option definition singleValue",
+            maxBytes,
+            Integer.valueOf( converted.getValueLengths().length > 1 ? converted.getValueLengths()[1] : null )
+        );
     }
 
     @Test
     public void testEquals()
     {
-        OptionDefinition converted1= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
-        OptionDefinition converted2= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
+        OptionDefinition converted1= MessageUtils
+            .toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
+        OptionDefinition converted2= MessageUtils
+            .toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
 
         assertTrue( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted2 ) );
     }
@@ -162,21 +202,50 @@ public class OptionDefinitionTest
     @Test
     public void testUnEquals()
     {
-        OptionDefinition converted1= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
-        OptionDefinition converted2= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( "different", number, format, singleValue, minBytes, maxBytes ) );
-        OptionDefinition converted3= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, 65000, format, singleValue, minBytes, maxBytes ) );
-        OptionDefinition converted4= MessageUtils.toCfOptionDefinition(
-            new OtherOptionConfig( alias, number, format == OptionFormat.INTEGER ? OptionFormat.OPAQUE : OptionFormat.INTEGER, singleValue, minBytes, maxBytes )
-        );
-        OptionDefinition converted5= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, !singleValue, minBytes, maxBytes ) );
-        OptionDefinition converted6= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes + 1, maxBytes ) );
-        OptionDefinition converted7= MessageUtils.toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes - 1 ) );
+        OptionDefinition converted1= MessageUtils
+            .toCfOptionDefinition( new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes ) );
+        OptionDefinition converted2= MessageUtils
+            .toCfOptionDefinition(
+                new OtherOptionConfig( "different", number, format, singleValue, minBytes, maxBytes )
+            );
+        OptionDefinition converted3= MessageUtils
+            .toCfOptionDefinition( new OtherOptionConfig( alias, 65000, format, singleValue, minBytes, maxBytes ) );
+        OptionDefinition converted4= MessageUtils
+            .toCfOptionDefinition(
+                new OtherOptionConfig(
+                    alias,
+                    number,
+                    format == OptionFormat.INTEGER ? OptionFormat.OPAQUE : OptionFormat.INTEGER,
+                    singleValue,
+                    minBytes,
+                    maxBytes
+                )
+            );
+        OptionDefinition converted5= MessageUtils
+            .toCfOptionDefinition( new OtherOptionConfig( alias, number, format, !singleValue, minBytes, maxBytes ) );
+        OptionDefinition converted6= MessageUtils
+            .toCfOptionDefinition(
+                new OtherOptionConfig( alias, number, format, singleValue, minBytes + 1, maxBytes )
+            );
+        OptionDefinition converted7= MessageUtils
+            .toCfOptionDefinition(
+                new OtherOptionConfig( alias, number, format, singleValue, minBytes, maxBytes - 1 )
+            );
 
         assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted2 ) );
         assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted3 ) );
         assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted4 ) );
-        assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted5 ) && format != OptionFormat.EMPTY );
-        assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted6 ) && format != OptionFormat.EMPTY );
-        assertFalse( "isEqual definition gave wrong result", MessageUtils.isEqual( converted1, converted7 ) && format != OptionFormat.EMPTY );
+        assertFalse(
+            "isEqual definition gave wrong result",
+            MessageUtils.isEqual( converted1, converted5 ) && format != OptionFormat.EMPTY
+        );
+        assertFalse(
+            "isEqual definition gave wrong result",
+            MessageUtils.isEqual( converted1, converted6 ) && format != OptionFormat.EMPTY
+        );
+        assertFalse(
+            "isEqual definition gave wrong result",
+            MessageUtils.isEqual( converted1, converted7 ) && format != OptionFormat.EMPTY
+        );
     }
 }

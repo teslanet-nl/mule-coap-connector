@@ -578,7 +578,7 @@ public interface ConfigVisitor
      * @param toVisit The object to visit.
      * @throws ConfigException When the visit is not successful.
      */
-    public default void visit( PreSharedKeyGroup preSharedKeyGroup ) throws ConfigException
+    public default void visit( PreSharedKeyGroup toVisit ) throws ConfigException
     {
         //NOOP
     }

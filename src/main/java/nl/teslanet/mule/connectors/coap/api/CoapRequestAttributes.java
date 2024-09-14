@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,13 +27,14 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
 /**
-* The attributes of a CoAP request that was received from a client.
-*
-*/
+ * The attributes of a CoAP request that was received from a client.
+ *
+ */
 public class CoapRequestAttributes
 {
     /**
@@ -47,12 +48,12 @@ public class CoapRequestAttributes
     protected String requestCode= null;
 
     /**
-     * The server address the request was issued on. 
+     * The server address the request was issued on.
      */
     protected String localAddress= null;
 
     /**
-     * The uri of the request. 
+     * The uri of the request.
      */
     protected String requestUri= null;
 
@@ -62,7 +63,8 @@ public class CoapRequestAttributes
     protected String remoteAddress= null;
 
     /**
-     * The key of the observe relation when the request is an observe request or notification. Null otherwise. 
+     * The key of the observe relation when the request is an observe request or
+     * notification. Null otherwise.
      */
     protected String relation= null;
 
@@ -87,7 +89,6 @@ public class CoapRequestAttributes
         return requestCode;
     }
 
-
     /**
      * @return The localAddress.
      */
@@ -102,6 +103,46 @@ public class CoapRequestAttributes
     public String getRequestUri()
     {
         return requestUri;
+    }
+
+    /**
+     * @return the requestScheme
+     */
+    public String getRequestScheme()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestHost
+     */
+    public String getRequestHost()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestPort
+     */
+    public int getRequestPort()
+    {
+        return 0;
+    }
+
+    /**
+     * @return the requestPath
+     */
+    public String getRequestPath()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestQuery
+     */
+    public String getRequestQuery()
+    {
+        return OptionUtils.EMPTY_STRING;
     }
 
     /**
@@ -129,7 +170,7 @@ public class CoapRequestAttributes
     }
 
     /**
-     * Get the string representation.
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString()

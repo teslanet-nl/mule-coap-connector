@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,45 +20,67 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.config;
+package nl.teslanet.mule.connectors.coap.api.config.options;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
-import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of Encryption parameters.
+ * Configuration of an other option to accept.
  *
  */
-public class LogHealthStatus implements VisitableConfig
+public class AcceptOtherOption
 {
     /**
-     * CoAP defined character set.
-     */
-    public static final String DEFAULT_HEALTH_STATUS_INTERVAL= "10m";
-
-    /**
-     * The interval of healthStatus logging.
+     * The alias of the other option to accept.
+     * This other option must be configured in a {@code coap:config} element.
      */
     @Parameter
-    @Optional( defaultValue= DEFAULT_HEALTH_STATUS_INTERVAL )
-    @Summary( value= "The interval of healthStatus logging." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public String healthStatusInterval= DEFAULT_HEALTH_STATUS_INTERVAL;
+    @Summary(
+        "The alias of the other option to accept.\nThis other option must be configured in a coap:config element."
+    )
+    @Example( "my_option_alias" )
+    private String alias= null;
 
     /**
-     * Accept visitor.
+     * Default constructor
      */
-    @Override
-    public void accept( ConfigVisitor visitor ) throws ConfigException
+    public AcceptOtherOption()
     {
-        visitor.visit( this );
+        //NOOP
+    }
+
+    /**
+     * Constructor with alias.
+     * @param alias The alias of the other option to accept.
+     */
+    public AcceptOtherOption( String alias )
+    {
+        this.alias= alias;
+    }
+
+    /**
+     * @return The alias.
+     */
+    public String getAlias()
+    {
+        return alias;
+    }
+
+    /**
+     * @param alias The alias to set.
+     */
+    public void setAlias( String alias )
+    {
+        this.alias= alias;
     }
 
     /**
@@ -79,7 +101,8 @@ public class LogHealthStatus implements VisitableConfig
         {
             return false;
         }
-        return healthStatusInterval.equals( ( (LogHealthStatus) obj ).healthStatusInterval );
+        AcceptOtherOption rhs= (AcceptOtherOption) obj;
+        return new EqualsBuilder().append( alias, rhs.alias ).isEquals();
     }
 
     /**
@@ -88,6 +111,6 @@ public class LogHealthStatus implements VisitableConfig
     @Override
     public int hashCode()
     {
-        return 3 + healthStatusInterval.hashCode();
+        return new HashCodeBuilder( 25, 45 ).append( alias ).toHashCode();
     }
 }

@@ -42,7 +42,7 @@ public class OtherOption
      */
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The number of the other option." )
+    @Summary( "The alias of the other option." )
     @Example( "my_option" )
     protected String alias;
 

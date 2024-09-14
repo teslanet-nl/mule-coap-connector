@@ -69,9 +69,8 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption;
 import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
-import nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm;
 import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmName;
 import nl.teslanet.mule.connectors.coap.api.config.security.CipherSuite;
@@ -85,8 +84,8 @@ import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString;
 import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
-import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
 import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm;
 import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithmName;
@@ -194,6 +193,9 @@ public class SetValueVisitor implements ConfigVisitor
     {
         switch ( param )
         {
+            case ENDPOINT_OTHEROPTION_ALIAS:
+                toVisit.optionParams= new OptionParams();
+                break;
             case ENDPOINT_LOGTRAFFIC:
                 toVisit.logTraffic= Boolean.valueOf( value );
                 break;
@@ -254,61 +256,14 @@ public class SetValueVisitor implements ConfigVisitor
     @Override
     public void visit( OptionParams toVisit )
     {
-        int nr= 65001;
         switch ( param )
         {
             case ENDPOINT_OTHEROPTION_ALIAS:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
+                toVisit.setAcceptOtherOptions( new ArrayList< AcceptOtherOption >() );
                 for ( String item : value.split( "," ) )
                 {
                     String alias= item.replaceAll( "[\\[\\]\\s]+", "" );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( alias, Integer.valueOf( alias ) ) );
-                }
-                break;
-
-            case ENDPOINT_OTHEROPTION_NUMBER:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
-                for ( String item : value.split( "," ) )
-                {
-                    int val= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( val ), val ) );
-                }
-                break;
-
-            case ENDPOINT_OTHEROPTION_MAXBYTES:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
-                for ( String item : value.split( "," ) )
-                {
-                    nr++;
-                    int val= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, true, 1, val ) );
-                }
-                break;
-            case ENDPOINT_OTHEROPTION_MINBYTES:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
-                for ( String item : value.split( "," ) )
-                {
-                    nr++;
-                    int val= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, true, val, Integer.MAX_VALUE ) );
-                }
-                break;
-            case ENDPOINT_OTHEROPTION_SINGLEVALUE:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
-                for ( String item : value.split( "," ) )
-                {
-                    nr++;
-                    boolean val= Boolean.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, OptionFormat.OPAQUE, val, 0, Integer.MAX_VALUE ) );
-                }
-                break;
-            case ENDPOINT_OTHEROPTION_TYPE:
-                toVisit.otherOptionConfigs= new ArrayList< OtherOptionConfig >();
-                for ( String item : value.split( "," ) )
-                {
-                    nr++;
-                    OptionFormat val= OptionFormat.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.otherOptionConfigs.add( new OtherOptionConfig( String.valueOf( nr ), nr, val, true, 0, Integer.MAX_VALUE ) );
+                    toVisit.getAcceptOtherOptions().add( new AcceptOtherOption( alias ) );
                 }
                 break;
             default:
@@ -815,21 +770,24 @@ public class SetValueVisitor implements ConfigVisitor
                 toVisit.preselectedCipherSuites= new ArrayList<>();
                 for ( String item : value.split( "," ) )
                 {
-                    toVisit.preselectedCipherSuites.add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                    toVisit.preselectedCipherSuites
+                        .add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
                 }
                 break;
             case DTLS_CIPHER_SUITES:
                 toVisit.cipherSuites= new ArrayList<>();
                 for ( String item : value.split( "," ) )
                 {
-                    toVisit.cipherSuites.add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                    toVisit.cipherSuites
+                        .add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
                 }
                 break;
             case DTLS_CURVES:
                 toVisit.curves= new ArrayList<>();
                 for ( String item : value.split( "," ) )
                 {
-                    toVisit.curves.add( new Curve( SupportedGroupName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                    toVisit.curves
+                        .add( new Curve( SupportedGroupName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
                 }
                 break;
             case DTLS_SIGNATURE_AND_HASH_ALGORITHMS:
@@ -843,7 +801,13 @@ public class SetValueVisitor implements ConfigVisitor
                         String hash= algorithmConfig.substring( 0, index );
                         String signature= algorithmConfig.substring( index + 4 );
 
-                        toVisit.signatureAlgorithms.add( new SignatureAlgorithm( HashAlgorithmName.valueOf( hash ), SignatureAlgorithmName.valueOf( signature ) ) );
+                        toVisit.signatureAlgorithms
+                            .add(
+                                new SignatureAlgorithm(
+                                    HashAlgorithmName.valueOf( hash ),
+                                    SignatureAlgorithmName.valueOf( signature )
+                                )
+                            );
                     }
                 }
                 break;
@@ -851,7 +815,12 @@ public class SetValueVisitor implements ConfigVisitor
                 toVisit.certificateKeyAlgorithms= new ArrayList<>();
                 for ( String item : value.split( "," ) )
                 {
-                    toVisit.certificateKeyAlgorithms.add( new CertificateKeyAlgorithm( CertificateKeyAlgorithmName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                    toVisit.certificateKeyAlgorithms
+                        .add(
+                            new CertificateKeyAlgorithm(
+                                CertificateKeyAlgorithmName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) )
+                            )
+                        );
                 }
                 break;
             case DTLS_EXTENDED_MASTER_SECRET_MODE:
@@ -906,7 +875,8 @@ public class SetValueVisitor implements ConfigVisitor
                 for ( String item : value.split( "," ) )
                 {
                     String host= item.replaceAll( "[\\[\\]\\s]+", "" );
-                    toVisit.preSharedKeys.add( new PreSharedKey( host + "identity", new KeyFromString( host ), host, 5684 ) );
+                    toVisit.preSharedKeys
+                        .add( new PreSharedKey( host + "identity", new KeyFromString( host ), host, 5684 ) );
                 }
                 break;
             case pskPort:
@@ -914,7 +884,15 @@ public class SetValueVisitor implements ConfigVisitor
                 for ( String item : value.split( "," ) )
                 {
                     Integer port= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
-                    toVisit.preSharedKeys.add( new PreSharedKey( "identity" + port, new KeyFromNumber( Long.valueOf( port ) ), "host" + port, port ) );
+                    toVisit.preSharedKeys
+                        .add(
+                            new PreSharedKey(
+                                "identity" + port,
+                                new KeyFromNumber( Long.valueOf( port ) ),
+                                "host" + port,
+                                port
+                            )
+                        );
                 }
                 break;
             case pskIdentity:

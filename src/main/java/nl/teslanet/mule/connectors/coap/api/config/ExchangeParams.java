@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -60,7 +62,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "10m" )
-    @Summary( "The maximum number time a peer may be inactive for before it is considered stale\n and all state associated with it can be discarded." )
+    @Summary(
+        "The maximum number time a peer may be inactive for before it is considered stale\n and all state associated with it can be discarded."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String maxPeerInactivityPeriod= null;
@@ -94,7 +98,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "2.0" )
-    @Summary( value= "The back-off factor for retransmissions. \nEvery subsequent retransmission time, spacing is enlarged using this factor." )
+    @Summary(
+                    value= "The back-off factor for retransmissions. \nEvery subsequent retransmission time, spacing is enlarged using this factor."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Float ackTimeoutScale= null;
@@ -129,7 +135,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "247s" )
-    @Summary( value= "The duration between starting to send a Confirmable message \nto the moment when an acknowledgement is no longer expected." )
+    @Summary(
+                    value= "The duration between starting to send a Confirmable message \nto the moment when an acknowledgement is no longer expected."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String exchangeLifetime= null;
@@ -142,7 +150,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "145s" )
-    @Summary( value= "The duration from sending a Non-confirmable message to the moment when its Message ID can be safely reused." )
+    @Summary(
+                    value= "The duration from sending a Non-confirmable message to the moment when its Message ID can be safely reused."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String nonLifetime= null;
@@ -159,7 +169,9 @@ public class ExchangeParams implements VisitableConfig
     */
     @Parameter
     @Optional( defaultValue= "100s" )
-    @Summary( value= "The maximum duration a datagram is expected to take from the start \n of its transmission to the completion of its reception." )
+    @Summary(
+                    value= "The maximum duration a datagram is expected to take from the start \n of its transmission to the completion of its reception."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String maxLatency= null;
@@ -177,7 +189,8 @@ public class ExchangeParams implements VisitableConfig
     @Parameter
     @Optional( defaultValue= "93s" )
     @Summary(
-                    value= "The maximum duration from the first transmission of \n" + "a Confirmable message to the time when the sender gives up on \n"
+                    value= "The maximum duration from the first transmission of \n"
+                        + "a Confirmable message to the time when the sender gives up on \n"
                         + "receiving an acknowledgement or reset."
     )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
@@ -194,7 +207,10 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "250s" )
-    @Summary( value= "The expected maximum response delay over all servers \n" + "that the client can send a multicast request to." )
+    @Summary(
+                    value= "The expected maximum response delay over all servers \n"
+                        + "that the client can send a multicast request to."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String maxResponseDelay= null;
@@ -206,7 +222,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "1" )
-    @Summary( value= "Maximum number of simultaneous outstanding interactions with a peer. \n(rfc7252 specifies default=1)" )
+    @Summary(
+                    value= "Maximum number of simultaneous outstanding interactions with a peer. \n(rfc7252 specifies default=1)"
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer nstart= null;
@@ -229,7 +247,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "65000" )
-    @Summary( value= "Base for multicast MID range. Multicast requests use MIDs in the range [base...65536).\nA negative or zero value disables multicast requests." )
+    @Summary(
+                    value= "Base for multicast MID range. Multicast requests use MIDs in the range [base...65536).\nA negative or zero value disables multicast requests."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer multicastMidBase= null;
@@ -253,7 +273,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "When enabled empty messages that contain token, options or payload are considered a format error." )
+    @Summary(
+                    value= "When enabled empty messages that contain token, options or payload are considered a format error."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean strictEmptyMessageFormat= true;
@@ -265,7 +287,9 @@ public class ExchangeParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "When true the message IDs will start at a random index. Otherwise the first message ID returned will be 0." )
+    @Summary(
+                    value= "When true the message IDs will start at a random index. Otherwise the first message ID returned will be 0."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean useRandomMidStart= true;
@@ -335,5 +359,80 @@ public class ExchangeParams implements VisitableConfig
         midTracker.accept( visitor );
         if ( deduplicator != null ) deduplicator.accept( visitor );
         if ( congestionControl != null ) congestionControl.accept( visitor );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        ExchangeParams rhs= (ExchangeParams) obj;
+        return new EqualsBuilder()
+            .append( ackRandomFactor, rhs.ackRandomFactor )
+            .append( ackTimeout, rhs.ackTimeout )
+            .append( ackTimeoutScale, rhs.ackTimeoutScale )
+            .append( congestionControl, rhs.congestionControl )
+            .append( deduplicator, rhs.deduplicator )
+            .append( exchangeLifetime, rhs.exchangeLifetime )
+            .append( leisure, rhs.leisure )
+            .append( maxAckTimeout, rhs.maxAckTimeout )
+            .append( maxActivePeers, rhs.maxActivePeers )
+            .append( maxLatency, rhs.maxLatency )
+            .append( maxPeerInactivityPeriod, rhs.maxPeerInactivityPeriod )
+            .append( maxResponseDelay, rhs.maxResponseDelay )
+            .append( maxRetransmit, rhs.maxRetransmit )
+            .append( maxTransmitWait, rhs.maxTransmitWait )
+            .append( midTracker, rhs.midTracker )
+            .append( multicastMidBase, rhs.multicastMidBase )
+            .append( nonLifetime, rhs.nonLifetime )
+            .append( nstart, rhs.nstart )
+            .append( strictEmptyMessageFormat, rhs.strictEmptyMessageFormat )
+            .append( tokenSizeLimit, rhs.tokenSizeLimit )
+            .append( useRandomMidStart, rhs.useRandomMidStart )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 21, 41 )
+            .append( ackRandomFactor )
+            .append( ackTimeout )
+            .append( ackTimeoutScale )
+            .append( congestionControl )
+            .append( deduplicator )
+            .append( exchangeLifetime )
+            .append( leisure )
+            .append( maxAckTimeout )
+            .append( maxActivePeers )
+            .append( maxLatency )
+            .append( maxPeerInactivityPeriod )
+            .append( maxResponseDelay )
+            .append( maxRetransmit )
+            .append( maxTransmitWait )
+            .append( midTracker )
+            .append( multicastMidBase )
+            .append( nonLifetime )
+            .append( nstart )
+            .append( strictEmptyMessageFormat )
+            .append( tokenSizeLimit )
+            .append( useRandomMidStart )
+            .toHashCode();
     }
 }

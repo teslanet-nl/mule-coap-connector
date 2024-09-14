@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 import java.util.List;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -33,7 +34,6 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 
 
@@ -74,7 +74,9 @@ public class ResponseOptions
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh." )
+    @Summary(
+        "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh."
+    )
     private Long maxAge= null;
 
     /**
@@ -103,8 +105,10 @@ public class ResponseOptions
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The entity-tag of the response content is a resource-local identifier for differentiating between representations of the same resource." )
-    private EntityTag entityTag= null;
+    @Summary(
+        "The entity-tag of the response content is a resource-local identifier for differentiating between representations of the same resource."
+    )
+    private TypedValue< Object > entityTagValue= null;
 
     /**
      * RFC 7252: The Location-Path and Location-Query Options together indicate a
@@ -251,19 +255,19 @@ public class ResponseOptions
     }
 
     /**
-     * @return the Entity-tag
+     * @return The Entity-tag value of the resource.
      */
-    public EntityTag getEntityTag()
+    public TypedValue< Object > getEntityTagValue()
     {
-        return entityTag;
+        return entityTagValue;
     }
 
     /**
-     * @param entityTag the Entity-tag to set
+     * @param entityTagValue The Entity-tag value of the resource to set
      */
-    public void setEntityTag( EntityTag entityTag )
+    public void setEntityTagValue( TypedValue< Object > entityTagValue )
     {
-        this.entityTag= entityTag;
+        this.entityTagValue= entityTagValue;
     }
 
     /**

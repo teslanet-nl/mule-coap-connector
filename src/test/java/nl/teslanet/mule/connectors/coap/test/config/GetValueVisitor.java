@@ -22,6 +22,7 @@ package nl.teslanet.mule.connectors.coap.test.config;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 
@@ -193,22 +194,15 @@ public class GetValueVisitor implements ConfigVisitor
             switch ( param )
             {
                 case ENDPOINT_OTHEROPTION_ALIAS:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getAlias() ).toArray( String[]::new ) );
-                    break;
-                case ENDPOINT_OTHEROPTION_NUMBER:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getNumber() ).map( Object::toString ).toArray( String[]::new ) );
-                    break;
-                case ENDPOINT_OTHEROPTION_MAXBYTES:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getMaxBytes() ).map( Object::toString ).toArray( String[]::new ) );
-                    break;
-                case ENDPOINT_OTHEROPTION_MINBYTES:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getMinBytes() ).map( Object::toString ).toArray( String[]::new ) );
-                    break;
-                case ENDPOINT_OTHEROPTION_SINGLEVALUE:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.isSingleValue() ).map( Object::toString ).toArray( String[]::new ) );
-                    break;
-                case ENDPOINT_OTHEROPTION_TYPE:
-                    result= Arrays.toString( toVisit.otherOptionConfigs.stream().map( c -> c.getFormat() ).map( Object::toString ).toArray( String[]::new ) );
+                    result= Arrays
+                        .toString(
+                            toVisit
+                                .getAcceptOtherOptions()
+                                .stream()
+                                .map( accept -> accept.getAlias() )
+                                .collect( Collectors.toList() )
+                                .toArray()
+                        );
                     break;
                 default:
                     break;
@@ -603,10 +597,12 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.signatureAlgorithms != null ? toVisit.signatureAlgorithms.toString() : null );
                 break;
             case DTLS_CERTIFICATE_KEY_ALGORITHMS:
-                result= ( toVisit.certificateKeyAlgorithms != null ? toVisit.certificateKeyAlgorithms.toString() : null );
+                result= ( toVisit.certificateKeyAlgorithms != null
+                    ? toVisit.certificateKeyAlgorithms.toString() : null );
                 break;
             case DTLS_EXTENDED_MASTER_SECRET_MODE:
-                result= ( toVisit.extendedMasterSecretMode != null ? toVisit.extendedMasterSecretMode.toString() : null );
+                result= ( toVisit.extendedMasterSecretMode != null
+                    ? toVisit.extendedMasterSecretMode.toString() : null );
                 break;
             case DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION:
                 result= Boolean.toString( toVisit.truncateCertificatePathForValidation );
@@ -859,7 +855,8 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.maxConnections != null ? toVisit.maxConnections.toString() : null );
                 break;
             case DTLS_STALE_CONNECTION_THRESHOLD:
-                result= ( toVisit.staleConnectionThreshold != null ? toVisit.staleConnectionThreshold.toString() : null );
+                result= ( toVisit.staleConnectionThreshold != null
+                    ? toVisit.staleConnectionThreshold.toString() : null );
                 break;
             case DTLS_UPDATE_ADDRESS_USING_CID_ON_NEWER_RECORDS:
                 result= String.valueOf( toVisit.updateAddressOnNewerCidRecords );
@@ -877,13 +874,15 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.dtlsReceiverThreadCount != null ? toVisit.dtlsReceiverThreadCount.toString() : null );
                 break;
             case DTLS_CONNECTOR_THREAD_COUNT:
-                result= ( toVisit.dtlsConnectorThreadCount != null ? toVisit.dtlsConnectorThreadCount.toString() : null );
+                result= ( toVisit.dtlsConnectorThreadCount != null
+                    ? toVisit.dtlsConnectorThreadCount.toString() : null );
                 break;
             case DTLS_MAX_PENDING_HANDSHAKE_RESULT_JOBS:
                 result= ( toVisit.handshakeCapacity != null ? toVisit.handshakeCapacity.toString() : null );
                 break;
             case DTLS_MAX_DEFERRED_INBOUND_RECORDS_SIZE:
-                result= ( toVisit.handshakeRecordBufferSize != null ? toVisit.handshakeRecordBufferSize.toString() : null );
+                result= ( toVisit.handshakeRecordBufferSize != null
+                    ? toVisit.handshakeRecordBufferSize.toString() : null );
                 break;
             case DTLS_MAX_DEFERRED_OUTBOUND_APPLICATION_MESSAGES:
                 result= ( toVisit.deferredMsgCapacity != null ? toVisit.deferredMsgCapacity.toString() : null );
@@ -897,7 +896,8 @@ public class GetValueVisitor implements ConfigVisitor
             case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
                 if ( toVisit.useExtendedAntiReplayFilterWindow )
                 {
-                    result= ( toVisit.antiReplyFilterWindowExtension != null ? toVisit.antiReplyFilterWindowExtension.toString() : "-1" );
+                    result= ( toVisit.antiReplyFilterWindowExtension != null
+                        ? toVisit.antiReplyFilterWindowExtension.toString() : "-1" );
                 }
                 else
                 {
@@ -924,7 +924,8 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.maxFragmentLength != null ? toVisit.maxFragmentLength.name() : null );
                 break;
             case DTLS_MAX_FRAGMENTED_HANDSHAKE_MESSAGE_LENGTH:
-                result= ( toVisit.maxFragmentedHandshakeMsgLength != null ? toVisit.maxFragmentedHandshakeMsgLength.toString() : null );
+                result= ( toVisit.maxFragmentedHandshakeMsgLength != null
+                    ? toVisit.maxFragmentedHandshakeMsgLength.toString() : null );
                 break;
             case DTLS_USE_MULTI_RECORD_MESSAGES:
                 result= toVisit.multiRecords.name();

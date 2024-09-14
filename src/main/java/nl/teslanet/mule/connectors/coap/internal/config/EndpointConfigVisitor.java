@@ -24,19 +24,17 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption;
 import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
+import nl.teslanet.mule.connectors.coap.internal.GlobalConfig;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.EndpointOptionRegistry;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
-import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
 /**
@@ -66,19 +64,20 @@ public abstract class EndpointConfigVisitor extends ConfigurationVisitor
     private boolean reuseAddress= false;
 
     /**
-     * Other options that the endpoint expects.
-     */
-    private ArrayList< OptionDefinition > otherOptionDefs= new ArrayList<>();
-
-    /**
      * Visit option parameters configuration object.
      * @param toVisit the object to visit.
      */
     @Override
     public void visit( OptionParams toVisit )
     {
-        toVisit.otherOptionConfigs.forEach( otherOptionConfig -> otherOptionDefs.add( MessageUtils.toCfOptionDefinition( otherOptionConfig ) ) );
-        endpointBuilder.setOptionRegistry( new EndpointOptionRegistry( otherOptionDefs.toArray( new OptionDefinition []{} ) ) );
+
+        EndpointOptionRegistry registry= new EndpointOptionRegistry();
+
+        for ( AcceptOtherOption accept : toVisit.getAcceptOtherOptions() )
+        {
+            GlobalConfig.getOtherOptionDefinition( accept.getAlias() ).ifPresent( def -> registry.add( def ) );
+        }
+        endpointBuilder.setOptionRegistry( registry );
     }
 
     /**
@@ -141,10 +140,10 @@ public abstract class EndpointConfigVisitor extends ConfigurationVisitor
     /**
      * @return The other option definitions.
      */
-    public List< OptionDefinition > getOtherOptionDefs()
-    {
-        return otherOptionDefs;
-    }
+    //    public List< OptionDefinition > getOtherOptionDefs()
+    //    {
+    //        return otherOptionDefs;
+    //    }
 
     /**
      * Build the endpoint using the configuration this visitor has collected.

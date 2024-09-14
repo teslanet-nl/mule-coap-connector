@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.mule.runtime.api.scheduler.Scheduler;
@@ -100,7 +99,7 @@ public final class OperationalEndpoint
     /**
      * Other options that the endpoint expects.
      */
-    private List< OptionDefinition > otherOptionsDefs;
+    //private List< OptionDefinition > otherOptionsDefs;
 
     /**
      * Create an endpoint not attached to a server or return existing when already created
@@ -143,7 +142,10 @@ public final class OperationalEndpoint
         }
         else
         {
-            throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { " + config.getClass().getCanonicalName() + " }" );
+            throw new EndpointConstructionException(
+                ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { "
+                    + config.getClass().getCanonicalName() + " }"
+            );
         }
         if ( config.logTraffic )
         {
@@ -159,7 +161,8 @@ public final class OperationalEndpoint
      * @return the operational endpoint
      * @throws EndpointConstructionException when endpoint cannot be created or used
      */
-    public static synchronized OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config ) throws EndpointConstructionException
+    public static synchronized OperationalEndpoint getOrCreate( Server server, AbstractEndpoint config )
+        throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
         Optional< Server > actualServer= Optional.of( server );
@@ -171,7 +174,9 @@ public final class OperationalEndpoint
             // endpoint must match, multiple server usage of the endpoint is not allowed
             if ( operationalEndpoint.server.isPresent() && !operationalEndpoint.server.equals( actualServer ) )
             {
-                throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " }: usage by multiple servers not allowed." );
+                throw new EndpointConstructionException(
+                    ENDPOINT_MSG_PREFIX + config.configName + " }: usage by multiple servers not allowed."
+                );
             }
             operationalEndpoint.server= actualServer;
             return operationalEndpoint;
@@ -190,12 +195,15 @@ public final class OperationalEndpoint
      * @return OperationalEndpoint instance that applies to the endpoint configuration.
      * @throws EndpointConstructionException When the endpoint could not be constructed.
      */
-    public static synchronized OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config ) throws EndpointConstructionException
+    public static synchronized OperationalEndpoint getOrCreate( Client client, AbstractEndpoint config )
+        throws EndpointConstructionException
     {
         OperationalEndpoint operationalEndpoint= null;
         if ( client == null )
         {
-            throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " }: no client configured." );
+            throw new EndpointConstructionException(
+                ENDPOINT_MSG_PREFIX + config.configName + " }: no client configured."
+            );
         }
         if ( registry.containsKey( config.configName ) )
         {
@@ -307,10 +315,10 @@ public final class OperationalEndpoint
     /**
      * @return the otherOptionsConfigs
      */
-    public List< OptionDefinition > getOtherOptionsDefs()
-    {
-        return otherOptionsDefs;
-    }
+    //    public List< OptionDefinition > getOtherOptionsDefs()
+    //    {
+    //        return otherOptionsDefs;
+    //    }
 
     /**
      * @return the coapEndpoint
@@ -337,7 +345,7 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 
@@ -359,7 +367,7 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 
@@ -380,7 +388,7 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        this.otherOptionsDefs= visitor.getOtherOptionDefs();
+        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 
@@ -391,7 +399,9 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( TCPServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TCP Server Endpoint NIY." );
+        throw new EndpointConstructionException(
+            ENDPOINT_MSG_PREFIX + config.configName + " } TCP Server Endpoint NIY."
+        );
     }
 
     /**
@@ -401,7 +411,9 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( TCPClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TCP Client Endpoint NIY." );
+        throw new EndpointConstructionException(
+            ENDPOINT_MSG_PREFIX + config.configName + " } TCP Client Endpoint NIY."
+        );
     }
 
     /**
@@ -411,7 +423,9 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( TLSServerEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TLS Server Endpoint NIY." );
+        throw new EndpointConstructionException(
+            ENDPOINT_MSG_PREFIX + config.configName + " } TLS Server Endpoint NIY."
+        );
     }
 
     /**
@@ -421,7 +435,9 @@ public final class OperationalEndpoint
      */
     private OperationalEndpoint( TLSClientEndpoint config ) throws EndpointConstructionException
     {
-        throw new EndpointConstructionException( ENDPOINT_MSG_PREFIX + config.configName + " } TLS Client Endpoint NIY." );
+        throw new EndpointConstructionException(
+            ENDPOINT_MSG_PREFIX + config.configName + " } TLS Client Endpoint NIY."
+        );
     }
 
     /**

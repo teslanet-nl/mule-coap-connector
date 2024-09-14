@@ -42,7 +42,6 @@ import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
-import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -214,11 +213,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private static UDPEndpoint defaultEndpoint= null;
 
     /**
-     * Other options that the client expects.
-     */
-    private ConcurrentHashMap< String, OptionDefinition > otherOptionDefs= new ConcurrentHashMap<>();
-
-    /**
      * Intitialise the client. The client is assigned an endpoint, which is created when needed. 
      */
     @Override
@@ -234,7 +228,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             abstractEndpoint= endpoint.getEndpoint();
             //mule should have set the mandatory endpoint.
-            if ( abstractEndpoint == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in client endpoint." ), this );
+            if (
+                abstractEndpoint == null
+            ) throw new InitialisationException(
+                new IllegalArgumentException( "Unexpected null value in client endpoint." ),
+                this
+            );
         }
         if ( abstractEndpoint.configName == null )
         {
@@ -250,7 +249,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             throw new InitialisationException( e, this );
         }
         scheme= operationalEndpoint.getCoapEndpoint().getUri().getScheme();
-        operationalEndpoint.getOtherOptionsDefs().forEach( optionDef -> otherOptionDefs.put( optionDef.getName(), optionDef ) );
         LOGGER.info( "{} initialised.", this );
     }
 
@@ -291,7 +289,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     {
         OperationalEndpoint.disposeAll( this );
         operationalEndpoint= null;
-        otherOptionDefs.clear();
         LOGGER.info( "{} disposed.", this );
     }
 
@@ -366,7 +363,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidObserverException when uri is already observed
      * @throws InternalUriException when uri is not valid
      */
-    synchronized void addRelation( URI uri, ObserveRelation relation ) throws InternalInvalidObserverException, InternalUriException
+    synchronized void addRelation( URI uri, ObserveRelation relation ) throws InternalInvalidObserverException,
+        InternalUriException
     {
         if ( uri == null )
         {
@@ -374,7 +372,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         if ( observeRelations.get( uri ) != null )
         {
-            throw new InternalInvalidObserverException( String.format( "%s observer already exists: { %s }", this, uri ) );
+            throw new InternalInvalidObserverException(
+                String.format( "%s observer already exists: { %s }", this, uri )
+            );
         }
         observeRelations.put( uri, relation );
     }
@@ -442,8 +442,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException When given request uri parameters are invalid.
      * @throws InternalInvalidMessageTypeException When request message type is invalid.
      */
-    Result< InputStream, CoapResponseAttributes > doRequest( RequestParams requestParams, RequestOptions options, ResponseHandlerParams handlerBuilder )
-        throws InternalInvalidHandlerException,
+    Result< InputStream, CoapResponseAttributes > doRequest(
+        RequestParams requestParams,
+        RequestOptions options,
+        ResponseHandlerParams handlerBuilder
+    ) throws InternalInvalidHandlerException,
         InternalRequestException,
         InternalResponseException,
         InternalEndpointException,
@@ -462,7 +465,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         try
         {
             MessageUtils.copyOptions( options, request.getOptions(), transformationService );
-            MessageUtils.copyOtherOptions( options, request.getOptions(), otherOptionDefs, transformationService );
+            MessageUtils.copyOtherOptions( options, request.getOptions(), transformationService );
         }
         catch ( InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {
@@ -471,7 +474,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         if ( handlerBuilder != null )
         {
             // asynchronous request
-            ResponseProcessor processor= ResponseProcessor.getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
+            ResponseProcessor processor= ResponseProcessor
+                .getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
             handler= createCoapHandler(
                 getLocalAddress(),
                 handlerBuilder.getResponseHandler().getHandlerName(),
@@ -504,7 +508,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidMessageTypeException When request message type is invalid.
      * @throws InternalInvalidRequestCodeException When request code is invalid.
      */
-    private Result< InputStream, CoapResponseAttributes > executeSynchronous( Request request ) throws InternalEndpointException,
+    private Result< InputStream, CoapResponseAttributes > executeSynchronous( Request request )
+        throws InternalEndpointException,
         InternalNoResponseException,
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
@@ -528,31 +533,47 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         DefaultResponseAttributes responseAttributes;
         try
         {
-            responseAttributes= ResponseProcessor.createReceivedResponseAttributes( getLocalAddress(), request.getURI(), type, code, response );
+            responseAttributes= ResponseProcessor
+                .createReceivedResponseAttributes( getLocalAddress(), request.getURI(), type, code, response );
         }
-        catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException | InternalInvalidMessageTypeException e )
+        catch (
+                        InternalInvalidOptionValueException | InternalInvalidResponseCodeException
+                        | InternalInvalidMessageTypeException e
+        )
         {
             throw new InternalResponseException( this + " CoAP response cannot be processed", e );
         }
         Result< InputStream, CoapResponseAttributes > result;
         if ( response == null )
         {
-            result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType( MediaType.ANY ).build();
+            result= Result
+                .< InputStream, CoapResponseAttributes > builder()
+                .output( null )
+                .attributes( responseAttributes )
+                .mediaType( MediaType.ANY )
+                .build();
         }
         else
         {
             byte[] payload= response.getPayload();
             if ( payload != null )
             {
-                result= Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( response.getPayload() ) ).length( payload.length ).attributes(
-                    responseAttributes
-                ).mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) ).build();
+                result= Result
+                    .< InputStream, CoapResponseAttributes > builder()
+                    .output( new ByteArrayInputStream( response.getPayload() ) )
+                    .length( payload.length )
+                    .attributes( responseAttributes )
+                    .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
+                    .build();
             }
             else
             {
-                result= Result.< InputStream, CoapResponseAttributes > builder().output( null ).attributes( responseAttributes ).mediaType(
-                    MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                ).build();
+                result= Result
+                    .< InputStream, CoapResponseAttributes > builder()
+                    .output( null )
+                    .attributes( responseAttributes )
+                    .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
+                    .build();
             }
         }
         return result;
@@ -600,7 +621,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             if ( !response.isSuccess() )
             {
-                String message= this + " response code received: " + AttributeUtils.toResponseCodeAttribute( response.getCode() );
+                String message= this + " response code received: "
+                    + AttributeUtils.toResponseCodeAttribute( response.getCode() );
                 if ( response.getCode().isClientError() )
                 {
                     throw new InternalClientErrorResponseException( message );
@@ -647,15 +669,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 {
                     try
                     {
-                        ResponseProcessor.processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
+                        ResponseProcessor
+                            .processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
                     }
                     catch ( InternalResponseException e )
                     {
                         //this should never happen
-                        LOGGER.error(
-                            String.format( "Handler { %s::%s } cannot proces an error on asynchronous request or response.", thisClient.getClientName(), handlerName ),
-                            e
-                        );
+                        LOGGER
+                            .error(
+                                String
+                                    .format(
+                                        "Handler { %s::%s } cannot proces an error on asynchronous request or response.",
+                                        thisClient.getClientName(),
+                                        handlerName
+                                    ),
+                                e
+                            );
                     }
                 }
 
@@ -668,19 +697,39 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 {
                     try
                     {
-                        ResponseProcessor.processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor );
+                        ResponseProcessor
+                            .processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor );
                     }
                     catch ( InternalResponseException e )
                     {
-                        LOGGER.error( String.format( "Handler { %s::%s } cannot proces an asynchronous response.", thisClient.getClientName(), handlerName ), e );
+                        LOGGER
+                            .error(
+                                String
+                                    .format(
+                                        "Handler { %s::%s } cannot proces an asynchronous response.",
+                                        thisClient.getClientName(),
+                                        handlerName
+                                    ),
+                                e
+                            );
                         try
                         {
-                            ResponseProcessor.processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
+                            ResponseProcessor
+                                .processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
                         }
                         catch ( InternalResponseException e1 )
                         {
                             //this should never happen
-                            LOGGER.error( String.format( "Handler { %s::%s } cannot proces an error on asynchronous respons.", thisClient.getClientName(), handlerName ), e );
+                            LOGGER
+                                .error(
+                                    String
+                                        .format(
+                                            "Handler { %s::%s } cannot proces an error on asynchronous respons.",
+                                            thisClient.getClientName(),
+                                            handlerName
+                                        ),
+                                    e
+                                );
                         }
                     }
                 }
@@ -749,7 +798,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         // check if Link Format
         if ( response.getOptions().getContentFormat() != MediaTypeRegistry.APPLICATION_LINK_FORMAT )
         {
-            throw new InternalUnexpectedResponseException( String.format( "%s no link format received on discover request from { %s }", this, request.getURI() ) );
+            throw new InternalUnexpectedResponseException(
+                String.format( "%s no link format received on discover request from { %s }", this, request.getURI() )
+            );
         }
         // parse and return
         return LinkFormat.parse( response.getResponseText() );
@@ -763,11 +814,13 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException When the uri parameters of the resource to observe are invalid.
      * @throws InternalInvalidHandlerException When the handler parameters are invalid.
      */
-    synchronized void addObserver( ObserverAddParams params, ResponseHandlerParams handlerBuilder ) throws InternalInvalidObserverException,
+    synchronized void addObserver( ObserverAddParams params, ResponseHandlerParams handlerBuilder )
+        throws InternalInvalidObserverException,
         InternalUriException,
         InternalInvalidHandlerException
     {
-        ResponseProcessor processor= ResponseProcessor.getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
+        ResponseProcessor processor= ResponseProcessor
+            .getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
         CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
         URI uri= requestBuilder.buildResourceUri();
         String localAddress= getLocalAddress();
@@ -783,7 +836,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             String.format( "CoAP Observer { %s::%s }", getClientName(), uri ),
             coapClient,
             requestBuilder,
-            ( requestUri, requestType, requestCode, response ) -> ResponseProcessor.processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor )
+            ( requestUri, requestType, requestCode, response ) -> ResponseProcessor
+                .processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor )
         );
         addRelation( uri, relation );
         relation.start();
@@ -795,7 +849,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalUriException
      * @throws InternalInvalidObserverException
      */
-    synchronized void removeObserver( ObserverRemoveParams params ) throws InternalUriException, InternalInvalidObserverException
+    synchronized void removeObserver( ObserverRemoveParams params ) throws InternalUriException,
+        InternalInvalidObserverException
     {
         CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( params );
         URI uri= requestBuilder.buildResourceUri();
@@ -807,7 +862,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         }
         else
         {
-            throw new InternalInvalidObserverException( String.format( "%s cannot stop observer, observer nonexistent on resource { %s }", this, uri ) );
+            throw new InternalInvalidObserverException(
+                String.format( "%s cannot stop observer, observer nonexistent on resource { %s }", this, uri )
+            );
         }
     }
 
@@ -941,7 +998,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     {
                         throw new InternalRequestException( Client.this + " cannot convert payload to byte[]", e );
                     }
-                    request.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() ) );
+                    request
+                        .getOptions()
+                        .setContentFormat(
+                            MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() )
+                        );
                 }
             }
         }
@@ -992,11 +1053,17 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             if ( params.getPingAddress() != null )
             {
-                setEndpointAddress( params.getPingAddress().getEndpointHost(), params.getPingAddress().getEndpointPort() );
+                setEndpointAddress(
+                    params.getPingAddress().getEndpointHost(),
+                    params.getPingAddress().getEndpointPort()
+                );
             }
             else if ( requestConfig.getRemoteEndpointConfig() != null )
             {
-                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+                setEndpointAddress(
+                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                );
             }
             else
             {
@@ -1104,11 +1171,17 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             //get the endpoint address
             if ( params.getRemoteEndpoint() != null )
             {
-                setEndpointAddress( params.getRemoteEndpoint().getEndpointHost(), params.getRemoteEndpoint().getEndpointPort() );
+                setEndpointAddress(
+                    params.getRemoteEndpoint().getEndpointHost(),
+                    params.getRemoteEndpoint().getEndpointPort()
+                );
             }
             else if ( requestConfig.getRemoteEndpointConfig() != null )
             {
-                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+                setEndpointAddress(
+                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                );
             }
             else
             {
@@ -1199,11 +1272,17 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             //get the endpoint address
             if ( params.getRemoteEndpointConfig() != null )
             {
-                setEndpointAddress( params.getRemoteEndpointConfig().getEndpointHost(), params.getRemoteEndpointConfig().getEndpointPort() );
+                setEndpointAddress(
+                    params.getRemoteEndpointConfig().getEndpointHost(),
+                    params.getRemoteEndpointConfig().getEndpointPort()
+                );
             }
             else if ( requestConfig.getRemoteEndpointConfig() != null )
             {
-                setEndpointAddress( requestConfig.getRemoteEndpointConfig().getEndpointHost(), requestConfig.getRemoteEndpointConfig().getEndpointPort() );
+                setEndpointAddress(
+                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                );
             }
             else
             {
@@ -1302,7 +1381,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             catch ( Exception e )
             {
                 throw new InternalUriException(
-                    String.format( INVALID_URI_FORMAT, Client.this, scheme, endpointHost, endpointPort, OptionUtils.EMPTY_STRING, OptionUtils.EMPTY_STRING ),
+                    String
+                        .format(
+                            INVALID_URI_FORMAT,
+                            Client.this,
+                            scheme,
+                            endpointHost,
+                            endpointPort,
+                            OptionUtils.EMPTY_STRING,
+                            OptionUtils.EMPTY_STRING
+                        ),
                     e
                 );
             }
@@ -1324,11 +1412,30 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             URI uri;
             try
             {
-                uri= new URI( ( proxyScheme != null ? proxyScheme : scheme ), null, resourceHost, resourcePort, resourcePath, resourceQuery, null );
+                uri= new URI(
+                    ( proxyScheme != null ? proxyScheme : scheme ),
+                    null,
+                    resourceHost,
+                    resourcePort,
+                    resourcePath,
+                    resourceQuery,
+                    null
+                );
             }
             catch ( Exception e )
             {
-                throw new InternalUriException( String.format( INVALID_URI_FORMAT, Client.this, scheme, endpointHost, endpointPort, resourcePath, resourceQuery ) );
+                throw new InternalUriException(
+                    String
+                        .format(
+                            INVALID_URI_FORMAT,
+                            Client.this,
+                            scheme,
+                            endpointHost,
+                            endpointPort,
+                            resourcePath,
+                            resourceQuery
+                        )
+                );
             }
             return uri;
         }
@@ -1355,9 +1462,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * @throws InternalRequestException When given payload could not be added the request.
          */
         @Override
-        public Request build() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
+        public Request build() throws InternalInvalidRequestCodeException,
+            InternalUriException,
+            InternalRequestException
         {
-            Request request= new Request( AttributeUtils.toRequestCode( requestCode ), ( confirmable ? Type.CON : Type.NON ) );
+            Request request= new Request(
+                AttributeUtils.toRequestCode( requestCode ),
+                ( confirmable ? Type.CON : Type.NON )
+            );
             request.setURI( buildEndpointUri() );
             request.setOptions( buildResourceUri() );
             if ( observe != null )

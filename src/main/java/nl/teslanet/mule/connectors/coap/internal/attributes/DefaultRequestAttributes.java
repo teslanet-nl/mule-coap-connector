@@ -23,19 +23,28 @@
 package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
-import nl.teslanet.mule.connectors.coap.internal.options.ToStringStyle;
 
 
 /**
-* The attributes of a CoAP request that was received from a client.
-*
-*/
+ * The attributes of a CoAP request that was received from a client.
+ *
+ */
 public class DefaultRequestAttributes extends CoapRequestAttributes
 {
+    /**
+     * The request URI object.
+     */
+    private URI requestUriObject= null;
+
     /**
      * @param requestType The request type to set.
      */
@@ -85,19 +94,99 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     }
 
     /**
-    * @param requestOptionAttributes The options to set.
-    */
+     * @param requestOptionAttributes The options to set.
+     */
     public void setRequestOptionAttributes( RequestOptionsAttributes requestOptionAttributes )
     {
         this.options= requestOptionAttributes;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @return the requestScheme
+     */
+    @Override
+    public String getRequestScheme()
+    {
+        return getOrCreateRequestUri().getScheme();
+    }
+
+    /**
+     * @return the requestHost
+     */
+    @Override
+    public String getRequestHost()
+    {
+        return getOrCreateRequestUri().getHost();
+    }
+
+    /**
+     * @return the requestPort
+     */
+    @Override
+    public int getRequestPort()
+    {
+        return getOrCreateRequestUri().getPort();
+    }
+
+    /**
+     * @return the requestPath
+     */
+    @Override
+    public String getRequestPath()
+    {
+        String path= getOrCreateRequestUri().getPath();
+        if ( path != null )
+        {
+            return getOrCreateRequestUri().getPath();
+        }
+        else
+        {
+            return Defs.COAP_URI_ROOTRESOURCE;
+        }
+    }
+
+    /**
+     * @return the requestQuery
+     */
+    @Override
+    public String getRequestQuery()
+    {
+        String query= getOrCreateRequestUri().getQuery();
+        if ( query != null )
+        {
+            return getOrCreateRequestUri().getPath();
+        }
+        else
+        {
+            return OptionUtils.EMPTY_STRING;
+        }
+    }
+
+    /**
+     * @return  The request uri object.
+     */
+    private synchronized URI getOrCreateRequestUri()
+    {
+        if ( requestUriObject == null )
+        {
+            try
+            {
+                requestUriObject= new URI( requestUri );
+            }
+            catch ( URISyntaxException e )
+            {
+                throw new IllegalStateException( "cannot create URI from request", e );
+            }
+        }
+        return requestUriObject;
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, new ToStringStyle() );
+        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
     }
 }

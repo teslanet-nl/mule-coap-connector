@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -53,5 +53,14 @@ public class EndpointOptionRegistry extends MapBasedOptionRegistry
         {
             this.put( definition );
         }
+    }
+
+    /**
+     * Add an option-definition to the registry.
+     * @param definition The definition to add
+     */
+    public void add( OptionDefinition definition )
+    {
+        this.put( definition );
     }
 }

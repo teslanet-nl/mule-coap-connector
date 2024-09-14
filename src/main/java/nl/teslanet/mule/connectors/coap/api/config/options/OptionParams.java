@@ -26,11 +26,12 @@ package nl.teslanet.mule.connectors.coap.api.config.options;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
@@ -42,63 +43,35 @@ import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
  * Configuration option parameters.
  *
  */
-@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
 public class OptionParams implements VisitableConfig
 {
     //TODO non critical options need to be understood as well. Not suitable for proxy.. 
 
     /**
-     * Name of the option parameter configuration.
-     */
-    @RefName
-    private String optionParamsName= null;
-
-    /**
-    * The list of other options that the endpoint understands. 
+    * The aliases of other options that the endpoint understands. 
     * Messages containing critical options that are not understood will be refused.
     * Elective options that are not understood will be ignored.
     */
     @Parameter
-    @Summary(
-                    value= "The other options that the endpoint understands. " + "\nMessages containing critical options that are not understood will be rejected. "
-                        + "\nElective options that are not understood will be ignored."
-    )
+    @Summary( value= "The aliases of other options the endpoint understands." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    public List< OtherOptionConfig > otherOptionConfigs;
+    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
+    private List< AcceptOtherOption > acceptOtherOptions= new CopyOnWriteArrayList<>();
 
     /**
-     * Default Constructor used by Mule. 
-     * Mandatory and Nullsafe params are set by Mule.
+     * @return the expected other options 
      */
-    public OptionParams()
+    public List< AcceptOtherOption > getAcceptOtherOptions()
     {
-        otherOptionConfigs= new CopyOnWriteArrayList<>();
+        return acceptOtherOptions;
     }
 
     /**
-     * Constructor for manually constructing the endpoint.
-     * (Mule uses default constructor and sets Nullsafe params.)
-     * @param otherOptionConfigs List of expected other options.
+     * @param acceptOtherOptions the expected other options to set
      */
-    public OptionParams( List< OtherOptionConfig > otherOptionConfigs )
+    public void setAcceptOtherOptions( List< AcceptOtherOption > acceptOtherOptions )
     {
-        this.otherOptionConfigs= otherOptionConfigs;
-    }
-
-    /**
-     * @return the otherOptionConfigs
-     */
-    public List< OtherOptionConfig > getOtherOptionConfigs()
-    {
-        return otherOptionConfigs;
-    }
-
-    /**
-     * @param otherOptionConfigs the otherOptionConfigs to set
-     */
-    public void setOtherOptionConfigs( List< OtherOptionConfig > otherOptionConfigs )
-    {
-        this.otherOptionConfigs= otherOptionConfigs;
+        this.acceptOtherOptions= acceptOtherOptions;
     }
 
     /**
@@ -108,5 +81,40 @@ public class OptionParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        OptionParams rhs= (OptionParams) obj;
+        EqualsBuilder builder= new EqualsBuilder();
+        acceptOtherOptions.forEach( other -> builder.append( other, rhs.acceptOtherOptions ) );
+        return builder.isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        HashCodeBuilder builder= new HashCodeBuilder( 9, 29 ).append( acceptOtherOptions );
+        acceptOtherOptions.forEach( other -> builder.append( other ) );
+        return builder.toHashCode();
     }
 }

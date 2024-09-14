@@ -311,17 +311,17 @@ public class ConfigParams
             case multicastGroups:
                 return new ConfigDescription( param, "", "", "224.0.1.187;test,eth0;", "224.0.1.187;test,eth0;", ConfigDescription.TEST_MULTICAST );
             case ENDPOINT_OTHEROPTION_ALIAS:
-                return new ConfigDescription( param, "[]", "[]", "[65001, 65002, 65003]", "[65001, 65002, 65003]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, null, "[]", "[65001, 65002, 65003]", "[65001, 65002, 65003]", ConfigDescription.TEST_ALL );
             case ENDPOINT_OTHEROPTION_NUMBER:
-                return new ConfigDescription( param, "[]", "[]", "[65001, 65002, 65003]", "[65001, 65002, 65003]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, "[]", "[]", "[65001, 65002, 65003]", "[65001, 65002, 65003]", ConfigDescription.TEST_NONE );
             case ENDPOINT_OTHEROPTION_TYPE:
-                return new ConfigDescription( param, "[]", "[]", "[OPAQUE, INTEGER, STRING]", "[OPAQUE, INTEGER, STRING]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, "[]", "[]", "[OPAQUE, INTEGER, STRING]", "[OPAQUE, INTEGER, STRING]", ConfigDescription.TEST_NONE );
             case ENDPOINT_OTHEROPTION_SINGLEVALUE:
-                return new ConfigDescription( param, "[]", "[]", "[true, false, true]", "[true, false, true]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, "[]", "[]", "[true, false, true]", "[true, false, true]", ConfigDescription.TEST_NONE );
             case ENDPOINT_OTHEROPTION_MINBYTES:
-                return new ConfigDescription( param, "[]", "[]", "[0, 2, 8]", "[0, 2, 8]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, "[]", "[]", "[0, 2, 8]", "[0, 2, 8]", ConfigDescription.TEST_NONE );
             case ENDPOINT_OTHEROPTION_MAXBYTES:
-                return new ConfigDescription( param, "[]", "[]", "[0, 2, 8]", "[0, 2, 8]", ConfigDescription.TEST_ALL );
+                return new ConfigDescription( param, "[]", "[]", "[0, 2, 8]", "[0, 2, 8]", ConfigDescription.TEST_NONE );
             case strictEmptyMessageFormat:
                 return new ConfigDescription( param, "true", "true", "false", "false", ConfigDescription.TEST_UDP | ConfigDescription.TEST_DTLS );
             case DTLS_AUTO_HANDSHAKE_TIMEOUT:

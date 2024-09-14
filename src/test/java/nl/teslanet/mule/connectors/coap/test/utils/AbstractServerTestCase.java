@@ -4,7 +4,7 @@
  * %%
  * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
- * Contributors:
+ * Contributors:m
  *     (teslanet.nl) Rogier Cobben - initial creation
  * %%
  * This program and the accompanying materials are made available under the
@@ -32,6 +32,7 @@ import org.eclipse.californium.core.coap.option.OptionDefinition;
 import org.eclipse.californium.core.coap.option.StandardOptionRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.CoapEndpoint.Builder;
+import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.network.EndpointManager;
 import org.eclipse.californium.elements.config.Configuration;
 import org.junit.After;
@@ -56,9 +57,10 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
-        OptionDefinition[] critical= {
+        OptionDefinition[] optionDefs= {
             TestOptions.OTHER_OPTION_65003,
             TestOptions.OTHER_OPTION_65009,
+            TestOptions.OTHER_OPTION_65010,
             TestOptions.OTHER_OPTION_65012,
             TestOptions.OTHER_OPTION_65013,
             TestOptions.OTHER_OPTION_65308 };
@@ -68,9 +70,14 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
         client.setTimeout( 1000000L );
         Builder builder= CoapEndpoint.builder();
         builder.setConfiguration( Configuration.createStandardWithoutFile() );
-        MapBasedOptionRegistry allOptions= new MapBasedOptionRegistry( StandardOptionRegistry.getDefaultOptionRegistry(), critical );
+        MapBasedOptionRegistry allOptions= new MapBasedOptionRegistry(
+            StandardOptionRegistry.getDefaultOptionRegistry(),
+            optionDefs
+        );
         builder.setOptionRegistry( allOptions );
-        client.setEndpoint( builder.build() );
+        CoapEndpoint endpoint= builder.build();
+        endpoint.addInterceptor( new MessageTracer() );
+        client.setEndpoint( endpoint );
     }
 
     /**

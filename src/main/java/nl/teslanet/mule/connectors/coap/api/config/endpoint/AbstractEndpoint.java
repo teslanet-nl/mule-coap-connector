@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -90,9 +92,8 @@ public abstract class AbstractEndpoint implements VisitableConfig
     */
     @Parameter
     @Optional
-    @NullSafe
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= true, allowInlineDefinition= true )
+    @ParameterDsl( allowReferences= false )
     public OptionParams optionParams= null;
 
     /**
@@ -146,7 +147,6 @@ public abstract class AbstractEndpoint implements VisitableConfig
         socketParams= new SocketParams();
         blockwiseParams= new BlockwiseParams();
         notificationParams= new NotificationParams();
-        optionParams= new OptionParams();
         exchangeParams= new ExchangeParams( new GroupedMidTracker() );
     }
 
@@ -175,5 +175,54 @@ public abstract class AbstractEndpoint implements VisitableConfig
         if ( optionParams != null ) optionParams.accept( visitor );
         exchangeParams.accept( visitor );
         if ( logHealthStatus != null ) logHealthStatus.accept( visitor );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        AbstractEndpoint rhs= (AbstractEndpoint) obj;
+        return new EqualsBuilder()
+            .append( blockwiseParams, rhs.blockwiseParams )
+            .append( configName, rhs.configName )
+            .append( exchangeParams, rhs.exchangeParams )
+            .append( logHealthStatus, rhs.logHealthStatus )
+            .append( logTraffic, rhs.logTraffic )
+            .append( notificationParams, rhs.notificationParams )
+            .append( optionParams, rhs.optionParams )
+            .append( socketParams, rhs.socketParams )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 17, 37 )
+            .append( blockwiseParams )
+            .append( configName )
+            .append( exchangeParams )
+            .append( logHealthStatus )
+            .append( logTraffic )
+            .append( notificationParams )
+            .append( optionParams )
+            .append( socketParams )
+            .toHashCode();
     }
 }

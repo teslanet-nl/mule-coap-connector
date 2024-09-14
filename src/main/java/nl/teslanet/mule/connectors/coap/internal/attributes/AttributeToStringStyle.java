@@ -20,17 +20,20 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.options;
+package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
+
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 
 
 /**
  * The to string style for attributes.
  *
  */
-public class ToStringStyle extends MultilineRecursiveToStringStyle
+public class AttributeToStringStyle extends MultilineRecursiveToStringStyle
 {
     /**
      * Serial version.
@@ -38,11 +41,33 @@ public class ToStringStyle extends MultilineRecursiveToStringStyle
     private static final long serialVersionUID= 1L;
 
     /**
+     * Style instance.
+     */
+    private static final AttributeToStringStyle instance= new AttributeToStringStyle();
+
+    /**
      * Constructor.
      */
-    public ToStringStyle()
+    public AttributeToStringStyle()
     {
         this.setUseClassName( false );
         this.setUseIdentityHashCode( false );
+    }
+
+    /**
+     * @return the instance
+     */
+    public static AttributeToStringStyle getInstance()
+    {
+        return instance;
+    }
+
+    /**
+     * Do not accept classes that will use {@code toString()}
+     */
+    @Override
+    protected boolean accept( final Class< ? > clazz )
+    {
+        return clazz != DefaultEntityTag.class && clazz != DefaultOtherOptionAttribute.class;
     }
 }

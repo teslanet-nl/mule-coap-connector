@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.internal;
 
 
 import org.mule.runtime.extension.api.annotation.Configurations;
-import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
@@ -86,7 +85,6 @@ import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString;
 import nl.teslanet.mule.connectors.coap.api.error.Errors;
 import nl.teslanet.mule.connectors.coap.internal.client.Client;
 import nl.teslanet.mule.connectors.coap.internal.client.ResponseListener;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.internal.server.Server;
 
 
@@ -96,7 +94,15 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @Xml( prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap" )
 @Extension( name= "CoAP", vendor= "Teslanet.nl" )
 @SubTypeMapping( baseType= AbstractEndpoint.class, subTypes=
-{ UDPEndpoint.class, MulticastUDPEndpoint.class, DTLSEndpoint.class, TCPServerEndpoint.class, TCPClientEndpoint.class, TLSServerEndpoint.class, TLSClientEndpoint.class } )
+{
+    UDPEndpoint.class,
+    MulticastUDPEndpoint.class,
+    DTLSEndpoint.class,
+    TCPServerEndpoint.class,
+    TCPClientEndpoint.class,
+    TLSServerEndpoint.class,
+    TLSClientEndpoint.class }
+)
 @SubTypeMapping( baseType= DtlsEndpointRole.class, subTypes=
 { DtlsServerRole.class, DtlsClientRole.class, DtlsClientAndServerRole.class } )
 @SubTypeMapping( baseType= ReplayFilter.class, subTypes=
@@ -118,13 +124,11 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @SubTypeMapping( baseType= KeyConfig.class, subTypes=
 { KeyFromHex.class, KeyFromNumber.class, KeyFromString.class } )
 @Configurations(
-    { Server.class, Client.class }
+    { Server.class, Client.class, GlobalConfig.class }
 )
 @Sources( value=
 { ResponseListener.class } )
 @Operations( GlobalOperations.class )
-@Export( classes=
-{ DefaultEntityTag.class } )
 @ErrorTypes( Errors.class )
 public class CoapConnector
 {

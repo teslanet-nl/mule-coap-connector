@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -43,7 +45,9 @@ public class BlockwiseParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "512" )
-    @Summary( "The block size [bytes] to use when doing a blockwise transfer. This value serves as the upper limit for block size in blockwise transfers." )
+    @Summary(
+        "The block size [bytes] to use when doing a blockwise transfer. This value serves as the upper limit for block size in blockwise transfers."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer preferredBlockSize= null;
@@ -118,7 +122,9 @@ public class BlockwiseParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "false" )
-    @Summary( "When activated the Block2 option is also included when client requests early \nblockwise negotiation but the response can be sent on one packet." )
+    @Summary(
+        "When activated the Block2 option is also included when client requests early \nblockwise negotiation but the response can be sent on one packet."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean strictBlock2Option= false;
@@ -129,7 +135,9 @@ public class BlockwiseParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( "When activated CoAP client will try to use block mode or adapt \nthe block size when receiving a 4.13 Entity too large response code." )
+    @Summary(
+        "When activated CoAP client will try to use block mode or adapt \nthe block size when receiving a 4.13 Entity too large response code."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean entityTooLargeFailover= true;
@@ -141,5 +149,54 @@ public class BlockwiseParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        BlockwiseParams rhs= (BlockwiseParams) obj;
+        return new EqualsBuilder()
+            .append( entityTooLargeFailover, rhs.entityTooLargeFailover )
+            .append( maxMessageSize, rhs.maxMessageSize )
+            .append( maxResourceBodySize, rhs.maxResourceBodySize )
+            .append( preferredBlockSize, rhs.preferredBlockSize )
+            .append( statusInterval, rhs.statusInterval )
+            .append( statusLifetime, rhs.statusLifetime )
+            .append( strictBlock1Option, rhs.strictBlock1Option )
+            .append( strictBlock2Option, rhs.strictBlock2Option )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 19, 39 )
+            .append( entityTooLargeFailover )
+            .append( maxMessageSize )
+            .append( maxResourceBodySize )
+            .append( preferredBlockSize )
+            .append( statusInterval )
+            .append( statusLifetime )
+            .append( strictBlock1Option )
+            .append( strictBlock2Option )
+            .toHashCode();
     }
 }

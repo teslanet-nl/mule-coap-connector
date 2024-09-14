@@ -33,6 +33,7 @@ import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 
@@ -79,7 +80,9 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
         if ( !optionSet.getLocationQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet.getLocationQuery().forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
+            optionSet
+                .getLocationQuery()
+                .forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
             locationQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasSize1() )
@@ -103,6 +106,6 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, new ToStringStyle() );
+        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
     }
 }

@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import nl.teslanet.mule.connectors.coap.api.config.options.OptionFormat;
+import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
@@ -64,15 +64,15 @@ public class OptionFormatTest
     @Parameters( name= "format= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
+        return Arrays
+            .asList( new Object [] []
             {
                 { org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.EMPTY, OptionFormat.EMPTY },
                 { org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.INTEGER, OptionFormat.INTEGER },
                 { org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.STRING, OptionFormat.STRING },
                 { org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.OPAQUE, OptionFormat.OPAQUE },
                 { org.eclipse.californium.core.coap.OptionNumberRegistry.OptionFormat.UNKNOWN, OptionFormat.OPAQUE } }
-        );
+            );
     }
 
     /**

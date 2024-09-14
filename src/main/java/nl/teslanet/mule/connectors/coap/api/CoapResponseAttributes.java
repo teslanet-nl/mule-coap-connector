@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,6 +27,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 
 
@@ -107,7 +108,6 @@ public class CoapResponseAttributes
         return requestCode;
     }
 
-
     /**
      * @return the localAddress
      */
@@ -122,6 +122,46 @@ public class CoapResponseAttributes
     public String getRequestUri()
     {
         return requestUri;
+    }
+
+    /**
+     * @return the requestScheme
+     */
+    public String getRequestScheme()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestHost
+     */
+    public String getRequestHost()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestPort
+     */
+    public int getRequestPort()
+    {
+        return 0;
+    }
+
+    /**
+     * @return the requestPath
+     */
+    public String getRequestPath()
+    {
+        return OptionUtils.EMPTY_STRING;
+    }
+
+    /**
+     * @return the requestQuery
+     */
+    public String getRequestQuery()
+    {
+        return OptionUtils.EMPTY_STRING;
     }
 
     /**
@@ -182,7 +222,7 @@ public class CoapResponseAttributes
     }
 
     /**
-     * Get the string representation.
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString()
