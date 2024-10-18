@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,8 +27,8 @@ import java.io.InputStream;
 
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 
 
@@ -61,7 +61,11 @@ public class OperationalListener
      * @param callback
      * @throws InternalResourceUriException 
      */
-    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, CoapRequestAttributes > callback ) throws InternalResourceUriException
+    public OperationalListener(
+        String uriPattern,
+        RequestCodeFlags flags,
+        SourceCallback< InputStream, CoapRequestAttributes > callback
+    ) throws InternalResourceUriException
     {
         super();
         setUriPattern( uriPattern );
@@ -107,8 +111,12 @@ public class OperationalListener
         }
         int wildcardIndex= this.uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
         if ( wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1 )
-            throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character." );
-        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, uri cannot be empty." );
+            throw new InternalResourceUriException(
+                "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character."
+            );
+        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException(
+            "invalid uriPattern { " + uriPattern + " }, uri cannot be empty."
+        );
 
     }
 

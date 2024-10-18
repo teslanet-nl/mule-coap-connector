@@ -97,11 +97,6 @@ public final class OperationalEndpoint
     private boolean schedulerIsSet= false;
 
     /**
-     * Other options that the endpoint expects.
-     */
-    //private List< OptionDefinition > otherOptionsDefs;
-
-    /**
      * Create an endpoint not attached to a server or return existing when already created
      * @param config the configuration for the endpoint
      * @param lightscheduler 
@@ -143,8 +138,9 @@ public final class OperationalEndpoint
         else
         {
             throw new EndpointConstructionException(
-                ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { "
-                    + config.getClass().getCanonicalName() + " }"
+                ENDPOINT_MSG_PREFIX + config.configName + " }: has unknown type { " + config
+                    .getClass()
+                    .getCanonicalName() + " }"
             );
         }
         if ( config.logTraffic )
@@ -313,14 +309,6 @@ public final class OperationalEndpoint
     }
 
     /**
-     * @return the otherOptionsConfigs
-     */
-    //    public List< OptionDefinition > getOtherOptionsDefs()
-    //    {
-    //        return otherOptionsDefs;
-    //    }
-
-    /**
      * @return the coapEndpoint
      */
     public CoapEndpoint getCoapEndpoint()
@@ -345,7 +333,6 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 
@@ -367,7 +354,6 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 
@@ -388,7 +374,6 @@ public final class OperationalEndpoint
             throw new EndpointConstructionException( e );
         }
         this.configName= visitor.getEndpointName();
-        //this.otherOptionsDefs= visitor.getOtherOptionDefs();
         this.coapEndpoint= visitor.getEndpoint();
     }
 

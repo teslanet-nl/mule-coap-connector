@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,7 +38,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 
 
 @RunnerDelegateTo( Parameterized.class )
@@ -51,18 +51,24 @@ public class SecureTest extends AbstractSecureServerTestCase
     @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
-                { "do_not_get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", "" },
-                { "post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
-                { "do_not_post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", ""  },
-                { "put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
-                { "do_not_put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", ""  },
-                { "delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
-                { "do_not_delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", "" } }
-        );
+        return Arrays
+            .asList( new Object [] []
+            { { "get_me", CoapRequestCode.GET, "coaps://127.0.0.1:5684/secure/get_me", "CONTENT",
+                "GET called on: /secure/get_me" },
+                { "do_not_get_me", CoapRequestCode.GET, "coaps://127.0.0.1:5684/secure/do_not_get_me",
+                    "METHOD_NOT_ALLOWED", "" },
+                { "post_me", CoapRequestCode.POST, "coaps://127.0.0.1:5684/secure/post_me", "CREATED",
+                    "POST called on: /secure/post_me" },
+                { "do_not_post_me", CoapRequestCode.POST, "coaps://127.0.0.1:5684/secure/do_not_post_me",
+                    "METHOD_NOT_ALLOWED", "" },
+                { "put_me", CoapRequestCode.PUT, "coaps://127.0.0.1:5684/secure/put_me", "CHANGED",
+                    "PUT called on: /secure/put_me" },
+                { "do_not_put_me", CoapRequestCode.PUT, "coaps://127.0.0.1:5684/secure/do_not_put_me",
+                    "METHOD_NOT_ALLOWED", "" },
+                { "delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1:5684/secure/delete_me", "DELETED",
+                    "DELETE called on: /secure/delete_me" },
+                { "do_not_delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1:5684/secure/do_not_delete_me",
+                    "METHOD_NOT_ALLOWED", "" } } );
     }
 
     /**

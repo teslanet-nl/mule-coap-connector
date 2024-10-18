@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -51,34 +51,53 @@ public class QueryTest extends AbstractServerTestCase
     @Parameters( name= "Request= {0}, uri= {1}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { Code.GET, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" },
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" }, {
+                Code.PUT, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" },
                 { Code.POST, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0", "query0" },
-                { Code.GET, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=", "query0=" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=", "query0=" },
-                { Code.POST, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=", "query0=" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=", "query0=" },
-                { Code.GET, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one", "query1=one" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one", "query1=one" },
-                { Code.POST, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one", "query1=one" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one", "query1=one" },
-                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query2", "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query2", "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
-                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query2", "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query2", "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
-                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query2=two", "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query2=two", "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
-                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query2=two", "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query2=two", "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
-                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query1=two", "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
-                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query1=two", "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
-                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query1=two", "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
-                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query1=two", "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" }, }
-        );
+                { Code.DELETE, "coap://127.0.0.1/service/test?query0", "coap://localhost/service/test?query0",
+                    "query0" },
+                { Code.GET, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=",
+                    "query0=" },
+                { Code.PUT, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=",
+                    "query0=" },
+                { Code.POST, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=",
+                    "query0=" },
+                { Code.DELETE, "coap://127.0.0.1/service/test?query0=", "coap://localhost/service/test?query0=",
+                    "query0=" },
+                { Code.GET, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one",
+                    "query1=one" },
+                { Code.PUT, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one",
+                    "query1=one" },
+                { Code.POST, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one",
+                    "query1=one" },
+                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one", "coap://localhost/service/test?query1=one",
+                    "query1=one" },
+                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query2",
+                    "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
+                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query2",
+                    "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
+                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query2",
+                    "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
+                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query2",
+                    "coap://localhost/service/test?query1=one&query2", "query1=one&query2" },
+                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query2=two",
+                    "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
+                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query2=two",
+                    "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
+                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query2=two",
+                    "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
+                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query2=two",
+                    "coap://localhost/service/test?query1=one&query2=two", "query1=one&query2=two" },
+                { Code.GET, "coap://127.0.0.1/service/test?query1=one&query1=two",
+                    "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
+                { Code.PUT, "coap://127.0.0.1/service/test?query1=one&query1=two",
+                    "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
+                { Code.POST, "coap://127.0.0.1/service/test?query1=one&query1=two",
+                    "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" },
+                { Code.DELETE, "coap://127.0.0.1/service/test?query1=one&query1=two",
+                    "coap://localhost/service/test?query1=one&query1=two", "query1=one&query1=two" }, } );
     }
 
     /**
@@ -127,7 +146,10 @@ public class QueryTest extends AbstractServerTestCase
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "no response", response );
-        assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+        assertTrue(
+            "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(),
+            response.isSuccess()
+        );
         assertEquals( "wrong spy activation count", 1, spy.getEvents().size() );
 
         Message received= (Message) spy.getEvents().get( 0 ).getContent();
@@ -135,7 +157,11 @@ public class QueryTest extends AbstractServerTestCase
         CoapRequestAttributes attributes= (CoapRequestAttributes) received.getAttributes().getValue();
         assertEquals( "wrong request code", requestCode.name(), attributes.getRequestCode() );
         assertEquals( "wrong request uri", expectedUri, attributes.getRequestUri() );
-        assertEquals( "wrong query params", expectedQuery, queryString( attributes.getOptions().getUriQuery() ) );
+        assertEquals(
+            "wrong query params",
+            expectedQuery,
+            queryString( attributes.getRequestOptions().getUriQuery() )
+        );
 
     }
 }

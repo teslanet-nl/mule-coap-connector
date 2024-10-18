@@ -35,9 +35,7 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
-import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
-import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
@@ -45,6 +43,8 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessa
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
@@ -86,7 +86,9 @@ public class ResponseProcessor
      */
     public static ResponseProcessor getResponseProcessor( String handlerName ) throws InternalInvalidHandlerException
     {
-        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException( "empty response handler name not allowed" );
+        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException(
+            "empty response handler name not allowed"
+        );
         registry.putIfAbsent( handlerName, new ResponseProcessor( handlerName ) );
         return registry.get( handlerName );
     }
@@ -98,7 +100,9 @@ public class ResponseProcessor
      */
     public static void removeHandler( String handlerName ) throws InternalInvalidHandlerException
     {
-        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException( "empty response handler name not allowed" );
+        if ( handlerName == null || handlerName.isEmpty() ) throw new InternalInvalidHandlerException(
+            "empty response handler name not allowed"
+        );
         registry.remove( handlerName );
     }
 
@@ -138,17 +142,14 @@ public class ResponseProcessor
     /**
      * Passes asynchronous response to the muleflow.
      * @param localAddress The local address of the endpoint that has received the response.
-     * @param requestUri The Uri of the request that caused the response.
-     * @param requestCode The code of the request that caused the response.
+     * @param requestBuilder The builder containing request parameters
      * @param response The coap response to process.
      * @param processor The processor method of the muleflow.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
     public static void processMuleFlow(
         String localAddress,
-        String requestUri,
-        CoapMessageType requestType,
-        CoapRequestCode requestCode,
+        CoapRequestBuilder requestBuilder,
         CoapResponse response,
         ResponseProcessor processor
     ) throws InternalResponseException
@@ -157,9 +158,12 @@ public class ResponseProcessor
         DefaultResponseAttributes responseAttributes;
         try
         {
-            responseAttributes= createReceivedResponseAttributes( localAddress, requestUri, requestType, requestCode, response );
+            responseAttributes= createReceivedResponseAttributes( localAddress, requestBuilder, response );
         }
-        catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException | InternalInvalidMessageTypeException e )
+        catch (
+            InternalInvalidOptionValueException | InternalInvalidResponseCodeException
+            | InternalInvalidMessageTypeException | InternalUriException e
+        )
         {
             throw new InternalResponseException( "cannot proces received response", e );
         }
@@ -172,17 +176,14 @@ public class ResponseProcessor
     /**
      * Passes asynchronous response to the muleflow.
      * @param localAddress The local address of the endpoint that has received the response.
-     * @param requestUri The Uri of the request that caused the response.
-     * @param requestCode The code of the request that caused the response.
-     * @param response The coap response to process.
+     * @param requestBuilder The builder containing request parameters
+     * @param response The received response.
      * @param callback The callback method of the muleflow.
      * @throws InternalResponseException When the received CoAP response contains values that cannot be processed.
      */
     public static void processMuleFlow(
         String localAddress,
-        String requestUri,
-        CoapMessageType requestType,
-        CoapRequestCode requestCode,
+        CoapRequestBuilder requestBuilder,
         CoapResponse response,
         SourceCallback< InputStream, CoapResponseAttributes > callback
     ) throws InternalResponseException
@@ -191,9 +192,12 @@ public class ResponseProcessor
         DefaultResponseAttributes responseAttributes;
         try
         {
-            responseAttributes= createReceivedResponseAttributes( localAddress, requestUri, requestType, requestCode, response );
+            responseAttributes= createReceivedResponseAttributes( localAddress, requestBuilder, response );
         }
-        catch ( InternalInvalidOptionValueException | InternalInvalidResponseCodeException | InternalInvalidMessageTypeException e )
+        catch (
+            InternalInvalidOptionValueException | InternalInvalidResponseCodeException
+            | InternalInvalidMessageTypeException | InternalUriException e
+        )
         {
             throw new InternalResponseException( "cannot proces received response", e );
         }
@@ -206,65 +210,69 @@ public class ResponseProcessor
      * @param response The CoAP response received.
      * @param callback The callback that will handle the response.
      */
-    private static void callMuleFlow( DefaultResponseAttributes responseAttributes, CoapResponse response, SourceCallback< InputStream, CoapResponseAttributes > callback )
+    private static void callMuleFlow(
+        DefaultResponseAttributes responseAttributes,
+        CoapResponse response,
+        SourceCallback< InputStream, CoapResponseAttributes > callback
+    )
     {
         SourceCallbackContext requestcontext= callback.createContext();
         //not needed yet in request context: addVariable CoapExchange
         if ( response != null )
         {
             byte[] responsePayload= response.getPayload();
-            if ( responsePayload != null )
-            {
-                callback.handle(
-                    Result.< InputStream, CoapResponseAttributes > builder().output( new ByteArrayInputStream( responsePayload ) ).attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                    ).build(),
+            callback
+                .handle(
+                    Result
+                        .< InputStream, CoapResponseAttributes > builder()
+                        .output( new ByteArrayInputStream( responsePayload ) )
+                        .attributes( responseAttributes )
+                        .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
+                        .build(),
                     requestcontext
                 );
-            }
-            else
-            {
-                callback.handle(
-                    Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType(
-                        MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() )
-                    ).build(),
-                    requestcontext
-                );
-            }
         }
         else
         {
-            callback.handle( Result.< InputStream, CoapResponseAttributes > builder().attributes( responseAttributes ).mediaType( MediaType.ANY ).build(), requestcontext );
+            callback
+                .handle(
+                    Result
+                        .< InputStream, CoapResponseAttributes > builder()
+                        .attributes( responseAttributes )
+                        .mediaType( MediaType.ANY )
+                        .build(),
+                    requestcontext
+                );
         }
     }
 
     /**
-     * Create response attributes that describe a response that is received.
+     * Create response attributes of a response that is received.
      * @param localAddress The local address of the endpoint that has received the response.
-     * @param requestUri The requested resource uri.
-     * @param requestCode The request code issued.
-     * @param response The received response, if any.
-     * @return The attributes created attributes derived from given request and response information.
-     * @throws InternalInvalidOptionValueException When an option value is not expected.
-     * @throws InternalInvalidResponseCodeException When the responseCode could not be interpreted.
+     * @param requestBuilder The builder containing request parameters
+     * @param response The received response.
+     * @return The created response attributes.
      * @throws InternalInvalidMessageTypeException When the responseType could not be interpreted.
+     * @throws InternalInvalidResponseCodeException When the response code is invalid.
+     * @throws InternalInvalidOptionValueExceptionrs. When an option value is invalid.
+     * @throws InternalUriException When the request uri is invalid.
      */
     static DefaultResponseAttributes createReceivedResponseAttributes(
         String localAddress,
-        String requestUri,
-        CoapMessageType requestType,
-        CoapRequestCode requestCode,
+        CoapRequestBuilder requestBuilder,
         CoapResponse response
     ) throws InternalInvalidMessageTypeException,
         InternalInvalidResponseCodeException,
-        InternalInvalidOptionValueException
+        InternalInvalidOptionValueException,
+        InternalUriException
 
     {
         DefaultResponseAttributes attributes= new DefaultResponseAttributes();
-        attributes.setRequestType( requestType.name() );
-        attributes.setRequestCode( requestCode.name() );
         attributes.setLocalAddress( localAddress );
-        attributes.setRequestUri( requestUri );
+        attributes.setRequestType( requestBuilder.buildMessageType().name() );
+        attributes.setRequestCode( requestBuilder.buildRequestCode().name() );
+        attributes.setRequestUriObject( requestBuilder.buildResourceUri() );
+        attributes.setRequestOptions( new DefaultRequestOptionsAttributes( requestBuilder.buildOptionSet() ) );
         if ( response == null )
         {
             attributes.setSuccess( false );
@@ -276,8 +284,15 @@ public class ResponseProcessor
             attributes.setResponseCode( AttributeUtils.toResponseCodeAttribute( response.getCode() ).name() );
             attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().toString() );
             attributes.setNotification( response.advanced().isNotification() );
-            attributes.setOptions( new DefaultResponseOptionsAttributes( response.getOptions() ) );
-            attributes.setLocationUri( MessageUtils.uriString( attributes.getOptions().getLocationPath(), attributes.getOptions().getLocationQuery() ) );
+            attributes.setResponseOptions( new DefaultResponseOptionsAttributes( response.getOptions() ) );
+            attributes
+                .setLocationUri(
+                    MessageUtils
+                        .uriString(
+                            attributes.getResponseOptions().getLocationPath(),
+                            attributes.getResponseOptions().getLocationQuery()
+                        )
+                );
         }
         return attributes;
     }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -36,17 +38,19 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * Configuration of a Multicast group.
  */
-@Alias("multicast-group")
+@Alias( "multicast-group" )
 public class MulticastGroupConfig
 {
     /**
     * The name of the resource that will be used to identify it in CoAP uri's.
     */
     @Parameter
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The multicast group. This can be the CoAP broadcast address '224.0.1.187' for IPv4, 'FF0X::FD' for IPv6, or a CoAP IPv6 multicast address.")
-    @Example("224.0.1.187")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary(
+        "The multicast group. This can be the CoAP broadcast address '224.0.1.187' for IPv4, 'FF0X::FD' for IPv6, or a CoAP IPv6 multicast address."
+    )
+    @Example( "224.0.1.187" )
     public String group;
 
     /**
@@ -54,17 +58,17 @@ public class MulticastGroupConfig
     */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("The network interface to use for this multicast group.")
-    @Example("eth0")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The network interface to use for this multicast group." )
+    @Example( "eth0" )
     public String networkInterface;
 
-    public MulticastGroupConfig( )
+    public MulticastGroupConfig()
     {
         //NOOP
     }
-    
+
     public MulticastGroupConfig( String group, String networkInterface )
     {
         this.group= group;
@@ -76,6 +80,40 @@ public class MulticastGroupConfig
     */
     public String toString()
     {
-        return "MulticastGroupConfig { " + group + ( networkInterface != null ? "|" + networkInterface + " }" : " }");
+        return "MulticastGroupConfig { " + group + ( networkInterface != null ? "|" + networkInterface + " }" : " }" );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        MulticastGroupConfig rhs= (MulticastGroupConfig) obj;
+        return new EqualsBuilder()
+            .append( group, rhs.group )
+            .append( networkInterface, rhs.networkInterface )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 ).append( group ).append( networkInterface ).toHashCode();
     }
 }

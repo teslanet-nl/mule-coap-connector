@@ -42,9 +42,9 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -58,7 +58,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     @Parameters( name= "requestCode= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList( new Object [] []{ { CoapRequestCode.GET }, { CoapRequestCode.POST }, { CoapRequestCode.PUT }, { CoapRequestCode.DELETE } } );
+        return Arrays
+            .asList( new Object [] []
+            { { CoapRequestCode.GET }, { CoapRequestCode.POST }, { CoapRequestCode.PUT }, { CoapRequestCode.DELETE } }
+            );
     }
 
     /**
@@ -112,9 +115,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
     /**
      * The property value to set on outbound test
      * @return the value to set
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
-    protected Object getOutboundPropertyValue() throws EntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
         return new String( getPropertyName() + "_test_value" );
     }
@@ -124,10 +127,10 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Default implementation inserts the Option using getOutboundPropertyValue()
      * Needs to be overridden when other properties than an option is to be inserted
      * @param options the attributes to insert the property in
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
     @Deprecated
-    protected void insertOutboundProperty( HashMap< String, Object > options ) throws EntityTagException
+    protected void insertOutboundProperty( HashMap< String, Object > options ) throws OptionValueException
     {
         options.put( getPropertyName(), getOutboundPropertyValue() );
     }
@@ -180,9 +183,9 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
      * Implement this method to specify the strategy the coap test server has to use
      * in the test.
      * @return the Options strategy to use
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
-    protected abstract OptionStrategy getStrategy() throws EntityTagException, EntityTagException;
+    protected abstract OptionStrategy getStrategy() throws OptionValueException, OptionValueException;
 
     /**
      * Override this method when a specific flow has to be used. 
@@ -213,7 +216,8 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
             } );
             assertEquals( "wrong exception cause", getExpectedException().getClass(), e.getCause().getClass() );
             assertTrue(
-                "wrong exception message content, expected frase: <" + getExpectedException().getMessage() + "> but was: <" + e.getMessage() + ">",
+                "wrong exception message content, expected frase: <" + getExpectedException().getMessage()
+                    + "> but was: <" + e.getMessage() + ">",
                 e.getMessage().contains( getExpectedException().getMessage() )
             );
         }
@@ -221,18 +225,29 @@ public abstract class AbstractOutboundPropertiesTestCase extends AbstractClientT
         {
             result= runFlow();
             Message response= result.getMessage();
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
 
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-            assertEquals( "wrong response code", getExpectedResponseCode( requestCode ).name(), attributes.getResponseCode() );
+            assertEquals(
+                "wrong response code",
+                getExpectedResponseCode( requestCode ).name(),
+                attributes.getResponseCode()
+            );
         }
     }
 
-    private Event runFlow() throws EntityTagException, Exception
+    private Event runFlow() throws OptionValueException, Exception
     {
-        return flowRunner( "do_request-" + getFlowNameExtension() ).withPayload( "nothing_important" ).withVariable( "requestCode", requestCode ).withVariable(
-            "host",
-            "127.0.0.1"
-        ).withVariable( "path", getResourcePath() ).withVariable( "option", getOutboundPropertyValue() ).withVariable( "other", getOutboundOptionAlias() ).run();
+        return flowRunner( "do_request-" + getFlowNameExtension() )
+            .withPayload( "nothing_important" )
+            .withVariable( "requestCode", requestCode )
+            .withVariable( "host", "127.0.0.1" )
+            .withVariable( "path", getResourcePath() )
+            .withVariable( "option", getOutboundPropertyValue() )
+            .withVariable( "other", getOutboundOptionAlias() )
+            .run();
     }
 }

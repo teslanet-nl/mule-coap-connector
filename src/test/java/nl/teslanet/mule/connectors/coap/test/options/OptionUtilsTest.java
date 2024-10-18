@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
 import org.mule.runtime.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 
@@ -48,22 +47,37 @@ public class OptionUtilsTest
     @Test
     public void testIsCriticalOption()
     {
-        assertTrue( "isCritical( Uri-Path ) failed", OptionUtils.isCritical( StandardOptionRegistry.URI_PATH.getNumber() ) );
-        assertFalse( "isCritical( Request-Tag ) failed", OptionUtils.isCritical( StandardOptionRegistry.REQUEST_TAG.getNumber() ) );
+        assertTrue(
+            "isCritical( Uri-Path ) failed",
+            OptionUtils.isCritical( StandardOptionRegistry.URI_PATH.getNumber() )
+        );
+        assertFalse(
+            "isCritical( Request-Tag ) failed",
+            OptionUtils.isCritical( StandardOptionRegistry.REQUEST_TAG.getNumber() )
+        );
     }
 
     @Test
     public void testIsUnsafeOption()
     {
-        assertTrue( "isUnsafe( Uri-Host ) failed", OptionUtils.isUnsafe( StandardOptionRegistry.URI_HOST.getNumber() ) );
+        assertTrue(
+            "isUnsafe( Uri-Host ) failed",
+            OptionUtils.isUnsafe( StandardOptionRegistry.URI_HOST.getNumber() )
+        );
         assertFalse( "isUnsafe( Accept ) failed", OptionUtils.isUnsafe( StandardOptionRegistry.ACCEPT.getNumber() ) );
     }
 
     @Test
     public void testIsNoCacheKeyOption()
     {
-        assertTrue( "isNoCacheKey( Size1 ) failed", OptionUtils.isNoCacheKey( StandardOptionRegistry.SIZE1.getNumber() ) );
-        assertFalse( "isNoCacheKey( ETag ) failed", OptionUtils.isNoCacheKey( StandardOptionRegistry.ETAG.getNumber() ) );
+        assertTrue(
+            "isNoCacheKey( Size1 ) failed",
+            OptionUtils.isNoCacheKey( StandardOptionRegistry.SIZE1.getNumber() )
+        );
+        assertFalse(
+            "isNoCacheKey( ETag ) failed",
+            OptionUtils.isNoCacheKey( StandardOptionRegistry.ETAG.getNumber() )
+        );
     }
 
     @Test
@@ -105,18 +119,38 @@ public class OptionUtilsTest
         OptionValueException e;
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( nullValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {0}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {0}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( smallValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {1}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {1}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
-        assertArrayEquals( "from int to bytes failed", mediumExpected, OptionUtils.toBytes( mediumValue, minLength, maxLength ) );
+        assertArrayEquals(
+            "from int to bytes failed",
+            mediumExpected,
+            OptionUtils.toBytes( mediumValue, minLength, maxLength )
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( largeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {4}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {4}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( negativeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {4}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {4}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
     }
 
     @Test
@@ -131,8 +165,10 @@ public class OptionUtilsTest
         byte[] nullExpected= {};
         byte[] smallExpected= { (byte) 0x01 };
         byte[] mediumExpected= { (byte) 0x01, (byte) 0xe6 };
-        byte[] largeExpected= { (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff };
-        byte[] negativeExpected= { (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+        byte[] largeExpected= { (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+            (byte) 0xff, (byte) 0xff };
+        byte[] negativeExpected= { (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00 };
 
         assertArrayEquals( "from long to bytes failed", nullExpected, OptionUtils.toBytes( nullValue ) );
         assertArrayEquals( "from long to bytes failed", smallExpected, OptionUtils.toBytes( smallValue ) );
@@ -158,18 +194,38 @@ public class OptionUtilsTest
         OptionValueException e;
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( nullValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {0}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {0}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( smallValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {1}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {1}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
-        assertArrayEquals( "from int to bytes failed", mediumExpected, OptionUtils.toBytes( mediumValue, minLength, maxLength ) );
+        assertArrayEquals(
+            "from int to bytes failed",
+            mediumExpected,
+            OptionUtils.toBytes( mediumValue, minLength, maxLength )
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( largeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {8}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {8}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( negativeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {8}, which is not between {2}..{3} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {8}, which is not between {2}..{3} bytes.",
+            e.getMessage()
+        );
     }
 
     @Test
@@ -184,29 +240,9 @@ public class OptionUtilsTest
         byte[] emptyExpected= {};
         byte[] smallExpected= { (byte) 0x65 };
         byte[] mediumExpected= { (byte) 0x34, (byte) 0x38, (byte) 0x36, (byte) 0x4c };
-        byte[] largeExpected= {
-            (byte) 0x74,
-            (byte) 0x68,
-            (byte) 0x69,
-            (byte) 0x73,
-            (byte) 0x20,
-            (byte) 0x69,
-            (byte) 0x73,
-            (byte) 0x20,
-            (byte) 0x61,
-            (byte) 0x20,
-            (byte) 0x6c,
-            (byte) 0xc3,
-            (byte) 0xb3,
-            (byte) 0x6e,
-            (byte) 0x67,
-            (byte) 0x20,
-            (byte) 0x73,
-            (byte) 0x74,
-            (byte) 0x72,
-            (byte) 0x69,
-            (byte) 0x6e,
-            (byte) 0x67 };
+        byte[] largeExpected= { (byte) 0x74, (byte) 0x68, (byte) 0x69, (byte) 0x73, (byte) 0x20, (byte) 0x69,
+            (byte) 0x73, (byte) 0x20, (byte) 0x61, (byte) 0x20, (byte) 0x6c, (byte) 0xc3, (byte) 0xb3, (byte) 0x6e,
+            (byte) 0x67, (byte) 0x20, (byte) 0x73, (byte) 0x74, (byte) 0x72, (byte) 0x69, (byte) 0x6e, (byte) 0x67 };
 
         assertArrayEquals( "from string to bytes failed", emptyExpected, OptionUtils.toBytes( nullValue ) );
         assertArrayEquals( "from string to bytes failed", emptyExpected, OptionUtils.toBytes( emptyValue ) );
@@ -238,12 +274,24 @@ public class OptionUtilsTest
         assertEquals( "exception has wrong message", "Given string is null or empty.", e.getMessage() );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( smallValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {1}, which is not between {2}..{4} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {1}, which is not between {2}..{4} bytes.",
+            e.getMessage()
+        );
 
-        assertArrayEquals( "from int to bytes failed", mediumExpected, OptionUtils.toBytes( mediumValue, minLength, maxLength ) );
+        assertArrayEquals(
+            "from int to bytes failed",
+            mediumExpected,
+            OptionUtils.toBytes( mediumValue, minLength, maxLength )
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytes( largeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {22}, which is not between {2}..{4} bytes.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {22}, which is not between {2}..{4} bytes.",
+            e.getMessage()
+        );
     }
 
     @Test
@@ -260,23 +308,9 @@ public class OptionUtilsTest
         byte[] emptyExpected= {};
         byte[] smallExpected= { (byte) 0xef };
         byte[] mediumExpected= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff };
-        byte[] largeExpected= {
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff };
+        byte[] largeExpected= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a,
+            (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a,
+            (byte) 0x99, (byte) 0xff };
 
         assertArrayEquals( "from string to bytes failed", emptyExpected, OptionUtils.toBytesFromHex( nullValue ) );
         assertArrayEquals( "from string to bytes failed", emptyExpected, OptionUtils.toBytesFromHex( emptyValue ) );
@@ -287,7 +321,11 @@ public class OptionUtilsTest
         OptionValueException e;
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( unevenValue ) );
-        assertEquals( "exception has wrong message", "Given hexString must have even number of characters. Actual number is {3}.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given hexString must have even number of characters. Actual number is {3}.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( wrongValue ) );
         assertEquals( "exception has wrong message", "Cannot parse given value as hexadecimal.", e.getMessage() );
@@ -311,22 +349,50 @@ public class OptionUtilsTest
 
         OptionValueException e;
 
-        e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( nullValue, minLength, maxLength ) );
+        e= assertThrows(
+            OptionValueException.class,
+            () -> OptionUtils.toBytesFromHex( nullValue, minLength, maxLength )
+        );
         assertEquals( "exception has wrong message", "Given string is null or empty.", e.getMessage() );
 
-        e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( emptyValue, minLength, maxLength ) );
+        e= assertThrows(
+            OptionValueException.class,
+            () -> OptionUtils.toBytesFromHex( emptyValue, minLength, maxLength )
+        );
         assertEquals( "exception has wrong message", "Given string is null or empty.", e.getMessage() );
 
-        e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( smallValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {1}, which is not between {2}..{4} bytes.", e.getMessage() );
+        e= assertThrows(
+            OptionValueException.class,
+            () -> OptionUtils.toBytesFromHex( smallValue, minLength, maxLength )
+        );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {1}, which is not between {2}..{4} bytes.",
+            e.getMessage()
+        );
 
-        assertArrayEquals( "from int to bytes failed", mediumExpected, OptionUtils.toBytesFromHex( mediumValue, minLength, maxLength ) );
+        assertArrayEquals(
+            "from int to bytes failed",
+            mediumExpected,
+            OptionUtils.toBytesFromHex( mediumValue, minLength, maxLength )
+        );
 
-        e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( largeValue, minLength, maxLength ) );
-        assertEquals( "exception has wrong message", "Given value result in array length {16}, which is not between {2}..{4} bytes.", e.getMessage() );
+        e= assertThrows(
+            OptionValueException.class,
+            () -> OptionUtils.toBytesFromHex( largeValue, minLength, maxLength )
+        );
+        assertEquals(
+            "exception has wrong message",
+            "Given value result in array length {16}, which is not between {2}..{4} bytes.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( unevenValue ) );
-        assertEquals( "exception has wrong message", "Given hexString must have even number of characters. Actual number is {3}.", e.getMessage() );
+        assertEquals(
+            "exception has wrong message",
+            "Given hexString must have even number of characters. Actual number is {3}.",
+            e.getMessage()
+        );
 
         e= assertThrows( OptionValueException.class, () -> OptionUtils.toBytesFromHex( wrongValue ) );
         assertEquals( "exception has wrong message", "Cannot parse given value as hexadecimal.", e.getMessage() );
@@ -339,22 +405,8 @@ public class OptionUtilsTest
         byte[] emptyValue= {};
         byte[] smallValue= { (byte) 0xef };
         byte[] mediumValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff };
-        byte[] largeValue= {
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
+        byte[] largeValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
+            (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
             (byte) 0xff };
 
         String emptyExpected= OptionUtils.EMPTY_STRING;
@@ -376,29 +428,35 @@ public class OptionUtilsTest
         byte[] emptyValue= {};
         byte[] smallValue= { (byte) 0xef };
         byte[] mediumValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff };
-        byte[] largeValue= {
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
+        byte[] largeValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
+            (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
             (byte) 0xff };
 
-        assertArrayEquals( "from bytes to hexstring failed", emptyValue, IOUtils.toByteArray( OptionUtils.toInputStream( nullValue ) ) );
-        assertArrayEquals( "from bytes to hexstring failed", emptyValue, IOUtils.toByteArray( OptionUtils.toInputStream( emptyValue ) ) );
-        assertArrayEquals( "from bytes to hexstring failed", smallValue, IOUtils.toByteArray( OptionUtils.toInputStream( smallValue ) ) );
-        assertArrayEquals( "from bytes to hexstring failed", mediumValue, IOUtils.toByteArray( OptionUtils.toInputStream( mediumValue ) ) );
-        assertArrayEquals( "from bytes to hexstring failed", largeValue, IOUtils.toByteArray( OptionUtils.toInputStream( largeValue ) ) );
+        assertArrayEquals(
+            "from bytes to hexstring failed",
+            emptyValue,
+            IOUtils.toByteArray( OptionUtils.toInputStream( nullValue ) )
+        );
+        assertArrayEquals(
+            "from bytes to hexstring failed",
+            emptyValue,
+            IOUtils.toByteArray( OptionUtils.toInputStream( emptyValue ) )
+        );
+        assertArrayEquals(
+            "from bytes to hexstring failed",
+            smallValue,
+            IOUtils.toByteArray( OptionUtils.toInputStream( smallValue ) )
+        );
+        assertArrayEquals(
+            "from bytes to hexstring failed",
+            mediumValue,
+            IOUtils.toByteArray( OptionUtils.toInputStream( mediumValue ) )
+        );
+        assertArrayEquals(
+            "from bytes to hexstring failed",
+            largeValue,
+            IOUtils.toByteArray( OptionUtils.toInputStream( largeValue ) )
+        );
     }
 
     @Test
@@ -408,22 +466,8 @@ public class OptionUtilsTest
         byte[] emptyValue= {};
         byte[] smallValue= { (byte) 0xef };
         byte[] mediumValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff };
-        byte[] largeValue= {
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
-            (byte) 0xff,
-            (byte) 0x48,
-            (byte) 0x6a,
-            (byte) 0x99,
+        byte[] largeValue= { (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
+            (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99, (byte) 0xff, (byte) 0x48, (byte) 0x6a, (byte) 0x99,
             (byte) 0xff };
 
         long emptyExpected= 0L;
@@ -442,35 +486,15 @@ public class OptionUtilsTest
     }
 
     @Test
-    public void testToString() throws EntityTagException
+    public void testToString() throws OptionValueException
     {
         byte[] nullValue= null;
         byte[] emptyValue= {};
         byte[] smallValue= { (byte) 0x65 };
         byte[] mediumValue= { (byte) 0x34, (byte) 0x38, (byte) 0x36, (byte) 0x4c };
-        byte[] largeValue= {
-            (byte) 0x74,
-            (byte) 0x68,
-            (byte) 0x69,
-            (byte) 0x73,
-            (byte) 0x20,
-            (byte) 0x69,
-            (byte) 0x73,
-            (byte) 0x20,
-            (byte) 0x61,
-            (byte) 0x20,
-            (byte) 0x6c,
-            (byte) 0xc3,
-            (byte) 0xb3,
-            (byte) 0x6e,
-            (byte) 0x67,
-            (byte) 0x20,
-            (byte) 0x73,
-            (byte) 0x74,
-            (byte) 0x72,
-            (byte) 0x69,
-            (byte) 0x6e,
-            (byte) 0x67 };
+        byte[] largeValue= { (byte) 0x74, (byte) 0x68, (byte) 0x69, (byte) 0x73, (byte) 0x20, (byte) 0x69, (byte) 0x73,
+            (byte) 0x20, (byte) 0x61, (byte) 0x20, (byte) 0x6c, (byte) 0xc3, (byte) 0xb3, (byte) 0x6e, (byte) 0x67,
+            (byte) 0x20, (byte) 0x73, (byte) 0x74, (byte) 0x72, (byte) 0x69, (byte) 0x6e, (byte) 0x67 };
 
         String emptyExpected= OptionUtils.EMPTY_STRING;
         String smallExpected= "e";

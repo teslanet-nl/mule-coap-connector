@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -121,10 +121,13 @@ public class AsyncResponseTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
         spy.clear();
 
-        flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            "5683"
-        ).withVariable( "path", resourcePath ).run();
+        flowRunner( "do_request" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode )
+            .withVariable( "host", "127.0.0.1" )
+            .withVariable( "port", "5683" )
+            .withVariable( "path", resourcePath )
+            .run();
         //let handler do its asynchronous work
         await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
             return spy.getEvents().size() == 1;

@@ -109,7 +109,7 @@ public class Curve
         {
             return false;
         }
-        return this.curveName == ( (Curve) obj ).curveName;
+        return this.curveName.equals( ( (Curve) obj ).curveName );
     }
 
     /**

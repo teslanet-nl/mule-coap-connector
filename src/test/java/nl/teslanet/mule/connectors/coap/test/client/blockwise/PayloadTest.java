@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,7 +40,7 @@ import org.mule.functional.api.flow.FlowRunner;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.Data;
@@ -54,14 +54,15 @@ public class PayloadTest extends AbstractClientTestCase
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters( name= "flowName= {0}, request= {1}, resourcePath= {2}, requestPayloadSize= {3}, expectedResponseCode= {4}" )
+    @Parameters(
+                    name= "flowName= {0}, request= {1}, resourcePath= {2}, requestPayloadSize= {3}, expectedResponseCode= {4}"
+    )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "do_request", "GET", "/blockwise/rq0", -1, "CONTENT", 2, false },
-                { "do_request", "POST", "/blockwise/rq0", -1, "CREATED", 2, false },
+        return Arrays
+            .asList( new Object [] []
+            { { "do_request", "GET", "/blockwise/rq0", -1, "CONTENT", 2, false }, { "do_request", "POST",
+                "/blockwise/rq0", -1, "CREATED", 2, false },
                 { "do_request", "PUT", "/blockwise/rq0", -1, "CHANGED", 2, false },
                 { "do_request", "DELETE", "/blockwise/rq0", -1, "DELETED", 2, false },
                 { "do_request", "FETCH", "/blockwise/rq0", -1, "CONTENT", 2, false },
@@ -157,8 +158,7 @@ public class PayloadTest extends AbstractClientTestCase
                 { "do_request2", "PATCH", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", 0, true },
                 { "do_request2", "PATCH", "/blockwise/rsp16001", 2, null, 0, true },
                 { "do_request2", "IPATCH", "/blockwise/rq16001", 16001, "REQUEST_ENTITY_TOO_LARGE", 0, true },
-                { "do_request2", "IPATCH", "/blockwise/rsp16001", 2, null, 0, true } }
-        );
+                { "do_request2", "IPATCH", "/blockwise/rsp16001", 2, null, 0, true } } );
     }
 
     /**
@@ -236,9 +236,11 @@ public class PayloadTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( spyName );
         spy.clear();
 
-        FlowRunner runner= flowRunner( flowName ).withVariable( "requestCode", request ).withVariable( "path", resourcePath ).withVariable( "spyName", spyName ).withPayload(
-            Data.getContent( requestPayloadSize )
-        );
+        FlowRunner runner= flowRunner( flowName )
+            .withVariable( "requestCode", request )
+            .withVariable( "path", resourcePath )
+            .withVariable( "spyName", spyName )
+            .withPayload( Data.getContent( requestPayloadSize ) );
 
         if ( expectFailure && expectedResponseCode == null )
         {
@@ -253,7 +255,10 @@ public class PayloadTest extends AbstractClientTestCase
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
             byte[] payload= (byte[]) response.getPayload().getValue();
 
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
 
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             if ( expectFailure )
@@ -265,8 +270,15 @@ public class PayloadTest extends AbstractClientTestCase
             {
                 assertTrue( "request failed", attributes.isSuccess() );
                 assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-                assertEquals( "wrong response size", expectedResponsePayloadSize.intValue(), ( payload == null ? -1 : payload.length ) );
-                assertTrue( "wrong response payload contents", Data.validateContent( payload, expectedResponsePayloadSize ) );
+                assertEquals(
+                    "wrong response size",
+                    expectedResponsePayloadSize.intValue(),
+                    ( payload == null ? -1 : payload.length )
+                );
+                assertTrue(
+                    "wrong response payload contents",
+                    Data.validateContent( payload, expectedResponsePayloadSize )
+                );
             }
         }
     }

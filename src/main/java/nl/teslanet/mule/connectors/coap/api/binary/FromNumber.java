@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,7 +35,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
  * Bytes constructed from a number value.
  *
  */
-public class FromNumber implements BytesValue
+public class FromNumber implements BytesParams
 {
     /**
      * The long value from which bytes are formed.

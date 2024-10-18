@@ -75,7 +75,7 @@ public abstract class EndpointConfigVisitor extends ConfigurationVisitor
 
         for ( AcceptOtherOption accept : toVisit.getAcceptOtherOptions() )
         {
-            GlobalConfig.getOtherOptionDefinition( accept.getAlias() ).ifPresent( def -> registry.add( def ) );
+            GlobalConfig.getOtherOptionDefinition( accept.getAlias() ).ifPresent( registry::add );
         }
         endpointBuilder.setOptionRegistry( registry );
     }

@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.californium.core.coap.BlockOption;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
@@ -46,21 +45,21 @@ import org.eclipse.californium.elements.util.Bytes;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.api.options.BlockValue;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOption;
-import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsParams;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsParams;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
+import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 import nl.teslanet.mule.connectors.coap.internal.GlobalConfig;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultBytesValue;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -70,6 +69,8 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
  */
 public class MessageUtils
 {
+    private static final String VALUE_INVALID= "value is not valid";
+
     /**
      * Do not create objects.
      */
@@ -79,170 +80,401 @@ public class MessageUtils
     }
 
     /**
-     * Copy options from {@link RequestOptions} to {@link OptionSet}.
+     * Copy options from {@link RequestOptionsParams} to {@link OptionSet}.
      * @param requestOptions to copy from
      * @param optionSet to copy to
      * @param transformationService Mule transformation service.
-     * @throws InvalidOptionValueException When given option value could not be copied
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
      */
     public static void copyOptions(
-        RequestOptions requestOptions,
+        RequestOptionsParams requestOptions,
         OptionSet optionSet,
         TransformationService transformationService
     ) throws InternalInvalidOptionValueException
     {
-        if ( requestOptions.isIfExists() )
+        copyIfExists( requestOptions.isIfExists(), optionSet );
+        copyIfMatch( requestOptions.getIfMatchOptions(), optionSet, transformationService );
+        copyEntityTags( requestOptions.getEntityTagOptions(), optionSet, transformationService );
+        copyIfNoneMatch( requestOptions.isIfNoneMatch(), optionSet );
+        copyContentFormat( requestOptions.getContentFormat(), optionSet );
+        copyAccept( requestOptions.getAccept(), optionSet );
+        copyRequireResponseSize( requestOptions.isRequireResponseSize(), optionSet );
+        copyRequestSize( requestOptions.getRequestSize(), optionSet );
+    }
+
+    /**
+     * Copy IfExists to {@link OptionSet}.
+     * @param requestOptions to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyIfExists( boolean ifExists, OptionSet optionSet ) throws InternalInvalidOptionValueException
+    {
+        if ( ifExists )
         {
-            optionSet.addIfMatch( new byte [0] );
+            try
+            {
+                optionSet.addIfMatch( OptionUtils.EMPTY_BYTES );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "If-Exists", VALUE_INVALID, e );
+            }
         }
-        if ( requestOptions.getIfMatchOptions() != null )
+    }
+
+    /**
+     * Copy IfMatch to {@link OptionSet}.
+     * @param ifIfMatchOptions to copy from
+     * @param optionSet to copy to
+     * @param transformationService Mule transformation service.
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyIfMatch(
+        List< EntityTag > ifIfMatchOptions,
+        OptionSet optionSet,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
+    {
+        if ( ifIfMatchOptions != null )
         {
             List< DefaultEntityTag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getIfMatchOptions(), transformationService );
+                etags= MessageUtils.toEtagList( ifIfMatchOptions, transformationService );
                 for ( DefaultEntityTag etag : etags )
                 {
                     optionSet.addIfMatch( etag.getValue() );
                 }
             }
-            catch ( EntityTagException e )
+            catch ( Exception e )
             {
-                throw new InternalInvalidOptionValueException( "If-Match", e.getMessage(), e );
+                throw new InternalInvalidOptionValueException( "If-Match", VALUE_INVALID, e );
             }
         }
-        if ( requestOptions.getEntityTagOptions() != null )
+    }
+
+    /**
+     * Copy EntityTags to {@link OptionSet}.
+     * @param entityTagOptions to copy from
+     * @param optionSet to copy to
+     * @param transformationService Mule transformation service.
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyEntityTags(
+        List< EntityTag > entityTagOptions,
+        OptionSet optionSet,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
+    {
+        if ( entityTagOptions != null )
         {
             List< DefaultEntityTag > etags;
             try
             {
-                etags= MessageUtils.toEtagList( requestOptions.getEntityTagOptions(), transformationService );
+                etags= MessageUtils.toEtagList( entityTagOptions, transformationService );
                 for ( DefaultEntityTag etag : etags )
                 {
                     optionSet.addETag( etag.getValue() );
                 }
             }
-            catch ( EntityTagException e )
+            catch ( Exception e )
             {
-                throw new InternalInvalidOptionValueException( "ETag", e.getMessage(), e );
+                throw new InternalInvalidOptionValueException( "ETag", VALUE_INVALID, e );
             }
-        }
-        if ( requestOptions.isIfNoneMatch() )
-        {
-            optionSet.setIfNoneMatch( true );
-        }
-        if ( requestOptions.getContentFormat() != null )
-        {
-            optionSet.setContentFormat( requestOptions.getContentFormat() );
-        }
-        if ( requestOptions.getAccept() != null )
-        {
-            optionSet.setAccept( requestOptions.getAccept() );
-        }
-        if ( requestOptions.isRequireResponseSize() )
-        {
-            optionSet.setSize2( 0 );
-        }
-        if ( requestOptions.getRequestSize() != null )
-        {
-            optionSet.setSize1( requestOptions.getRequestSize() );
         }
     }
 
     /**
-    * Copy other options from {@link RequestOptions} to {@link OptionSet}.
-    * @param requestOptions to copy from.
+     * Copy IfNoneMatch to {@link OptionSet}.
+     * @param requestOptions to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyIfNoneMatch( boolean ifNoneMatch, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( ifNoneMatch )
+        {
+            try
+            {
+                optionSet.setIfNoneMatch( true );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "If-None-Match", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy ContentFormat to {@link OptionSet}.
+     * @param contentFormat to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyContentFormat( Integer contentFormat, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( contentFormat != null )
+        {
+            try
+            {
+                optionSet.setContentFormat( contentFormat );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Content-Format", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy Accept to {@link OptionSet}.
+     * @param contentFormat to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyAccept( Integer contentFormat, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( contentFormat != null )
+        {
+            try
+            {
+                optionSet.setAccept( contentFormat );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Accept", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy IfExists to {@link OptionSet}.
+     * @param requireResponseSize to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyRequireResponseSize( boolean requireResponseSize, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( requireResponseSize )
+        {
+            try
+            {
+                optionSet.setSize2( 0 );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Require-Response-Size", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy IfExists to {@link OptionSet}.
+     * @param requestSize to copy from
+     * @param optionSet to copy to
+     * @throws InternalInvalidOptionValueException When given option value could not be copied
+     */
+    private static void copyRequestSize( Integer requestSize, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( requestSize != null )
+        {
+            try
+            {
+                optionSet.setSize1( requestSize );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Request-Size", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+    * Copy other options from list of other options to {@link OptionSet}.
+    * @param otherOptions to copy from.
     * @param optionSet to copy to.
-     * @param transformationService 
+    * @param transformationService Mules transformation service for unknown option value types.
     * @throws InternalInvalidOptionValueException When given option value is not valid.
     * @throws InternalUnkownOptionException When given option alias was not defined. 
     */
-    public static void copyOtherOptions(
-        RequestOptions requestOptions,
+    public static void copyOptions(
+        List< OtherOption > otherOptions,
         OptionSet optionSet,
         TransformationService transformationService
     ) throws InternalInvalidOptionValueException,
         InternalUnkownOptionException
     {
-        for ( OtherOption otherOption : requestOptions.getOtherOptions() )
+        for ( OtherOption otherOption : otherOptions )
         {
             addOption( optionSet, otherOption, transformationService );
         }
     }
 
     /**
-     * Copy options from {@link ResponseOptions} to {@link OptionSet}.
+     * Copy options from {@link ResponseOptionsParams} to {@link OptionSet}.
      * @param responseOptions The options to copy.
      * @param optionSet The set to copy to.
      * @param transformationService Mule transformation service.
      * @throws InternalInvalidOptionValueException When given option value is invalid. 
      */
     public static void copyOptions(
-        ResponseOptions responseOptions,
+        ResponseOptionsParams responseOptions,
         OptionSet optionSet,
         TransformationService transformationService
     ) throws InternalInvalidOptionValueException
     {
-        if ( responseOptions.getEntityTagValue() != null )
+        copyEntityTagValue( responseOptions.getEntityTagValue(), optionSet, transformationService );
+        copyContentFormat( responseOptions.getContentFormat(), optionSet );
+        copyMaxAge( responseOptions.getMaxAge(), optionSet );
+        copyLocationPath( responseOptions.getLocationPath(), optionSet );
+        copyLocationQuery( responseOptions.getLocationQuery(), optionSet );
+        copyResponseSize( responseOptions.getResponseSize(), optionSet );
+        copyAcceptableRequestSize( responseOptions.getAcceptableRequestSize(), optionSet );
+    }
+
+    /**
+     * Copy EntityTagValue to {@link OptionSet}.
+     * @param entityTagValue The entityTagValue to copy.
+     * @param optionSet The set to copy to.
+     * @param transformationService Mule transformation service.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyEntityTagValue(
+        TypedValue< Object > entityTagValue,
+        OptionSet optionSet,
+        TransformationService transformationService
+    ) throws InternalInvalidOptionValueException
+    {
+        if ( entityTagValue != null )
         {
-            DefaultEntityTag etag;
+            Optional< DefaultEntityTag > optionalEtag;
             try
             {
-                etag= MessageUtils.toETag( responseOptions.getEntityTagValue(), transformationService );
+                optionalEtag= toOptionalETag( entityTagValue, transformationService );
             }
-            catch ( EntityTagException e )
+            catch ( Exception e )
             {
-                throw new InternalInvalidOptionValueException( "ETag", "Entity tag value is not valid" );
+                throw new InternalInvalidOptionValueException( "ETag", VALUE_INVALID, e );
             }
-            optionSet.addETag( etag.getValue() );
-        }
-        if ( responseOptions.getContentFormat() != null )
-        {
-            optionSet.setContentFormat( responseOptions.getContentFormat() );
-        }
-        if ( responseOptions.getMaxAge() != null )
-        {
-            optionSet.setMaxAge( responseOptions.getMaxAge() );
-        }
-        if ( responseOptions.getLocationPath() != null )
-        {
-            optionSet.setLocationPath( responseOptions.getLocationPath() );
-        }
-        if ( responseOptions.getLocationQuery() != null )
-        {
-            for ( AbstractQueryParam param : responseOptions.getLocationQuery() )
-            {
-                optionSet.addLocationQuery( param.toString() );
-            }
-        }
-        if ( responseOptions.getResponseSize() != null )
-        {
-            optionSet.setSize2( responseOptions.getResponseSize() );
-        }
-        if ( responseOptions.getAcceptableRequestSize() != null )
-        {
-            optionSet.setSize1( responseOptions.getAcceptableRequestSize() );
+            optionalEtag.ifPresent( etag -> optionSet.addETag( etag.getValue() ) );
         }
     }
 
     /**
-    * Copy other options from {@link RequestOptions} to {@link OptionSet}.
-    * @param responseOptions to copy from.
-    * @param optionSet to copy to.
-    * @param transformationService 
-    * @throws InternalInvalidOptionValueException When given option value is not valid.
-    * @throws InternalUnkownOptionException When given option alias was not defined. 
-    */
-    public static void copyOtherOptions(
-        ResponseOptions responseOptions,
-        OptionSet optionSet,
-        TransformationService transformationService
-    ) throws InternalInvalidOptionValueException,
-        InternalUnkownOptionException
+     * Copy MaxAge to {@link OptionSet}.
+     * @param maxAge The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyMaxAge( Long maxAge, OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
-        for ( OtherOption otherOption : responseOptions.getOtherOptions() )
+        if ( maxAge != null )
         {
-            addOption( optionSet, otherOption, transformationService );
+            try
+            {
+                optionSet.setMaxAge( maxAge );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Max-Age", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy LocationPath to {@link OptionSet}.
+     * @param locationPath The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyLocationPath( String locationPath, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( locationPath != null )
+        {
+            try
+            {
+                optionSet.setLocationPath( locationPath );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Location-Path", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy LocationQuery to {@link OptionSet}.
+     * @param locationQuery The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyLocationQuery( List< QueryParam > locationQuery, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( locationQuery != null )
+        {
+            for ( QueryParam param : locationQuery )
+            {
+                try
+                {
+                    optionSet.addLocationQuery( param.toString() );
+                }
+                catch ( Exception e )
+                {
+                    throw new InternalInvalidOptionValueException( "Location-Query", VALUE_INVALID, e );
+                }
+            }
+        }
+    }
+
+    /**
+     * Copy ResponseSize to {@link OptionSet}.
+     * @param responseSize The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyResponseSize( Integer responseSize, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( responseSize != null )
+        {
+            try
+            {
+                optionSet.setSize2( responseSize );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Response-Size", VALUE_INVALID, e );
+            }
+        }
+    }
+
+    /**
+     * Copy AcceptableRequestSize to {@link OptionSet}.
+     * @param acceptableRequestSize The options to copy.
+     * @param optionSet The set to copy to.
+     * @throws InternalInvalidOptionValueException When given option value is invalid. 
+     */
+    public static void copyAcceptableRequestSize( Integer acceptableRequestSize, OptionSet optionSet )
+        throws InternalInvalidOptionValueException
+    {
+        if ( acceptableRequestSize != null )
+        {
+            try
+            {
+                optionSet.setSize1( acceptableRequestSize );
+            }
+            catch ( Exception e )
+            {
+                throw new InternalInvalidOptionValueException( "Acceptable-Request-Size", VALUE_INVALID, e );
+            }
         }
     }
 
@@ -334,9 +566,9 @@ public class MessageUtils
     {
         if ( left == right ) return true;
         if ( left == null || right == null ) return false;
-        return( left.getName().equals( right.getName() ) && left.getFormat() == right.getFormat()
-            && left.getNumber() == right.getNumber() && left.isSingleValue() == right.isSingleValue()
-            && Arrays.equals( left.getValueLengths(), right.getValueLengths() ) );
+        return( left.getName().equals( right.getName() ) && left.getFormat() == right.getFormat() && left
+            .getNumber() == right.getNumber() && left.isSingleValue() == right.isSingleValue() && Arrays
+                .equals( left.getValueLengths(), right.getValueLengths() ) );
     }
 
     /**
@@ -360,7 +592,7 @@ public class MessageUtils
         }
         catch ( Exception e )
         {
-            throw new InternalInvalidOptionValueException( otherOption.getAlias(), e.getMessage(), e );
+            throw new InternalInvalidOptionValueException( otherOption.getAlias(), VALUE_INVALID, e );
         }
         return option;
     }
@@ -415,9 +647,9 @@ public class MessageUtils
         {
             return ( (String) object ).getBytes( CoAP.UTF8_CHARSET );
         }
-        else if ( object instanceof EntityTagAttribute )
+        else if ( object instanceof BytesValue )
         {
-            return ( (EntityTagAttribute) object ).getValue();
+            return ( (BytesValue) object ).getValue();
         }
         else if ( object instanceof Integer )
         {
@@ -484,10 +716,10 @@ public class MessageUtils
     * Convert a typed value to ETag.
     * @param etag The EntityTag to construct a DefaultEntityTag from.
     * @return The ETag object that has been constructed.
-    * @throws EntityTagException When value cannot be converted to a valid ETag.
+    * @throws OptionValueException When value cannot be converted to a valid ETag.
     */
     private static DefaultEntityTag toETag( EntityTag etag, TransformationService transformationService )
-        throws EntityTagException
+        throws OptionValueException
     {
         return toETag( etag.getValue(), transformationService );
     }
@@ -496,50 +728,113 @@ public class MessageUtils
     * Convert a typed value to ETag.
     * @param etagValue The value to construct an ETag from.
     * @return The ETag object that has been constructed.
-    * @throws EntityTagException When value cannot be converted to a valid ETag.
+    * @throws OptionValueException When value cannot be converted to a valid ETag.
     */
     private static DefaultEntityTag toETag(
         TypedValue< Object > etagValue,
         TransformationService transformationService
-    ) throws EntityTagException
+    ) throws OptionValueException
     {
         Object object= TypedValue.unwrap( etagValue );
 
         if ( object == null )
         {
-            throw new EntityTagException( "Cannot construct etag value of object { null }" );
+            throw new OptionValueException( "Cannot construct etag value of object { null }" );
         }
-        else if ( object instanceof DefaultEntityTag )
+        Optional< DefaultEntityTag > optionalEtag= convertETag( object );
+        if ( optionalEtag.isPresent() )
         {
-            return (DefaultEntityTag) object;
+            return optionalEtag.get();
+        }
+        return transformETag( etagValue, transformationService );
+    }
+
+    /**
+    * Convert a typed value to an optional ETag.
+    * @param etagValue The value to construct an ETag from.
+    * @return The Optional ETag object that may have been constructed.
+    * @throws OptionValueException When value cannot be converted to a valid ETag.
+    */
+    private static Optional< DefaultEntityTag > toOptionalETag(
+        TypedValue< Object > etagValue,
+        TransformationService transformationService
+    ) throws OptionValueException
+    {
+        Object object= TypedValue.unwrap( etagValue );
+
+        if ( object == null )
+        {
+            return Optional.empty();
+        }
+        Optional< DefaultEntityTag > optionalEtag= convertETag( object );
+        if ( optionalEtag.isPresent() )
+        {
+            return optionalEtag;
+        }
+        return Optional.of( transformETag( etagValue, transformationService ) );
+    }
+
+    /**
+    * Convert an object to ETag when the value is of a known type.
+    * @param object The value to construct an ETag from.
+    * @return The Optional ETag object that has been converted.
+    * @throws OptionValueException When value cannot be converted to a valid ETag.
+    */
+    private static Optional< DefaultEntityTag > convertETag( Object object ) throws OptionValueException
+    {
+        if ( object instanceof DefaultEntityTag )
+        {
+            return Optional.of( (DefaultEntityTag) object );
+        }
+        else if ( object instanceof DefaultBytesValue )
+        {
+            return Optional.of( new DefaultEntityTag( (DefaultBytesValue) object ) );
+        }
+        else if ( object instanceof BytesValue )
+        {
+            return Optional.of( new DefaultEntityTag( ( (BytesValue) object ).getValue() ) );
         }
         else if ( object instanceof Integer )
         {
-            return new DefaultEntityTag( (Integer) object );
+            return Optional.of( new DefaultEntityTag( (Integer) object ) );
         }
         else if ( object instanceof Long )
         {
-            return new DefaultEntityTag( (Long) object );
+            return Optional.of( new DefaultEntityTag( (Long) object ) );
         }
         else if ( object instanceof String )
         {
-            return new DefaultEntityTag( (String) object );
+            return Optional.of( new DefaultEntityTag( (String) object ) );
         }
         else if ( object instanceof byte[] )
         {
-            return new DefaultEntityTag( (byte[]) object );
+            return Optional.of( new DefaultEntityTag( (byte[]) object ) );
         }
         else if ( object instanceof Byte[] )
         {
-            return new DefaultEntityTag( toPrimitives( (Byte[]) object ) );
+            return Optional.of( new DefaultEntityTag( toPrimitives( (Byte[]) object ) ) );
         }
         else
         {
-            //transform using Mule's transformers.
-            return new DefaultEntityTag(
-                (byte[]) transformationService.transform( etagValue.getValue(), etagValue.getDataType(), BYTE_ARRAY )
-            );
+            return Optional.empty();
         }
+    }
+
+    /**
+    * Transform a typed value to ETag.
+    * @param etagValue The value to construct an ETag from.
+    * @return The ETag object that has been constructed.
+    * @throws OptionValueException When value cannot be converted to a valid ETag.
+    */
+    private static DefaultEntityTag transformETag(
+        TypedValue< Object > etagValue,
+        TransformationService transformationService
+    ) throws OptionValueException
+    {
+        //transform using Mule's transformers.
+        return new DefaultEntityTag(
+            (byte[]) transformationService.transform( etagValue.getValue(), etagValue.getDataType(), BYTE_ARRAY )
+        );
     }
 
     /**
@@ -547,12 +842,12 @@ public class MessageUtils
      * @param typedValue The value to create the list of etags from.
      * @param transformationService Transformation service for not recognized value types.
      * @return The list of entity tags.
-     * @throws EntityTagException When given values are invalid.
+     * @throws OptionValueException When given values are invalid.
      */
     private static List< DefaultEntityTag > toEtagList(
         List< EntityTag > etagValues,
         TransformationService transformationService
-    ) throws EntityTagException
+    ) throws OptionValueException
     {
         LinkedList< DefaultEntityTag > list= new LinkedList<>();
 
@@ -568,16 +863,6 @@ public class MessageUtils
             }
         }
         return Collections.unmodifiableList( list );
-    }
-
-    /**
-     * Creates a BlockValue from a Cf block option.
-     * @param block The block option to use.
-     * @return BlockValue that corresponds to the block option.
-     */
-    public static BlockValue toBlockValue( BlockOption block )
-    {
-        return BlockValue.create( block.getNum(), block.getSzx(), block.isM() );
     }
 
     /**
@@ -612,8 +897,8 @@ public class MessageUtils
     )
     {
         if (
-            ( defaultQueryParams == null || defaultQueryParams.isEmpty() )
-                && ( queryParams == null || queryParams.isEmpty() )
+            ( defaultQueryParams == null || defaultQueryParams.isEmpty() ) && ( queryParams == null || queryParams
+                .isEmpty() )
         ) return null;
         StringWriter writer= new StringWriter();
         boolean first= true;
@@ -697,9 +982,9 @@ public class MessageUtils
      * in stead of throwing an exception.
      * @param bytesList The List of Byte arrays to make a list of Entity-tags from.
      * @return The optional list of Entity-tags. Empty when an empty etag occurs.
-     * @throws EntityTagException when the Entity-tag could not be created from bytes
+     * @throws OptionValueException when the Entity-tag could not be created from bytes
      */
-    public static Optional< List< DefaultEntityTag > > getList( List< byte[] > bytesList ) throws EntityTagException
+    public static Optional< List< DefaultEntityTag > > getList( List< byte[] > bytesList ) throws OptionValueException
     {
         LinkedList< DefaultEntityTag > result= new LinkedList<>();
         for ( byte[] bytes : bytesList )

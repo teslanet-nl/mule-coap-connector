@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -87,4 +89,42 @@ public class MulticastUDPEndpoint extends UDPEndpoint
         multicastParams.accept( visitor );
         visitor.visit( this );
     }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        MulticastUDPEndpoint rhs= (MulticastUDPEndpoint) obj;
+        return new EqualsBuilder()
+            .appendSuper( super.equals( obj ) )
+            .append( multicastParams, rhs.multicastParams )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 13, 33 )
+            .appendSuper( super.hashCode() )
+            .append( multicastParams )
+            .toHashCode();
+    }
+
 }

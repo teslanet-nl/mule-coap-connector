@@ -38,8 +38,8 @@ import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 import org.junit.Test;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -63,7 +63,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTagAttribute > list= attributes.getIfMatch();
+        List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNull( list );
@@ -71,7 +71,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetifExistsMultiple() throws InternalInvalidOptionValueException, EntityTagException
+    public void testOptionSetifExistsMultiple() throws InternalInvalidOptionValueException, OptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= {};
@@ -84,7 +84,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTagAttribute > list= attributes.getIfMatch();
+        List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNull( list );
@@ -92,7 +92,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionSetIfMatch() throws InternalInvalidOptionValueException, EntityTagException
+    public void testOptionSetIfMatch() throws InternalInvalidOptionValueException, OptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -101,18 +101,21 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTagAttribute > list= attributes.getIfMatch();
+        List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNotNull( list );
         assertFalse( "coap.opt.if_match.ifexistst: wrong value", ifExists );
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 1, list.size() );
         assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue1 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new DefaultEntityTag( etagValue2 ) ) );
+        assertFalse(
+            "coap.opt.if_match.etags: etag not expected",
+            list.contains( new DefaultEntityTag( etagValue2 ) )
+        );
     }
 
     @Test
-    public void testOptionSetIfMatchMultiple() throws InternalInvalidOptionValueException, EntityTagException
+    public void testOptionSetIfMatchMultiple() throws InternalInvalidOptionValueException, OptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -124,7 +127,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTagAttribute > list= attributes.getIfMatch();
+        List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
 
         assertNotNull( list );
@@ -132,7 +135,10 @@ public class DefaultRequestOptionsAttributesTest
         assertEquals( "coap.opt.if_match.etags: wrong number of etags", 2, list.size() );
         assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue1 ) ) );
         assertTrue( "coap.opt.if_match.etags: missing etag", list.contains( new DefaultEntityTag( etagValue2 ) ) );
-        assertFalse( "coap.opt.if_match.etags: etag not expected", list.contains( new DefaultEntityTag( etagValue3 ) ) );
+        assertFalse(
+            "coap.opt.if_match.etags: etag not expected",
+            list.contains( new DefaultEntityTag( etagValue3 ) )
+        );
     }
 
     @Test
@@ -150,7 +156,7 @@ public class DefaultRequestOptionsAttributesTest
     }
 
     @Test
-    public void testOptionETagMultiple() throws InternalInvalidOptionValueException, EntityTagException
+    public void testOptionETagMultiple() throws InternalInvalidOptionValueException, OptionValueException
     {
         OptionSet set= new OptionSet();
         byte[] etagValue1= { (byte) 0x00, (byte) 0xFF };
@@ -162,7 +168,7 @@ public class DefaultRequestOptionsAttributesTest
 
         DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
 
-        List< EntityTagAttribute > list= attributes.getEtags();
+        List< BytesValue > list= attributes.getEtags();
 
         assertNotNull( list );
         assertEquals( "coap.opt.etag.list: wrong number of etags", 2, list.size() );
@@ -354,13 +360,12 @@ public class DefaultRequestOptionsAttributesTest
     public void testOptionOther() throws InternalInvalidOptionValueException
     {
         OptionSet set= new OptionSet();
-        byte[][] values= {
-            { (byte) 0x01, (byte) 0x02, (byte) 0x03 },
-            { (byte) 0x01, (byte) 0x02, (byte) 0x04 },
-            { (byte) 0x01, (byte) 0x02, (byte) 0x05 },
+        byte[][] values= { { (byte) 0x01, (byte) 0x02, (byte) 0x03 }, { (byte) 0x01, (byte) 0x02, (byte) 0x04 }, {
+            (byte) 0x01, (byte) 0x02, (byte) 0x05 },
             { (byte) 0xff, (byte) 0x02, (byte) 0x05 } };
 
-        OpaqueOptionDefinition[] optionsDefs= { TestOptions.OTHER_OPTION_65001, TestOptions.OTHER_OPTION_65002, TestOptions.OTHER_OPTION_65028, TestOptions.OTHER_OPTION_65029 };
+        OpaqueOptionDefinition[] optionsDefs= { TestOptions.OTHER_OPTION_65001, TestOptions.OTHER_OPTION_65002,
+            TestOptions.OTHER_OPTION_65028, TestOptions.OTHER_OPTION_65029 };
 
         for ( int i= 0; i < 4; i++ )
         {

@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -39,7 +39,7 @@ public class ResponseOptionsAttributes
 
     protected Long maxAge= null;
 
-    protected EntityTagAttribute etag= null;
+    protected BytesValue etag= null;
 
     protected List< String > locationPath= null;
 
@@ -56,7 +56,7 @@ public class ResponseOptionsAttributes
     /**
      * @return The etag option.
      */
-    public EntityTagAttribute getEtag()
+    public BytesValue getEtag()
     {
         return etag;
     }

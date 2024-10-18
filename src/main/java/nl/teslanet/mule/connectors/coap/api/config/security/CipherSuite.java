@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -72,6 +72,15 @@ public class CipherSuite
     }
 
     /**
+     * String value of this enum.
+     */
+    @Override
+    public String toString()
+    {
+        return cipherSuiteName == null ? String.valueOf( cipherSuiteName ) : cipherSuiteName.name();
+    }
+
+    /**
      * Returns a hash code value for the object.
      */
     @Override
@@ -102,16 +111,6 @@ public class CipherSuite
         {
             return false;
         }
-        return this.cipherSuiteName == ( (CipherSuite) obj ).cipherSuiteName;
+        return this.cipherSuiteName.equals( ( (CipherSuite) obj ).cipherSuiteName );
     }
-
-    /**
-     * String value of this enum.
-     */
-    @Override
-    public String toString()
-    {
-        return cipherSuiteName == null ? String.valueOf( cipherSuiteName ) : cipherSuiteName.name();
-    }
-
 }

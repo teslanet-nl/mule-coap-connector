@@ -42,6 +42,7 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultBytesValue;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
 
 
@@ -155,12 +156,15 @@ public class OptionValueOperationTest extends AbstractTestCase
     @Test
     public void testConRequest() throws Exception
     {
-        CoreEvent result= flowRunner( "testflow" ).withPayload( inPayload ).withVariable( "in", inPayloadType.name() ).run();
+        CoreEvent result= flowRunner( "testflow" )
+            .withPayload( inPayload )
+            .withVariable( "in", inPayloadType.name() )
+            .run();
         Message response= result.getMessage();
 
         assertNotNull( "no mule event", response );
         Object responsePayload= TypedValue.unwrap( response.getPayload() );
-        assertTrue( "wrong response payload class", responsePayload instanceof byte[] );
-        assertArrayEquals( (byte[]) outPayload, (byte[]) responsePayload );
+        assertTrue( "wrong response payload class", responsePayload instanceof DefaultBytesValue );
+        assertArrayEquals( (byte[]) outPayload, ( (DefaultBytesValue) responsePayload ).getValue() );
     }
 }

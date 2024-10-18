@@ -25,8 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -39,7 +39,7 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
     /**
      * Test value
      * @return the value to use in test
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
     private LinkedList< DefaultEntityTag > getValue()
     {
@@ -61,7 +61,7 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws EntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
         return new LinkedList< EntityTag >();
     }
@@ -70,7 +70,7 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws EntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptEtagListStrategy( getValue() );
     }

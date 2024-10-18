@@ -66,7 +66,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			doc:id="53784292-e82f-49df-8bab-5aa0846717d2" instance="#[vars.spy]"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			method="event(Object)" target="value">
-			<java:args><![CDATA[#[{ arg0: vars.attr.options.uriPath }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: vars.attr.requestOptions.uriPath }]]]></java:args>
 		</java:invoke>
 		<set-payload value="nothing_important"/>
 	</flow>

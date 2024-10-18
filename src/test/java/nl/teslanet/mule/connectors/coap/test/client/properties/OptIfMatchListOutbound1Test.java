@@ -28,8 +28,8 @@ import java.util.LinkedList;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -42,9 +42,9 @@ public class OptIfMatchListOutbound1Test extends AbstractOutboundPropertiesTestC
     /**
      * Test value
      * @return the value to use in test
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
-    private DefaultEntityTag getValue() throws EntityTagException
+    private DefaultEntityTag getValue() throws OptionValueException
     {
         return new DefaultEntityTag( 0xAA001122L );
     }
@@ -62,7 +62,7 @@ public class OptIfMatchListOutbound1Test extends AbstractOutboundPropertiesTestC
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws EntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
         EntityTag etag= new EntityTag();
         etag.setValue( new TypedValue< Object >( getValue(), DataType.fromObject( getValue() ) ) );
@@ -75,7 +75,7 @@ public class OptIfMatchListOutbound1Test extends AbstractOutboundPropertiesTestC
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws EntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptIfMatchListStrategy( getValue() );
     }

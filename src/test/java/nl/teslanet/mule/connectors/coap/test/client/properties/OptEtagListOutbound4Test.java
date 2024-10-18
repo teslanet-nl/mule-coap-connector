@@ -28,8 +28,8 @@ import java.util.LinkedList;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -46,9 +46,9 @@ public class OptEtagListOutbound4Test extends AbstractOutboundPropertiesTestCase
 
     /**
      * Constructor
-     * @throws EntityTagException
+     * @throws OptionValueException
      */
-    public OptEtagListOutbound4Test() throws EntityTagException
+    public OptEtagListOutbound4Test() throws OptionValueException
     {
         super();
         value= new DefaultEntityTag( 123642L );
@@ -70,7 +70,10 @@ public class OptEtagListOutbound4Test extends AbstractOutboundPropertiesTestCase
     protected Object getOutboundPropertyValue()
     {
         EntityTag etag= new EntityTag();
-        etag.setValue( new TypedValue< Object >( value.getValueAsNumber(), DataType.fromObject( value.getValueAsNumber() ) ) );
+        etag
+            .setValue(
+                new TypedValue< Object >( value.getValueAsNumber(), DataType.fromObject( value.getValueAsNumber() ) )
+            );
         LinkedList< EntityTag > list= new LinkedList< EntityTag >();
         list.add( etag );
         return list;

@@ -28,7 +28,7 @@ import java.util.LinkedList;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -36,7 +36,7 @@ public class OptIfMatchListInbound1Test extends AbstractInboundPropertyTestcase
 {
 
     @Override
-    protected void addOption( OptionSet options ) throws EntityTagException
+    protected void addOption( OptionSet options ) throws OptionValueException
     {
         options.addIfMatch( new DefaultEntityTag( 0x11FFL ).getValue() );
     }
@@ -48,7 +48,7 @@ public class OptIfMatchListInbound1Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws EntityTagException
+    protected Object getExpectedPropertyValue() throws OptionValueException
     {
         LinkedList< DefaultEntityTag > list= new LinkedList< DefaultEntityTag >();
         list.add( new DefaultEntityTag( 0x11FFL ) );

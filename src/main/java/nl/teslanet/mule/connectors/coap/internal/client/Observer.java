@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -95,7 +95,8 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
             this.toString(),
             client.getCoapClient(),
             requestBuilder,
-            ( requestUri, requestType, requestCode, response ) -> ResponseProcessor.processMuleFlow( localAdress, requestUri, requestType, requestCode, response, sourceCallback )
+            ( requestBuilder2, response ) -> ResponseProcessor
+                .processMuleFlow( localAdress, requestBuilder2, response, sourceCallback )
         );
         relation.start();
         LOGGER.info( "{} started.", this );

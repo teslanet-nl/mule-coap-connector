@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.security;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
@@ -50,5 +52,36 @@ public class PreSharedKeyParams implements VisitableConfig
     {
         visitor.visit( this );
         if ( preSharedKeyGroup != null ) preSharedKeyGroup.accept( visitor );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        PreSharedKeyParams rhs= (PreSharedKeyParams) obj;
+        return new EqualsBuilder().append( preSharedKeyGroup, rhs.preSharedKeyGroup ).isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 ).append( preSharedKeyGroup ).toHashCode();
     }
 }

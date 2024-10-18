@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -102,7 +102,7 @@ public class CertificateKeyAlgorithm
         {
             return false;
         }
-        return this.algorithm == ( (CertificateKeyAlgorithm) obj ).algorithm;
+        return this.algorithm.equals( ( (CertificateKeyAlgorithm) obj ).algorithm );
     }
 
     /**

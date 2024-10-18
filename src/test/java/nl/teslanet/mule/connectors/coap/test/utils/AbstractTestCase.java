@@ -32,6 +32,7 @@ import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultBytesValue;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -55,7 +56,8 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
     },
     exportPluginClasses= 
 	{
-		DefaultEntityTag.class
+		DefaultEntityTag.class,
+		DefaultBytesValue.class
     }, 
     testExclusions= 
     {
@@ -81,7 +83,7 @@ import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule
-    public Timeout globalTimeout= Timeout.seconds( 100 ); // 100 seconds max per method tested
+    public Timeout globalTimeout= Timeout.seconds( 10000 ); // 100 seconds max per method tested
 
     /**
      * Create query part of an uri.

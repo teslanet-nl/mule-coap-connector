@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.api;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
@@ -37,6 +38,7 @@ public class ResponseHandlerParams
 {
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
+    @Placement( tab= "Response", order= 1 ) 
     @Summary( "The handler that will receive the response." )
     public ResponseHandler responseHandler;
 

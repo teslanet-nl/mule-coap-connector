@@ -43,7 +43,7 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
@@ -62,14 +62,12 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     @Parameters( name= "request= {0}  " )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { Code.GET, "/property/setoption", ResponseCode.CONTENT },
-                { Code.PUT, "/property/setoption", ResponseCode.CHANGED },
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "/property/setoption", ResponseCode.CONTENT }, { Code.PUT, "/property/setoption",
+                ResponseCode.CHANGED },
                 { Code.POST, "/property/setoption", ResponseCode.CHANGED },
-                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } }
-        );
+                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } } );
     }
 
     /**
@@ -178,10 +176,14 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     @Test
     public void testInboundProperty() throws Exception
     {
-        Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            null
-        ).withVariable( "path", path + getPathExtension() ).keepStreamsOpen().run();
+        Event result= flowRunner( "do_request" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.name() )
+            .withVariable( "host", "127.0.0.1" )
+            .withVariable( "port", null )
+            .withVariable( "path", path + getPathExtension() )
+            .keepStreamsOpen()
+            .run();
         Message response= result.getMessage();
         CoapResponseAttributes attributes= null;;
 
@@ -192,7 +194,10 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
             }
             default:
-                assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+                assertTrue(
+                    "wrong attributes class",
+                    response.getAttributes().getValue() instanceof CoapResponseAttributes
+                );
 
                 attributes= (CoapResponseAttributes) response.getAttributes().getValue();
                 assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
@@ -244,7 +249,9 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
             case CollectionOfETag:
             {
                 @SuppressWarnings( "unchecked" )
-                Collection< DefaultEntityTag > property= (Collection< DefaultEntityTag >) fetchInboundProperty( attributes );
+                Collection< DefaultEntityTag > property= (Collection< DefaultEntityTag >) fetchInboundProperty(
+                    attributes
+                );
                 assertNotNull( "property is not found in inbound scope", property );
 
                 @SuppressWarnings( "unchecked" )
@@ -263,11 +270,19 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
 
             case ByteArray:
-                assertArrayEquals( "wrong inbound property value", (byte[]) getExpectedInboundPropertyValue(), (byte[]) fetchInboundProperty( attributes ) );
+                assertArrayEquals(
+                    "wrong inbound property value",
+                    (byte[]) getExpectedInboundPropertyValue(),
+                    (byte[]) fetchInboundProperty( attributes )
+                );
                 break;
 
             case ETag:
-                assertEquals( "wrong inbound property value", (DefaultEntityTag) getExpectedInboundPropertyValue(), (DefaultEntityTag) fetchInboundProperty( attributes ) );
+                assertEquals(
+                    "wrong inbound property value",
+                    (DefaultEntityTag) getExpectedInboundPropertyValue(),
+                    (DefaultEntityTag) fetchInboundProperty( attributes )
+                );
                 break;
 
             case NoResponse:
@@ -275,7 +290,11 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
                 break;
 
             default:
-                assertEquals( "wrong inbound property value", getExpectedInboundPropertyValue(), fetchInboundProperty( attributes ) );
+                assertEquals(
+                    "wrong inbound property value",
+                    getExpectedInboundPropertyValue(),
+                    fetchInboundProperty( attributes )
+                );
                 break;
         }
     }

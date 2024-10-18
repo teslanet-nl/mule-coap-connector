@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,8 +40,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -125,24 +125,37 @@ public class ResponseTest extends AbstractClientTestCase
         {
             Exception e= assertThrows(
                 Exception.class,
-                () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-                    "port",
-                    "5683"
-                ).withVariable( "path", resourcePath ).run()
+                () -> flowRunner( "do_request" )
+                    .withPayload( "nothing_important" )
+                    .withVariable( "code", requestCode )
+                    .withVariable( "host", "127.0.0.1" )
+                    .withVariable( "port", "5683" )
+                    .withVariable( "path", resourcePath )
+                    .run()
             );
-            assertEquals( "wrong exception message", "CoAP Client { config } failed to execute request.", e.getMessage() );
+            assertEquals(
+                "wrong exception message",
+                "CoAP Client { config } failed to execute request.",
+                e.getMessage()
+            );
             assertEquals( "wrong exception cause", e.getCause().getClass(), ResponseException.class );
         }
         else
         {
-            flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-                "port",
-                "5683"
-            ).withVariable( "path", resourcePath ).run();
+            flowRunner( "do_request" )
+                .withPayload( "nothing_important" )
+                .withVariable( "code", requestCode )
+                .withVariable( "host", "127.0.0.1" )
+                .withVariable( "port", "5683" )
+                .withVariable( "path", resourcePath )
+                .run();
 
             assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );

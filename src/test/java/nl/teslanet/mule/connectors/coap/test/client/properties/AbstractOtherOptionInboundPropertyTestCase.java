@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import org.eclipse.californium.core.coap.option.OpaqueOptionDefinition;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
@@ -54,7 +54,7 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
         ArrayList< OtherOptionAttribute > list= new ArrayList<>();
-        for ( OtherOptionAttribute option : attributes.getOptions().getOther() )
+        for ( OtherOptionAttribute option : attributes.getResponseOptions().getOther() )
         {
             if ( getOptionAlias().equals( option.getAlias() ) )
             {
@@ -85,7 +85,10 @@ public abstract class AbstractOtherOptionInboundPropertyTestCase extends Abstrac
         ArrayList< OtherOptionAttribute > list= new ArrayList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
-            OtherOptionAttribute otherOption= new TestOtherOptionAttribute( new OpaqueOptionDefinition( getOptionNumber(), getOptionAlias() ), getOptionValues()[i] );
+            OtherOptionAttribute otherOption= new TestOtherOptionAttribute(
+                new OpaqueOptionDefinition( getOptionNumber(), getOptionAlias() ),
+                getOptionValues()[i]
+            );
             list.add( otherOption );
         }
         return Collections.unmodifiableList( list );

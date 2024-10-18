@@ -197,14 +197,14 @@ public abstract class AbstractEndpoint implements VisitableConfig
         }
         AbstractEndpoint rhs= (AbstractEndpoint) obj;
         return new EqualsBuilder()
-            .append( blockwiseParams, rhs.blockwiseParams )
             .append( configName, rhs.configName )
+            .append( socketParams, rhs.socketParams )
+            .append( blockwiseParams, rhs.blockwiseParams )
+            .append( notificationParams, rhs.notificationParams )
+            .append( optionParams, rhs.optionParams )
             .append( exchangeParams, rhs.exchangeParams )
             .append( logHealthStatus, rhs.logHealthStatus )
             .append( logTraffic, rhs.logTraffic )
-            .append( notificationParams, rhs.notificationParams )
-            .append( optionParams, rhs.optionParams )
-            .append( socketParams, rhs.socketParams )
             .isEquals();
     }
 
@@ -215,14 +215,14 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public int hashCode()
     {
         return new HashCodeBuilder( 17, 37 )
-            .append( blockwiseParams )
             .append( configName )
+            .append( socketParams )
+            .append( blockwiseParams )
+            .append( notificationParams )
+            .append( optionParams )
             .append( exchangeParams )
             .append( logHealthStatus )
             .append( logTraffic )
-            .append( notificationParams )
-            .append( optionParams )
-            .append( socketParams )
             .toHashCode();
     }
 }

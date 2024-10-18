@@ -112,7 +112,6 @@ public class UdpParams implements VisitableConfig
         }
         UdpParams rhs= (UdpParams) obj;
         return new EqualsBuilder()
-            .appendSuper( super.equals( obj ) )
             .append( datagramSize, rhs.datagramSize )
             .append( outCapacity, rhs.outCapacity )
             .append( receiverThreadCount, rhs.receiverThreadCount )
@@ -127,7 +126,6 @@ public class UdpParams implements VisitableConfig
     public int hashCode()
     {
         return new HashCodeBuilder( 15, 35 )
-            .appendSuper( super.hashCode() )
             .append( datagramSize )
             .append( outCapacity )
             .append( receiverThreadCount )

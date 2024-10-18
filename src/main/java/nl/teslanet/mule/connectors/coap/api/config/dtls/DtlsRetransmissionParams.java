@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -119,7 +121,9 @@ public class DtlsRetransmissionParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "Stop retransmission on receiving the first message of the next flight, not waiting for the last message." )
+    @Summary(
+                    value= "Stop retransmission on receiving the first message of the next flight, not waiting for the last message."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean earlyStop= true;
@@ -131,5 +135,54 @@ public class DtlsRetransmissionParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        DtlsRetransmissionParams rhs= (DtlsRetransmissionParams) obj;
+        return new EqualsBuilder()
+            .append( initialTimeout, rhs.initialTimeout )
+            .append( maxTimeout, rhs.maxTimeout )
+            .append( timeoutRandomFactor, rhs.timeoutRandomFactor )
+            .append( timeoutScaleFactor, rhs.timeoutScaleFactor )
+            .append( additionalEccTimeout, rhs.additionalEccTimeout )
+            .append( maxRetransmissions, rhs.maxRetransmissions )
+            .append( backoffThreshold, rhs.backoffThreshold )
+            .append( earlyStop, rhs.earlyStop )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+            .append( initialTimeout )
+            .append( maxTimeout )
+            .append( timeoutRandomFactor )
+            .append( timeoutScaleFactor )
+            .append( additionalEccTimeout )
+            .append( maxRetransmissions )
+            .append( backoffThreshold )
+            .append( earlyStop )
+            .toHashCode();
     }
 }

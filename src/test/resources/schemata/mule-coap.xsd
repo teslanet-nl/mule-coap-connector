@@ -551,7 +551,7 @@
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-dtls-client-and-server-role" name="dtls-client-and-server-role">
     <xs:complexType>
       <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole"></xs:extension>
+		<xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole"></xs:extension>
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
@@ -1236,19 +1236,19 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-bytes-value"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue" abstract="true" name="abstract-bytes-value"></xs:element>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-bytes-params"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams" abstract="true" name="abstract-bytes-params"></xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes">
     <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue"></xs:extension>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams"></xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes" substitutionGroup="coap:abstract-bytes-value" abstract="true" name="abstract-empty-bytes"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-empty-bytes"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-empty-bytes" name="empty-bytes">
     <xs:complexType>
       <xs:complexContent>
@@ -1258,12 +1258,12 @@
   </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromBinary">
     <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
         <xs:attribute type="xs:string" use="required" name="binaryValue"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromBinary" substitutionGroup="coap:abstract-bytes-value" abstract="true" name="abstract-from-binary"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromBinary" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-binary"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-binary" name="from-binary">
     <xs:complexType>
       <xs:complexContent>
@@ -1273,12 +1273,12 @@
   </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromHex">
     <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
         <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionString" use="required" name="hexValue"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHex" substitutionGroup="coap:abstract-bytes-value" abstract="true" name="abstract-from-hex"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHex" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-hex"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-hex" name="from-hex">
     <xs:complexType>
       <xs:complexContent>
@@ -1288,12 +1288,12 @@
   </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromNumber">
     <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
         <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionLong" use="required" name="numberValue"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumber" substitutionGroup="coap:abstract-bytes-value" abstract="true" name="abstract-from-number"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumber" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-number"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-number" name="from-number">
     <xs:complexType>
       <xs:complexContent>
@@ -1303,12 +1303,12 @@
   </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromString">
     <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
         <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionString" use="required" name="stringValue"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromString" substitutionGroup="coap:abstract-bytes-value" abstract="true" name="abstract-from-string"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromString" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-string"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-string" name="from-string">
     <xs:complexType>
       <xs:complexContent>
@@ -1450,11 +1450,6 @@
               <xs:documentation>The identifier of this element used to reference it in other components</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="confirmable">
-            <xs:annotation>
-              <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="host">
             <xs:annotation>
               <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
@@ -1473,6 +1468,11 @@
           <xs:attribute type="mule:substitutableName" use="optional" name="queryConfigs">
             <xs:annotation>
               <xs:documentation>The default query parameters of requests.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="confirmable">
+            <xs:annotation>
+              <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -1583,11 +1583,6 @@
             <xs:documentation>Whether this source should only be executed on the primary node when runnning in Cluster</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
-          <xs:annotation>
-            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="host">
           <xs:annotation>
             <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
@@ -1606,6 +1601,11 @@
         <xs:attribute type="mule:substitutableName" use="optional" name="queryConfigs">
           <xs:annotation>
             <xs:documentation>The default query parameters of requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
+          <xs:annotation>
+            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -2010,13 +2010,6 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-byte-streaming-strategy"></xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="request-options">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequestOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
               <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
@@ -2039,8 +2032,37 @@
             </xs:complexType>
           </xs:element>
           <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="entity-tag-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="if-match-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
+            <xs:annotation>
+              <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="request-options"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
           <xs:annotation>
             <xs:documentation>The mime type of the payload that this operation outputs.</xs:documentation>
@@ -2096,6 +2118,51 @@
             <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="accept">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="entityTagOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="ifMatchOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
+          <xs:annotation>
+            <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
           <xs:annotation>
             <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
@@ -2109,18 +2176,18 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.entity.EntityTag">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.EntityTag">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.entity.EntityTag" abstract="true" name="abstract-entity-tag"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.options.EntityTag" abstract="true" name="abstract-entity-tag"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-entity-tag" name="entity-tag">
     <xs:complexType>
       <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.entity.EntityTag"></xs:extension>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.options.EntityTag"></xs:extension>
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
@@ -2140,44 +2207,6 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="entity-tag-options">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="if-match-options">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="accept"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="entityTagOptions"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="ifMatchOptions"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RequestAsyncType" substitutionGroup="mule:abstract-operator" name="request-async">
     <xs:annotation>
       <xs:documentation>The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.</xs:documentation>
@@ -2187,16 +2216,6 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="request-options">
-            <xs:annotation>
-              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequestOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
               <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
@@ -2219,12 +2238,37 @@
             </xs:complexType>
           </xs:element>
           <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="entity-tag-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="if-match-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
+            <xs:annotation>
+              <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="requestOptions">
-          <xs:annotation>
-            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
@@ -2269,6 +2313,51 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="forcePayload">
           <xs:annotation>
             <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="accept">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="entityTagOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="ifMatchOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
+          <xs:annotation>
+            <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -2511,13 +2600,6 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="response-options">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.ResponseOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" default="/*" name="pathPattern">
           <xs:annotation>
@@ -2580,19 +2662,10 @@
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="response"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="response-options"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ResponseParams">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapResponseCodeEnumType" use="optional" name="responseCode"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" default="#[payload]" name="responsePayload"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.ResponseOptions">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
@@ -2611,6 +2684,8 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapResponseCodeEnumType" use="optional" name="responseCode"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="#[payload]" name="responsePayload"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat"></xs:attribute>
         <xs:attribute type="mule:expressionLong" use="optional" name="maxAge"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="entityTagValue"></xs:attribute>
@@ -2872,22 +2947,12 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-bytes-value"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-bytes-value"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-bytes-params"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-bytes-params"></xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
-          <xs:annotation>
-            <xs:documentation>The mime type of the payload that this operation outputs.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="mule:expressionString" use="optional" name="outputEncoding">
-          <xs:annotation>
-            <xs:documentation>The encoding of the payload that this operation outputs.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
           <xs:annotation>
             <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>

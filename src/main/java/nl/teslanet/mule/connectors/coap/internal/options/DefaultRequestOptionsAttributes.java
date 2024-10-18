@@ -31,8 +31,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
@@ -76,7 +76,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
                     ifMatch= Collections.unmodifiableList( tmpIfMatch.get() );
                 }
             }
-            catch ( EntityTagException e )
+            catch ( OptionValueException e )
             {
                 throw new InternalInvalidOptionValueException( "IfMatch", MSG_CANNOT_CREATE, e );
             }
@@ -102,7 +102,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
                     etags= Collections.unmodifiableList( tmpEtags.get() );
                 }
             }
-            catch ( EntityTagException e )
+            catch ( OptionValueException e )
             {
                 throw new InternalInvalidOptionValueException( "Entity-Tag option is invalid", MSG_CANNOT_CREATE, e );
             }

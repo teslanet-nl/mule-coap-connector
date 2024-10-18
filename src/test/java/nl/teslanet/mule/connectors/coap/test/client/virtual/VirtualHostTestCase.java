@@ -41,7 +41,7 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -60,11 +60,10 @@ public class VirtualHostTestCase extends AbstractClientTestCase
     @Parameters( name= "request= {0}  flow= {1} " )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { Code.GET, "do_request", "6768", ResponseCode.CONTENT },
-                { Code.PUT, "do_request", "6768", ResponseCode.CHANGED },
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "do_request", "6768", ResponseCode.CONTENT }, { Code.PUT, "do_request", "6768",
+                ResponseCode.CHANGED },
                 { Code.POST, "do_request", "6768", ResponseCode.CHANGED },
                 { Code.DELETE, "do_request", "6768", ResponseCode.DELETED },
                 { Code.GET, "do_request_to_virtual_host", "6767", ResponseCode.CONTENT },
@@ -74,8 +73,7 @@ public class VirtualHostTestCase extends AbstractClientTestCase
                 { Code.GET, "do_request_to_virtual_host_override", "6768", ResponseCode.CONTENT },
                 { Code.PUT, "do_request_to_virtual_host_override", "6768", ResponseCode.CHANGED },
                 { Code.POST, "do_request_to_virtual_host_override", "6768", ResponseCode.CHANGED },
-                { Code.DELETE, "do_request_to_virtual_host_override", "6768", ResponseCode.DELETED } }
-        );
+                { Code.DELETE, "do_request_to_virtual_host_override", "6768", ResponseCode.DELETED } } );
     }
 
     /**
@@ -155,10 +153,15 @@ public class VirtualHostTestCase extends AbstractClientTestCase
     {
         MuleEventSpy spy= new MuleEventSpy( spyId );
         spy.clear();
-        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", host ).withVariable(
-            "port",
-            port
-        ).withVariable( "endpointHost", endpointHost ).withVariable( "endpointPort", endpointPort ).withVariable( "path", "/" + path ).run();
+        Event result= flowRunner( flowName )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.name() )
+            .withVariable( "host", host )
+            .withVariable( "port", port )
+            .withVariable( "endpointHost", endpointHost )
+            .withVariable( "endpointPort", endpointPort )
+            .withVariable( "path", "/" + path )
+            .run();
         Message response= result.getMessage();
         assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();

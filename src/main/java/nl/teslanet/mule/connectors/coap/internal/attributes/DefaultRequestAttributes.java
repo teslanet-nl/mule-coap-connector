@@ -28,8 +28,8 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
@@ -46,7 +46,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     private URI requestUriObject= null;
 
     /**
-     * @param requestType The request type to set.
+     * @param requestType the requestType to set
      */
     public void setRequestType( String requestType )
     {
@@ -86,7 +86,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     }
 
     /**
-     * @param remoteAddress The remoteHost to set.
+     * @param remoteAddress the remoteAddress to set
      */
     public void setRemoteAddress( String remoteAddress )
     {
@@ -96,9 +96,9 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     /**
      * @param requestOptionAttributes The options to set.
      */
-    public void setRequestOptionAttributes( RequestOptionsAttributes requestOptionAttributes )
+    public void setRequestOptions( RequestOptionsAttributes requestOptionAttributes )
     {
-        this.options= requestOptionAttributes;
+        this.requestOptions= requestOptionAttributes;
     }
 
     /**
@@ -137,7 +137,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
         String path= getOrCreateRequestUri().getPath();
         if ( path != null )
         {
-            return getOrCreateRequestUri().getPath();
+            return path;
         }
         else
         {

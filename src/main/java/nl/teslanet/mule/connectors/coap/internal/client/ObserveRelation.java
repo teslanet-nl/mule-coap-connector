@@ -27,13 +27,14 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 
 
@@ -64,11 +65,6 @@ public class ObserveRelation implements CoapHandler
     private final CoapRequestBuilder requestBuilder;
 
     /**
-     * The request uri.
-     */
-    private String requestUri= null;
-
-    /**
      * processor that will process notifications.
      */
     private final ResponseProcessingStrategy processor;
@@ -82,7 +78,12 @@ public class ObserveRelation implements CoapHandler
      * Constructor
      * @param sourceCallback
      */
-    ObserveRelation( String observerName, CoapClient coapClient, CoapRequestBuilder requestBuilder, ResponseProcessingStrategy processor )
+    ObserveRelation(
+        String observerName,
+        CoapClient coapClient,
+        CoapRequestBuilder requestBuilder,
+        ResponseProcessingStrategy processor
+    )
     {
         super();
         this.observerName= observerName;
@@ -101,7 +102,10 @@ public class ObserveRelation implements CoapHandler
             coapRelation= sendObserveRequest();
             LOGGER.info( "{} has started.", this );
         }
-        catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+        catch (
+            InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+            | InternalInvalidOptionValueException | InternalUnkownOptionException e
+        )
         {
             LOGGER.error( String.format( "%s failed to recreate relation with server.", this ), e );
         }
@@ -150,9 +154,16 @@ public class ObserveRelation implements CoapHandler
                 {
                     coapRelation= sendObserveRequest();
                 }
-                catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+                catch (
+                    InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+                    | InternalInvalidOptionValueException | InternalUnkownOptionException e
+                )
                 {
-                    LOGGER.error( String.format( "%s failed to observe, trying to restore relation with server...", this ), e );
+                    LOGGER
+                        .error(
+                            String.format( "%s failed to observe, trying to restore relation with server...", this ),
+                            e
+                        );
                 }
                 if ( coapRelation != null )
                 {
@@ -178,7 +189,7 @@ public class ObserveRelation implements CoapHandler
         }
         try
         {
-            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), null );
+            processor.process( requestBuilder, null );
         }
         catch ( InternalResponseException e )
         {
@@ -194,7 +205,7 @@ public class ObserveRelation implements CoapHandler
     {
         try
         {
-            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), response );
+            processor.process( requestBuilder, response );
         }
         catch ( InternalResponseException e )
         {
@@ -208,12 +219,16 @@ public class ObserveRelation implements CoapHandler
      * @throws InternalRequestException When the request cannot be constructed.
      * @throws InternalUriException When no valid uri could be constructed.
      * @throws InternalInvalidRequestCodeException When request code is invalid.
+     * @throws InternalUnkownOptionException  When an other option is not accepted.
+     * @throws InternalInvalidOptionValueException  When an option value is invalid.
      */
-    private CoapObserveRelation sendObserveRequest() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
+    private CoapObserveRelation sendObserveRequest() throws InternalInvalidRequestCodeException,
+        InternalUriException,
+        InternalRequestException,
+        InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
-        Request request= requestBuilder.build();
-        requestUri= request.getURI();
-        return coapClient.observe( request, this );
+        return coapClient.observe( requestBuilder.build(), this );
     }
 
     /**

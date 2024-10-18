@@ -66,11 +66,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-				<coap:response-options>
+				<coap:response>
 					<coap:other-options>
 						<coap:other-option alias="option-65013" value="#[ vars.value ]"/>
 					</coap:other-options>
-				</coap:response-options>
+				</coap:response>
 		</coap:listener>
 		
         <set-variable value="#[import * from dw::core::Binaries --- fromHex('12FF45')]" variableName="value"/>

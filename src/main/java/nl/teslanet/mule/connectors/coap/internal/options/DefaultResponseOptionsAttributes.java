@@ -29,8 +29,8 @@ import java.util.LinkedList;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.eclipse.californium.core.coap.OptionSet;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
@@ -60,7 +60,7 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
             {
                 etag= new DefaultEntityTag( optionSet.getETags().get( 0 ) );
             }
-            catch ( EntityTagException e )
+            catch ( OptionValueException e )
             {
                 throw new InternalInvalidOptionValueException( "ETags", errorMsg, e );
             }

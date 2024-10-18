@@ -41,10 +41,11 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
 
-@Ignore("Psk Store intented for servers only.")
+
+@Ignore( "Psk Store intented for servers only." )
 @RunnerDelegateTo( Parameterized.class )
 public class PskStoreClientTest extends AbstractTestCase
 {
@@ -55,19 +56,26 @@ public class PskStoreClientTest extends AbstractTestCase
     @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT", "GET called on: /secure/get_me" },
-                { "do_not_get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED", "" },
-                { "post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED", "POST called on: /secure/post_me" },
-                { "do_not_post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me", "METHOD_NOT_ALLOWED", ""  },
-                { "put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED", "PUT called on: /secure/put_me" },
-                { "do_not_put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED", ""  },
-                { "delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED", "DELETE called on: /secure/delete_me" },
-                { "do_not_delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me", "METHOD_NOT_ALLOWED", "" } }
-        );
+        return Arrays
+            .asList( new Object [] []
+            { { "get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/get_me", "CONTENT",
+                "GET called on: /secure/get_me" },
+                { "do_not_get_me", CoapRequestCode.GET, "coaps://127.0.0.1/secure/do_not_get_me", "METHOD_NOT_ALLOWED",
+                    "" },
+                { "post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/post_me", "CREATED",
+                    "POST called on: /secure/post_me" },
+                { "do_not_post_me", CoapRequestCode.POST, "coaps://127.0.0.1/secure/do_not_post_me",
+                    "METHOD_NOT_ALLOWED", "" },
+                { "put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/put_me", "CHANGED",
+                    "PUT called on: /secure/put_me" },
+                { "do_not_put_me", CoapRequestCode.PUT, "coaps://127.0.0.1/secure/do_not_put_me", "METHOD_NOT_ALLOWED",
+                    "" },
+                { "delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/delete_me", "DELETED",
+                    "DELETE called on: /secure/delete_me" },
+                { "do_not_delete_me", CoapRequestCode.DELETE, "coaps://127.0.0.1/secure/do_not_delete_me",
+                    "METHOD_NOT_ALLOWED", "" } } );
     }
+
     /**
      * Server to test against
      */
@@ -98,7 +106,7 @@ public class PskStoreClientTest extends AbstractTestCase
             server= null;
         }
     }
-    
+
     /**
      * The mule flow to call.
      */

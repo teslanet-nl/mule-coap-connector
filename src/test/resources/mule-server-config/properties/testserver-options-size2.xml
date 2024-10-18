@@ -56,7 +56,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true"
 			delete="true" pathPattern="/service/*" config-ref="config">
-			<coap:response-options
+			<coap:response
 				responseSize="#[vars.value]" />
 		</coap:listener>
 		<set-variable value="#[attributes]" doc:name="Set attr"
@@ -73,7 +73,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 			doc:id="53784292-e82f-49df-8bab-5aa0846717d2" instance="#[vars.spy]"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"
 			method="event(Object)" target="value">
-			<java:args><![CDATA[#[{ arg0: vars.attr.options.provideResponseSize default Null }]]]></java:args>
+			<java:args><![CDATA[#[{ arg0: vars.attr.requestOptions.provideResponseSize default Null }]]]></java:args>
 		</java:invoke>
 		<set-payload value="nothing_important" />
 	</flow>

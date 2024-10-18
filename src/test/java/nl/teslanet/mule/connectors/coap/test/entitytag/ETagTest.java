@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
@@ -47,7 +47,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 public class ETagTest
 {
     @Test
-    public void testConstructorNullAndMinusValue() throws EntityTagException
+    public void testConstructorNullAndMinusValue() throws OptionValueException
     {
         String etagValue1= null;
         byte[] etagValue2= null;
@@ -57,53 +57,53 @@ public class ETagTest
         long etagValue6= 0L;
         int etagValue7= 0;
 
-        EntityTagException e;
-        e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e;
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given string is null or empty." ) );
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given string is null or empty." ) );
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag2= new DefaultEntityTag( etagValue2 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag3= new DefaultEntityTag( etagValue3 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given string is null or empty." ) );
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag4= new DefaultEntityTag( etagValue4 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag5= new DefaultEntityTag( etagValue5 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given string is null or empty." ) );
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag6= new DefaultEntityTag( etagValue6 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag8= new DefaultEntityTag( etagValue7 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag10= new DefaultEntityTag( etagValue1, 16 );
         } );
         assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag11= new DefaultEntityTag( etagValue5, 16 );
         } );
@@ -111,7 +111,7 @@ public class ETagTest
     }
 
     @Test
-    public void testConstructor() throws EntityTagException
+    public void testConstructor() throws OptionValueException
     {
         String etagValue1= "h\u20ACy";
         String etagValue2= "68e282ac79";
@@ -134,14 +134,14 @@ public class ETagTest
     }
 
     @Test
-    public void testConstructorETagLargeByteArray() throws EntityTagException
+    public void testConstructorETagLargeByteArray() throws OptionValueException
     {
         byte[] etagValue1= new byte [9];
         for ( int i= 0; i < 9; i++ )
         {
             etagValue1[i]= (byte) i;
         }
-        EntityTagException e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1 );
         } );
@@ -149,19 +149,19 @@ public class ETagTest
     }
 
     @Test
-    public void testConstructorInvalidString() throws EntityTagException
+    public void testConstructorInvalidString() throws OptionValueException
     {
         String etagValue1= "10aaZZ";
-        EntityTagException e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1, 16 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct bytes value" ) );
         assertTrue( "exception has wrong message", e.getMessage().contains( etagValue1 ) );
     }
 
     @Test
-    public void testConstructorUnevenString1() throws EntityTagException
+    public void testConstructorUnevenString1() throws OptionValueException
     {
         String etagValue1= "1";
         DefaultEntityTag etag1= new DefaultEntityTag( etagValue1, 16 );
@@ -177,31 +177,30 @@ public class ETagTest
     }
 
     @Test
-    public void testConstructorETagLargeString() throws EntityTagException
+    public void testConstructorETagLargeString() throws OptionValueException
     {
         String etagValue1= "112233445566778899";
-        EntityTagException e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1, 16 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct bytes value" ) );
         assertTrue( "exception has wrong message", e.getMessage().contains( etagValue1 ) );
     }
 
     @Test
-    public void testConstructorETagLargeString2() throws EntityTagException
+    public void testConstructorETagLargeString2() throws OptionValueException
     {
         String etagValue1= "this is too large to fit into an etag";
-        EntityTagException e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= new DefaultEntityTag( etagValue1 );
         } );
-        assertTrue( "exception has wrong message", e.getMessage().contains( "Cannot construct Entity-tag value" ) );
-        assertTrue( "exception has wrong message", e.getMessage().contains( etagValue1 ) );
+        assertTrue( "exception has wrong message", e.getMessage().contains( "Given value result in array length" ) );
     }
 
     @Test
-    public void testGetBytes() throws EntityTagException
+    public void testGetBytes() throws OptionValueException
     {
         byte[] etagValue00= { 0x00 };
         byte[] etagValue1= { (byte) 0xFF };
@@ -231,44 +230,71 @@ public class ETagTest
     }
 
     @Test
-    public void testGetLong() throws EntityTagException
+    public void testGetLong() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01 };
         byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
-        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
+        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+            (byte) 0x88 };
         long hexValue1= 1;
         long hexValue2= 0xafb990L;
         long hexValue3= 0x1122334455667788L;
 
-        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new DefaultEntityTag( etagValue1 ).getValueAsNumber() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new DefaultEntityTag( etagValue2 ).getValueAsNumber() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new DefaultEntityTag( etagValue3 ).getValueAsNumber() );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue1,
+            new DefaultEntityTag( etagValue1 ).getValueAsNumber()
+        );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue2,
+            new DefaultEntityTag( etagValue2 ).getValueAsNumber()
+        );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue3,
+            new DefaultEntityTag( etagValue3 ).getValueAsNumber()
+        );
     }
 
     @Test
-    public void testGetHexString() throws EntityTagException
+    public void testGetHexString() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01 };
         byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
-        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
+        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+            (byte) 0x88 };
         String hexValue1= "01";
         String hexValue2= "afb990";
         String hexValue3= "1122334455667788";
 
-        assertEquals( "ETag.toHexString gives wrong value", hexValue1, new DefaultEntityTag( etagValue1 ).getValueAsHex() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue2, new DefaultEntityTag( etagValue2 ).getValueAsHex() );
-        assertEquals( "ETag.toHexString gives wrong value", hexValue3, new DefaultEntityTag( etagValue3 ).getValueAsHex() );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue1,
+            new DefaultEntityTag( etagValue1 ).getValueAsHex()
+        );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue2,
+            new DefaultEntityTag( etagValue2 ).getValueAsHex()
+        );
+        assertEquals(
+            "ETag.toHexString gives wrong value",
+            hexValue3,
+            new DefaultEntityTag( etagValue3 ).getValueAsHex()
+        );
     }
 
     @Test
-    public void testToString() throws EntityTagException
+    public void testToString() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01 };
         byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
-        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
-        String hexValue1= "Entity-tag{ 01 }";
-        String hexValue2= "Entity-tag{ afb990 }";
-        String hexValue3= "Entity-tag{ 1122334455667788 }";
+        byte[] etagValue3= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+            (byte) 0x88 };
+        String hexValue1= "BytesValue{ 01 }";
+        String hexValue2= "BytesValue{ afb990 }";
+        String hexValue3= "BytesValue{ 1122334455667788 }";
 
         assertEquals( "ETag.toHexString gives wrong value", hexValue1, new DefaultEntityTag( etagValue1 ).toString() );
         assertEquals( "ETag.toHexString gives wrong value", hexValue2, new DefaultEntityTag( etagValue2 ).toString() );
@@ -276,7 +302,7 @@ public class ETagTest
     }
 
     @Test
-    public void testValueOf() throws EntityTagException
+    public void testValueOf() throws OptionValueException
     {
         String etagValue1= "h\u20ACy";
         String etagValue2= "68e282ac79";
@@ -299,7 +325,7 @@ public class ETagTest
     }
 
     @Test
-    public void testValueOfNull() throws EntityTagException
+    public void testValueOfNull() throws OptionValueException
     {
         String etagValue1= null;
         byte[] etagValue2= null;
@@ -312,53 +338,54 @@ public class ETagTest
         int etagValue9= 0;
 
         @SuppressWarnings( "unused" )
-        EntityTagException e;
-        e= assertThrows( EntityTagException.class, () -> {
+        OptionValueException e;
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag1= DefaultEntityTag.valueOf( etagValue1 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag2= DefaultEntityTag.valueOf( etagValue2 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag3= DefaultEntityTag.valueOf( etagValue3 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag4= DefaultEntityTag.valueOf( etagValue4 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag5= DefaultEntityTag.valueOf( etagValue5 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag6= DefaultEntityTag.valueOf( etagValue6 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag7= DefaultEntityTag.valueOf( etagValue7 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag8= DefaultEntityTag.valueOf( etagValue8 );
         } );
-        e= assertThrows( EntityTagException.class, () -> {
+        e= assertThrows( OptionValueException.class, () -> {
             @SuppressWarnings( "unused" )
             DefaultEntityTag etag9= DefaultEntityTag.valueOf( etagValue9 );
         } );
     }
 
     @Test
-    public void testGetList() throws EntityTagException
+    public void testGetList() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01, };
         byte[] etagValue2= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
         byte[] etagValue3= { (byte) 0xAF, (byte) 0xB9, (byte) 0x90 };
         byte[] etagValue4= { (byte) 0xAF, (byte) 0xB9, (byte) 0x91 };
-        byte[] etagValue5= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88 };
+        byte[] etagValue5= { (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+            (byte) 0x88 };
 
         DefaultEntityTag etag1= new DefaultEntityTag( etagValue1 );
         DefaultEntityTag etag2= new DefaultEntityTag( etagValue2 );
@@ -393,21 +420,45 @@ public class ETagTest
         assertTrue( "ETag.getList doesn't contain etag", list.contains( etag4 ) );
         assertFalse( "ETag.getList does contain etag", list.contains( etag5 ) );
 
-        assertTrue( "ETag.getList doesn't contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue1 ), list ) );
-        assertTrue( "ETag.getList doesn't contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue2 ), list ) );
-        assertTrue( "ETag.getList doesn't contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue3 ), list ) );
-        assertTrue( "ETag.getList doesn't contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), list ) );
+        assertTrue(
+            "ETag.getList doesn't contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue1 ), list )
+        );
+        assertTrue(
+            "ETag.getList doesn't contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue2 ), list )
+        );
+        assertTrue(
+            "ETag.getList doesn't contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue3 ), list )
+        );
+        assertTrue(
+            "ETag.getList doesn't contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), list )
+        );
         assertFalse( "ETag.getList does contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue5 ), list ) );
 
-        assertTrue( "ETag.getList doesn't contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), listofone ) );
-        assertFalse( "ETag.getList does contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue5 ), listofone ) );
+        assertTrue(
+            "ETag.getList doesn't contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), listofone )
+        );
+        assertFalse(
+            "ETag.getList does contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue5 ), listofone )
+        );
 
-        assertFalse( "ETag.getList does contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), emptylist ) );
-        assertFalse( "ETag.getList does contain etag", MessageUtils.isIn( new DefaultEntityTag( etagValue5 ), emptylist ) );
+        assertFalse(
+            "ETag.getList does contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue4 ), emptylist )
+        );
+        assertFalse(
+            "ETag.getList does contain etag",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue5 ), emptylist )
+        );
     }
 
     @Test
-    public void testIsIn() throws EntityTagException
+    public void testIsIn() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01 };
         String etagValue2= "afb990";
@@ -449,15 +500,27 @@ public class ETagTest
         assertFalse( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue5, 16 ), list ) );
         assertFalse( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue6 ), list ) );
 
-        assertTrue( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue4, 16 ), listOfOne ) );
-        assertFalse( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue5, 16 ), listOfOne ) );
+        assertTrue(
+            "ETag.isIn gives wrong value",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue4, 16 ), listOfOne )
+        );
+        assertFalse(
+            "ETag.isIn gives wrong value",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue5, 16 ), listOfOne )
+        );
 
-        assertFalse( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue4, 16 ), emptyList ) );
-        assertFalse( "ETag.isIn gives wrong value", MessageUtils.isIn( new DefaultEntityTag( etagValue5, 16 ), emptyList ) );
+        assertFalse(
+            "ETag.isIn gives wrong value",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue4, 16 ), emptyList )
+        );
+        assertFalse(
+            "ETag.isIn gives wrong value",
+            MessageUtils.isIn( new DefaultEntityTag( etagValue5, 16 ), emptyList )
+        );
     }
 
     @Test
-    public void testCompareTo() throws EntityTagException
+    public void testCompareTo() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x00 };
         String etagValue2= "afb990";
@@ -491,7 +554,7 @@ public class ETagTest
     }
 
     @Test
-    public void testCompareToInteger() throws EntityTagException
+    public void testCompareToInteger() throws OptionValueException
     {
         int etagValue1= 255;
         String etagValue2= "FF";
@@ -513,7 +576,7 @@ public class ETagTest
     }
 
     @Test
-    public void testCompareToLong() throws EntityTagException
+    public void testCompareToLong() throws OptionValueException
     {
         long etagValue1= 255L;
         String etagValue2= "FF";
@@ -535,7 +598,7 @@ public class ETagTest
     }
 
     @Test
-    public void testHashCode() throws EntityTagException
+    public void testHashCode() throws OptionValueException
     {
         byte[] etagValue1= { (byte) 0x01 };
         String etagValue2= "afb990";
@@ -551,30 +614,102 @@ public class ETagTest
         DefaultEntityTag etag5= new DefaultEntityTag( etagValue5, 16 );
         DefaultEntityTag etag6= new DefaultEntityTag( etagValue6 );
 
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag1.hashCode(), new DefaultEntityTag( etagValue1 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag2.hashCode(), new DefaultEntityTag( etagValue2, 16 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag3.hashCode(), new DefaultEntityTag( etagValue3 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag4.hashCode(), new DefaultEntityTag( etagValue4, 16 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag5.hashCode(), new DefaultEntityTag( etagValue5, 16 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag6.hashCode(), new DefaultEntityTag( etagValue6 ).hashCode() );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag1.hashCode(),
+            new DefaultEntityTag( etagValue1 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag2.hashCode(),
+            new DefaultEntityTag( etagValue2, 16 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag3.hashCode(),
+            new DefaultEntityTag( etagValue3 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag4.hashCode(),
+            new DefaultEntityTag( etagValue4, 16 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag5.hashCode(),
+            new DefaultEntityTag( etagValue5, 16 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag6.hashCode(),
+            new DefaultEntityTag( etagValue6 ).hashCode()
+        );
 
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag1.hashCode(), new DefaultEntityTag( etagValue5, 16 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag2.hashCode(), new DefaultEntityTag( etagValue1 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag3.hashCode(), new DefaultEntityTag( etagValue2, 16 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag4.hashCode(), new DefaultEntityTag( etagValue3 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag5.hashCode(), new DefaultEntityTag( etagValue4, 16 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag6.hashCode(), new DefaultEntityTag( etagValue3 ).hashCode() );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag1.hashCode(),
+            new DefaultEntityTag( etagValue5, 16 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag2.hashCode(),
+            new DefaultEntityTag( etagValue1 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag3.hashCode(),
+            new DefaultEntityTag( etagValue2, 16 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag4.hashCode(),
+            new DefaultEntityTag( etagValue3 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag5.hashCode(),
+            new DefaultEntityTag( etagValue4, 16 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag6.hashCode(),
+            new DefaultEntityTag( etagValue3 ).hashCode()
+        );
 
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag1.hashCode(), new DefaultEntityTag( etagValue2, 16 ).hashCode() );
-        assertEquals( "ETag.hashCode failed to compare to equal etag", etag2.hashCode(), new DefaultEntityTag( etagValue3 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag3.hashCode(), new DefaultEntityTag( etagValue4, 16 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag4.hashCode(), new DefaultEntityTag( etagValue5, 16 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag5.hashCode(), new DefaultEntityTag( etagValue1 ).hashCode() );
-        assertNotEquals( "ETag.hashCode failed to compare to unequal etag", etag6.hashCode(), new DefaultEntityTag( etagValue1 ).hashCode() );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag1.hashCode(),
+            new DefaultEntityTag( etagValue2, 16 ).hashCode()
+        );
+        assertEquals(
+            "ETag.hashCode failed to compare to equal etag",
+            etag2.hashCode(),
+            new DefaultEntityTag( etagValue3 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag3.hashCode(),
+            new DefaultEntityTag( etagValue4, 16 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag4.hashCode(),
+            new DefaultEntityTag( etagValue5, 16 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag5.hashCode(),
+            new DefaultEntityTag( etagValue1 ).hashCode()
+        );
+        assertNotEquals(
+            "ETag.hashCode failed to compare to unequal etag",
+            etag6.hashCode(),
+            new DefaultEntityTag( etagValue1 ).hashCode()
+        );
     }
 
     @Test
-    public void testEquals() throws EntityTagException
+    public void testEquals() throws OptionValueException
     {
         String etagValue1= "ffb990";
         byte[] etagValue2= { (byte) 0xFF, (byte) 0xB9, (byte) 0x90 };
@@ -613,7 +748,7 @@ public class ETagTest
     }
 
     @Test
-    public void testEqualsToWrongClass() throws EntityTagException
+    public void testEqualsToWrongClass() throws OptionValueException
     {
         String etagValue1= "1122334455667788";
         DefaultEntityTag etag1= new DefaultEntityTag( etagValue1, 16 );

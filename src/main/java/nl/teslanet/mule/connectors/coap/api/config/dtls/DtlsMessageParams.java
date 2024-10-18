@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -80,7 +82,9 @@ public class DtlsMessageParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "8192" )
-    @Summary( value= "Maximum length [BYTES] of reassembled fragmented handshake message.\nMust be large enough for used certificates." )
+    @Summary(
+                    value= "Maximum length [BYTES] of reassembled fragmented handshake message.\nMust be large enough for used certificates."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer maxFragmentedHandshakeMsgLength= 8192;
@@ -110,7 +114,9 @@ public class DtlsMessageParams implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Summary( value= "MTU (Maximum Transmission Unit) [BYTES].\nMust be used, if the MTU of the local network doesn't apply, e.g. if ip-tunnels are used." )
+    @Summary(
+                    value= "MTU (Maximum Transmission Unit) [BYTES].\nMust be used, if the MTU of the local network doesn't apply, e.g. if ip-tunnels are used."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer mtu= null;
@@ -132,5 +138,52 @@ public class DtlsMessageParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        DtlsMessageParams rhs= (DtlsMessageParams) obj;
+        return new EqualsBuilder()
+            .append( recordSizeLimit, rhs.recordSizeLimit )
+            .append( maxFragmentLength, rhs.maxFragmentLength )
+            .append( maxFragmentedHandshakeMsgLength, rhs.maxFragmentedHandshakeMsgLength )
+            .append( multiRecords, rhs.multiRecords )
+            .append( multiHandshakeMsgRecords, rhs.multiHandshakeMsgRecords )
+            .append( mtu, rhs.mtu )
+            .append( mtuLimit, rhs.mtuLimit )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+            .append( recordSizeLimit )
+            .append( maxFragmentLength )
+            .append( maxFragmentedHandshakeMsgLength )
+            .append( multiRecords )
+            .append( multiHandshakeMsgRecords )
+            .append( mtu )
+            .append( mtuLimit )
+            .toHashCode();
     }
 }

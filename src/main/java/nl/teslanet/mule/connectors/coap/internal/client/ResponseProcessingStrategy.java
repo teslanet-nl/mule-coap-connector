@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,8 +26,6 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 import org.eclipse.californium.core.CoapResponse;
 
-import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
-import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 
 
@@ -38,11 +36,9 @@ interface ResponseProcessingStrategy
 {
     /**
      * Process a CoAP response.
-     * @param requestUri The uri of the originating request.
-     * @param requestCode The CoAP code of the originating request.
-     * @param requestType The CoAP type of the originating request.
+     * @param requestBuilder The originating request.
      * @param response The response received, or null when no response was be received.
      * @throws InternalResponseException When the response could not be interpreted correctly. 
      */
-    void process( String requestUri, CoapMessageType requestType, CoapRequestCode requestCode, CoapResponse response ) throws InternalResponseException;
+    void process( CoapRequestBuilder requestBuilder, CoapResponse response ) throws InternalResponseException;
 }

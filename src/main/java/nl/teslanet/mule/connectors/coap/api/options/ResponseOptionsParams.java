@@ -32,6 +32,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
@@ -41,7 +42,7 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
  * The option parameters of a CoAP response.
  *
  */
-public class ResponseOptions
+public class ResponseOptionsParams
 {
     /**
      * RFC 7252: The Content-Format Option indicates the representation format of
@@ -57,6 +58,7 @@ public class ResponseOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The Content-Format Option indicates the representation format of the message payload." )
+    @Placement( tab= "Options", order= 50 )
     private Integer contentFormat= null;
 
     /**
@@ -77,6 +79,7 @@ public class ResponseOptions
     @Summary(
         "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh."
     )
+    @Placement( tab= "Options", order= 51 )
     private Long maxAge= null;
 
     /**
@@ -108,6 +111,7 @@ public class ResponseOptions
     @Summary(
         "The entity-tag of the response content is a resource-local identifier for differentiating between representations of the same resource."
     )
+    @Placement( tab= "Options", order= 52 )
     private TypedValue< Object > entityTagValue= null;
 
     /**
@@ -129,6 +133,7 @@ public class ResponseOptions
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The Location-Path specifies the absolute path to a resource that is created." )
     @Example( "/some/location/on/server" )
+    @Placement( tab= "Options", order= 53 )
     private String locationPath= null;
 
     /**
@@ -150,6 +155,7 @@ public class ResponseOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The Location-Query specifies the arguments parameterizing the resource that is created." )
+    @Placement( tab= "Options", order= 54 )
     private List< QueryParam > locationQuery= null;
 
     /**
@@ -164,6 +170,7 @@ public class ResponseOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "Indication of the response payload size in [Bytes]." )
+    @Placement( tab= "Options", order= 55 )
     private Integer responseSize= null;
 
     /**
@@ -177,6 +184,7 @@ public class ResponseOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "To indicate (in a 4.13 response) the maximum payload size that would have been acceptable, in [Bytes]." )
+    @Placement( tab= "Options", order= 56 )
     private Integer acceptableRequestSize= null;
 
     /**
@@ -204,6 +212,7 @@ public class ResponseOptions
     @NullSafe
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The other CoAP options to send with the response." )
+    @Placement( tab= "Options", order= 59 )
     private List< OtherOption > otherOptions;
 
     /**

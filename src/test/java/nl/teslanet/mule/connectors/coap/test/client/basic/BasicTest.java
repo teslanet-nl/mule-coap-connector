@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,8 +43,8 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -58,24 +58,34 @@ public class BasicTest extends AbstractClientTestCase
     @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "get_me", "GET", "coap://127.0.0.1/basic/get_me?test=sync", "CONTENT", "GET called on: coap://localhost/basic/get_me?test=sync" },
+        return Arrays
+            .asList( new Object [] []
+            { { "get_me", "GET", "coap://127.0.0.1/basic/get_me?test=sync", "CONTENT",
+                "GET called on: coap://localhost/basic/get_me?test=sync" },
                 { "do_not_get_me", "GET", "coap://127.0.0.1/basic/do_not_get_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "post_me", "POST", "coap://127.0.0.1/basic/post_me?test=sync", "CREATED", "POST called on: coap://localhost/basic/post_me?test=sync" },
-                { "do_not_post_me", "POST", "coap://127.0.0.1/basic/do_not_post_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "put_me", "PUT", "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED", "PUT called on: coap://localhost/basic/put_me?test=sync" },
+                { "post_me", "POST", "coap://127.0.0.1/basic/post_me?test=sync", "CREATED",
+                    "POST called on: coap://localhost/basic/post_me?test=sync" },
+                { "do_not_post_me", "POST", "coap://127.0.0.1/basic/do_not_post_me?test=sync", "METHOD_NOT_ALLOWED",
+                    "" },
+                { "put_me", "PUT", "coap://127.0.0.1/basic/put_me?test=sync", "CHANGED",
+                    "PUT called on: coap://localhost/basic/put_me?test=sync" },
                 { "do_not_put_me", "PUT", "coap://127.0.0.1/basic/do_not_put_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me?test=sync", "DELETED", "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
-                { "do_not_delete_me", "DELETE", "coap://127.0.0.1/basic/do_not_delete_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "fetch_me", "FETCH", "coap://127.0.0.1/basic/fetch_me?test=sync", "CONTENT", "FETCH called on: coap://localhost/basic/fetch_me?test=sync" },
-                { "do_not_fetch_me", "FETCH", "coap://127.0.0.1/basic/do_not_fetch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "patch_me", "PATCH", "coap://127.0.0.1/basic/patch_me?test=sync", "CREATED", "PATCH called on: coap://localhost/basic/patch_me?test=sync" },
-                { "do_not_patch_me", "PATCH", "coap://127.0.0.1/basic/do_not_patch_me?test=sync", "METHOD_NOT_ALLOWED", "" },
-                { "ipatch_me", "IPATCH", "coap://127.0.0.1/basic/ipatch_me?test=sync", "CHANGED", "IPATCH called on: coap://localhost/basic/ipatch_me?test=sync" },
-                { "do_not_ipatch_me", "IPATCH", "coap://127.0.0.1/basic/do_not_ipatch_me?test=sync", "METHOD_NOT_ALLOWED", "" } }
-        );
+                { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me?test=sync", "DELETED",
+                    "DELETE called on: coap://localhost/basic/delete_me?test=sync" },
+                { "do_not_delete_me", "DELETE", "coap://127.0.0.1/basic/do_not_delete_me?test=sync",
+                    "METHOD_NOT_ALLOWED", "" },
+                { "fetch_me", "FETCH", "coap://127.0.0.1/basic/fetch_me?test=sync", "CONTENT",
+                    "FETCH called on: coap://localhost/basic/fetch_me?test=sync" },
+                { "do_not_fetch_me", "FETCH", "coap://127.0.0.1/basic/do_not_fetch_me?test=sync", "METHOD_NOT_ALLOWED",
+                    "" },
+                { "patch_me", "PATCH", "coap://127.0.0.1/basic/patch_me?test=sync", "CREATED",
+                    "PATCH called on: coap://localhost/basic/patch_me?test=sync" },
+                { "do_not_patch_me", "PATCH", "coap://127.0.0.1/basic/do_not_patch_me?test=sync", "METHOD_NOT_ALLOWED",
+                    "" },
+                { "ipatch_me", "IPATCH", "coap://127.0.0.1/basic/ipatch_me?test=sync", "CHANGED",
+                    "IPATCH called on: coap://localhost/basic/ipatch_me?test=sync" },
+                { "do_not_ipatch_me", "IPATCH", "coap://127.0.0.1/basic/do_not_ipatch_me?test=sync",
+                    "METHOD_NOT_ALLOWED", "" } } );
     }
 
     /**
@@ -148,7 +158,8 @@ public class BasicTest extends AbstractClientTestCase
         assertEquals(
             "wrong response payload",
             expectedPayload,
-            responsePayload == null ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
+            responsePayload == null
+                ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
         );
     }
 
@@ -174,7 +185,8 @@ public class BasicTest extends AbstractClientTestCase
         assertEquals(
             "wrong response payload",
             expectedPayload,
-            responsePayload == null ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
+            responsePayload == null
+                ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
         );
     }
 }

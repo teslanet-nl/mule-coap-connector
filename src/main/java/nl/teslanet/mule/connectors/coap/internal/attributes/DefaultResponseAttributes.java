@@ -28,10 +28,11 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 
 
 /**
@@ -54,7 +55,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param requestCode the requestCode to set
+     * @param requestCode The requestCode to set.
      */
     public void setRequestCode( String requestCode )
     {
@@ -62,8 +63,8 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param localAddress the localAddress to set
-     */
+      * @param localAddress The localAddress to set.
+    */
     public void setLocalAddress( String localAddress )
     {
         this.localAddress= localAddress;
@@ -75,6 +76,14 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     public void setRequestUri( String requestUri )
     {
         this.requestUri= requestUri;
+    }
+
+    /**
+     * @param uri The request uri to set.
+     */
+    public synchronized void setRequestUriObject( URI uri )
+    {
+        this.requestUriObject= uri;
     }
 
     /**
@@ -126,11 +135,35 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
+     * @param requestOptionAttributes The options to set.
+     */
+    public void setRequestOptions( RequestOptionsAttributes requestOptionAttributes )
+    {
+        this.requestOptions= requestOptionAttributes;
+    }
+
+    /**
     * @param responseOptions the options to set
     */
-    public void setOptions( DefaultResponseOptionsAttributes responseOptions )
+    public void setResponseOptions( ResponseOptionsAttributes responseOptions )
     {
-        this.options= responseOptions;
+        this.responseOptions= responseOptions;
+    }
+
+    /**
+     * @return the request uri
+     */
+    @Override
+    public String getRequestUri()
+    {
+        if ( requestUri != null )
+        {
+            return requestUri;
+        }
+        else
+        {
+            return getOrCreateRequestUri().toASCIIString();
+        }
     }
 
     /**
@@ -169,7 +202,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
         String path= getOrCreateRequestUri().getPath();
         if ( path != null )
         {
-            return getOrCreateRequestUri().getPath();
+            return path;
         }
         else
         {

@@ -26,7 +26,7 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 import org.eclipse.californium.core.coap.OptionSet;
@@ -35,7 +35,7 @@ import org.eclipse.californium.core.coap.OptionSet;
 public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options ) throws EntityTagException
+    protected void addOption( OptionSet options ) throws OptionValueException
     {
         options.addETag( new DefaultEntityTag( "0011FF" ).getValue() );
     }
@@ -47,7 +47,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws EntityTagException
+    protected Object getExpectedPropertyValue() throws OptionValueException
     {
         LinkedList< DefaultEntityTag > list= new LinkedList< DefaultEntityTag >();
         list.add( new DefaultEntityTag( "0011FF" ) );

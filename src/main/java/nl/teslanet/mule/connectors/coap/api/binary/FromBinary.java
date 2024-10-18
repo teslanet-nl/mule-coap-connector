@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,7 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
  * Bytes constructed from a binary value.
  *
  */
-public class FromBinary implements BytesValue
+public class FromBinary implements BytesParams
 {
     /**
      * The binary value.

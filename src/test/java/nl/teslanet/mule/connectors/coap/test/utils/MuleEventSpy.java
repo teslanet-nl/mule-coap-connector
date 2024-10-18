@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.message.Message;
@@ -38,7 +38,6 @@ import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.api.util.IOUtils;
-
 import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
 
 
@@ -48,7 +47,7 @@ import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
  */
 public class MuleEventSpy
 {
-    private static ConcurrentSkipListMap< String, SpyData > spyData= new ConcurrentSkipListMap< String, SpyData >();
+    private static ConcurrentHashMap< String, SpyData > spyData= new ConcurrentHashMap< String, SpyData >();
 
     /**
      * Id identifies the spy. Multiple instances can share the same id, 
@@ -85,7 +84,7 @@ public class MuleEventSpy
         //make sure the spyData is there
         if ( !spyData.containsKey( spyId ) )
         {
-            spyData.put( spyId, new SpyData() );
+            spyData.putIfAbsent( spyId, new SpyData() );
         }
         if ( testKey != null )
         {

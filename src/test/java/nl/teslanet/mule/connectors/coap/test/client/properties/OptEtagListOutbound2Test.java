@@ -28,8 +28,8 @@ import java.util.LinkedList;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -46,9 +46,9 @@ public class OptEtagListOutbound2Test extends AbstractOutboundPropertiesTestCase
 
     /**
      * constructor
-     * @throws EntityTagException 
+     * @throws OptionValueException 
      */
-    public OptEtagListOutbound2Test() throws EntityTagException
+    public OptEtagListOutbound2Test() throws OptionValueException
     {
         super();
         value= new DefaultEntityTag( 0xAA001122L );

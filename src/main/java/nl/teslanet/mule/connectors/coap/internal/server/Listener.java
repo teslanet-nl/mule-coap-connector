@@ -32,11 +32,9 @@ import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.transformation.TransformationService;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.execution.OnSuccess;
 import org.mule.runtime.extension.api.annotation.execution.OnTerminate;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -55,11 +53,10 @@ import org.mule.runtime.extension.api.runtime.source.SourceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseParams;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptions;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalExchangeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
@@ -197,7 +194,6 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     /**
      * Called when processing incoming request was successful.
      * @param response
-     * @param responseOptions
      * @param callbackContext
      * @throws InternalInvalidByteArrayValueException
      * @throws InternalInvalidResponseCodeException
@@ -213,13 +209,6 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         @Alias( "response" )
         @Placement( tab= "Response", order= 1 )
         ResponseParams response,
-        @Optional
-        @NullSafe
-        @Alias( "response-options" )
-        @Expression( ExpressionSupport.SUPPORTED )
-        @Summary( "The CoAP options to send with the response." )
-        @Placement( tab= "Options", order= 1 )
-        ResponseOptions responseOptions,
         SourceCallbackContext callbackContext
     ) throws InternalInvalidByteArrayValueException,
         InternalInvalidResponseCodeException,
@@ -239,11 +228,14 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         coapResponse
             .getOptions()
             .setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
-        if ( responseOptions != null )
-        {
-            MessageUtils.copyOptions( responseOptions, coapResponse.getOptions(), transformationService );
-            MessageUtils.copyOtherOptions( responseOptions, coapResponse.getOptions(), transformationService );
-        }
+        MessageUtils
+            .copyOptions( response.getResponseOptionsParams(), coapResponse.getOptions(), transformationService );
+        MessageUtils
+            .copyOptions(
+                response.getResponseOptionsParams().getOtherOptions(),
+                coapResponse.getOptions(),
+                transformationService
+            );
         //TODO add streaming & blockwise cooperation
         try
         {
@@ -302,80 +294,6 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         server.removeListener( operationalListener );
         operationalListener= null;
         LOGGER.info( "{} stopped.", this );
-    }
-
-    /**
-     * Gets the server
-     * @return the config
-     */
-    public Server getServer()
-    {
-        return server;
-    }
-
-    /**
-     * Gets the uriPattern describing the resources the listener listens on.
-     * @return the uriPattern
-     */
-    public String getUriPattern()
-    {
-        return pathPattern;
-    }
-
-    /**
-     * @return true if the listener listens on Delete requests, false otherwise.
-     */
-    public boolean isDelete()
-    {
-        return delete;
-    }
-
-    /**
-     * @return true if the listener listens on Get requests, false otherwise.
-     */
-    public boolean isGet()
-    {
-        return get;
-    }
-
-    /**
-     * @return true if the listener listens on Post requests, false otherwise.
-     */
-    public boolean isPost()
-    {
-        return post;
-    }
-
-    /**
-     * @return true if the listener listens on Put requests, false otherwise.
-     */
-    public boolean isPut()
-    {
-        return put;
-    }
-
-    /**
-     * @return true if the listener listens on Fetch requests, false otherwise.
-     */
-    public boolean isFetch()
-    {
-        return fetch;
-    }
-
-    /**
-     * @return true if the listener listens on Patch requests, false otherwise.
-     */
-    public boolean isPatch()
-    {
-        return patch;
-    }
-
-    /**
-     * @return true if the listener listens on iPatch requests, false otherwise.
-     */
-    public boolean isIpatch()
-    {
-        return ipatch;
     }
 
     /**

@@ -29,7 +29,7 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
-import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesParams;
 
 
 /**
@@ -45,12 +45,12 @@ public class OptionValueParams
     @Placement( order= 1 )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    private BytesValue bytes= null;
+    private BytesParams bytes= null;
 
     /**
      * @return the bytes
      */
-    public BytesValue getBytes()
+    public BytesParams getBytes()
     {
         return bytes;
     }
@@ -58,7 +58,7 @@ public class OptionValueParams
     /**
      * @param bytes the bytes to set
      */
-    public void setBytes( BytesValue bytes )
+    public void setBytes( BytesParams bytes )
     {
         this.bytes= bytes;
     }

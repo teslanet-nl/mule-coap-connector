@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -53,7 +55,7 @@ public class DtlsClientParams implements VisitableConfig
         /**
          * Start a handshake, if no session is available.
          */
-        AUTO,
+        AUTO
     }
 
     /**
@@ -96,4 +98,42 @@ public class DtlsClientParams implements VisitableConfig
         visitor.visit( this );
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        DtlsClientParams rhs= (DtlsClientParams) obj;
+        return new EqualsBuilder()
+            .append( truncateClientCertificatePaths, rhs.truncateClientCertificatePaths )
+            .append( verifyServerCertificateSubject, rhs.verifyServerCertificateSubject )
+            .append( defaultHandshakeMode, rhs.defaultHandshakeMode )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+            .append( truncateClientCertificatePaths )
+            .append( verifyServerCertificateSubject )
+            .append( defaultHandshakeMode )
+            .toHashCode();
+    }
 }

@@ -38,7 +38,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 public class Endpoint
 {
     @ParameterGroup( name= "Configure one of the endpoint types" )
-    private EndpointConfig endpointConfig;
+    private EndpointConfig endpointConfig= null;
 
     /**
      * @return The endpoint configuration.

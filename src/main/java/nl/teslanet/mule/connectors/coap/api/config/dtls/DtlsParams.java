@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -57,7 +59,9 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "30m" )
-    @Summary( value= "Stale connections (no messages are exchanged within the threshold)\n can get removed for new connections." )
+    @Summary(
+                    value= "Stale connections (no messages are exchanged within the threshold)\n can get removed for new connections."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String staleConnectionThreshold= null;
@@ -68,7 +72,10 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "Update the ip-address from DTLS 1.2 CID records only for newer records\n" + "based on epoch/sequence_number." )
+    @Summary(
+                    value= "Update the ip-address from DTLS 1.2 CID records only for newer records\n"
+                        + "based on epoch/sequence_number."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean updateAddressOnNewerCidRecords= true;
@@ -80,7 +87,9 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "false" )
-    @Summary( value= "Remove stale connections, if the principal has also a newer connection. \nRequires to have unique principals." )
+    @Summary(
+                    value= "Remove stale connections, if the principal has also a newer connection. \nRequires to have unique principals."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public boolean removeStaleDoublePrincipals= false;
@@ -151,7 +160,9 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "8192" )
-    @Summary( value= "The size [Bytes] of the buffer for Handshake records with future handshake message sequence number \nor records with future epochs." )
+    @Summary(
+                    value= "The size [Bytes] of the buffer for Handshake records with future handshake message sequence number \nor records with future epochs."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer handshakeRecordBufferSize= null;
@@ -162,7 +173,9 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "10" )
-    @Summary( value= "The maximum number of messages sent during a handshake that are processed deferred after the handshake.\nAbove this number messages are dropped." )
+    @Summary(
+                    value= "The maximum number of messages sent during a handshake that are processed deferred after the handshake.\nAbove this number messages are dropped."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer deferredMsgCapacity= null;
@@ -175,8 +188,10 @@ public class DtlsParams implements VisitableConfig
     @Parameter
     @Optional
     @Summary(
-                    value= "The period after which, without exchanged messages, \n" + "new messages will initiate a handshake. Clients use {@code 30[s]} as \n"
-                        + "a common value to compensate assumed NAT timeouts. Not used by servers.\n" + "Default no auto handshake is initiated"
+                    value= "The period after which, without exchanged messages, \n"
+                        + "new messages will initiate a handshake. Clients use {@code 30[s]} as \n"
+                        + "a common value to compensate assumed NAT timeouts. Not used by servers.\n"
+                        + "Default no auto handshake is initiated"
     )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
@@ -188,7 +203,9 @@ public class DtlsParams implements VisitableConfig
      */
     @Parameter
     @Optional( defaultValue= "30" )
-    @Summary( value= "The threshold defines the maximum percentage of handshakes without HELLO_VERIFY_REQUEST.\nWhen 0 peers are verified on all resumptions." )
+    @Summary(
+                    value= "The threshold defines the maximum percentage of handshakes without HELLO_VERIFY_REQUEST.\nWhen 0 peers are verified on all resumptions."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer verifyPeersOnResumptionThreshold= null;
@@ -234,6 +251,71 @@ public class DtlsParams implements VisitableConfig
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        DtlsParams rhs= (DtlsParams) obj;
+        return new EqualsBuilder()
+            .append( maxConnections, rhs.maxConnections )
+            .append( staleConnectionThreshold, rhs.staleConnectionThreshold )
+            .append( updateAddressOnNewerCidRecords, rhs.updateAddressOnNewerCidRecords )
+            .append( removeStaleDoublePrincipals, rhs.removeStaleDoublePrincipals )
+            .append( outboundMsgCapacity, rhs.outboundMsgCapacity )
+            .append( inboundMsgCapacity, rhs.inboundMsgCapacity )
+            .append( dtlsReceiverThreadCount, rhs.dtlsReceiverThreadCount )
+            .append( dtlsConnectorThreadCount, rhs.dtlsConnectorThreadCount )
+            .append( handshakeCapacity, rhs.handshakeCapacity )
+            .append( handshakeRecordBufferSize, rhs.handshakeRecordBufferSize )
+            .append( deferredMsgCapacity, rhs.deferredMsgCapacity )
+            .append( autoHandshakeTimeout, rhs.autoHandshakeTimeout )
+            .append( verifyPeersOnResumptionThreshold, rhs.verifyPeersOnResumptionThreshold )
+            .append( useAntiReplyFilter, rhs.useAntiReplyFilter )
+            .append( useExtendedAntiReplayFilterWindow, rhs.useExtendedAntiReplayFilterWindow )
+            .append( antiReplyFilterWindowExtension, rhs.antiReplyFilterWindowExtension )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+            .append( maxConnections )
+            .append( staleConnectionThreshold )
+            .append( updateAddressOnNewerCidRecords )
+            .append( removeStaleDoublePrincipals )
+            .append( outboundMsgCapacity )
+            .append( inboundMsgCapacity )
+            .append( dtlsReceiverThreadCount )
+            .append( dtlsConnectorThreadCount )
+            .append( handshakeCapacity )
+            .append( handshakeRecordBufferSize )
+            .append( deferredMsgCapacity )
+            .append( autoHandshakeTimeout )
+            .append( verifyPeersOnResumptionThreshold )
+            .append( useAntiReplyFilter )
+            .append( useExtendedAntiReplayFilterWindow )
+            .append( antiReplyFilterWindowExtension )
+            .toHashCode();
     }
 
 }

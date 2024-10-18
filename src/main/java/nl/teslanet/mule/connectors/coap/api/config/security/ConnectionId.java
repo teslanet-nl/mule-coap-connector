@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.security;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -55,8 +57,10 @@ public class ConnectionId implements VisitableConfig
     @Parameter
     @Optional
     @Summary(
-                    value= "Local connection ID length in [BYTES]. " + "\nWhen empty remote peers connection ID is used only. "
-                        + "\nWhen set it's recommended to have 100 time more values than peers. " + "\nE.g. 65000 peers then choose at least 3 bytes."
+                    value= "Local connection ID length in [BYTES]. "
+                        + "\nWhen empty remote peers connection ID is used only. "
+                        + "\nWhen set it's recommended to have 100 time more values than peers. "
+                        + "\nE.g. 65000 peers then choose at least 3 bytes."
     )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
@@ -81,4 +85,40 @@ public class ConnectionId implements VisitableConfig
         visitor.visit( this );
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        ConnectionId rhs= (ConnectionId) obj;
+        return new EqualsBuilder()
+            .append( connectionIdLength, rhs.connectionIdLength )
+            .append( updateAddressOnNewerRecords, rhs.updateAddressOnNewerRecords )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+            .append( connectionIdLength )
+            .append( updateAddressOnNewerRecords )
+            .toHashCode();
+    }
 }

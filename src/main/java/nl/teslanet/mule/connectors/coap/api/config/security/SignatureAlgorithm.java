@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.security;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -84,5 +86,39 @@ public class SignatureAlgorithm
         builder.append( "with" );
         builder.append( algorithm == null ? String.valueOf( algorithm ) : algorithm.name() );
         return builder.toString();
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        SignatureAlgorithm rhs= (SignatureAlgorithm) obj;
+        return new EqualsBuilder()
+            .append( algorithm, rhs.algorithm )
+            .append( hashAlgorithm, rhs.hashAlgorithm )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 ).append( algorithm ).append( hashAlgorithm ).toHashCode();
     }
 }

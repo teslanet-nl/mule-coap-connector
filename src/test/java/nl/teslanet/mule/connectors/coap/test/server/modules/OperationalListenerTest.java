@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.server.OperationalListener;
 import nl.teslanet.mule.connectors.coap.internal.server.RequestCodeFlags;
@@ -57,36 +57,55 @@ public class OperationalListenerTest
     @Parameters( name= "uri= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "/some_resource", new RequestCodeFlags(), new TestSourceCallBack() },
-                { "/some_resource/child", new RequestCodeFlags(), new TestSourceCallBack() },
-                { "/some_resource/child/child", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/child/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
-                { "/*", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource/*", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+        return Arrays
+            .asList( new Object [] []
+            { { "/some_resource", new RequestCodeFlags(), new TestSourceCallBack() }, { "/some_resource/child",
+                new RequestCodeFlags(), new TestSourceCallBack() },
+                { "/some_resource/child/child", new RequestCodeFlags( true, false, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child", new RequestCodeFlags( true, true, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/child", new RequestCodeFlags( true, true, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/*", new RequestCodeFlags( true, true, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource/*", new RequestCodeFlags( true, true, false, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
                 { "*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, false, false, false ), new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, false, false ), new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, false, false ), new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, false ), new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, false ), new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, true ), new TestSourceCallBack() },
+                { "some_resource/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, false, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, false, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, false, false, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, false, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, false ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, false ),
+                    new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, true, true ),
+                    new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, true ),
+                    new TestSourceCallBack() },
+                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, true ),
+                    new TestSourceCallBack() },
 
-            }
-        );
+            } );
     }
 
     /**

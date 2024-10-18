@@ -221,13 +221,11 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
         if ( endpoint != null )
         {
-            //TODO cf3
-            if (
-                endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null
-            ) throw new InitialisationException(
-                new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
-                this
-            );
+            if ( endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null )
+                throw new InitialisationException(
+                    new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
+                    this
+                );
             //add main endpoint config
             configuredEndpoints.add( endpoint.getEndpointConfig().getEndpoint() );
         }
@@ -239,9 +237,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
-            if (
-                additionalEndpoint.getEndpoint() == null
-            ) throw new InitialisationException(
+            if ( additionalEndpoint.getEndpoint() == null ) throw new InitialisationException(
                 new IllegalArgumentException( "Unexpected null value in additional server endpoint." ),
                 this
             );

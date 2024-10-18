@@ -30,16 +30,15 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTag;
 
 
 /**
  * The CoAP option parameters of a request.
  *
  */
-public class RequestOptions
+public class RequestOptionsParams
 {
     /**
      * RFC 7252: The Content-Format Option indicates the representation format of
@@ -57,6 +56,7 @@ public class RequestOptions
     @Summary(
         "The Content-Format Option indicates the representation format of the request payload. \nWhen empty the Mimetype of the payload is used. \nWhen none of these are set no content type option is set on the request."
     )
+    @Placement( order= 50, tab= "Options" )
     private Integer contentFormat= null;
 
     /**
@@ -73,6 +73,7 @@ public class RequestOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client." )
+    @Placement( order= 51, tab= "Options" )
     private Integer accept= null;
 
     /**
@@ -101,9 +102,8 @@ public class RequestOptions
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary(
-        "Entity-tags of previously obtained resource content the client wishes to refresh."
-    )
+    @Summary( "Entity-tags of previously obtained resource content the client wishes to refresh." )
+    @Placement( order= 52, tab= "Options" )
     private List< EntityTag > entityTagOptions= null;
 
     /**
@@ -127,6 +127,7 @@ public class RequestOptions
     @Summary(
         "Sets an empty If-Match Option which makes a request conditional on the existence of the resource only. When set If-MAtch options containing ETags must be ignored server-side."
     )
+    @Placement( order= 53, tab= "Options" )
     private boolean ifExists= false;
 
     /**
@@ -145,6 +146,7 @@ public class RequestOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The If-Match Option makes a request conditional on the resources entity tag." )
+    @Placement( order= 54, tab= "Options" )
     private List< EntityTag > ifMatchOptions= null;
 
     /**
@@ -162,7 +164,10 @@ public class RequestOptions
     @Parameter
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource." )
+    @Summary(
+        "The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource."
+    )
+    @Placement( order= 55, tab= "Options" )
     private boolean ifNoneMatch= false;
 
     /**
@@ -177,6 +182,7 @@ public class RequestOptions
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "Indication of the request payload size in [Bytes]." )
+    @Placement( order= 56, tab= "Options" )
     private Integer requestSize= null;
 
     /**
@@ -191,6 +197,7 @@ public class RequestOptions
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "Ask server to provide for a Size2 option in the response,\nindicating the response payload size." )
+    @Placement( order= 57, tab= "Options" )
     private boolean requireResponseSize= false;
 
     /**
@@ -218,6 +225,7 @@ public class RequestOptions
     @NullSafe
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "The other CoAP options to send with the request." )
+    @Placement( order= 59, tab= "Options" )
     private List< OtherOption > otherOptions;
 
     /**

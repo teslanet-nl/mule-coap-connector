@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -40,11 +40,11 @@ public class RequestOptionsAttributes
      */
     protected boolean ifExists= false;
 
-    protected List< EntityTagAttribute > ifMatch= null;
+    protected List< BytesValue > ifMatch= null;
 
     protected String uriHost= null;
 
-    protected List< EntityTagAttribute > etags= null;
+    protected List< BytesValue > etags= null;
 
     protected boolean ifNoneMatch= false;
 
@@ -83,7 +83,7 @@ public class RequestOptionsAttributes
      * Use getIfMatchValue instead.
      * @return null.
      */
-    public List< EntityTagAttribute > getIfMatch()
+    public List< BytesValue > getIfMatch()
     {
         return ifMatch;
     }
@@ -101,7 +101,7 @@ public class RequestOptionsAttributes
      * Use getEtagsValue instead.
      * @return null.
      */
-    public List< EntityTagAttribute > getEtags()
+    public List< BytesValue > getEtags()
     {
         return etags;
     }

@@ -114,7 +114,7 @@ public class OptionParams implements VisitableConfig
     public int hashCode()
     {
         HashCodeBuilder builder= new HashCodeBuilder( 9, 29 ).append( acceptOtherOptions );
-        acceptOtherOptions.forEach( other -> builder.append( other ) );
+        acceptOtherOptions.forEach( builder::append );
         return builder.toHashCode();
     }
 }

@@ -23,9 +23,6 @@
 package nl.teslanet.mule.connectors.coap.internal.options;
 
 
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagAttribute;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 
 
@@ -37,7 +34,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
  * as utf-8 bytes or hexadecimal representation. 
  * An Entity-tag value object is immutable and comparable to other Entity-tags.
  */
-public class DefaultEntityTag extends EntityTagAttribute
+public class DefaultEntityTag extends DefaultBytesValue
 {
     /**
      * Class serial version.
@@ -55,150 +52,94 @@ public class DefaultEntityTag extends EntityTagAttribute
     private static final String MSG_POSTFIX_CONSTRUCT_ERROR= " } is invalid.";
 
     /**
-     * The Entity-tag value
-     */
-    private final byte[] value;
-
-    /**
      * Constructs an Entity-tag from a byte array value.
      * @param bytes The byte array containing the Entity-tag value
-     * @throws EntityTagException When given array has length that is not 1..8 bytes
+     * @throws OptionValueException When given array has length that is not 1..8 bytes
      */
-    public DefaultEntityTag( byte[] bytes ) throws EntityTagException
+    public DefaultEntityTag( byte[] bytes ) throws OptionValueException
     {
-        if ( bytes == null )
-        {
-            throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "value { null" + MSG_POSTFIX_CONSTRUCT_ERROR );
-        }
-        else if ( bytes.length <= 0 || bytes.length > 8 )
-        {
-            throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "must be between 1..8 bytes. Actual length is { " + bytes.length + MSG_POSTFIX_CONSTRUCT_ERROR );
-        }
-        else
-        {
-            this.value= bytes.clone();
-        }
+        super( bytes );
+        checkValid();
     }
 
     /**
      * Constructs an Entity-tag from a string using UTF-8 encoding.
      * @param string contains the string representation of the Entity-tag value.
-     * @throws EntityTagException when given string does not represent a Entity-tag length of 1..8 bytes
+     * @throws OptionValueException when given string does not represent a Entity-tag length of 1..8 bytes
      */
-    public DefaultEntityTag( String string ) throws EntityTagException
+    public DefaultEntityTag( String string ) throws OptionValueException
     {
-        try
-        {
-            this.value= OptionUtils.toBytes( string, 1, 8 );
-        }
-        catch ( OptionValueException e )
-        {
-            throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "string { " + string + MSG_POSTFIX_CONSTRUCT_ERROR, e );
-        }
+        super( string, 1, 8 );
+        checkValid();
     }
 
     /**
      * Constructs an Entity-tag from string interpreted as number using given radix.
      * @param string contains the string representation of the Entity-tag value.
-     * @throws EntityTagException when given string does not represent a Entity-tag length of 1..8 bytes
+     * @throws OptionValueException when given string does not represent a Entity-tag length of 1..8 bytes
+     * @throws OptionValueException when given string cannot be converted to bytes.
      */
-    public DefaultEntityTag( String string, int radix ) throws EntityTagException
+    public DefaultEntityTag( String string, int radix ) throws OptionValueException
     {
-        if ( string == null )
-        {
-            throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "string { null" + MSG_POSTFIX_CONSTRUCT_ERROR );
-        }
-        else if ( string.length() <= 0 )
-        {
-            throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "empty string is invalid." );
-        }
-        else
-        {
-            try
-            {
-                long longValue= Long.parseLong( string, radix );
-                this.value= OptionUtils.toBytes( longValue, 0, 8 );
-            }
-            catch ( NumberFormatException | OptionValueException e )
-            {
-                throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "string value of { " + string + " } using radix {" + radix + MSG_POSTFIX_CONSTRUCT_ERROR );
-            }
-        }
+        super( string, radix );
+        checkValid();
     }
 
     /**
      * Constructs an Entity-tag from a Integer value.
      * @param intValue The value to create an Entity-tag from.
-     * @throws EntityTagException When intValue <= 0.
+     * @throws OptionValueException When intValue is invalid.
      */
-    public DefaultEntityTag( int intValue ) throws EntityTagException
+    public DefaultEntityTag( int intValue ) throws OptionValueException
     {
-        this.value= OptionUtils.toBytes( intValue );
-        if ( this.value.length <= 0 ) throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "int value of { " + intValue + MSG_POSTFIX_CONSTRUCT_ERROR );
-
+        super( intValue );
+        checkValid();
     }
 
     /**
      * Constructs an Entity-tag from a Long value.
      * @param longValue The value to create an Entity-tag from.
-     * @throws EntityTagException When longValue <= 0.
+     * @throws OptionValueException When longValue <= 0.
      */
-    public DefaultEntityTag( long longValue ) throws EntityTagException
+    public DefaultEntityTag( long longValue ) throws OptionValueException
     {
-        this.value= OptionUtils.toBytes( longValue );
-        if ( this.value.length <= 0 ) throw new EntityTagException( MSG_PREFIX_CONSTRUCT_ERROR + "long value of { " + longValue + MSG_POSTFIX_CONSTRUCT_ERROR );
+        super( longValue );
+        checkValid();
     }
 
     /**
-     * Get the Entity-tag value as byte array.
-     * Cf does clone the byte array also, however not cloning here would make the class mutable.
-     * This is considered acceptable because Entity-tags are small objects.
-     * @return byte array containing the Entity-tag value.
+     * Constructs an Entity-tag from a Long value.
+     * @param bytes The value to create an Entity-tag from.
+     * @throws OptionValueException When longValue <= 0.
      */
-    @Override
-    public byte[] getValue()
+    public DefaultEntityTag( DefaultBytesValue bytes ) throws OptionValueException
     {
-        return value.clone();
+        super( bytes );
+        checkValid();
     }
 
     /**
-     * Get the Entity-tag value as long.
-     * @return Long containing the Entity-tag value.
+     * Check validity of this Entity-tag.
+     * @throws OptionValueException When value has length that is not 1..8 bytes
      */
-    @Override
-    public long getValueAsNumber()
+    private void checkValid() throws OptionValueException
     {
-        return OptionUtils.toLong( value );
-    }
-
-    /**
-     * Get Entity-tag value as UTF-8 string.
-     * @return The UTF-8 string interpretation.
-     */
-    @Override
-    public String getValueAsString()
-    {
-        return OptionUtils.toString( value );
-    }
-
-    /**
-     * Get the Entity-tag value as hexadecimal string.
-     * Hexadecimal values a-f will be lower case.
-     * @return The string containing the hexadecimal representation or empty string when Entity-tag has no value.
-     */
-    @Override
-    public String getValueAsHex()
-    {
-        return OptionUtils.toHexString( value );
+        if ( value.length == 0 || value.length > 8 )
+        {
+            throw new OptionValueException(
+                MSG_PREFIX_CONSTRUCT_ERROR + "must be between 1..8 bytes. Actual length is { " + value.length
+                    + MSG_POSTFIX_CONSTRUCT_ERROR
+            );
+        }
     }
 
     /**
      * Static function that creates Entity-tag from byte array.
      * @param bytes The byte array containing Entity-tag value.
      * @return The Entity-tag object created.
-     * @throws EntityTagException when byte array was empty or too large. 
+     * @throws OptionValueException when byte array was empty or too large. 
      */
-    public static DefaultEntityTag valueOf( byte[] bytes ) throws EntityTagException
+    public static DefaultEntityTag valueOf( byte[] bytes ) throws OptionValueException
     {
         return new DefaultEntityTag( bytes );
     }
@@ -207,9 +148,9 @@ public class DefaultEntityTag extends EntityTagAttribute
      * Static function that creates Entity-tag from Integer.
      * @param intValue The integer value to create Entity-tag from.
      * @return The Entity-tag value created.
-     * @throws EntityTagException when byte array was empty or too large. 
+     * @throws OptionValueException when byte array was empty or too large. 
      */
-    public static DefaultEntityTag valueOf( int intValue ) throws EntityTagException
+    public static DefaultEntityTag valueOf( int intValue ) throws OptionValueException
     {
         return new DefaultEntityTag( intValue );
     }
@@ -218,9 +159,9 @@ public class DefaultEntityTag extends EntityTagAttribute
      * Static function that creates Entity-tag from Long.
      * @param longValue The long value to create Entity-tag from.
      * @return The Entity-tag object created.
-     * @throws EntityTagException When longValue <= 0.
+     * @throws OptionValueException When longValue <= 0.
      */
-    public static DefaultEntityTag valueOf( long longValue ) throws EntityTagException
+    public static DefaultEntityTag valueOf( long longValue ) throws OptionValueException
     {
         return new DefaultEntityTag( longValue );
     }
@@ -229,9 +170,9 @@ public class DefaultEntityTag extends EntityTagAttribute
      * Static function that creates Entity-tag from string using utf-8 representation.
      * @param string the string to create Entity-tag from.
      * @return The Entity-tag object created.
-     * @throws EntityTagException when given string was too large. 
+     * @throws OptionValueException when given string was too large. 
      */
-    public static DefaultEntityTag valueOf( String string ) throws EntityTagException
+    public static DefaultEntityTag valueOf( String string ) throws OptionValueException
     {
         return new DefaultEntityTag( string );
     }
@@ -240,9 +181,9 @@ public class DefaultEntityTag extends EntityTagAttribute
      * Static function that creates Entity-tag from string interpreted as number using given radix.
      * @param string the string to create Entity-tag from.
      * @return The Entity-tag object created.
-     * @throws EntityTagException when given string cannot be converted. 
+     * @throws OptionValueException when given string cannot be converted. 
      */
-    public static DefaultEntityTag valueOf( String string, int radix ) throws EntityTagException
+    public static DefaultEntityTag valueOf( String string, int radix ) throws OptionValueException
     {
         return new DefaultEntityTag( string, radix );
     }

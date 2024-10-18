@@ -23,8 +23,8 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.entity.EntityTagException;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
@@ -40,7 +40,7 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
      * @return the value to use in test
      * @throws InvalidEntityTagException 
      */
-    private DefaultEntityTag getValue() throws EntityTagException
+    private DefaultEntityTag getValue() throws OptionValueException
     {
         return new DefaultEntityTag( 0x1122334455667788L );
     }
@@ -58,13 +58,13 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object getExpectedInboundPropertyValue() throws EntityTagException
+    protected Object getExpectedInboundPropertyValue() throws OptionValueException
     {
         return getValue();
     }
 
     @Override
-    protected OptionStrategy getStrategy() throws EntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptEtagStrategy( getValue() );
     }
@@ -72,6 +72,6 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getEtag();
+        return attributes.getResponseOptions().getEtag();
     }
 }

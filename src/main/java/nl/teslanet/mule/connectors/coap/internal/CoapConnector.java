@@ -38,7 +38,7 @@ import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.SharedServer;
 import nl.teslanet.mule.connectors.coap.api.SharedServerConfig;
 import nl.teslanet.mule.connectors.coap.api.binary.BytesConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
+import nl.teslanet.mule.connectors.coap.api.binary.BytesParams;
 import nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes;
 import nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig;
 import nl.teslanet.mule.connectors.coap.api.binary.FromBinary;
@@ -94,15 +94,8 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 @Xml( prefix= "coap", namespace= "http://www.teslanet.nl/schema/mule/coap" )
 @Extension( name= "CoAP", vendor= "Teslanet.nl" )
 @SubTypeMapping( baseType= AbstractEndpoint.class, subTypes=
-{
-    UDPEndpoint.class,
-    MulticastUDPEndpoint.class,
-    DTLSEndpoint.class,
-    TCPServerEndpoint.class,
-    TCPClientEndpoint.class,
-    TLSServerEndpoint.class,
-    TLSClientEndpoint.class }
-)
+{ UDPEndpoint.class, MulticastUDPEndpoint.class, DTLSEndpoint.class, TCPServerEndpoint.class, TCPClientEndpoint.class,
+    TLSServerEndpoint.class, TLSClientEndpoint.class } )
 @SubTypeMapping( baseType= DtlsEndpointRole.class, subTypes=
 { DtlsServerRole.class, DtlsClientRole.class, DtlsClientAndServerRole.class } )
 @SubTypeMapping( baseType= ReplayFilter.class, subTypes=
@@ -117,7 +110,7 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 { SharedServer.class, Proxy.class } )
 @SubTypeMapping( baseType= RemoteEndpointConfig.class, subTypes=
 { SharedServerConfig.class, ProxyConfig.class } )
-@SubTypeMapping( baseType= BytesValue.class, subTypes=
+@SubTypeMapping( baseType= BytesParams.class, subTypes=
 { EmptyBytes.class, FromBinary.class, FromHex.class, FromNumber.class, FromString.class } )
 @SubTypeMapping( baseType= BytesConfig.class, subTypes=
 { EmptyBytesConfig.class, FromHexConfig.class, FromNumberConfig.class, FromStringConfig.class } )

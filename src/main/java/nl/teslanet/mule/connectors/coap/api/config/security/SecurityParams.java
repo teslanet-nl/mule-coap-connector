@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.api.config.security;
 
 import java.util.List;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -200,5 +202,66 @@ public class SecurityParams implements VisitableConfig
         if ( keyStore != null ) keyStore.accept( visitor );
         if ( trustStore != null ) trustStore.accept( visitor );
         if ( supportConnectionId != null ) supportConnectionId.accept( visitor );
+    }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        SecurityParams rhs= (SecurityParams) obj;
+        return new EqualsBuilder()
+            .append( preSharedKeyParams, rhs.preSharedKeyParams )
+            .append( keyStore, rhs.keyStore )
+            .append( trustStore, rhs.trustStore )
+            .append( truncateCertificatePathForValidation, rhs.truncateCertificatePathForValidation )
+            .append( recommendedCipherSuitesOnly, rhs.recommendedCipherSuitesOnly )
+            .append( recommendedCurvesOnly, rhs.recommendedCurvesOnly )
+            .append( recommendedSignatureAndHashAlgorithmsOnly, rhs.recommendedSignatureAndHashAlgorithmsOnly )
+            .append( preselectedCipherSuites, rhs.preselectedCipherSuites )
+            .append( cipherSuites, rhs.cipherSuites )
+            .append( curves, rhs.curves )
+            .append( signatureAlgorithms, rhs.signatureAlgorithms )
+            .append( certificateKeyAlgorithms, rhs.certificateKeyAlgorithms )
+            .append( extendedMasterSecretMode, rhs.extendedMasterSecretMode )
+            .append( supportConnectionId, rhs.supportConnectionId )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 )
+                        .append( preSharedKeyParams )
+                        .append( keyStore )
+                        .append( trustStore )
+                        .append( truncateCertificatePathForValidation )
+                        .append( recommendedCipherSuitesOnly )
+                        .append( recommendedCurvesOnly )
+                        .append( recommendedSignatureAndHashAlgorithmsOnly )
+                        .append( preselectedCipherSuites )
+                        .append( cipherSuites )
+                        .append( curves )
+                        .append( signatureAlgorithms )
+                        .append( certificateKeyAlgorithms )
+                        .append( extendedMasterSecretMode )
+                        .append( supportConnectionId )
+                        .toHashCode();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,22 +20,18 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api;
+package nl.teslanet.mule.connectors.coap.api.attributes;
 
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
-import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 
 
 /**
- * The attributes of a CoAP response that was received from a server.
+ * The common attributes of a CoAP request or response that was received.
  *
  */
-public class CoapResponseAttributes
+public class CoapAttributes
 {
     /**
      * The CoAP request type that was issued.
@@ -48,52 +44,27 @@ public class CoapResponseAttributes
     protected String requestCode= null;
 
     /**
-     * The client address the request was issued from. 
+     * The server address the request was issued on.
      */
     protected String localAddress= null;
 
     /**
-     * The uri of the request. 
+     * The uri of the request.
      */
     protected String requestUri= null;
 
     /**
-     * The address of the server that issued the response.
+     * The address of the client that issued the request.
      */
     protected String remoteAddress= null;
 
     /**
-     * True when response is received and indicates success.
+     * The CoAP options that accompanied the request.
      */
-    protected boolean success= false;
+    protected RequestOptionsAttributes requestOptions= null;
 
     /**
-     * The CoAP response type of the server response.
-     */
-    protected String responseType= null;
-
-    /**
-     * The CoAP response code of the server response.
-     */
-    protected String responseCode= null;
-
-    /**
-     * True when response is a notification.
-     */
-    protected boolean notification= false;
-
-    /**
-     * The uri of the resource that has been created. 
-     */
-    protected String locationUri= null;
-
-    /**
-     * The CoAP options that accompanied the response.
-     */
-    protected ResponseOptionsAttributes options= null;
-
-    /**
-     * @return The requestType
+     * @return The requestType.
      */
     public String getRequestType()
     {
@@ -101,7 +72,7 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return The requestCode
+     * @return The requestCode.
      */
     public String getRequestCode()
     {
@@ -109,7 +80,7 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the localAddress
+     * @return The localAddress.
      */
     public String getLocalAddress()
     {
@@ -165,7 +136,7 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the remoteAddress
+     * @return The remoteHost.
      */
     public String getRemoteAddress()
     {
@@ -173,60 +144,10 @@ public class CoapResponseAttributes
     }
 
     /**
-     * @return the success
+     * @return The request options.
      */
-    public boolean isSuccess()
+    public RequestOptionsAttributes getRequestOptions()
     {
-        return success;
-    }
-
-    /**
-     * @return the notification
-     */
-    public boolean isNotification()
-    {
-        return notification;
-    }
-
-    /**
-     * @return The responseType
-     */
-    public String getResponseType()
-    {
-        return responseType;
-    }
-
-    /**
-     * @return the responseCode
-     */
-    public String getResponseCode()
-    {
-        return responseCode;
-    }
-
-    /**
-     * The location of a created resource.
-     * @return the location Uri derived from the location options.
-     */
-    public String getLocationUri()
-    {
-        return locationUri;
-    }
-
-    /**
-     * @return The options
-     */
-    public ResponseOptionsAttributes getOptions()
-    {
-        return options;
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return ReflectionToStringBuilder.toString( this, MULTI_LINE_STYLE );
+        return requestOptions;
     }
 }

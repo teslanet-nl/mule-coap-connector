@@ -40,6 +40,7 @@ import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.elements.exception.ConnectorException;
@@ -77,7 +78,6 @@ import nl.teslanet.mule.connectors.coap.api.AbstractResourceRequestParams;
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestType;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
@@ -90,11 +90,12 @@ import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
-import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsParams;
 import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
@@ -228,9 +229,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         {
             abstractEndpoint= endpoint.getEndpoint();
             //mule should have set the mandatory endpoint.
-            if (
-                abstractEndpoint == null
-            ) throw new InitialisationException(
+            if ( abstractEndpoint == null ) throw new InitialisationException(
                 new IllegalArgumentException( "Unexpected null value in client endpoint." ),
                 this
             );
@@ -278,7 +277,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         observeRelations.clear();
         coapClient.shutdown();
         coapClient= null;
-        LOGGER.info( "{} started.", this );
+        LOGGER.info( "{} stopped.", this );
     }
 
     /**
@@ -298,22 +297,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     public String getClientName()
     {
         return clientName;
-    }
-
-    /**
-     * @return the schedulerService
-     */
-    public SchedulerService getSchedulerService()
-    {
-        return schedulerService;
-    }
-
-    /**
-     * @return the schedulerConfig
-     */
-    public SchedulerConfig getSchedulerConfig()
-    {
-        return schedulerConfig;
     }
 
     /**
@@ -338,22 +321,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
         }
         return defaultEndpoint;
-    }
-
-    /**
-     * @return the endpoint
-     */
-    public Endpoint getEndpoint()
-    {
-        return endpoint;
-    }
-
-    /**
-     * @param endpoint the endpoint to set
-     */
-    public void setEndpoint( Endpoint endpoint )
-    {
-        this.endpoint= endpoint;
     }
 
     /**
@@ -440,11 +407,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidResponseCodeException When response indicates other error.
      * @throws InternalServerErrorResponseException When response indicates server error.
      * @throws InternalUriException When given request uri parameters are invalid.
-     * @throws InternalInvalidMessageTypeException When request message type is invalid.
      */
     Result< InputStream, CoapResponseAttributes > doRequest(
         RequestParams requestParams,
-        RequestOptions options,
+        RequestOptionsParams options,
         ResponseHandlerParams handlerBuilder
     ) throws InternalInvalidHandlerException,
         InternalRequestException,
@@ -455,42 +421,35 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
         InternalServerErrorResponseException,
-        InternalUriException,
-        InternalInvalidMessageTypeException
+        InternalUriException
     {
         Result< InputStream, CoapResponseAttributes > result= null;
         CoapHandler handler= null;
-        CoapRequestBuilderImpl builder= new CoapRequestBuilderImpl( requestParams );
-        Request request= builder.build();
         try
         {
-            MessageUtils.copyOptions( options, request.getOptions(), transformationService );
-            MessageUtils.copyOtherOptions( options, request.getOptions(), transformationService );
+            CoapRequestBuilderImpl requestBuilder= new CoapRequestBuilderImpl( requestParams, options );
+            if ( handlerBuilder != null )
+            {
+                // asynchronous request
+                ResponseProcessor processor= ResponseProcessor
+                    .getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
+                handler= createCoapHandler(
+                    handlerBuilder.getResponseHandler().getHandlerName(),
+                    requestBuilder,
+                    processor
+                );
+                coapClient.advanced( handler, requestBuilder.build() );
+                // nothing to return
+            }
+            else
+            {
+                // send out synchronous request
+                result= executeSynchronous( requestBuilder );
+            }
         }
         catch ( InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {
             throw new InternalRequestException( this + " cannot process request options", e );
-        }
-        if ( handlerBuilder != null )
-        {
-            // asynchronous request
-            ResponseProcessor processor= ResponseProcessor
-                .getResponseProcessor( handlerBuilder.getResponseHandler().getHandlerName() );
-            handler= createCoapHandler(
-                getLocalAddress(),
-                handlerBuilder.getResponseHandler().getHandlerName(),
-                request.getURI(),
-                builder.buildMessageType(),
-                builder.buildRequestCode(),
-                processor
-            );
-            coapClient.advanced( handler, request );
-            // nothing to return
-        }
-        else
-        {
-            // send out synchronous request
-            result= executeSynchronous( request );
         }
         return result;
     }
@@ -505,25 +464,29 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalInvalidResponseCodeException The response contained an invalid response code.
      * @throws InternalClientErrorResponseException The response received indicates client error.
      * @throws InternalNoResponseException No response was received within exchange lifetime.
-     * @throws InternalInvalidMessageTypeException When request message type is invalid.
      * @throws InternalInvalidRequestCodeException When request code is invalid.
+     * @throws InternalUnkownOptionException  When an other option is unknown.
+     * @throws InternalInvalidOptionValueException  When an option value is invalid.
+     * @throws InternalRequestException  When request parameters are invalid.
+     * @throws InternalUriException  When request uri is invalid.
      */
-    private Result< InputStream, CoapResponseAttributes > executeSynchronous( Request request )
+    private Result< InputStream, CoapResponseAttributes > executeSynchronous( CoapRequestBuilder requestBuilder )
         throws InternalEndpointException,
         InternalNoResponseException,
         InternalClientErrorResponseException,
         InternalInvalidResponseCodeException,
         InternalServerErrorResponseException,
         InternalResponseException,
-        InternalInvalidMessageTypeException,
-        InternalInvalidRequestCodeException
+        InternalInvalidRequestCodeException,
+        InternalUriException,
+        InternalRequestException,
+        InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
         CoapResponse response;
-        CoapMessageType type= AttributeUtils.toMessageTypeAttribute( request.getType() );
-        CoapRequestCode code= AttributeUtils.toRequestCodeAttribute( request.getCode() );
         try
         {
-            response= coapClient.advanced( request );
+            response= coapClient.advanced( requestBuilder.build() );
         }
         catch ( ConnectorException | IOException e )
         {
@@ -534,11 +497,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         try
         {
             responseAttributes= ResponseProcessor
-                .createReceivedResponseAttributes( getLocalAddress(), request.getURI(), type, code, response );
+                .createReceivedResponseAttributes( getLocalAddress(), requestBuilder, response );
         }
         catch (
-                        InternalInvalidOptionValueException | InternalInvalidResponseCodeException
-                        | InternalInvalidMessageTypeException e
+            InternalInvalidOptionValueException | InternalInvalidResponseCodeException
+            | InternalInvalidMessageTypeException e
         )
         {
             throw new InternalResponseException( this + " CoAP response cannot be processed", e );
@@ -556,25 +519,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         else
         {
             byte[] payload= response.getPayload();
-            if ( payload != null )
-            {
-                result= Result
-                    .< InputStream, CoapResponseAttributes > builder()
-                    .output( new ByteArrayInputStream( response.getPayload() ) )
-                    .length( payload.length )
-                    .attributes( responseAttributes )
-                    .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
-                    .build();
-            }
-            else
-            {
-                result= Result
-                    .< InputStream, CoapResponseAttributes > builder()
-                    .output( null )
-                    .attributes( responseAttributes )
-                    .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
-                    .build();
-            }
+            // payload is always initialized, no need to check for null. 
+            result= Result
+                .< InputStream, CoapResponseAttributes > builder()
+                .output( new ByteArrayInputStream( payload ) )
+                .length( payload.length )
+                .attributes( responseAttributes )
+                .mediaType( MediaTypeMediator.toMediaType( response.getOptions().getContentFormat() ) )
+                .build();
         }
         return result;
     }
@@ -621,8 +573,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             if ( !response.isSuccess() )
             {
-                String message= this + " response code received: "
-                    + AttributeUtils.toResponseCodeAttribute( response.getCode() );
+                String message= this + " response code received: " + AttributeUtils
+                    .toResponseCodeAttribute( response.getCode() );
                 if ( response.getCode().isClientError() )
                 {
                     throw new InternalClientErrorResponseException( message );
@@ -642,18 +594,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     /**
      * Create a Handler of CoAP responses.
-     * @param uri 
-     * @param client  The Coap client that produced the response
-     * @param callback The Listening Messageprocessor that needs to be called
-     * @param requestCode The coap request code from the request context
-     * @return
+     * @param handlerName The name of response handler. 
+     * @param requestBuilder The builder that will issue the requests.
+     * @param processor The response processor that will handle the flow result.
+     * @return The created handler.
      */
     private CoapHandler createCoapHandler(
-        final String localAddress,
         final String handlerName,
-        final String requestUri,
-        final CoapMessageType requestType,
-        final CoapRequestCode requestCode,
+        final CoapRequestBuilder requestBuilder,
         final ResponseProcessor processor
     )
     {
@@ -670,7 +618,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     try
                     {
                         ResponseProcessor
-                            .processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
+                            .processMuleFlow( thisClient.getLocalAddress(), requestBuilder, null, processor );
                     }
                     catch ( InternalResponseException e )
                     {
@@ -698,7 +646,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     try
                     {
                         ResponseProcessor
-                            .processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor );
+                            .processMuleFlow( thisClient.getLocalAddress(), requestBuilder, response, processor );
                     }
                     catch ( InternalResponseException e )
                     {
@@ -715,7 +663,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                         try
                         {
                             ResponseProcessor
-                                .processMuleFlow( localAddress, requestUri, requestType, requestCode, null, processor );
+                                .processMuleFlow( thisClient.getLocalAddress(), requestBuilder, null, processor );
                         }
                         catch ( InternalResponseException e1 )
                         {
@@ -836,8 +784,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             String.format( "CoAP Observer { %s::%s }", getClientName(), uri ),
             coapClient,
             requestBuilder,
-            ( requestUri, requestType, requestCode, response ) -> ResponseProcessor
-                .processMuleFlow( localAddress, requestUri, requestType, requestCode, response, processor )
+            ( requestBuilder2, response ) -> ResponseProcessor
+                .processMuleFlow( localAddress, requestBuilder2, response, processor )
         );
         addRelation( uri, relation );
         relation.start();
@@ -912,7 +860,6 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         */
         CoapRequestCode requestCode= null;
 
-        //TODO add proxyUri
         /**
          * Scheme part of the uri to use by a forwarding proxy.
          */
@@ -953,6 +900,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * even when request code indicates it should not have one.
          */
         boolean forcePayload= false;
+
+        /**
+         * Request options.
+         */
+        OptionSet optionSet= new OptionSet();
 
         /**
          * The request payload
@@ -998,11 +950,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     {
                         throw new InternalRequestException( Client.this + " cannot convert payload to byte[]", e );
                     }
-                    request
-                        .getOptions()
-                        .setContentFormat(
-                            MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() )
-                        );
+                    OptionSet options= request.getOptions();
+                    if ( options.getContentFormat() == MediaTypeRegistry.UNDEFINED )
+                    {
+                        options
+                            .setContentFormat(
+                                MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() )
+                            );
+                    }
                 }
             }
         }
@@ -1099,14 +1054,22 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         /**
          * Constructor using RequestBuilder and client defaults.
          * @param params Provides request parameters.
+         * @param options Provides request options.
          * @return The constructed UriBuilder object.
+         * @throws InternalUnkownOptionException When an unknown other option alias is given.
+         * @throws InternalInvalidOptionValueException When an invalid option value is given.
          */
-        public CoapRequestBuilderImpl( RequestParams params )
+        public CoapRequestBuilderImpl( RequestParams params, RequestOptionsParams options )
+            throws InternalInvalidOptionValueException,
+            InternalUnkownOptionException
         {
             this( (AbstractResourceRequestParams) params );
             requestCode= params.getRequestCode();
             forcePayload= params.isForcePayload();
             requestPayload= params.getRequestPayload();
+            this.optionSet= new OptionSet();
+            MessageUtils.copyOptions( options, optionSet, transformationService );
+            MessageUtils.copyOptions( options.getOtherOptions(), optionSet, transformationService );
         }
 
         /**
@@ -1465,11 +1428,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         public Request build() throws InternalInvalidRequestCodeException,
             InternalUriException,
             InternalRequestException
+        //InternalInvalidOptionValueException,
+        //InternalUnkownOptionException
         {
             Request request= new Request(
                 AttributeUtils.toRequestCode( requestCode ),
                 ( confirmable ? Type.CON : Type.NON )
             );
+            request.setOptions( optionSet );
             request.setURI( buildEndpointUri() );
             request.setOptions( buildResourceUri() );
             if ( observe != null )
@@ -1486,6 +1452,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             if ( proxyScheme != null ) request.getOptions().setProxyScheme( proxyScheme );
             setPayload( request );
             return request;
+        }
+
+        /**
+         * Build the request option set.
+         * @return The request option set.
+         */
+        @Override
+        public OptionSet buildOptionSet()
+        {
+            return optionSet;
         }
     }
 }

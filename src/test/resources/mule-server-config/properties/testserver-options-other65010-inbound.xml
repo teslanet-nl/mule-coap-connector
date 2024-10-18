@@ -66,14 +66,14 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-			<coap:response-options>
+			<coap:response>
 				<coap:other-options>
 					<coap:other-option alias="option-65013" value="#[ vars.value ]"/>
 				</coap:other-options>
-			</coap:response-options>
+			</coap:response>
 		</coap:listener>
 		
-		<set-variable value="#[attributes.options.other[?( $.alias == 'option-65010' )].value[0]]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
+		<set-variable value="#[attributes.requestOptions.other[?( $.alias == 'option-65010' )].value[0]]" doc:name="Set Variable" doc:id="29ea9552-f1ff-42bb-b434-a0673883faa8" variableName="attr"/>
 
 		<java:new doc:name="New spy" doc:id="2e9c26f0-796f-4a26-aead-3a6968893f6e"
 			class="nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy"

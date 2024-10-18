@@ -44,7 +44,7 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -59,14 +59,16 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
     @Parameters( name= "flowName= {0}, host= {1}, port= {2}, path= {3}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me", "Response is: CONTENT".getBytes() },
-                { Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED", "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
-                { Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me", "Response is: CHANGED".getBytes() },
-                { Code.DELETE, "127.0.0.1", "8976", "/service/delete_me", "DELETED", "coap://127.0.0.1:8976/service/delete_me", "Response is: DELETED".getBytes() } }
-        );
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "127.0.0.1", "8976", "/service/get_me", "CONTENT", "coap://127.0.0.1:8976/service/get_me",
+                "Response is: CONTENT".getBytes() },
+                { Code.POST, "127.0.0.1", "8976", "/service/post_me", "CREATED",
+                    "coap://127.0.0.1:8976/service/post_me", "Response is: CREATED".getBytes() },
+                { Code.PUT, "127.0.0.1", "8976", "/service/put_me", "CHANGED", "coap://127.0.0.1:8976/service/put_me",
+                    "Response is: CHANGED".getBytes() },
+                { Code.DELETE, "127.0.0.1", "8976", "/service/delete_me", "DELETED",
+                    "coap://127.0.0.1:8976/service/delete_me", "Response is: DELETED".getBytes() } } );
     }
 
     /**
@@ -144,10 +146,13 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         MuleEventSpy spy3= new MuleEventSpy( "spy-me3" );
         spy3.clear();
 
-        Event result= flowRunner( "do_request_catching_handler").withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
-            "port",
-            port
-        ).withVariable( "path", path ).run();
+        Event result= flowRunner( "do_request_catching_handler" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", expectedRequestCode.name() )
+            .withVariable( "host", host )
+            .withVariable( "port", port )
+            .withVariable( "path", path )
+            .run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
@@ -197,10 +202,13 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         MuleEventSpy spy3= new MuleEventSpy( "spy-me3" );
         spy3.clear();
 
-        Event result= flowRunner( "do_request_failing_handler" ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
-            "port",
-            port
-        ).withVariable( "path", path ).run();
+        Event result= flowRunner( "do_request_failing_handler" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", expectedRequestCode.name() )
+            .withVariable( "host", host )
+            .withVariable( "port", port )
+            .withVariable( "path", path )
+            .run();
         Message response= result.getMessage();
 
         //let handler do its asynchronous work
@@ -237,13 +245,25 @@ public class ExceptionHandlingTest extends AbstractClientTestCase
         //exception.expect( hasMessage( containsString( "referenced handler { nonexisting_handler } not found" ) ) );
 
         Exception e= assertThrows( Exception.class, () -> {
-            flowRunner( "do_request_no_handler" ).withPayload( "nothing_important" ).withVariable( "code", expectedRequestCode.name() ).withVariable( "host", host ).withVariable(
-                "port",
-                port
-            ).withVariable( "path", path ).withVariable( "handler", "nonexisting_handler" ).run();
+            flowRunner( "do_request_no_handler" )
+                .withPayload( "nothing_important" )
+                .withVariable( "code", expectedRequestCode.name() )
+                .withVariable( "host", host )
+                .withVariable( "port", port )
+                .withVariable( "path", path )
+                .withVariable( "handler", "nonexisting_handler" )
+                .run();
         } );
-        assertEquals( "wrong exception message", "Element 'non_existent' is not defined in the Mule Registry", e.getMessage() );
-        assertEquals( "wrong exception cause", org.mule.runtime.core.api.config.ConfigurationException.class, e.getCause().getClass() );
+        assertEquals(
+            "wrong exception message",
+            "Element 'non_existent' is not defined in the Mule Registry",
+            e.getMessage()
+        );
+        assertEquals(
+            "wrong exception cause",
+            org.mule.runtime.core.api.config.ConfigurationException.class,
+            e.getCause().getClass()
+        );
     }
 
 }

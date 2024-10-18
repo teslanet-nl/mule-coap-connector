@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
@@ -77,5 +79,39 @@ public class DtlsClientAndServerRole implements DtlsEndpointRole
         visitor.visit( this );
         dtlsServerParams.accept( visitor );
         dtlsClientParams.accept( visitor );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        DtlsClientAndServerRole rhs= (DtlsClientAndServerRole) obj;
+        return new EqualsBuilder()
+            .append( dtlsServerParams, rhs.dtlsServerParams )
+            .append( dtlsClientParams, rhs.dtlsClientParams )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 ).append( dtlsServerParams ).append( dtlsClientParams ).toHashCode();
     }
 }

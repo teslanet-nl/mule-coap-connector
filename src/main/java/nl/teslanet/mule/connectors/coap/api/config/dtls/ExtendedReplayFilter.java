@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.dtls;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -47,7 +49,9 @@ public class ExtendedReplayFilter implements ReplayFilter
      */
     @Parameter
     @Optional
-    @Summary( value= "Extend the replay filter window with given number of postponed records to the default of 64. \nWhen empty the filter window is extended to session epoch." )
+    @Summary(
+                    value= "Extend the replay filter window with given number of postponed records to the default of 64. \nWhen empty the filter window is extended to session epoch."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer extendedfilterWindow= null;
@@ -59,5 +63,36 @@ public class ExtendedReplayFilter implements ReplayFilter
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        ExtendedReplayFilter rhs= (ExtendedReplayFilter) obj;
+        return new EqualsBuilder().append( extendedfilterWindow, rhs.extendedfilterWindow ).isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 15, 35 ).append( extendedfilterWindow ).toHashCode();
     }
 }

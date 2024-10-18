@@ -43,13 +43,13 @@ public class OptEtagOutbound0Test extends AbstractOutboundPropertyTestcase
     @Override
     protected boolean getExpectedSuccess()
     {
-        return false;
+        return true;
     }
 
     @Override
     protected Object getPropertyValue()
     {
-        return "";
+        return null;
     }
 
     @Override

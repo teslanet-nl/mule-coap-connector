@@ -24,13 +24,14 @@ package nl.teslanet.mule.connectors.coap.internal;
 
 
 import org.mule.runtime.extension.api.annotation.error.Throws;
-import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.OptionValueErrorProvider;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultBytesValue;
 
 
 /**
@@ -46,17 +47,16 @@ public class GlobalOperations
      * @return The byte array containing given value.
      */
     @Throws( { OptionValueErrorProvider.class } )
-    @MediaType( strict= false, value= "application/octet-stream")
-    public byte[] setOptionValue( @ParameterGroup( name= "Bytes value" )
+    public BytesValue setOptionValue( @ParameterGroup( name= "Bytes value" )
     OptionValueParams params )
     {
         try
         {
-            return params.getBytes().getByteArray();
+            return new DefaultBytesValue( params.getBytes().getByteArray() );
         }
         catch ( OptionValueException e )
         {
-            throw new InvalidOptionValueException("Invalid option value.", e);
+            throw new InvalidOptionValueException( "Invalid option value.", e );
         }
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,7 +36,7 @@ import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
  * Bytes constructed from a hexadecimal value.
  *
  */
-public class FromHex implements BytesValue
+public class FromHex implements BytesParams
 {
     /**
      * The hexadecimal value from which bytes are formed.

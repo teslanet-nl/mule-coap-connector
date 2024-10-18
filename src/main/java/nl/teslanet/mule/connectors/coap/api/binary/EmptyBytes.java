@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,7 +27,7 @@ package nl.teslanet.mule.connectors.coap.api.binary;
  * Empty bytes value.
  *
  */
-public class EmptyBytes implements BytesValue
+public class EmptyBytes implements BytesParams
 {
     //NOOP
 }
