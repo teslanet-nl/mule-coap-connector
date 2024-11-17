@@ -64,6 +64,7 @@ public class AttributesStringBuilder extends ToStringBuilder
      * @param value  the value to add to the {@code toString}
      * @return {@code this} instance.
      */
+    @Override
     public ToStringBuilder append( final String fieldName, final boolean value )
     {
         if ( value )

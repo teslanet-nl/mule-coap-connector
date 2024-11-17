@@ -959,10 +959,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     {
                         throw new InternalRequestException( Client.this + " cannot convert payload to byte[]", e );
                     }
-                    OptionSet options= request.getOptions();
-                    if ( options.getContentFormat() == MediaTypeRegistry.UNDEFINED )
+                    if ( optionSet.getContentFormat() == MediaTypeRegistry.UNDEFINED )
                     {
-                        options
+                        optionSet
                             .setContentFormat(
                                 MediaTypeMediator.toContentFormat( requestPayload.getDataType().getMediaType() )
                             );
