@@ -40,7 +40,7 @@ import org.mule.runtime.core.api.util.IOUtils;
 
 import nl.teslanet.mule.connectors.coap.api.options.OptionFormat;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapOtherOptionAttributeImpl;
 
 
 /**
@@ -109,7 +109,7 @@ public class OtherOptionsAttributesTest
         byte[] value= {};
 
         OptionDefinition def= new EmptyOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.EMPTY, number, value, "", null, null );
     }
@@ -122,7 +122,7 @@ public class OtherOptionsAttributesTest
         byte[] value= {};
 
         OptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.OPAQUE, number, value, "", null, null );
     }
@@ -135,7 +135,7 @@ public class OtherOptionsAttributesTest
         byte[] value= {};
 
         OptionDefinition def= new IntegerOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.INTEGER, number, value, "", 0L, null );
     }
@@ -148,7 +148,7 @@ public class OtherOptionsAttributesTest
         byte[] value= {};
 
         OptionDefinition def= new StringOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.STRING, number, value, "", null, "" );
     }
@@ -161,7 +161,7 @@ public class OtherOptionsAttributesTest
         byte[] value= null;
 
         OptionDefinition def= new EmptyOptionDefinition( number, alias );
-        assertThrows( NullPointerException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( NullPointerException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     @Test
@@ -172,7 +172,7 @@ public class OtherOptionsAttributesTest
         byte[] value= null;
 
         OptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        assertThrows( NullPointerException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( NullPointerException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     public void constructorIntegerNullTest()
@@ -182,7 +182,7 @@ public class OtherOptionsAttributesTest
         byte[] value= null;
 
         OptionDefinition def= new IntegerOptionDefinition( number, alias );
-        assertThrows( NullPointerException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( NullPointerException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     public void constructorStringNullTest()
@@ -192,7 +192,7 @@ public class OtherOptionsAttributesTest
         byte[] value= null;
 
         OptionDefinition def= new StringOptionDefinition( number, alias );
-        assertThrows( NullPointerException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( NullPointerException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     @Test
@@ -203,7 +203,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OptionDefinition def= new EmptyOptionDefinition( number, alias );
-        assertThrows( IllegalArgumentException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( IllegalArgumentException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     @Test
@@ -214,7 +214,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.OPAQUE, number, value, "686f69", null, null );
     }
@@ -227,7 +227,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OptionDefinition def= new IntegerOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.INTEGER, number, value, "686f69", 6844265L, null );
     }
@@ -240,7 +240,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OptionDefinition def= new StringOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute( attribute, alias, OptionFormat.STRING, number, value, "686f69", null, "hoi" );
     }
@@ -254,7 +254,7 @@ public class OtherOptionsAttributesTest
         byte[] value= text.getBytes();
 
         OptionDefinition def= new EmptyOptionDefinition( number, alias );
-        assertThrows( IllegalArgumentException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( IllegalArgumentException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     @Test
@@ -266,7 +266,7 @@ public class OtherOptionsAttributesTest
         byte[] value= text.getBytes();
 
         OptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute(
             attribute,
@@ -289,7 +289,7 @@ public class OtherOptionsAttributesTest
         byte[] value= text.getBytes();
 
         OptionDefinition def= new IntegerOptionDefinition( number, alias );
-        assertThrows( IllegalArgumentException.class, () -> new DefaultOtherOptionAttribute( def, value ) );
+        assertThrows( IllegalArgumentException.class, () -> new CoapOtherOptionAttributeImpl( def, value ) );
     }
 
     @Test
@@ -301,7 +301,7 @@ public class OtherOptionsAttributesTest
         byte[] value= text.getBytes();
 
         OptionDefinition def= new StringOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertAttribute(
             attribute,
@@ -323,7 +323,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -338,7 +338,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -353,7 +353,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -368,7 +368,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertFalse( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -384,7 +384,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -399,7 +399,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertFalse( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -414,7 +414,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -429,7 +429,7 @@ public class OtherOptionsAttributesTest
         byte[] value= { 0x68, 0x6f, 0x69 };
 
         OpaqueOptionDefinition def= new OpaqueOptionDefinition( number, alias );
-        OtherOptionAttribute attribute= new DefaultOtherOptionAttribute( def, value );
+        OtherOptionAttribute attribute= new CoapOtherOptionAttributeImpl( def, value );
 
         assertTrue( "OtherOptionAttribute has wrong critical trait", attribute.isCritical() );
         assertTrue( "OtherOptionAttribute has wrong unSafe trait", attribute.isUnsafe() );
@@ -447,15 +447,15 @@ public class OtherOptionsAttributesTest
         byte[] value2= { 0x68, 0x6f, 0x70 };
 
         OpaqueOptionDefinition def1= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute1= new DefaultOtherOptionAttribute( def1, value1 );
+        OtherOptionAttribute attribute1= new CoapOtherOptionAttributeImpl( def1, value1 );
         OpaqueOptionDefinition def2= new OpaqueOptionDefinition( number2, alias );
-        OtherOptionAttribute attribute2= new DefaultOtherOptionAttribute( def2, value2 );
+        OtherOptionAttribute attribute2= new CoapOtherOptionAttributeImpl( def2, value2 );
         OpaqueOptionDefinition def3= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute3= new DefaultOtherOptionAttribute( def3, value1 );
+        OtherOptionAttribute attribute3= new CoapOtherOptionAttributeImpl( def3, value1 );
         OpaqueOptionDefinition def4= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute4= new DefaultOtherOptionAttribute( def4, value2 );
+        OtherOptionAttribute attribute4= new CoapOtherOptionAttributeImpl( def4, value2 );
         OpaqueOptionDefinition def5= new OpaqueOptionDefinition( number2, alias );
-        OtherOptionAttribute attribute5= new DefaultOtherOptionAttribute( def5, value1 );
+        OtherOptionAttribute attribute5= new CoapOtherOptionAttributeImpl( def5, value1 );
 
         assertEquals( "attribute 1 equals attribute 1 returns wrong result", attribute1, attribute1 );
         assertNotEquals( "attribute 1 equals null returns wrong result", attribute1, null );
@@ -479,15 +479,15 @@ public class OtherOptionsAttributesTest
         byte[] value2= { 0x68, 0x6f, 0x70 };
 
         OpaqueOptionDefinition def1= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute1= new DefaultOtherOptionAttribute( def1, value1 );
+        OtherOptionAttribute attribute1= new CoapOtherOptionAttributeImpl( def1, value1 );
         OpaqueOptionDefinition def2= new OpaqueOptionDefinition( number2, alias );
-        OtherOptionAttribute attribute2= new DefaultOtherOptionAttribute( def2, value2 );
+        OtherOptionAttribute attribute2= new CoapOtherOptionAttributeImpl( def2, value2 );
         OpaqueOptionDefinition def3= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute3= new DefaultOtherOptionAttribute( def3, value1 );
+        OtherOptionAttribute attribute3= new CoapOtherOptionAttributeImpl( def3, value1 );
         OpaqueOptionDefinition def4= new OpaqueOptionDefinition( number1, alias );
-        OtherOptionAttribute attribute4= new DefaultOtherOptionAttribute( def4, value2 );
+        OtherOptionAttribute attribute4= new CoapOtherOptionAttributeImpl( def4, value2 );
         OpaqueOptionDefinition def5= new OpaqueOptionDefinition( number2, alias );
-        OtherOptionAttribute attribute5= new DefaultOtherOptionAttribute( def5, value1 );
+        OtherOptionAttribute attribute5= new CoapOtherOptionAttributeImpl( def5, value1 );
 
         assertEquals( "hashcode flag 1 has wrong value", 2150916, attribute1.hashCode() );
         assertEquals( "hashcode flag 2 has wrong value", 2150861, attribute2.hashCode() );

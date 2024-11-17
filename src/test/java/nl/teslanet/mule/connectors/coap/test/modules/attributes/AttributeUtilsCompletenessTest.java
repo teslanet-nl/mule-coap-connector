@@ -34,10 +34,10 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**

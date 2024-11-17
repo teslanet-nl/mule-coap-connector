@@ -65,6 +65,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorR
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
@@ -72,6 +73,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestExcep
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverAddErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverExistsErrorProvider;
@@ -308,7 +310,7 @@ public class ClientOperations
         {
             throw new InvalidRequestCodeException( client + DISCOVERY_ERROR_MSG, e );
         }
-        catch ( InternalRequestException e )
+        catch ( InternalRequestException | InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {
             throw new RequestException( client + DISCOVERY_ERROR_MSG, e );
         }

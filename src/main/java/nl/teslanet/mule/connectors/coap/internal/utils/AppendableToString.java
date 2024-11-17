@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,26 +20,21 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api.attributes;
+package nl.teslanet.mule.connectors.coap.internal.utils;
+
+
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 
 /**
- * The attributes of a CoAP request that was received from a client.
- *
+ * Interface of objects that are appendable to a string builder.
  */
-public class CoapRequestAttributes extends Attributes
+public interface AppendableToString
 {
     /**
-     * The key of the observe relation when the request is an observe request or
-     * notification. Null otherwise.
+     * Append this to string builder.
+     * @param style The styla to apply.
+     * @param buffer The string buffer to use.
      */
-    protected String relation= null;
-
-    /**
-     * @return The relation
-     */
-    public String getRelation()
-    {
-        return relation;
-    }
+    public void appendTo( ToStringStyle style, StringBuffer buffer );
 }

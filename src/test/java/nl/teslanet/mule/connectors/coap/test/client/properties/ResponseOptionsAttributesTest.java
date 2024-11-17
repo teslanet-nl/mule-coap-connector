@@ -39,9 +39,9 @@ import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapOtherOptionAttributeImpl;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapResponseOptionsAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
@@ -50,7 +50,7 @@ import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
  * Test option classes
  *
  */
-public class DefaultResponseOptionsAttributesTest
+public class ResponseOptionsAttributesTest
 {
     @Test
     public void testOptionContentFormat() throws OptionValueException, InternalInvalidOptionValueException
@@ -59,7 +59,7 @@ public class DefaultResponseOptionsAttributesTest
         Integer format= 41;
         set.setContentFormat( format );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         Integer attr= attributes.getContentFormat();
 
@@ -73,7 +73,7 @@ public class DefaultResponseOptionsAttributesTest
         Long maxage= Long.valueOf( 120 );
         set.setMaxAge( maxage );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         Long attr= attributes.getMaxAge();
 
@@ -90,7 +90,7 @@ public class DefaultResponseOptionsAttributesTest
         set.addETag( etagValue1.clone() );
         set.addETag( etagValue2.clone() );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         BytesValue etag= attributes.getEtag();
 
@@ -107,7 +107,7 @@ public class DefaultResponseOptionsAttributesTest
         set.addLocationPath( values[0] );
         set.addLocationPath( values[1] );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         List< String > list= attributes.getLocationPath();
 
@@ -131,7 +131,7 @@ public class DefaultResponseOptionsAttributesTest
             set.addLocationQuery( keys[i] + ( values[i] == null ? "" : "=" + values[i] ) );
         }
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         List< QueryParamAttribute > query= attributes.getLocationQuery();
 
@@ -152,7 +152,7 @@ public class DefaultResponseOptionsAttributesTest
         Integer size= Integer.valueOf( 120 );
         set.setSize2( size );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         Integer attr= attributes.getResponseSize();
 
@@ -166,7 +166,7 @@ public class DefaultResponseOptionsAttributesTest
         Integer size= Integer.valueOf( 120 );
         set.setSize1( size );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         Integer attr= attributes.getAcceptableRequestSize();
 
@@ -180,7 +180,7 @@ public class DefaultResponseOptionsAttributesTest
         Integer seqnum= Integer.valueOf( 120 );
         set.setObserve( seqnum );
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
 
         Integer attr= attributes.getObserve();
 
@@ -198,14 +198,14 @@ public class DefaultResponseOptionsAttributesTest
         OpaqueOptionDefinition[] optionsDefs= { TestOptions.OTHER_OPTION_65001, TestOptions.OTHER_OPTION_65002,
             TestOptions.OTHER_OPTION_65028, TestOptions.OTHER_OPTION_65029 };
 
-        ArrayList< DefaultOtherOptionAttribute > expected= new ArrayList<>();
+        ArrayList< CoapOtherOptionAttributeImpl > expected= new ArrayList<>();
         for ( int i= 0; i < 4; i++ )
         {
-            expected.add( new DefaultOtherOptionAttribute( optionsDefs[i], values[i].clone() ) );
+            expected.add( new CoapOtherOptionAttributeImpl( optionsDefs[i], values[i].clone() ) );
             set.addOption( new Option( optionsDefs[i], values[i].clone() ) );
         }
 
-        DefaultResponseOptionsAttributes attributes= new DefaultResponseOptionsAttributes( set );
+        CoapResponseOptionsAttributesImpl attributes= new CoapResponseOptionsAttributesImpl( set );
         List< OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", expected.size(), options.size() );

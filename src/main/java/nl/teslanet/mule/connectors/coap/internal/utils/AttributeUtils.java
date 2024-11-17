@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.attributes;
+package nl.teslanet.mule.connectors.coap.internal.utils;
 
 
 import java.util.ArrayList;
@@ -35,12 +35,13 @@ import org.eclipse.californium.core.coap.Option;
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
+import nl.teslanet.mule.connectors.coap.api.attributes.Result;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapOtherOptionAttributeImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultOtherOptionAttribute;
 
 
 /**
@@ -128,7 +129,9 @@ public class AttributeUtils
             case IPATCH:
                 return Code.IPATCH;
             default:
-                throw new InternalInvalidRequestCodeException( "invalid request code { " + requestCodeAttribute + " }" );
+                throw new InternalInvalidRequestCodeException(
+                    "invalid request code { " + requestCodeAttribute + " }"
+                );
         }
     }
 
@@ -168,7 +171,10 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoapResponseCode reponseCodeAttribute, CoapResponseCode defaultResponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode(
+        CoapResponseCode reponseCodeAttribute,
+        CoapResponseCode defaultResponseCodeAttribute
+    ) throws InternalInvalidResponseCodeException
     {
         if ( reponseCodeAttribute != null )
         {
@@ -186,7 +192,8 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static ResponseCode toResponseCode( CoapResponseCode reponseCodeAttribute ) throws InternalInvalidResponseCodeException
+    public static ResponseCode toResponseCode( CoapResponseCode reponseCodeAttribute )
+        throws InternalInvalidResponseCodeException
     {
         switch ( reponseCodeAttribute )
         {
@@ -258,7 +265,8 @@ public class AttributeUtils
      * @return the converted Cf responseCode
      * @throws InternalInvalidResponseCodeException
      */
-    public static CoapResponseCode toResponseCodeAttribute( ResponseCode reponseCode ) throws InternalInvalidResponseCodeException
+    public static CoapResponseCode toResponseCodeAttribute( ResponseCode reponseCode )
+        throws InternalInvalidResponseCodeException
     {
         switch ( reponseCode )
         {
@@ -357,9 +365,34 @@ public class AttributeUtils
         List< OtherOptionAttribute > others= new ArrayList<>();
         for ( Option other : otherCoapOptions )
         {
-            DefaultOtherOptionAttribute otherOptionAttribute= new DefaultOtherOptionAttribute( other );
+            CoapOtherOptionAttributeImpl otherOptionAttribute= new CoapOtherOptionAttributeImpl( other );
             others.add( otherOptionAttribute );
         }
         return Collections.unmodifiableList( others );
+    }
+
+    /**
+     * Translate response code to result.
+     * @param code The response code to translate.
+     * @return The result value.
+     */
+    public static Result toResult( ResponseCode code )
+    {
+        if ( code.isSuccess() )
+        {
+            return Result.SUCCESS;
+        }
+        else if ( code.isClientError() )
+        {
+            return Result.CLIENT_ERROR;
+        }
+        else if ( code.isServerError() )
+        {
+            return Result.SERVER_ERROR;
+        }
+        else
+        {
+            return Result.NO_RESPONSE;
+        }
     }
 }

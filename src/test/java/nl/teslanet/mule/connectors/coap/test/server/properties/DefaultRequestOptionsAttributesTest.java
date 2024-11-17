@@ -42,8 +42,8 @@ import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestOptionsAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
@@ -61,7 +61,7 @@ public class DefaultRequestOptionsAttributesTest
         byte[] etagValue1= {};
         set.addIfMatch( etagValue1.clone() );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
@@ -82,7 +82,7 @@ public class DefaultRequestOptionsAttributesTest
         set.addIfMatch( etagValue2.clone() );
         set.addIfMatch( etagValue3.clone() );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
@@ -99,7 +99,7 @@ public class DefaultRequestOptionsAttributesTest
         byte[] etagValue2= { (byte) 0x11, (byte) 0xFF };
         set.addIfMatch( etagValue1.clone() );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
@@ -125,7 +125,7 @@ public class DefaultRequestOptionsAttributesTest
         set.addIfMatch( etagValue1.clone() );
         set.addIfMatch( etagValue2.clone() );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< BytesValue > list= attributes.getIfMatch();
         boolean ifExists= attributes.isIfExists();
@@ -148,7 +148,7 @@ public class DefaultRequestOptionsAttributesTest
         String host= "testhost";
         set.setUriHost( host );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         String attr= attributes.getUriHost();
 
@@ -166,7 +166,7 @@ public class DefaultRequestOptionsAttributesTest
         set.addETag( etagValue1.clone() );
         set.addETag( etagValue2.clone() );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< BytesValue > list= attributes.getEtags();
 
@@ -182,14 +182,14 @@ public class DefaultRequestOptionsAttributesTest
     {
         OptionSet set= new OptionSet();
         set.setIfNoneMatch( Boolean.TRUE );
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         boolean attr= attributes.isIfNoneMatch();
 
         assertTrue( "coap.opt.if_none_match: wrong value", attr );
 
         set.setIfNoneMatch( Boolean.FALSE );
-        attributes= new DefaultRequestOptionsAttributes( set );
+        attributes= new CoapRequestOptionsAttributesImpl( set );
 
         attr= attributes.isIfNoneMatch();
 
@@ -203,7 +203,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer port= 5536;
         set.setUriPort( port );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         Integer attr= attributes.getUriPort();
 
@@ -221,7 +221,7 @@ public class DefaultRequestOptionsAttributesTest
         set.addUriPath( value1 );
         set.addUriPath( value2 );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< String > list= attributes.getUriPath();
 
@@ -240,7 +240,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer format= 41;
         set.setContentFormat( format );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         Integer attr= attributes.getContentFormat();
 
@@ -258,7 +258,7 @@ public class DefaultRequestOptionsAttributesTest
             set.addUriQuery( keys[i] + ( values[i] == null ? "" : "=" + values[i] ) );
         }
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         List< QueryParamAttribute > query= attributes.getUriQuery();
 
@@ -279,7 +279,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer format= Integer.valueOf( 41 );
         set.setAccept( format );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         Integer attr= attributes.getAccept();
 
@@ -293,7 +293,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer size= Integer.valueOf( 0 );
         set.setSize2( size );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         boolean attr= attributes.isProvideResponseSize();
 
@@ -307,7 +307,7 @@ public class DefaultRequestOptionsAttributesTest
         String uri= "testproxyuri";
         set.setProxyUri( uri );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         String attr= attributes.getProxyUri();
 
@@ -321,7 +321,7 @@ public class DefaultRequestOptionsAttributesTest
         String scheme= "testproxyscheme";
         set.setProxyScheme( scheme );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         String attr= attributes.getProxyScheme();
 
@@ -335,7 +335,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer size= Integer.valueOf( 120 );
         set.setSize1( size );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         Integer attr= attributes.getRquestSize();
 
@@ -349,7 +349,7 @@ public class DefaultRequestOptionsAttributesTest
         Integer seqnum= Integer.valueOf( 120 );
         set.setObserve( seqnum );
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
         Integer attr= attributes.getObserve();
 
@@ -372,7 +372,7 @@ public class DefaultRequestOptionsAttributesTest
             set.addOption( new Option( optionsDefs[i], values[i].clone() ) );
         }
 
-        DefaultRequestOptionsAttributes attributes= new DefaultRequestOptionsAttributes( set );
+        CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
         List< OtherOptionAttribute > options= attributes.getOther();
 
         assertEquals( "coap.opt.other has wrong length", 4, options.size() );

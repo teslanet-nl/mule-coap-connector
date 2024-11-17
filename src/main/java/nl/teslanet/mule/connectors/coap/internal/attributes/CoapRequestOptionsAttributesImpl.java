@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.options;
+package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
 import java.util.Collections;
@@ -28,16 +28,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.californium.core.coap.OptionSet;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
+import nl.teslanet.mule.connectors.coap.internal.utils.AppendableToString;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributesStringBuilder;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
@@ -45,7 +48,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
  * The CoAP option parameters of a request.
  *
  */
-public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
+public class CoapRequestOptionsAttributesImpl extends RequestOptionsAttributes implements AppendableToString
 {
     /**
      * Error message.
@@ -58,7 +61,7 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
      * @param optionSet to copy from.
      * @throws InvalidOptionValueException when given option value could not be copied successfully.
      */
-    public DefaultRequestOptionsAttributes( OptionSet optionSet ) throws InternalInvalidOptionValueException
+    public CoapRequestOptionsAttributesImpl( OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
         super();
 
@@ -115,7 +118,6 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
         if ( !optionSet.getUriPath().isEmpty() )
         {
             uriPath= Collections.unmodifiableList( optionSet.getUriPath() );
-            //attributes.setUriPath( optionSet.getUriPathString() );
         }
         if ( optionSet.hasContentFormat() )
         {
@@ -162,6 +164,45 @@ public class DefaultRequestOptionsAttributes extends RequestOptionsAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
+        AttributesStringBuilder builder= new AttributesStringBuilder( this );
+        this.appendTo( builder );
+        return builder.toString();
+    }
+
+    /**
+     * Append this to string builder.
+     * @param style The styla to apply.
+     * @param buffer The string buffer to use.
+     */
+    @Override
+    public void appendTo( ToStringStyle style, StringBuffer buffer )
+    {
+        AttributesStringBuilder builder= new AttributesStringBuilder( this, style, buffer );
+        this.appendTo( builder );
+    }
+
+    /**
+     * Append this to string builder.
+     * @param builder The string builder to append to.
+     */
+    public void appendTo( ToStringBuilder builder )
+    {
+        builder
+            .append( "accept", accept )
+            .append( "contentFormat", contentFormat )
+            .append( "etags", etags )
+            .append( "ifExists", ifExists )
+            .append( "ifMatch", ifMatch )
+            .append( "ifNoneMatch", ifNoneMatch )
+            .append( "observe", observe )
+            .append( "other", other )
+            .append( "provideResponseSize", provideResponseSize )
+            .append( "proxyScheme", proxyScheme )
+            .append( "proxyUri", proxyUri )
+            .append( "requestSize", requestSize )
+            .append( "uriHost", uriHost )
+            .append( "uriPort", uriPort )
+            .append( "uriPath", uriPath )
+            .append( "uriQuery", uriQuery );
     }
 }

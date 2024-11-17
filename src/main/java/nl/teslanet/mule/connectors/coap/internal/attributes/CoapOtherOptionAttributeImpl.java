@@ -20,7 +20,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.options;
+package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
 import java.io.InputStream;
@@ -39,7 +39,7 @@ import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 /**
  * Default other option attribute. 
  */
-public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
+public final class CoapOtherOptionAttributeImpl extends OtherOptionAttribute
 {
     /**
      * Wrong type exception message format.
@@ -56,7 +56,7 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
      * @param optionDef The definition of the other option.
      * @param value The option value.
      */
-    public DefaultOtherOptionAttribute( OptionDefinition optionDef, byte[] value )
+    public CoapOtherOptionAttributeImpl( OptionDefinition optionDef, byte[] value )
     {
         super();
         this.option= optionDef.create( value );
@@ -66,7 +66,7 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
      * Copy constructor from Cf Option
      * @param option The Cf Option to copy from.
      */
-    public DefaultOtherOptionAttribute( Option option )
+    public CoapOtherOptionAttributeImpl( Option option )
     {
         super();
         this.option= option;
@@ -242,11 +242,11 @@ public final class DefaultOtherOptionAttribute extends OtherOptionAttribute
         {
             return true;
         }
-        if ( !( obj instanceof DefaultOtherOptionAttribute ) )
+        if ( !( obj instanceof CoapOtherOptionAttributeImpl ) )
         {
             return false;
         }
-        DefaultOtherOptionAttribute other= (DefaultOtherOptionAttribute) obj;
+        CoapOtherOptionAttributeImpl other= (CoapOtherOptionAttributeImpl) obj;
         return ( getNumber() == other.getNumber() ) && Arrays.equals( getValueAsBytes(), other.getValueAsBytes() );
     }
 

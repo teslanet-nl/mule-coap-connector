@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,22 +24,27 @@ package nl.teslanet.mule.connectors.coap.api.attributes;
 
 
 /**
- * The attributes of a CoAP request that was received from a client.
- *
+ * The result of a CoAP request.
  */
-public class CoapRequestAttributes extends Attributes
+public enum Result
 {
     /**
-     * The key of the observe relation when the request is an observe request or
-     * notification. Null otherwise.
+     * Client received no response from the server.
      */
-    protected String relation= null;
+    NO_RESPONSE,
 
     /**
-     * @return The relation
-     */
-    public String getRelation()
-    {
-        return relation;
-    }
+    * The Response indicates an invalid request made by the client.
+    */
+    CLIENT_ERROR,
+
+    /**
+    * The Response indicates the request made by the client is valid, but the server could not fulfill the request
+    */
+    SERVER_ERROR,
+
+    /**
+    * The server was able to comply with the request and provide an adequate response.
+    */
+    SUCCESS
 }

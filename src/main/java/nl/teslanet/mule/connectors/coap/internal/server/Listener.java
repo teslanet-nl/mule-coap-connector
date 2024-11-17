@@ -57,7 +57,6 @@ import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ResponseParams;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalExchangeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidByteArrayValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
@@ -66,6 +65,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriE
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 

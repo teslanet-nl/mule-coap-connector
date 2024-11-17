@@ -26,20 +26,20 @@ package nl.teslanet.mule.connectors.coap.internal.attributes;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.Result;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributesStringBuilder;
 
 
 /**
  * The attributes of a CoAP response that was received from a server.
  *
  */
-public class DefaultResponseAttributes extends CoapResponseAttributes
+public class CoapResponseAttributesImpl extends CoapResponseAttributes
 {
     /**
      * The request URI object.
@@ -47,8 +47,17 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     private URI requestUriObject= null;
 
     /**
-     * @param requestType the requestType to set
+     * Default constructor.
      */
+    public CoapResponseAttributesImpl()
+    {
+        super();
+    }
+
+    /**
+    }
+    * @param requestType the requestType to set
+    */
     public void setRequestType( String requestType )
     {
         this.requestType= requestType;
@@ -103,15 +112,15 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param success the success to set
+     * @param result The result to set
      */
-    public void setSuccess( boolean success )
+    public void setResult( Result result )
     {
-        this.success= success;
+        this.result= result;
     }
 
     /**
-     * @param responseType the responseCode to set
+     * @param responseType The responseCode to set
      */
     public void setResponseType( String responseType )
     {
@@ -119,7 +128,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @param responseCode the responseCode to set
+     * @param responseCode The responseCode to set
      */
     public void setResponseCode( String responseCode )
     {
@@ -143,7 +152,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-    * @param responseOptions the options to set
+    * @param responseOptions The options to set
     */
     public void setResponseOptions( ResponseOptionsAttributes responseOptions )
     {
@@ -151,7 +160,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the request uri
+     * @return The request uri
      */
     @Override
     public String getRequestUri()
@@ -167,7 +176,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the requestScheme
+     * @return The requestScheme
      */
     @Override
     public String getRequestScheme()
@@ -176,7 +185,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the requestHost
+     * @return The requestHost
      */
     @Override
     public String getRequestHost()
@@ -185,7 +194,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the requestPort
+     * @return The requestPort
      */
     @Override
     public int getRequestPort()
@@ -194,7 +203,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the requestPath
+     * @return The requestPath
      */
     @Override
     public String getRequestPath()
@@ -211,7 +220,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     }
 
     /**
-     * @return the requestQuery
+     * @return The requestQuery
      */
     @Override
     public String getRequestQuery()
@@ -219,7 +228,7 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
         String query= getOrCreateRequestUri().getQuery();
         if ( query != null )
         {
-            return getOrCreateRequestUri().getPath();
+            return query;
         }
         else
         {
@@ -236,11 +245,11 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
         {
             try
             {
-                requestUriObject= new URI( requestUri );
+                requestUriObject= new URI( ( requestUri == null ? OptionUtils.EMPTY_STRING : requestUri ) );
             }
             catch ( URISyntaxException e )
             {
-                throw new IllegalStateException( "cannot create URI from request", e );
+                throw new IllegalStateException( "cannot create URI from request uri", e );
             }
         }
         return requestUriObject;
@@ -252,6 +261,20 @@ public class DefaultResponseAttributes extends CoapResponseAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
+        AttributesStringBuilder builder= new AttributesStringBuilder( this );
+        builder
+            .append( "localAddress", localAddress )
+            .append( "remoteAddress", remoteAddress )
+            .append( "requestType", requestType )
+            .append( "requestCode", requestCode )
+            .append( "requestOptions", requestOptions )
+            .append( "requestUri", getRequestUri() )
+            .append( "notification", notification )
+            .append( "responseType", responseType )
+            .append( "responseCode", responseCode )
+            .append( "locationUri", locationUri )
+            .append( "responseOptions", responseOptions )
+            .append( "result", result.name() );
+        return builder.toString();
     }
 }

@@ -20,36 +20,39 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.internal.options;
+package nl.teslanet.mule.connectors.coap.internal.attributes;
 
 
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.californium.core.coap.OptionSet;
 
 import nl.teslanet.mule.connectors.coap.api.error.InvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
 import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeToStringStyle;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
+import nl.teslanet.mule.connectors.coap.internal.utils.AppendableToString;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributesStringBuilder;
 
 
 /**
  * The option parameters of a CoAP response.
  *
  */
-public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
+public class CoapResponseOptionsAttributesImpl extends ResponseOptionsAttributes implements AppendableToString
 {
     /**
      * Constructor that uses options from given optionSet.
      * @param optionSet to copy from.
      * @throws InvalidOptionValueException when given option value could not be copied successfully.
      */
-    public DefaultResponseOptionsAttributes( OptionSet optionSet ) throws InternalInvalidOptionValueException
+    public CoapResponseOptionsAttributesImpl( OptionSet optionSet ) throws InternalInvalidOptionValueException
     {
         super();
         String errorMsg= "cannot create attribute";
@@ -106,6 +109,38 @@ public class DefaultResponseOptionsAttributes extends ResponseOptionsAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
+        AttributesStringBuilder builder= new AttributesStringBuilder( this );
+        this.appendTo( builder );
+        return builder.toString();
+    }
+
+    /**
+     * Append this to string builder.
+     * @param style The styla to apply.
+     * @param buffer The string buffer to use.
+     */
+    @Override
+    public void appendTo( ToStringStyle style, StringBuffer buffer )
+    {
+        AttributesStringBuilder builder= new AttributesStringBuilder( this, style, buffer );
+        this.appendTo( builder );
+    }
+
+    /**
+     * Append this to string builder.
+     * @param builder The string builder to append to.
+     */
+    public void appendTo( ToStringBuilder builder )
+    {
+        builder
+            .append( "acceptableRequestSize", acceptableRequestSize )
+            .append( "contentFormat", contentFormat )
+            .append( "etag", etag )
+            .append( "locationPath", locationPath )
+            .append( "locationQuery", locationQuery )
+            .append( "maxAge", maxAge )
+            .append( "observe", observe )
+            .append( "other", other )
+            .append( "responseSize", responseSize );
     }
 }

@@ -45,13 +45,13 @@ import nl.teslanet.mule.connectors.coap.api.ConfigurableResource;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestAttributesImpl;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestOptionsAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**
@@ -432,13 +432,13 @@ public class ServedResource extends CoapResource
      * @throws InternalInvalidMessageTypeException When request type could not be interpreted.
      * @throws InternalInvalidRequestCodeException When request code could not be interpreted.
      */
-    private DefaultRequestAttributes createRequestAttributes( CoapExchange coapExchange )
+    private CoapRequestAttributesImpl createRequestAttributes( CoapExchange coapExchange )
         throws InternalInvalidOptionValueException,
         InternalInvalidMessageTypeException,
         InternalInvalidRequestCodeException
     {
         Exchange exchange= coapExchange.advanced();
-        DefaultRequestAttributes attributes= new DefaultRequestAttributes();
+        CoapRequestAttributesImpl attributes= new CoapRequestAttributesImpl();
         attributes
             .setRequestType(
                 AttributeUtils.toMessageTypeAttribute( coapExchange.advanced().getRequest().getType() ).name()
@@ -447,7 +447,7 @@ public class ServedResource extends CoapResource
         attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
         attributes.setRemoteAddress( coapExchange.getSourceSocketAddress().toString() );
         attributes.setRequestUri( exchange.getRequest().getURI() );
-        attributes.setRequestOptions( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
+        attributes.setRequestOptions( new CoapRequestOptionsAttributesImpl( coapExchange.getRequestOptions() ) );
         attributes
             .setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKeyToken().toString() : null ) );
         return attributes;

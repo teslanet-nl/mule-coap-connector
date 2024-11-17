@@ -26,19 +26,18 @@ package nl.teslanet.mule.connectors.coap.internal.attributes;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributesStringBuilder;
 
 
 /**
  * The attributes of a CoAP request that was received from a client.
  *
  */
-public class DefaultRequestAttributes extends CoapRequestAttributes
+public class CoapRequestAttributesImpl extends CoapRequestAttributes
 {
     /**
      * The request URI object.
@@ -135,7 +134,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     public String getRequestPath()
     {
         String path= getOrCreateRequestUri().getPath();
-        if ( path != null )
+        if ( path != null && !path.isEmpty() )
         {
             return path;
         }
@@ -154,7 +153,7 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
         String query= getOrCreateRequestUri().getQuery();
         if ( query != null )
         {
-            return getOrCreateRequestUri().getPath();
+            return query;
         }
         else
         {
@@ -171,11 +170,11 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
         {
             try
             {
-                requestUriObject= new URI( requestUri );
+                requestUriObject= new URI( ( requestUri == null ? OptionUtils.EMPTY_STRING : requestUri ) );
             }
             catch ( URISyntaxException e )
             {
-                throw new IllegalStateException( "cannot create URI from request", e );
+                throw new IllegalStateException( "cannot create URI from request uri", e );
             }
         }
         return requestUriObject;
@@ -187,6 +186,15 @@ public class DefaultRequestAttributes extends CoapRequestAttributes
     @Override
     public String toString()
     {
-        return ReflectionToStringBuilder.toString( this, AttributeToStringStyle.getInstance() );
+        AttributesStringBuilder builder= new AttributesStringBuilder( this );
+        builder
+            .append( "relation", relation )
+            .append( "localAddress", localAddress )
+            .append( "remoteAddress", remoteAddress )
+            .append( "requestType", requestType )
+            .append( "requestCode", requestCode )
+            .append( "requestOptions", requestOptions )
+            .append( "requestUri", getRequestUri() );
+        return builder.toString();
     }
 }

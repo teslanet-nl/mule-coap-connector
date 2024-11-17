@@ -856,10 +856,16 @@
         <type name="nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes">
             <description><![CDATA[]]></description>
             <parameters>
+                <parameter name="clientError">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="localAddress">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="locationUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="noResponse">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notification">
@@ -902,6 +908,12 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="responseType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="result">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="serverError">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="success">

@@ -36,17 +36,17 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestOptionsAttributesImpl;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapResponseAttributesImpl;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapResponseOptionsAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultResponseOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
@@ -155,7 +155,7 @@ public class ResponseProcessor
     ) throws InternalResponseException
 
     {
-        DefaultResponseAttributes responseAttributes;
+        CoapResponseAttributesImpl responseAttributes;
         try
         {
             responseAttributes= createReceivedResponseAttributes( localAddress, requestBuilder, response );
@@ -189,7 +189,7 @@ public class ResponseProcessor
     ) throws InternalResponseException
 
     {
-        DefaultResponseAttributes responseAttributes;
+        CoapResponseAttributesImpl responseAttributes;
         try
         {
             responseAttributes= createReceivedResponseAttributes( localAddress, requestBuilder, response );
@@ -211,7 +211,7 @@ public class ResponseProcessor
      * @param callback The callback that will handle the response.
      */
     private static void callMuleFlow(
-        DefaultResponseAttributes responseAttributes,
+        CoapResponseAttributesImpl responseAttributes,
         CoapResponse response,
         SourceCallback< InputStream, CoapResponseAttributes > callback
     )
@@ -257,7 +257,7 @@ public class ResponseProcessor
      * @throws InternalInvalidOptionValueExceptionrs. When an option value is invalid.
      * @throws InternalUriException When the request uri is invalid.
      */
-    static DefaultResponseAttributes createReceivedResponseAttributes(
+    static CoapResponseAttributesImpl createReceivedResponseAttributes(
         String localAddress,
         CoapRequestBuilder requestBuilder,
         CoapResponse response
@@ -267,24 +267,24 @@ public class ResponseProcessor
         InternalUriException
 
     {
-        DefaultResponseAttributes attributes= new DefaultResponseAttributes();
+        CoapResponseAttributesImpl attributes= new CoapResponseAttributesImpl();
         attributes.setLocalAddress( localAddress );
         attributes.setRequestType( requestBuilder.buildMessageType().name() );
         attributes.setRequestCode( requestBuilder.buildRequestCode().name() );
         attributes.setRequestUriObject( requestBuilder.buildResourceUri() );
-        attributes.setRequestOptions( new DefaultRequestOptionsAttributes( requestBuilder.buildOptionSet() ) );
+        attributes.setRequestOptions( new CoapRequestOptionsAttributesImpl( requestBuilder.buildOptionSet() ) );
         if ( response == null )
         {
-            attributes.setSuccess( false );
+            attributes.setResult( nl.teslanet.mule.connectors.coap.api.attributes.Result.NO_RESPONSE );
         }
         else
         {
-            attributes.setSuccess( response.isSuccess() );
+            attributes.setResult( AttributeUtils.toResult( response.getCode() ) );
             attributes.setResponseType( AttributeUtils.toMessageTypeAttribute( response.advanced().getType() ).name() );
             attributes.setResponseCode( AttributeUtils.toResponseCodeAttribute( response.getCode() ).name() );
             attributes.setRemoteAddress( response.advanced().getSourceContext().getPeerAddress().toString() );
             attributes.setNotification( response.advanced().isNotification() );
-            attributes.setResponseOptions( new DefaultResponseOptionsAttributes( response.getOptions() ) );
+            attributes.setResponseOptions( new CoapResponseOptionsAttributesImpl( response.getOptions() ) );
             attributes
                 .setLocationUri(
                     MessageUtils

@@ -30,12 +30,12 @@ import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsAttributes;
  * The attributes of a CoAP response that was received from a server.
  *
  */
-public class CoapResponseAttributes extends CoapAttributes
+public class CoapResponseAttributes extends Attributes
 {
     /**
      * True when response is received and indicates success.
      */
-    protected boolean success= false;
+    protected Result result= null;
 
     /**
      * The CoAP response type of the server response.
@@ -63,11 +63,43 @@ public class CoapResponseAttributes extends CoapAttributes
     protected ResponseOptionsAttributes responseOptions= null;
 
     /**
+     * @return the result
+     */
+    public Result getResult()
+    {
+        return result;
+    }
+
+    /**
+     * @return the success
+     */
+    public boolean isNoResponse()
+    {
+        return result == Result.NO_RESPONSE;
+    }
+
+    /**
+     * @return the success
+     */
+    public boolean isClientError()
+    {
+        return result == Result.CLIENT_ERROR;
+    }
+
+    /**
+     * @return the success
+     */
+    public boolean isServerError()
+    {
+        return result == Result.SERVER_ERROR;
+    }
+
+    /**
      * @return the success
      */
     public boolean isSuccess()
     {
-        return success;
+        return result == Result.SUCCESS;
     }
 
     /**

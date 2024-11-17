@@ -66,7 +66,6 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     @ParameterGroup( name= "Observe uri" )
     private ObserverConfig observerConfig;
 
-    //TODO add options config?
     //TODO add refresh observe feature
     /**
      * The relation that has been established

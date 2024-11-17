@@ -31,7 +31,7 @@ import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsAttributes;
  * The common attributes of a CoAP request or response that was received.
  *
  */
-public class CoapAttributes
+public class Attributes
 {
     /**
      * The CoAP request type that was issued.

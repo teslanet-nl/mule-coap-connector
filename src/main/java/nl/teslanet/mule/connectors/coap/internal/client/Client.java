@@ -96,8 +96,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.options.OptionUtils;
 import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsParams;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultResponseAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapResponseAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
@@ -116,6 +115,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedRe
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.utils.MessageUtils;
 
 
@@ -493,7 +493,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             throw new InternalEndpointException( this + " CoAP request failed", e );
         }
         throwExceptionWhenNeeded( throwExceptionOnErrorResponse, response );
-        DefaultResponseAttributes responseAttributes;
+        CoapResponseAttributesImpl responseAttributes;
         try
         {
             responseAttributes= ResponseProcessor
@@ -726,6 +726,8 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      * @throws InternalResponseException When response indicates other error.
      * @throws InternalRequestException When request parameters are invalid.
      * @throws InternalInvalidRequestCodeException When request code is invalid.
+     * @throws InternalUnkownOptionException 
+     * @throws InternalInvalidOptionValueException 
      */
     Set< WebLink > discover( DiscoverParams discoverParams ) throws InternalUriException,
         InternalNoResponseException,
@@ -737,7 +739,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         InternalServerErrorResponseException,
         InternalResponseException,
         InternalInvalidRequestCodeException,
-        InternalRequestException
+        InternalRequestException,
+        InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
         Request request= new CoapRequestBuilderImpl( discoverParams ).build();
         CoapResponse response= coapClient.advanced( request );
@@ -904,7 +908,12 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         /**
          * Request options.
          */
-        OptionSet optionSet= new OptionSet();
+        RequestOptionsParams options= null;
+
+        /**
+         * Option set of the request issued.
+         */
+        OptionSet optionSet= null;
 
         /**
          * The request payload
@@ -1056,20 +1065,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * @param params Provides request parameters.
          * @param options Provides request options.
          * @return The constructed UriBuilder object.
-         * @throws InternalUnkownOptionException When an unknown other option alias is given.
-         * @throws InternalInvalidOptionValueException When an invalid option value is given.
-         */
+        */
         public CoapRequestBuilderImpl( RequestParams params, RequestOptionsParams options )
-            throws InternalInvalidOptionValueException,
-            InternalUnkownOptionException
         {
             this( (AbstractResourceRequestParams) params );
             requestCode= params.getRequestCode();
             forcePayload= params.isForcePayload();
             requestPayload= params.getRequestPayload();
-            this.optionSet= new OptionSet();
-            MessageUtils.copyOptions( options, optionSet, transformationService );
-            MessageUtils.copyOptions( options.getOtherOptions(), optionSet, transformationService );
+            this.options= options;
         }
 
         /**
@@ -1423,19 +1426,26 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
          * @throws InternalInvalidRequestCodeException When given requestCode is invalid.
          * @throws InternalUriException When parameters do not assemble to valid URI.
          * @throws InternalRequestException When given payload could not be added the request.
-         */
+         * @throws InternalUnkownOptionException When an unknown other option alias is given.
+         * @throws InternalInvalidOptionValueException When an invalid option value is given.
+          */
         @Override
         public Request build() throws InternalInvalidRequestCodeException,
             InternalUriException,
-            InternalRequestException
-        //InternalInvalidOptionValueException,
-        //InternalUnkownOptionException
+            InternalRequestException,
+            InternalInvalidOptionValueException,
+            InternalUnkownOptionException
         {
             Request request= new Request(
                 AttributeUtils.toRequestCode( requestCode ),
                 ( confirmable ? Type.CON : Type.NON )
             );
-            request.setOptions( optionSet );
+            optionSet= request.getOptions();
+            if ( options != null )
+            {
+                MessageUtils.copyOptions( options, optionSet, transformationService );
+                MessageUtils.copyOptions( options.getOtherOptions(), optionSet, transformationService );
+            }
             request.setURI( buildEndpointUri() );
             request.setOptions( buildResourceUri() );
             if ( observe != null )

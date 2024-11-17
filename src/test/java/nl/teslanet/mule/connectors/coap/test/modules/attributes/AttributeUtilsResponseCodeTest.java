@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,8 +36,9 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
+import nl.teslanet.mule.connectors.coap.api.attributes.Result;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**
@@ -53,12 +54,10 @@ public class AttributeUtilsResponseCodeTest
     @Parameters( name= "responseCode= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { CoapResponseCode.CREATED, ResponseCode.CREATED },
-                { CoapResponseCode.DELETED, ResponseCode.DELETED },
-                { CoapResponseCode.VALID, ResponseCode.VALID },
+        return Arrays
+            .asList( new Object [] []
+            { { CoapResponseCode.CREATED, ResponseCode.CREATED }, { CoapResponseCode.DELETED, ResponseCode.DELETED }, {
+                CoapResponseCode.VALID, ResponseCode.VALID },
                 { CoapResponseCode.CHANGED, ResponseCode.CHANGED },
                 { CoapResponseCode.CONTENT, ResponseCode.CONTENT },
                 { CoapResponseCode.CONTINUE, ResponseCode.CONTINUE },
@@ -85,8 +84,7 @@ public class AttributeUtilsResponseCodeTest
                 { CoapResponseCode.BAD_GATEWAY, ResponseCode.BAD_GATEWAY },
                 { CoapResponseCode.SERVICE_UNAVAILABLE, ResponseCode.SERVICE_UNAVAILABLE },
                 { CoapResponseCode.GATEWAY_TIMEOUT, ResponseCode.GATEWAY_TIMEOUT },
-                { CoapResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } }
-        );
+                { CoapResponseCode.PROXY_NOT_SUPPORTED, ResponseCode.PROXY_NOT_SUPPORTED } } );
     }
 
     /**
@@ -129,5 +127,26 @@ public class AttributeUtilsResponseCodeTest
     public void testToResponseCodeAttribute() throws InternalInvalidResponseCodeException
     {
         assertEquals( attributeValue, AttributeUtils.toResponseCodeAttribute( cfValue ) );
+    }
+
+    /**
+    * Test translation of Cf ResponseCode to response result attribute.
+    * @throws InternalInvalidResponseCodeException
+    */
+    @Test
+    public void testToResultAttribute() throws InternalInvalidResponseCodeException
+    {
+        if ( cfValue.isSuccess() )
+        {
+            assertEquals( "Result should be SUCCESS", Result.SUCCESS, AttributeUtils.toResult( cfValue ) );
+        }
+        if ( cfValue.isClientError() )
+        {
+            assertEquals( "Result should be CLIENT_ERROR", Result.CLIENT_ERROR, AttributeUtils.toResult( cfValue ) );
+        }
+        if ( cfValue.isServerError() )
+        {
+            assertEquals( "Result should be SERVER_ERROR", Result.SERVER_ERROR, AttributeUtils.toResult( cfValue ) );
+        }
     }
 }
