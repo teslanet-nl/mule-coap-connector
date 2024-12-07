@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.internal.endpoint;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -439,6 +440,19 @@ public final class OperationalEndpoint
             Scheduler cpuLightScheduler= schedulerService.cpuLightScheduler( schedulerConfig );
             coapEndpoint.setExecutors( ioScheduler, cpuLightScheduler );
             schedulerIsSet= true;
+        }
+    }
+
+    /**
+     * Start the endpoint when needed. 
+     * When the endpoint is used by a server, it is started by this server.
+     * @throws IOException When the endpoint cannot setup io.
+     */
+    public synchronized void startIfNeeded() throws IOException
+    {
+        if ( !server.isPresent() )
+        {
+            coapEndpoint.start();
         }
     }
 

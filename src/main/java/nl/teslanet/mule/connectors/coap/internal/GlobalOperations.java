@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2023 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -47,12 +47,12 @@ public class GlobalOperations
      * @return The byte array containing given value.
      */
     @Throws( { OptionValueErrorProvider.class } )
-    public BytesValue setOptionValue( @ParameterGroup( name= "Bytes value" )
+    public BytesValue setOptionValue( @ParameterGroup( name= "Option value" )
     OptionValueParams params )
     {
         try
         {
-            return new DefaultBytesValue( params.getBytes().getByteArray() );
+            return new DefaultBytesValue( params.getByteArray() );
         }
         catch ( OptionValueException e )
         {

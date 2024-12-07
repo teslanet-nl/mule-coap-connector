@@ -220,7 +220,7 @@ public class DtlsParams implements VisitableConfig
     @Summary( value= "Use anti replay filter." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public boolean useAntiReplyFilter= true;
+    public boolean useAntiReplayFilter= true;
 
     /**
      * Use extended anti replay filter window passing postponed records.
@@ -242,7 +242,7 @@ public class DtlsParams implements VisitableConfig
     @Summary( value= "Limit the anti replay filter window extension to given number of postponed records." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public Integer antiReplyFilterWindowExtension= null;
+    public Integer antiReplayFilterWindowExtension= null;
 
     /**
      * Accept visitor.
@@ -286,9 +286,9 @@ public class DtlsParams implements VisitableConfig
             .append( deferredMsgCapacity, rhs.deferredMsgCapacity )
             .append( autoHandshakeTimeout, rhs.autoHandshakeTimeout )
             .append( verifyPeersOnResumptionThreshold, rhs.verifyPeersOnResumptionThreshold )
-            .append( useAntiReplyFilter, rhs.useAntiReplyFilter )
+            .append( useAntiReplayFilter, rhs.useAntiReplayFilter )
             .append( useExtendedAntiReplayFilterWindow, rhs.useExtendedAntiReplayFilterWindow )
-            .append( antiReplyFilterWindowExtension, rhs.antiReplyFilterWindowExtension )
+            .append( antiReplayFilterWindowExtension, rhs.antiReplayFilterWindowExtension )
             .isEquals();
     }
 
@@ -312,9 +312,9 @@ public class DtlsParams implements VisitableConfig
             .append( deferredMsgCapacity )
             .append( autoHandshakeTimeout )
             .append( verifyPeersOnResumptionThreshold )
-            .append( useAntiReplyFilter )
+            .append( useAntiReplayFilter )
             .append( useExtendedAntiReplayFilterWindow )
-            .append( antiReplyFilterWindowExtension )
+            .append( antiReplayFilterWindowExtension )
             .toHashCode();
     }
 

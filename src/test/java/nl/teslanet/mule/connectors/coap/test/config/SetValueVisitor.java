@@ -1053,12 +1053,12 @@ public class SetValueVisitor implements ConfigVisitor
                 toVisit.autoHandshakeTimeout= value;
                 break;
             case DTLS_USE_ANTI_REPLAY_FILTER:
-                toVisit.useAntiReplyFilter= Boolean.valueOf( value );
+                toVisit.useAntiReplayFilter= Boolean.valueOf( value );
                 break;
             case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
                 int intValue= Integer.valueOf( value );
                 toVisit.useExtendedAntiReplayFilterWindow= Boolean.valueOf( intValue != 0 );
-                toVisit.antiReplyFilterWindowExtension= intValue == -1 ? null : intValue;
+                toVisit.antiReplayFilterWindowExtension= intValue == -1 ? null : intValue;
                 break;
             default:
                 break;

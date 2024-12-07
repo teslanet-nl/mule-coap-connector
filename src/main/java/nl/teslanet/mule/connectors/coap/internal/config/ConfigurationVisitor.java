@@ -635,16 +635,16 @@ public class ConfigurationVisitor implements ConfigVisitor
             {
                 config.set( DtlsConfig.DTLS_AUTO_HANDSHAKE_TIMEOUT, TimeUtils.toNanos( toVisit.autoHandshakeTimeout ), TimeUnit.NANOSECONDS );
             }
-            config.set( DtlsConfig.DTLS_USE_ANTI_REPLAY_FILTER, toVisit.useAntiReplyFilter );
+            config.set( DtlsConfig.DTLS_USE_ANTI_REPLAY_FILTER, toVisit.useAntiReplayFilter );
             if ( toVisit.useExtendedAntiReplayFilterWindow )
             {
-                if ( toVisit.antiReplyFilterWindowExtension == null )
+                if ( toVisit.antiReplayFilterWindowExtension == null )
                 {
                     config.set( DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER, -1 );
                 }
                 else
                 {
-                    config.set( DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER, Math.max( 0, toVisit.antiReplyFilterWindowExtension ) );
+                    config.set( DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER, Math.max( 0, toVisit.antiReplayFilterWindowExtension ) );
                 }
             }
             else

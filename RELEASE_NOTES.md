@@ -1,6 +1,10 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release candidate 3.0.0-RC1
+
+* Release candidate 1
+
 ## Development milestone 3.0.0-M7
 
 * Development phase 7

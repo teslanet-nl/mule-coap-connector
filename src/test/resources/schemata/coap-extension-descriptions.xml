@@ -84,9 +84,6 @@
                 <parameter name="lingerOnShutdown">
                     <description><![CDATA[The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.]]></description>
                 </parameter>
-                <parameter name="protocolStageThreadCount">
-                    <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
-                </parameter>
                 <parameter name="name">
                     <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
                 </parameter>
@@ -491,8 +488,17 @@
         <operation name="setOptionValue">
             <description><![CDATA[Operation that constructs an CoAP option byte value. The resulting byte array is complient to CoAP specifications how integer and string values must be converted to bytes.]]></description>
             <parameters>
-                <parameter name="bytes">
-                    <description><![CDATA[The bytes value of an option.]]></description>
+                <parameter name="fromBinary">
+                    <description><![CDATA[The binary from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromNumber">
+                    <description><![CDATA[The long value from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromHex">
+                    <description><![CDATA[The hexadecimal value from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromString">
+                    <description><![CDATA[The string value from which utf8 bytes are formed.]]></description>
                 </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
@@ -921,14 +927,6 @@
                 </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
-            <description><![CDATA[]]></description>
-            <parameters/>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-            <description><![CDATA[]]></description>
-            <parameters/>
-        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
             <description><![CDATA[]]></description>
             <parameters>
@@ -942,70 +940,6 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="valueAsString">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes">
-            <description><![CDATA[]]></description>
-            <parameters/>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig">
-            <description><![CDATA[]]></description>
-            <parameters/>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromBinary">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="binaryValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromHex">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="hexValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="hexValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromNumber">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="numberValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="numberValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromString">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="stringValue">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="stringValue">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

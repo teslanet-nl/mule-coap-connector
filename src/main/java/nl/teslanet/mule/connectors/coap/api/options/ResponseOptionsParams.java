@@ -77,7 +77,7 @@ public class ResponseOptionsParams
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary(
-        "The Max-Age Option indicates the maximum time a response may be cached before it is considered not fresh."
+        "The Max-Age Option indicates the maximum time a response may be cached\n before it is considered not fresh, in [Seconds]."
     )
     @Placement( tab= "Options", order= 51 )
     private Long maxAge= null;

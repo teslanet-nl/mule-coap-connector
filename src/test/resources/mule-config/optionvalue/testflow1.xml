@@ -40,39 +40,19 @@
 	<flow name="testflow">
 		<choice doc:name="input type" doc:id="52800155-a9f0-47b3-b97e-47261f8ed795" >
 			<when expression="#[vars.in == 'EMPTY']">
-				<coap:set-option-value doc:name="Empty">
-					<coap:bytes>
-                        <coap:from-number numberValue="0" />
-					</coap:bytes>
-				</coap:set-option-value>
+				<coap:set-option-value doc:name="Empty" fromNumber="0"/>
 			</when>
 			<when expression="#[vars.in == 'BINARY']">
-				<coap:set-option-value doc:name="Entity tag" >
-					<coap:bytes >
-						<coap:from-binary binaryValue="#[payload]"/>
-					</coap:bytes>
-				</coap:set-option-value>
+				<coap:set-option-value doc:name="Entity tag" fromBinary="#[payload]"/>
 			</when>
 			<when expression="#[vars.in == 'HEX']">
-				<coap:set-option-value doc:name="From hex">
-					<coap:bytes>
-						<coap:from-hex hexValue="#[payload]" />
-					</coap:bytes>
-				</coap:set-option-value>
+				<coap:set-option-value doc:name="From hex" fromHex="#[payload]" />
 			</when>
 			<when expression="#[vars.in == 'NUMBER']">
-				<coap:set-option-value doc:name="From number" >
-					<coap:bytes >
-						<coap:from-number numberValue="#[payload]" />
-					</coap:bytes>
-				</coap:set-option-value>
+				<coap:set-option-value doc:name="From number" fromNumber="#[payload]"/>
 			</when>
 			<when expression="#[vars.in == 'STRING']">
-				<coap:set-option-value doc:name="Entity tag" >
-					<coap:bytes >
-						<coap:from-string stringValue="#[payload]" />
-					</coap:bytes>
-				</coap:set-option-value>
+				<coap:set-option-value doc:name="Entity tag" fromString="#[payload]" />
 			</when>
 		</choice>
 		<error-handler >

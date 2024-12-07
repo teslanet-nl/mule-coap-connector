@@ -56,6 +56,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.api.transformation.TransformationService;
+import org.mule.runtime.core.api.lifecycle.StartException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -200,7 +201,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     /**
      * The Californium CoAP client instance.
      */
-    private CoapClient coapClient= null;
+    private ConnectorCoapClient coapClient= null;
 
     /**
      * observe relations contains the active observers.
@@ -257,9 +258,19 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void start() throws MuleException
     {
-        coapClient= new CoapClient();
+        coapClient= new ConnectorCoapClient();
+        //TODO scheduler type mismatch!
+        //coapClient.setExecutors( ioScheduler, (ScheduledThreadPoolExecutor) cpuLightScheduler, true );
         operationalEndpoint.setSchedulersIfNeeded( schedulerService, schedulerConfig );
         coapClient.setEndpoint( operationalEndpoint.getCoapEndpoint() );
+        try
+        {
+            operationalEndpoint.startIfNeeded();
+        }
+        catch ( Exception e )
+        {
+            throw new StartException( e, this );
+        }
         LOGGER.info( "{} connected to Endpoint { {} } ", this, operationalEndpoint );
         LOGGER.info( "{} started.", this );
     }

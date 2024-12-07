@@ -551,7 +551,7 @@
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-dtls-client-and-server-role" name="dtls-client-and-server-role">
     <xs:complexType>
       <xs:complexContent>
-		<xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole"></xs:extension>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole"></xs:extension>
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
@@ -857,9 +857,9 @@
         <xs:attribute type="mule:substitutableInt" use="optional" default="10" name="deferredMsgCapacity"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="autoHandshakeTimeout"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="30" name="verifyPeersOnResumptionThreshold"></xs:attribute>
-        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useAntiReplyFilter"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useAntiReplayFilter"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="useExtendedAntiReplayFilterWindow"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="antiReplyFilterWindowExtension"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="antiReplayFilterWindowExtension"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1233,151 +1233,6 @@
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.ProxyConfig"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-bytes-params"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams" abstract="true" name="abstract-bytes-params"></xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-empty-bytes"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-empty-bytes" name="empty-bytes">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromBinary">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-        <xs:attribute type="xs:string" use="required" name="binaryValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromBinary" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-binary"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-binary" name="from-binary">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromBinary"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromHex">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionString" use="required" name="hexValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHex" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-hex"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-hex" name="from-hex">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHex"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromNumber">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionLong" use="required" name="numberValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumber" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-number"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-number" name="from-number">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumber"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromString">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesParams">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:expressionString" use="required" name="stringValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromString" substitutionGroup="coap:abstract-bytes-params" abstract="true" name="abstract-from-string"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-string" name="from-string">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromString"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-bytes-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig" abstract="true" name="abstract-bytes-config"></xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig" substitutionGroup="coap:abstract-bytes-config" abstract="true" name="abstract-empty-bytes-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-empty-bytes-config" name="empty-bytes-config">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
-        <xs:attribute type="xs:string" use="required" name="hexValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig" substitutionGroup="coap:abstract-bytes-config" abstract="true" name="abstract-from-hex-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-hex-config" name="from-hex-config">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableLong" use="required" name="numberValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig" substitutionGroup="coap:abstract-bytes-config" abstract="true" name="abstract-from-number-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-number-config" name="from-number-config">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.binary.BytesConfig">
-        <xs:attribute type="xs:string" use="required" name="stringValue"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig" substitutionGroup="coap:abstract-bytes-config" abstract="true" name="abstract-from-string-config"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-from-string-config" name="from-string-config">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig"></xs:extension>
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
@@ -2475,11 +2330,6 @@
               <xs:documentation>The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableInt" use="optional" name="protocolStageThreadCount">
-            <xs:annotation>
-              <xs:documentation>Thread pool size of endpoint executor. Default value is equal to the number of cores.</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
           <xs:attribute type="xs:string" use="required" name="name">
             <xs:annotation>
               <xs:documentation>The identifier of this element used to reference it in other components</xs:documentation>
@@ -2940,19 +2790,27 @@
   <xs:complexType name="SetOptionValueType">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
-        <xs:sequence minOccurs="1" maxOccurs="1">
-          <xs:element minOccurs="1" maxOccurs="1" name="bytes">
-            <xs:annotation>
-              <xs:documentation>The bytes value of an option.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-bytes-params"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-bytes-params"></xs:element>
-              </xs:choice>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
+        <xs:attribute type="xs:string" use="optional" name="fromBinary">
+          <xs:annotation>
+            <xs:documentation>The binary from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionLong" use="optional" name="fromNumber">
+          <xs:annotation>
+            <xs:documentation>The long value from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="fromHex">
+          <xs:annotation>
+            <xs:documentation>The hexadecimal value from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="fromString">
+          <xs:annotation>
+            <xs:documentation>The string value from which utf8 bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
           <xs:annotation>
             <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>

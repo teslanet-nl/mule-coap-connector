@@ -37,17 +37,6 @@ import nl.teslanet.mule.connectors.coap.api.RemoteEndpoint;
 import nl.teslanet.mule.connectors.coap.api.RemoteEndpointConfig;
 import nl.teslanet.mule.connectors.coap.api.SharedServer;
 import nl.teslanet.mule.connectors.coap.api.SharedServerConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.BytesConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.BytesParams;
-import nl.teslanet.mule.connectors.coap.api.binary.EmptyBytes;
-import nl.teslanet.mule.connectors.coap.api.binary.EmptyBytesConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.FromBinary;
-import nl.teslanet.mule.connectors.coap.api.binary.FromHex;
-import nl.teslanet.mule.connectors.coap.api.binary.FromHexConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.FromNumber;
-import nl.teslanet.mule.connectors.coap.api.binary.FromNumberConfig;
-import nl.teslanet.mule.connectors.coap.api.binary.FromString;
-import nl.teslanet.mule.connectors.coap.api.binary.FromStringConfig;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.CocoaStrong;
@@ -110,10 +99,6 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 { SharedServer.class, Proxy.class } )
 @SubTypeMapping( baseType= RemoteEndpointConfig.class, subTypes=
 { SharedServerConfig.class, ProxyConfig.class } )
-@SubTypeMapping( baseType= BytesParams.class, subTypes=
-{ EmptyBytes.class, FromBinary.class, FromHex.class, FromNumber.class, FromString.class } )
-@SubTypeMapping( baseType= BytesConfig.class, subTypes=
-{ EmptyBytesConfig.class, FromHexConfig.class, FromNumberConfig.class, FromStringConfig.class } )
 @SubTypeMapping( baseType= KeyConfig.class, subTypes=
 { KeyFromHex.class, KeyFromNumber.class, KeyFromString.class } )
 @Configurations(

@@ -891,13 +891,13 @@ public class GetValueVisitor implements ConfigVisitor
                 result= ( toVisit.autoHandshakeTimeout != null ? toVisit.autoHandshakeTimeout.toString() : null );
                 break;
             case DTLS_USE_ANTI_REPLAY_FILTER:
-                result= String.valueOf( toVisit.useAntiReplyFilter );
+                result= String.valueOf( toVisit.useAntiReplayFilter );
                 break;
             case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
                 if ( toVisit.useExtendedAntiReplayFilterWindow )
                 {
-                    result= ( toVisit.antiReplyFilterWindowExtension != null
-                        ? toVisit.antiReplyFilterWindowExtension.toString() : "-1" );
+                    result= ( toVisit.antiReplayFilterWindowExtension != null
+                        ? toVisit.antiReplayFilterWindowExtension.toString() : "-1" );
                 }
                 else
                 {

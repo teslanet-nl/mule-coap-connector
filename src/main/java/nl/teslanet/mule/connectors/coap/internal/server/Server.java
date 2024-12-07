@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.config.CoapConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -110,6 +109,16 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     private SchedulerConfig schedulerConfig;
 
     /**
+     * The io scheduler of this server.
+     */
+    private Scheduler ioScheduler= null;
+
+    /**
+     * The cpu light scheduler of this server.
+     */
+    private Scheduler cpuLightScheduler= null;
+
+    /**
      * Main endpoint the server uses.
      */
     @Parameter
@@ -175,18 +184,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public long lingerOnShutdown= 250L;
 
     /**
-     * Thread pool size of endpoint executor. Default value is equal to the number
-     * of cores.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    @Placement( order= 3, tab= "Advanced" )
-    @Summary( "Thread pool size of endpoint executor. Default value is equal to the number of cores." )
-    private Integer protocolStageThreadCount= null;
-
-    /**
      * The Californium CoAP server instance.
      */
     private CoapServer coapServer= null;
@@ -204,10 +201,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration
             .createStandardWithoutFile();
-        if ( protocolStageThreadCount != null )
-        {
-            config.set( CoapConfig.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
-        }
         coapServer= new CoapServer( config );
         try
         {
@@ -272,6 +265,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void dispose()
     {
         coapServer.destroy();
+        coapServer= null;
         OperationalEndpoint.disposeAll( this );
         LOGGER.info( "{} disposed.", this );
     }
@@ -282,9 +276,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void start() throws MuleException
     {
-        Scheduler ioScheduler= schedulerService.ioScheduler( schedulerConfig );
-        Scheduler cpuLightScheduler= schedulerService.cpuLightScheduler( schedulerConfig );
-        coapServer.setExecutors( ioScheduler, cpuLightScheduler, true );
         try
         {
             if ( resources != null )
@@ -294,7 +285,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                     registry.add( null, resourceConfig );
                 }
             }
-
+            SchedulerConfig config= schedulerConfig.withPrefix( getServerName() );
+            ioScheduler= schedulerService.ioScheduler( config );
+            cpuLightScheduler= schedulerService.cpuLightScheduler( config );
+            coapServer.setExecutors( ioScheduler, cpuLightScheduler, true );
             coapServer.start();
         }
         catch ( Exception e )
@@ -338,6 +332,10 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 //cleanup still needed
                 registry.removeAll();
             }
+            ioScheduler.stop();
+            ioScheduler= null;
+            cpuLightScheduler.stop();
+            cpuLightScheduler= null;
             LOGGER.info( "{} stopped", this );
         }
     }
