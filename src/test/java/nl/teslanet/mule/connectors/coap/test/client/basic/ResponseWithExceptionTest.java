@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.ServerErrorResponseException;
@@ -62,23 +62,22 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-
-            tests.add(
-                new Object []
-                { "GET", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "POST", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "PUT", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
-            tests.add(
-                new Object []
-                { "DELETE", "/response/" + code.name(), ResponseCode.isClientError( code ), ResponseCode.isServerError( code ), code, "Response is: " + code.name() }
-            );
+            tests
+                .add( new Object []
+                { "GET", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: "
+                    + code.name() } );
+            tests
+                .add( new Object []
+                { "POST", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: "
+                    + code.name() } );
+            tests
+                .add( new Object []
+                { "PUT", "/response/" + code.name(), code.isClientError(), code.isServerError(), code, "Response is: "
+                    + code.name() } );
+            tests
+                .add( new Object []
+                { "DELETE", "/response/" + code.name(), code.isClientError(), code.isServerError(), code,
+                    "Response is: " + code.name() } );
         }
         return tests;
     }
@@ -151,12 +150,19 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
         {
             Exception e= assertThrows(
                 Exception.class,
-                () -> flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-                    "port",
-                    "5683"
-                ).withVariable( "path", resourcePath ).run()
+                () -> flowRunner( "do_request" )
+                    .withPayload( "nothing_important" )
+                    .withVariable( "code", requestCode )
+                    .withVariable( "host", "127.0.0.1" )
+                    .withVariable( "port", "5683" )
+                    .withVariable( "path", resourcePath )
+                    .run()
             );
-            assertEquals( "wrong exception message", "CoAP Client { config } failed to execute request.", e.getMessage() );
+            assertEquals(
+                "wrong exception message",
+                "CoAP Client { config } failed to execute request.",
+                e.getMessage()
+            );
             if ( expectClientError )
             {
                 assertEquals( "wrong exception cause", e.getCause().getClass(), ClientErrorResponseException.class );
@@ -172,20 +178,26 @@ public class ResponseWithExceptionTest extends AbstractClientTestCase
         }
         else
         {
-            flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-                "port",
-                "5683"
-            ).withVariable( "path", resourcePath ).run();
+            flowRunner( "do_request" )
+                .withPayload( "nothing_important" )
+                .withVariable( "code", requestCode )
+                .withVariable( "host", "127.0.0.1" )
+                .withVariable( "port", "5683" )
+                .withVariable( "path", resourcePath )
+                .run();
 
             assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
             Message response= (Message) spy.getEvents().get( 0 ).getContent();
-            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
 
             CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
             byte[] payload= (byte[]) ( response.getPayload().getValue() );
             assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
             assertEquals( "wrong response payload", expectedResponsePayload, new String( payload ) );
-            assertEquals( "wrong success flag", ResponseCode.isSuccess( expectedResponseCode ), attributes.isSuccess() );
+            assertEquals( "wrong success flag", expectedResponseCode.isSuccess(), attributes.isSuccess() );
             //TODO test for property clienterror, servererror
         }
     }

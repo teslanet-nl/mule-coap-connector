@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,6 +38,12 @@ public class OptOtherInbound1NoCacheKeyTest extends AbstractOtherOptionInboundPr
     }
 
     @Override
+    protected String getOptionAlias()
+    {
+        return "option-65012";
+    }
+
+    @Override
     protected int getOptionNumber()
     {
         return 65012;
@@ -52,7 +58,6 @@ public class OptOtherInbound1NoCacheKeyTest extends AbstractOtherOptionInboundPr
     @Override
     protected boolean isNoCacheKey()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 }

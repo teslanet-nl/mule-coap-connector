@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -230,7 +230,7 @@ public final class DiscoveredResource implements Comparable< DiscoveredResource 
     @Override
     public boolean equals( Object other )
     {
-        if ( !DiscoveredResource.class.isInstance( other ) ) return false;
+        if ( !( other instanceof DiscoveredResource ) ) return false;
         return 0 == COMPARATOR.compare( this, (DiscoveredResource) other );
     }
 

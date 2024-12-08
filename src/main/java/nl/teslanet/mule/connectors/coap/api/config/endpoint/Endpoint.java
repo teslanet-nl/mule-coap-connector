@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.extension.api.annotation.NoImplicit;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 
@@ -36,7 +38,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 public class Endpoint
 {
     @ParameterGroup( name= "Configure one of the endpoint types" )
-    private EndpointConfig endpointConfig;
+    private EndpointConfig endpointConfig= null;
 
     /**
      * @return The endpoint configuration.
@@ -55,23 +57,41 @@ public class Endpoint
     }
 
     /**
-     * @return The endpoint that is configured.
-     */
+    * @return The endpoint that is configured.
+    */
     public AbstractEndpoint getEndpoint()
     {
         return endpointConfig.getEndpoint();
     }
-    
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
-	public boolean equals(Object obj)
+    public boolean equals( Object obj )
     {
-		return super.equals(obj);
-    	
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        Endpoint rhs= (Endpoint) obj;
+        return new EqualsBuilder().append( endpointConfig, rhs.endpointConfig ).isEquals();
     }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     @Override
-	public int hashCode()
+    public int hashCode()
     {
-		return super.hashCode();
-    	
+        return new HashCodeBuilder( 11, 31 ).append( endpointConfig ).toHashCode();
     }
 }

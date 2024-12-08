@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,7 @@
 package nl.teslanet.mule.connectors.coap.api.config.midtracker;
 
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 
 
@@ -32,11 +33,12 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
  */
 public class NullMidTracker implements MidTracker
 {
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept a visitor and pass on.
+     * @throws ConfigException 
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }
@@ -48,5 +50,35 @@ public class NullMidTracker implements MidTracker
     public String name()
     {
         return "NullMidTracker";
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        return name().equals( ( (NullMidTracker) obj ).name() );
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return name().hashCode();
     }
 }

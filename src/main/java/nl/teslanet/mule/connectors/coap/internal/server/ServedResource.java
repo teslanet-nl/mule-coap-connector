@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
@@ -39,17 +40,18 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
+import nl.teslanet.mule.connectors.coap.api.ConfigurableResource;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
-import nl.teslanet.mule.connectors.coap.internal.attributes.DefaultRequestAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestAttributesImpl;
+import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestOptionsAttributesImpl;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
-import nl.teslanet.mule.connectors.coap.internal.options.DefaultRequestOptionsAttributes;
 import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**
@@ -76,7 +78,7 @@ public class ServedResource extends CoapResource
     /**
      * Regular expression for splitting comma separated values.
      */
-    private static final String CSV_REGEX= "\\s*,\\s*";
+    private static final String CSV_REGEX= ",";
 
     /**
      * The callback of the messagesource for Get requests.
@@ -137,64 +139,10 @@ public class ServedResource extends CoapResource
      */
     public ServedResource( ResourceConfig resource )
     {
-        //TODO add / replacement
         super( resource.getResourceName() );
+        configure( resource );
 
-        //TODO make use of visible/invisible?
-
-        requestCodeFlags.setGet( resource.isGet() );
-        requestCodeFlags.setPost( resource.isPost() );
-        requestCodeFlags.setPut( resource.isPut() );
-        requestCodeFlags.setDelete( resource.isDelete() );
-        requestCodeFlags.setFetch( resource.isFetch() );
-        requestCodeFlags.setPatch( resource.isPatch() );
-        requestCodeFlags.setIpatch( resource.isIpatch() );
-        earlyAck= resource.isEarlyAck();
-
-        if ( resource.isObservable() )
-        {
-            setObservable( true );
-            getAttributes().setObservable();
-        }
-        else
-        {
-            setObservable( false );
-        }
-
-        //process info configuration
-        if ( resource.getCoreInfoConfig() != null )
-        {
-            if ( resource.getCoreInfoConfig().getTitle() != null )
-            {
-                getAttributes().setTitle( resource.getCoreInfoConfig().getTitle() );
-            }
-            if ( resource.getCoreInfoConfig().getRt() != null )
-            {
-                for ( String rt : resource.getCoreInfoConfig().getRt().split( CSV_REGEX ) )
-                {
-                    getAttributes().addResourceType( rt );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getIfdesc() != null )
-            {
-                for ( String ifdesc : resource.getCoreInfoConfig().getIfdesc().split( CSV_REGEX ) )
-                {
-                    getAttributes().addInterfaceDescription( ifdesc );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getCt() != null )
-            {
-                for ( String ct : resource.getCoreInfoConfig().getCt().split( CSV_REGEX ) )
-                {
-                    getAttributes().addContentType( Integer.parseInt( ct ) );
-                }
-            }
-            if ( resource.getCoreInfoConfig().getSz() != null )
-            {
-                getAttributes().setMaximumSizeEstimate( resource.getCoreInfoConfig().getSz() );
-            }
-        }
-        //process resource configuration
+        //process subresources
         if ( resource.getSubResources() != null )
         {
             //also create children (recursively) 
@@ -214,9 +162,15 @@ public class ServedResource extends CoapResource
     public ServedResource( ResourceParams resource )
     {
         super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ) );
+        configure( resource );
+    }
 
-        //TODO make use of visible/invisible?
-
+    /**
+     * Configure the resource.
+     * @param resource the configuration to set. 
+     */
+    private void configure( ConfigurableResource resource )
+    {
         requestCodeFlags.setGet( resource.isGet() );
         requestCodeFlags.setPost( resource.isPost() );
         requestCodeFlags.setPut( resource.isPut() );
@@ -237,50 +191,46 @@ public class ServedResource extends CoapResource
         }
 
         //process info configuration
-        if ( resource.getInfo() != null )
+        if ( resource.getCoreInfo() != null )
         {
-            if ( resource.getInfo().getTitle() != null )
+            if ( resource.getCoreInfo().getTitle() != null )
             {
-                getAttributes().setTitle( resource.getInfo().getTitle() );
+                getAttributes().setTitle( resource.getCoreInfo().getTitle() );
             }
-            if ( resource.getInfo().getRt() != null )
+            if ( resource.getCoreInfo().getRt() != null )
             {
-                for ( String rt : resource.getInfo().getRt().split( CSV_REGEX ) )
+                for ( String rt : StringUtils.deleteWhitespace( resource.getCoreInfo().getRt() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addResourceType( rt );
                 }
             }
-            if ( resource.getInfo().getIfdesc() != null )
+            if ( resource.getCoreInfo().getIfdesc() != null )
             {
-                for ( String ifdesc : resource.getInfo().getIfdesc().split( CSV_REGEX ) )
+                for (
+                    String ifdesc : StringUtils
+                        .deleteWhitespace( resource.getCoreInfo().getIfdesc() )
+                        .split( CSV_REGEX )
+                )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }
             }
-            if ( resource.getInfo().getCt() != null )
+            if ( resource.getCoreInfo().getCt() != null )
             {
-                for ( String ct : resource.getInfo().getCt().split( CSV_REGEX ) )
+                for ( String ct : StringUtils.deleteWhitespace( resource.getCoreInfo().getCt() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addContentType( Integer.parseInt( ct ) );
                 }
             }
-            if ( resource.getInfo().getSz() != null )
+            if ( resource.getCoreInfo().getSz() != null )
             {
-                getAttributes().setMaximumSizeEstimate( resource.getInfo().getSz() );
+                getAttributes().setMaximumSizeEstimate( resource.getCoreInfo().getSz() );
             }
         }
     }
 
     /**
-     * @return True when this resource will handle get requests.
-     */
-    boolean isHandlingGet()
-    {
-        return requestCodeFlags.isGet();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handleGET(org.eclipse.californium.core.server.resources.CoapExchange)
+     * Override default handler of Cf.
      */
     @Override
     public void handleGET( CoapExchange exchange )
@@ -297,15 +247,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle put requests.
-     */
-    boolean isHandlingPut()
-    {
-        return requestCodeFlags.isPut();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handlePUT(org.eclipse.californium.core.server.resources.CoapExchange)
+     * Override default handler of Cf.
      */
     @Override
     public void handlePUT( CoapExchange exchange )
@@ -322,15 +264,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle post requests.
-     */
-    boolean isHandlingPost()
-    {
-        return requestCodeFlags.isPost();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handlePOST(org.eclipse.californium.core.server.resources.CoapExchange)
+     * Override default handler of Cf.
      */
     @Override
     public void handlePOST( CoapExchange exchange )
@@ -347,15 +281,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle delete requests.
-     */
-    boolean isHandlingDelete()
-    {
-        return requestCodeFlags.isDelete();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.californium.core.CoapResource#handleDELETE(org.eclipse.californium.core.server.resources.CoapExchange)
+     * Override default handler of Cf.
      */
     @Override
     public void handleDELETE( CoapExchange exchange )
@@ -372,15 +298,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle fetch requests.
-     */
-    boolean isHandlingFetch()
-    {
-        return requestCodeFlags.isFetch();
-    }
-
-    /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handleFETCH( CoapExchange exchange )
@@ -397,15 +315,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle patch requests.
-     */
-    boolean isHandlingPatch()
-    {
-        return requestCodeFlags.isPatch();
-    }
-
-    /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handlePATCH( CoapExchange exchange )
@@ -422,15 +332,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return True when this resource will handle patch requests.
-     */
-    boolean isHandlingIpatch()
-    {
-        return requestCodeFlags.isIpatch();
-    }
-
-    /**
-     * Overide default handler of Cf.
+     * Override default handler of Cf.
      */
     @Override
     public void handleIPATCH( CoapExchange exchange )
@@ -451,30 +353,36 @@ public class ServedResource extends CoapResource
      * @param exchange the CoAP exchange context of the request.
      * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
      */
-    private void handleRequest( SourceCallback< InputStream, CoapRequestAttributes > callback, CoapExchange exchange, CoapResponseCode defaultCoAPResponseCode )
+    private void handleRequest(
+        SourceCallback< InputStream, CoapRequestAttributes > callback,
+        CoapExchange exchange,
+        CoapResponseCode defaultCoAPResponseCode
+    )
     {
         if ( callback == null )
         {
-            exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
+            exchange.respond( ResponseCode.NOT_IMPLEMENTED, "NO LISTENER" );
             if ( LOGGER.isWarnEnabled( ERROR_RESPONSE_MARKER ) )
             {
                 try
                 {
-                    LOGGER.warn(
-                        ERROR_RESPONSE_MARKER,
-                        NO_LISTENER_LOG_FORMAT,
-                        AttributeUtils.toRequestCodeAttribute( exchange.advanced().getCurrentRequest().getCode() ),
-                        exchange.advanced().getCurrentRequest().getURI()
-                    );
+                    LOGGER
+                        .warn(
+                            ERROR_RESPONSE_MARKER,
+                            NO_LISTENER_LOG_FORMAT,
+                            AttributeUtils.toRequestCodeAttribute( exchange.advanced().getCurrentRequest().getCode() ),
+                            exchange.advanced().getCurrentRequest().getURI()
+                        );
                 }
                 catch ( InternalInvalidRequestCodeException e )
                 {
-                    LOGGER.warn(
-                        ERROR_RESPONSE_MARKER,
-                        NO_LISTENER_LOG_FORMAT,
-                        exchange.advanced().getCurrentRequest().getCode(),
-                        exchange.advanced().getCurrentRequest().getURI()
-                    );
+                    LOGGER
+                        .warn(
+                            ERROR_RESPONSE_MARKER,
+                            NO_LISTENER_LOG_FORMAT,
+                            exchange.advanced().getCurrentRequest().getCode(),
+                            exchange.advanced().getCurrentRequest().getURI()
+                        );
                 }
             }
             return;
@@ -498,29 +406,22 @@ public class ServedResource extends CoapResource
             return;
         }
         SourceCallbackContext requestcontext= callback.createContext();
-        requestcontext.addVariable( "defaultCoAPResponseCode", defaultCoAPResponseCode );
-        requestcontext.addVariable( "CoapExchange", exchange );
+        requestcontext.addVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE, defaultCoAPResponseCode );
+        requestcontext.addVariable( Server.VARNAME_COAP_EXCHANGE, exchange );
         //TODO add streaming & blockwise cooperation
         byte[] requestPayload= exchange.getRequestPayload();
-        if ( requestPayload != null )
-        {
-            callback.handle(
-                Result.< InputStream, CoapRequestAttributes > builder().output( new ByteArrayInputStream( requestPayload ) ).length( requestPayload.length ).attributes(
-                    requestAttributes
-                ).mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) ).build(),
+        // payload is always initialized, no need to check null
+        callback
+            .handle(
+                Result
+                    .< InputStream, CoapRequestAttributes > builder()
+                    .output( new ByteArrayInputStream( requestPayload ) )
+                    .length( requestPayload.length )
+                    .attributes( requestAttributes )
+                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
+                    .build(),
                 requestcontext
             );
-        }
-        else
-        {
-            callback.handle(
-                Result.< InputStream, CoapRequestAttributes > builder().attributes( requestAttributes ).output( null ).mediaType(
-                    MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() )
-                ).build(),
-                requestcontext
-            );
-        }
-
     }
 
     /**
@@ -531,19 +432,24 @@ public class ServedResource extends CoapResource
      * @throws InternalInvalidMessageTypeException When request type could not be interpreted.
      * @throws InternalInvalidRequestCodeException When request code could not be interpreted.
      */
-    private DefaultRequestAttributes createRequestAttributes( CoapExchange coapExchange ) throws InternalInvalidOptionValueException,
+    private CoapRequestAttributesImpl createRequestAttributes( CoapExchange coapExchange )
+        throws InternalInvalidOptionValueException,
         InternalInvalidMessageTypeException,
         InternalInvalidRequestCodeException
     {
         Exchange exchange= coapExchange.advanced();
-        DefaultRequestAttributes attributes= new DefaultRequestAttributes();
-        attributes.setRequestType( AttributeUtils.toMessageTypeAttribute( coapExchange.advanced().getRequest().getType() ).name() );
+        CoapRequestAttributesImpl attributes= new CoapRequestAttributesImpl();
+        attributes
+            .setRequestType(
+                AttributeUtils.toMessageTypeAttribute( coapExchange.advanced().getRequest().getType() ).name()
+            );
         attributes.setRequestCode( AttributeUtils.toRequestCodeAttribute( coapExchange.getRequestCode() ).name() );
         attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
         attributes.setRemoteAddress( coapExchange.getSourceSocketAddress().toString() );
         attributes.setRequestUri( exchange.getRequest().getURI() );
-        attributes.setRequestOptionAttributes( new DefaultRequestOptionsAttributes( coapExchange.getRequestOptions() ) );
-        attributes.setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKey() : null ) );
+        attributes.setRequestOptions( new CoapRequestOptionsAttributesImpl( coapExchange.getRequestOptions() ) );
+        attributes
+            .setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKeyToken().toString() : null ) );
         return attributes;
     }
 

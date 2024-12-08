@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,8 +43,8 @@ import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -62,14 +62,12 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     @Parameters( name= "request= {0}  " )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { Code.GET, "/property/setoption", ResponseCode.CONTENT },
-                { Code.PUT, "/property/setoption", ResponseCode.CHANGED },
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "/property/setoption", ResponseCode.CONTENT }, { Code.PUT, "/property/setoption",
+                ResponseCode.CHANGED },
                 { Code.POST, "/property/setoption", ResponseCode.CHANGED },
-                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } }
-        );
+                { Code.DELETE, "/property/setoption", ResponseCode.DELETED } } );
     }
 
     /**
@@ -178,16 +176,32 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
     @Test
     public void testInboundProperty() throws Exception
     {
-        Event result= flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.name() ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            null
-        ).withVariable( "path", path + getPathExtension() ).run();
+        Event result= flowRunner( "do_request" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.name() )
+            .withVariable( "host", "127.0.0.1" )
+            .withVariable( "port", null )
+            .withVariable( "path", path + getPathExtension() )
+            .keepStreamsOpen()
+            .run();
         Message response= result.getMessage();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= null;;
 
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        switch ( getPropertyType() )
+        {
+            case NoResponse:
+            {
+                break;
+            }
+            default:
+                assertTrue(
+                    "wrong attributes class",
+                    response.getAttributes().getValue() instanceof CoapResponseAttributes
+                );
 
+                attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+                assertEquals( "wrong response code", expectedResponseCode.name(), attributes.getResponseCode() );
+        }
         switch ( getPropertyType() )
         {
             case CollectionOfByteArray:
@@ -235,34 +249,52 @@ public abstract class AbstractInboundPropertyTestCase extends AbstractClientTest
             case CollectionOfETag:
             {
                 @SuppressWarnings( "unchecked" )
-                Collection< EntityTag > property= (Collection< EntityTag >) fetchInboundProperty( attributes );
+                Collection< DefaultEntityTag > property= (Collection< DefaultEntityTag >) fetchInboundProperty(
+                    attributes
+                );
                 assertNotNull( "property is not found in inbound scope", property );
 
                 @SuppressWarnings( "unchecked" )
-                Collection< EntityTag > expected= (Collection< EntityTag >) getExpectedInboundPropertyValue();
+                Collection< DefaultEntityTag > expected= (Collection< DefaultEntityTag >) getExpectedInboundPropertyValue();
                 assertEquals( "option value list length differ", expected.size(), property.size() );
 
-                Iterator< EntityTag > propertyIt= property.iterator();
-                Iterator< EntityTag > expectedIt= expected.iterator();
+                Iterator< DefaultEntityTag > propertyIt= property.iterator();
+                Iterator< DefaultEntityTag > expectedIt= expected.iterator();
                 while ( propertyIt.hasNext() && expectedIt.hasNext() )
                 {
-                    EntityTag optionValue= propertyIt.next();
-                    EntityTag expectedValue= expectedIt.next();
-                    assertTrue( "value in collection not equal", expectedValue.equals( optionValue ) );
+                    DefaultEntityTag optionValue= propertyIt.next();
+                    DefaultEntityTag expectedValue= expectedIt.next();
+                    assertEquals( "value in collection not equal", expectedValue, optionValue );
                 } ;
             }
                 break;
 
             case ByteArray:
-                assertArrayEquals( "wrong inbound property value", (byte[]) getExpectedInboundPropertyValue(), (byte[]) fetchInboundProperty( attributes ) );
+                assertArrayEquals(
+                    "wrong inbound property value",
+                    (byte[]) getExpectedInboundPropertyValue(),
+                    (byte[]) fetchInboundProperty( attributes )
+                );
                 break;
 
             case ETag:
-                assertTrue( "wrong inbound property value", ( (EntityTag) getExpectedInboundPropertyValue() ).equals( (EntityTag) fetchInboundProperty( attributes ) ) );
+                assertEquals(
+                    "wrong inbound property value",
+                    (DefaultEntityTag) getExpectedInboundPropertyValue(),
+                    (DefaultEntityTag) fetchInboundProperty( attributes )
+                );
+                break;
+
+            case NoResponse:
+                assertEquals( "received unexpected response", "NO_RESPONSE", getPayloadAsString( response ) );
                 break;
 
             default:
-                assertEquals( "wrong inbound property value", getExpectedInboundPropertyValue(), fetchInboundProperty( attributes ) );
+                assertEquals(
+                    "wrong inbound property value",
+                    getExpectedInboundPropertyValue(),
+                    fetchInboundProperty( attributes )
+                );
                 break;
         }
     }

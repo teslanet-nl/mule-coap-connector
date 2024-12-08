@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,65 +24,57 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Objects;
 
 
 /**
- * Other option interface.
+ * Other option attribute.
+ * This class is actually an interface but Mule needs a concrete class.
  */
 public class OtherOptionAttribute
 {
     /**
-     * The number of the other option.
+     * Get the alias of this other option.
+     * @return The option number.
      */
-    protected final int number;
-
-    /**
-     * The value of the other option.
-     */
-    protected final byte[] value;
-
-    /**
-     * Default constructor.
-     */
-    public OtherOptionAttribute()
+    public String getAlias()
     {
-        super();
-        this.number= 0;
-        this.value= OptionUtils.EMPTY_BYTES;
-    }
-
-    /**
-     * Constructor setting members.
-     * @param number The number of the option.
-     * @param value The value of the option.
-     */
-    public OtherOptionAttribute( int number, byte[] value )
-    {
-        super();
-        this.number= number;
-        this.value= ( value == null ? OptionUtils.EMPTY_BYTES : value );
+        return null;
     }
 
     /**
      * Get the number of this other option.
-     *
      * @return The option number.
      */
     public int getNumber()
     {
-        return number;
+        return 0;
+    }
+
+    /**
+     * Get the format of this other option.
+     * @return The option type.
+     */
+    public OptionFormat getFormat()
+    {
+        return null;
+    }
+
+    /**
+     * Get the the length of the other option.
+     * @return The number of bytes of this option.
+     */
+    public int getLength()
+    {
+        return 0;
     }
 
     /**
      * Get the value of this other option.
-     *
      * @return The option value if any, otherwise null.
      */
     public InputStream getValue()
     {
-        return OptionUtils.toInputStream( value );
+        return null;
     }
 
     /**
@@ -91,7 +83,7 @@ public class OtherOptionAttribute
      */
     public long getValueAsNumber()
     {
-        return OptionUtils.toLong( value );
+        return 0;
     }
 
     /**
@@ -99,9 +91,9 @@ public class OtherOptionAttribute
      * Hexadecimal values a-f will be lower case.
      * @return The string containing the hexadecimal representation or empty string when the value is empty.
      */
-    public String getValueAsHexString()
+    public String getValueAsHex()
     {
-        return OptionUtils.toHexString( value );
+        return null;
     }
 
     /**
@@ -110,76 +102,42 @@ public class OtherOptionAttribute
      */
     public String getValueAsString()
     {
-        return OptionUtils.toString( value );
+        return null;
     }
 
     /**
      * Checks if option is critical.
-     *
      * @return {@code true} if is option critical, otherwise {@code false}.
      */
     public boolean isCritical()
     {
-        return OptionUtils.isCritical( getNumber() );
+        return false;
     }
 
     /**
      * Checks if option with this number is unsafe.
-     *
      * @return {@code true}  if this is an unsafe option, otherwise {@code false}.
      */
-    public boolean isUnSafe()
+    public boolean isUnsafe()
     {
-        return OptionUtils.isUnSafe( getNumber() );
+        return false;
     }
 
     /**
      * Checks if option with this number is a NoCacheKey option.
-     *
      * @return {@code true} if this is NoCacheKey option, otherwise {@code false}.
      */
     public boolean isNoCacheKey()
     {
-        return OptionUtils.isNoCacheKey( getNumber() );
+        return false;
     }
 
     /**
-     * Check if the etag is empty. etags whether it contains the etag.
-     * @return True when the etag is empty, otherwise false.
+     * Check if the option is empty.
+     * @return True when the option is empty, otherwise false.
      */
     public boolean isEmpty()
     {
-        return( value.length == 0 );
-    }
-
-    /**
-     * Returns a hash code value for the object.
-     */
-    @Override
-    public int hashCode()
-    {
-        final int prime= 31;
-        int result= 1;
-        result= prime * result + Arrays.hashCode( value );
-        result= prime * result + Objects.hash( number );
-        return result;
-    }
-
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     */
-    @Override
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
-        {
-            return true;
-        }
-        if ( !( obj instanceof OtherOptionAttribute ) )
-        {
-            return false;
-        }
-        OtherOptionAttribute other= (OtherOptionAttribute) obj;
-        return getNumber() == other.getNumber() && Arrays.equals( value, other.value );
+        return false;
     }
 }

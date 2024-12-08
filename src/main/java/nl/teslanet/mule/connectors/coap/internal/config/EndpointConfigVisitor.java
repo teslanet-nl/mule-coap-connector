@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,16 +27,21 @@ import java.net.InetSocketAddress;
 
 import org.eclipse.californium.core.network.CoapEndpoint;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
+import nl.teslanet.mule.connectors.coap.internal.GlobalConfig;
+import nl.teslanet.mule.connectors.coap.internal.endpoint.EndpointOptionRegistry;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
 /**
- * Configuration visitor that collects multi-cast configuration
+ * Endpoint configuration visitor.
  *
  */
-public class EndpointConfigVisitor extends CfNetworkConfigVisitor
+public abstract class EndpointConfigVisitor extends ConfigurationVisitor
 {
     /**
      * The name of the endpont 
@@ -44,21 +49,48 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
     private String endpointName;
 
     /**
+     * Network interface to bind to.
+     */
+    private InetSocketAddress localAddress= null;
+
+    /**
      * The Endpoint Builder that is used to collect endpoint configuration.
      */
-    CoapEndpoint.Builder endPointBuilder= new CoapEndpoint.Builder();
+    protected CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
+
+    /**
+     * Reuse address flag.
+     */
+    private boolean reuseAddress= false;
+
+    /**
+     * Visit option parameters configuration object.
+     * @param toVisit the object to visit.
+     */
+    @Override
+    public void visit( OptionParams toVisit )
+    {
+
+        EndpointOptionRegistry registry= new EndpointOptionRegistry();
+
+        for ( AcceptOtherOption accept : toVisit.getAcceptOtherOptions() )
+        {
+            GlobalConfig.getOtherOptionDefinition( accept.getAlias() ).ifPresent( registry::add );
+        }
+        endpointBuilder.setOptionRegistry( registry );
+    }
 
     /**
      * Visit Endpoint configuration object.
      * @param toVisit the object to visit.
+     * @throws ConfigException When visit is not successful.
      */
     @Override
-    public void visit( AbstractEndpoint toVisit )
+    public void visit( AbstractEndpoint toVisit ) throws ConfigException
     {
         super.visit( toVisit );
         endpointName= toVisit.configName;
     }
-
 
     /**
      * Visit socket parameters.
@@ -72,12 +104,13 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
 
         if ( toVisit.bindToHost != null )
         {
-            endPointBuilder.setInetSocketAddress( new InetSocketAddress( toVisit.bindToHost, port ) );
+            localAddress= new InetSocketAddress( toVisit.bindToHost, port );
         }
         else
         {
-            endPointBuilder.setInetSocketAddress( new InetSocketAddress( port ) );
+            localAddress= new InetSocketAddress( port );
         }
+        reuseAddress= toVisit.reuseAddress;
     }
 
     /**
@@ -89,12 +122,33 @@ public class EndpointConfigVisitor extends CfNetworkConfigVisitor
     }
 
     /**
-     * Get the Builder that is ready to build the endpoint.
-     * @return The Endpoint Builder.
+     * @return the localAddress
      */
-    public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
+    public InetSocketAddress getLocalAddress()
     {
-        endPointBuilder.setNetworkConfig( this.getNetworkConfig() );
-        return endPointBuilder;
+        return localAddress;
     }
+
+    /**
+     * @return {@code True} when to reuse address.
+     */
+    public boolean isReuseAddress()
+    {
+        return reuseAddress;
+    }
+
+    /**
+     * @return The other option definitions.
+     */
+    //    public List< OptionDefinition > getOtherOptionDefs()
+    //    {
+    //        return otherOptionDefs;
+    //    }
+
+    /**
+     * Build the endpoint using the configuration this visitor has collected.
+     * @return The Endpoint.
+     * @throws EndpointConstructionException When the configuration cannot be used to create an endpoint.
+     */
+    public abstract CoapEndpoint getEndpoint() throws EndpointConstructionException;
 }

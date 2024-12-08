@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.modules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -422,12 +423,12 @@ public class RequestCodeFlagsTest
         RequestCodeFlags flags2= new RequestCodeFlags( false, true, false, false, true, true, false );
         RequestCodeFlags flags3= new RequestCodeFlags( false, true, true, false, true, true, false );
 
-        assertTrue( "flag 1 equals flag 1 returns wrong result", flags1.equals( flags1 ) );
-        assertFalse( "flag 1 equals null returns wrong result", flags1.equals( null ) );
-        assertFalse( "flag 1 equals flag 2 returns wrong result", flags1.equals( flags2 ) );
-        assertFalse( "flag 2 equals flag 1 returns wrong result", flags2.equals( flags1 ) );
-        assertTrue( "flag 1 equals flag 3 returns wrong result", flags1.equals( flags3 ) );
-        assertTrue( "flag 3 equals flag 1 returns wrong result", flags3.equals( flags1 ) );
+        assertEquals( "flag 1 equals flag 1 returns wrong result", flags1, flags1 );
+        assertNotEquals( "flag 1 equals null returns wrong result", flags1, null );
+        assertNotEquals( "flag 1 equals flag 2 returns wrong result", flags1, flags2 );
+        assertNotEquals( "flag 2 equals flag 1 returns wrong result", flags2, flags1 );
+        assertEquals( "flag 1 equals flag 3 returns wrong result", flags1, flags3 );
+        assertEquals( "flag 3 equals flag 1 returns wrong result", flags3, flags1 );
     }
 
     @Test

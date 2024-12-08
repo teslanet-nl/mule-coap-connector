@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,7 +43,7 @@ public class OptContentFormatInboundTest extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue()
     {
-        return new Integer( 41 );
+        return Integer.valueOf( 41 );
     }
     
     /* (non-Javadoc)

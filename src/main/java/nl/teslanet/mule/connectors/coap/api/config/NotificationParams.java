@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,18 +38,31 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class NotificationParams implements VisitableConfig
 {
     /**
-     * The time in milliseconds [ms] that may pass sending only Non-Confirmable
+     * The maximum number of observes supported on the CoAP server endpoint.
+     * A negative value indicates unlimited.
+     */
+    @Parameter
+    @Optional( defaultValue= "50000" )
+    @Summary( "The maximum number of observes supported on the CoAP server endpoint.\nA negative value indicates unlimited." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public Integer maxObserves= null;
+
+    /**
+     * The time that may pass sending only Non-Confirmable
      * notifications to an observing client. After this period the first
      * notification will be Confirmable to verify the client is listening. When this
      * notification isn't acknowledged, the CoAP relation is considered stale and
      * removed.
      */
     @Parameter
-    @Optional(defaultValue= "86400000")
-    @Summary("The time in milliseconds [ms] that may pass sending only Non-Confirmable notifications to an observing client. After this period the first notification will be Confirmable to verify the client is listening.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Long notificationCheckIntervalTime= null;
+    @Optional( defaultValue= "2m" )
+    @Summary(
+        "The time that may pass sending only Non-Confirmable notifications to an observing client. \nAfter this period the first notification will be Confirmable to verify the client is listening."
+    )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public String checkIntervalTime= null;
 
     /**
      * The maximum number of notifications that may pass before a Confirmable notification must be sent to an
@@ -58,27 +71,27 @@ public class NotificationParams implements VisitableConfig
      * removed.
      */
     @Parameter
-    @Optional(defaultValue= "100")
-    @Summary(" The maximum number of notifications that may pass before a Confirmable notification must be sent to an observing client, to verify that this client is listening.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Integer notificationCheckIntervalCount= null;
+    @Optional( defaultValue= "100" )
+    @Summary( " The maximum number of notifications that may pass before a Confirmable notification must be sent to an observing client, to verify that this client is listening." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public Integer checkIntervalCount= null;
 
     /**
      * The time a client waits for re-registration after Max-Age is expired.
      */
     @Parameter
-    @Optional(defaultValue= "2000")
-    @Summary("The time in milleseconds [ms] a client waits for re-registration after Max-Age is expired.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Long notificationReregistrationBackoff= null;
+    @Optional( defaultValue= "2s" )
+    @Summary( "The time a client waits for re-registration after Max-Age is expired." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public String reregistrationBackoff= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

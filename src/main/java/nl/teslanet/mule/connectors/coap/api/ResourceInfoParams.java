@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,16 +38,16 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  * CoRE Information of the resource 
  *
  */
-public class ResourceInfoParams
+public class ResourceInfoParams implements CoreInfo
 {
     /**
      * Human readable title of the resource. 
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("Human readable title of the resource. ")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "Human readable title of the resource. " )
     private String title;
 
     /**
@@ -55,10 +55,10 @@ public class ResourceInfoParams
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("Comma separated list of interface descriptions that apply to the resource.")
-    @Alias("if")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "Comma separated list of interface descriptions that apply to the resource." )
+    @Alias( "if" )
     private String ifdesc;
 
     /**
@@ -66,10 +66,10 @@ public class ResourceInfoParams
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("Comma separated list of resource types that apply to the resource.")
-    @DisplayName("rt")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "Comma separated list of resource types that apply to the resource." )
+    @DisplayName( "rt" )
     private String rt;
 
     /**
@@ -77,10 +77,10 @@ public class ResourceInfoParams
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("Maximum size estimate of the resource. [bytes]")
-    @DisplayName("sz")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "Maximum size estimate of the resource. [bytes]" )
+    @DisplayName( "sz" )
     private String sz;
 
     /**
@@ -89,11 +89,11 @@ public class ResourceInfoParams
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    @ParameterDsl(allowReferences= true)
-    @Summary("Comma separated list of CoAP content types that are available on the resource.")
-    @Example("0,41")
-    @DisplayName("ct")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "Comma separated list of CoAP content types that are available on the resource." )
+    @Example( "0,41" )
+    @DisplayName( "ct" )
     private String ct;
 
     /**
@@ -118,6 +118,7 @@ public class ResourceInfoParams
     /**
      * @return the title
      */
+    @Override
     public String getTitle()
     {
         return title;
@@ -134,6 +135,7 @@ public class ResourceInfoParams
     /**
      * @return the ifdesc
      */
+    @Override
     public String getIfdesc()
     {
         return ifdesc;
@@ -150,6 +152,7 @@ public class ResourceInfoParams
     /**
      * @return the rt
      */
+    @Override
     public String getRt()
     {
         return rt;
@@ -166,6 +169,7 @@ public class ResourceInfoParams
     /**
      * @return the sz
      */
+    @Override
     public String getSz()
     {
         return sz;
@@ -182,6 +186,7 @@ public class ResourceInfoParams
     /**
      * @return the ct
      */
+    @Override
     public String getCt()
     {
         return ct;

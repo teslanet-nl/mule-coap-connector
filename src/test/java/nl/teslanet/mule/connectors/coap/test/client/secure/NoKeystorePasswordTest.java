@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,10 +28,10 @@ import static org.hamcrest.Matchers.isA;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 
-import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.lifecycle.LifecycleException;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractMuleStartTestCase;
+import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 
 
 public class NoKeystorePasswordTest extends AbstractMuleStartTestCase
@@ -40,13 +40,9 @@ public class NoKeystorePasswordTest extends AbstractMuleStartTestCase
     protected void expectException()
     {
         exception.expect( isA( LifecycleException.class ) );
-        exception.expect( hasMessage( containsString( "nl.teslanet.mule.transport.coap.client" ) ) );
-        exception.expect( hasCause( isA( ConnectionException.class ) ) );
-        exception.expect( hasCause( hasMessage( containsString( "coap uri endpoint" ) ) ) );
-        //TODO
-        //exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
-        //exception.expect( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) );
-        //exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load keystore" ) ) ) ) );
+        exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
+        exception.expect( hasCause( hasCause( isA( EndpointException.class ) ) ) );
+        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load keystore" ) ) ) ) );
     }
 
     @Override

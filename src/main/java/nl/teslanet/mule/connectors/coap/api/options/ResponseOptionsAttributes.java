@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -34,28 +35,55 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
  */
 public class ResponseOptionsAttributes
 {
-    protected Integer contentFormat= null;
-
-    protected Long maxAge= null;
-
-    protected EntityTag etag= null;
-
-    protected List< String > locationPath= null;
-
-    protected List< QueryParamAttribute > locationQuery= null;
-
-    protected Integer responseSize= null;
-
+    /**
+     * The request size that is acceptable for the server ac
+     */
     protected Integer acceptableRequestSize= null;
 
+    /**
+     * The content format of the response payload.
+     */
+    protected Integer contentFormat= null;
+
+    /**
+     * The entity tag of the response payload content.
+     */
+    protected BytesValue etag= null;
+
+    /**
+     * The location path of the resource that is created.
+     */
+    protected List< String > locationPath= null;
+
+    /**
+     * The location query of the resource that is created.
+     */
+    protected List< QueryParamAttribute > locationQuery= null;
+
+    /**
+     * The max age of an observable resource.
+     */
+    protected Long maxAge= null;
+
+    /**
+     * The number of the notification of an observed resource.number
+     */
     protected Integer observe= null;
 
-    protected List< OtherOptionAttribute > otherOptions= null;
+    /**
+     * The other response options.
+     */
+    protected List< OtherOptionAttribute > other= null;
+
+    /**
+     * The response payload size indication [bytes].
+     */
+    protected Integer responseSize= null;
 
     /**
      * @return The etag option.
      */
-    public EntityTag getEtag()
+    public BytesValue getEtag()
     {
         return etag;
     }
@@ -117,10 +145,10 @@ public class ResponseOptionsAttributes
     }
 
     /**
-     * Get the other options.
+     * Get the other response options.
      */
-    public List< OtherOptionAttribute > getOtherOptions()
+    public List< OtherOptionAttribute > getOther()
     {
-        return otherOptions;
+        return other;
     }
 }

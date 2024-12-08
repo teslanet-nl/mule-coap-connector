@@ -25,11 +25,11 @@ package nl.teslanet.mule.connectors.coap.test.client.exceptionhandling;
 
 import java.net.SocketException;
 
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
 
@@ -53,7 +53,7 @@ public class ExceptionHandlingTestServer extends CoapServer
      */
     public ExceptionHandlingTestServer( int port ) throws SocketException
     {
-        super( NetworkConfig.createStandardWithoutFile(), port );
+        super( Configuration.createStandardWithoutFile(), port );
         addResources();
     }
 

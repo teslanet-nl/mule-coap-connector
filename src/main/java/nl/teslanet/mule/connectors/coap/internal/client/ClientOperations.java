@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,25 +28,18 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.elements.exception.ConnectorException;
-import org.mule.runtime.api.meta.ExpressionSupport;
-import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
-import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
 import nl.teslanet.mule.connectors.coap.api.DiscoveredResource;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
@@ -55,6 +48,7 @@ import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
 import nl.teslanet.mule.connectors.coap.api.PingParams;
 import nl.teslanet.mule.connectors.coap.api.RequestParams;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandlerParams;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.error.ClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.EndpointException;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidHandlerException;
@@ -65,13 +59,13 @@ import nl.teslanet.mule.connectors.coap.api.error.RequestException;
 import nl.teslanet.mule.connectors.coap.api.error.ResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.ServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.api.error.UriException;
-import nl.teslanet.mule.connectors.coap.api.options.RequestOptions;
+import nl.teslanet.mule.connectors.coap.api.options.RequestOptionsParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.DiscoverErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalClientErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalEndpointException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidObserverException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalNoResponseException;
@@ -79,6 +73,7 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestExcep
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalServerErrorResponseException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnexpectedResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverAddErrorProvider;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ObserverExistsErrorProvider;
@@ -144,12 +139,10 @@ public class ClientOperations
     public Result< InputStream, CoapResponseAttributes > request( @Config
     Client client, @ParameterGroup( name= "Request" )
     RequestParams requestParams,
-        @Alias( "request-options" )
-        @Optional
-        @NullSafe
+        @ParameterGroup( name= "Request options" )
         @Summary( "The CoAP options to send with the request." )
         @Placement( tab= "Options", order= 1 )
-        RequestOptions requestOptions
+        RequestOptionsParams requestOptions
     )
     {
         try
@@ -160,7 +153,7 @@ public class ClientOperations
         {
             throw new EndpointException( client + REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalInvalidHandlerException | InternalRequestException e )
+        catch ( InternalInvalidRequestCodeException | InternalInvalidHandlerException | InternalRequestException e )
         {
             throw new RequestException( client + REQUEST_ERROR_MSG, e );
         }
@@ -201,12 +194,10 @@ public class ClientOperations
     Client client, @ParameterGroup( name= "Response handling" )
     ResponseHandlerParams responseHandlerParams, @ParameterGroup( name= "Request" )
     RequestParams requestParams,
-        @Optional
-        @NullSafe
-        @Expression( ExpressionSupport.SUPPORTED )
+        @ParameterGroup( name= "Request options" )
         @Summary( "The CoAP options to send with the request." )
         @Placement( tab= "Options", order= 1 )
-        RequestOptions requestOptions
+        RequestOptionsParams requestOptions
     )
     {
         try
@@ -217,7 +208,7 @@ public class ClientOperations
         {
             throw new EndpointException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
-        catch ( InternalInvalidMessageTypeException | InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
+        catch ( InternalInvalidRequestCodeException | InternalResponseException | InternalRequestException e )
         {
             throw new RequestException( client + ASYNC_REQUEST_ERROR_MSG, e );
         }
@@ -300,17 +291,16 @@ public class ClientOperations
         {
             throw new UriException( client + DISCOVERY_ERROR_MSG, e );
         }
-        catch ( InternalUnexpectedResponseException | InternalInvalidResponseCodeException | InternalResponseException e )
+        catch (
+            InternalClientErrorResponseException | InternalUnexpectedResponseException
+            | InternalInvalidResponseCodeException | InternalResponseException e
+        )
         {
             throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalNoResponseException e )
         {
             throw new NoResponseException( client + DISCOVERY_ERROR_MSG, e );
-        }
-        catch ( InternalClientErrorResponseException e )
-        {
-            throw new ResponseException( client + DISCOVERY_ERROR_MSG, e );
         }
         catch ( InternalServerErrorResponseException e )
         {
@@ -320,24 +310,25 @@ public class ClientOperations
         {
             throw new InvalidRequestCodeException( client + DISCOVERY_ERROR_MSG, e );
         }
-        catch ( InternalRequestException e )
+        catch ( InternalRequestException | InternalInvalidOptionValueException | InternalUnkownOptionException e )
         {
             throw new RequestException( client + DISCOVERY_ERROR_MSG, e );
         }
         ConcurrentSkipListSet< DiscoveredResource > resultSet= new ConcurrentSkipListSet<>();
         for ( WebLink link : links )
         {
-            resultSet.add(
-                new DiscoveredResource(
-                    link.getURI(),
-                    link.getAttributes().hasObservable(),
-                    link.getAttributes().getTitle(),
-                    link.getAttributes().getInterfaceDescriptions(),
-                    link.getAttributes().getResourceTypes(),
-                    link.getAttributes().getMaximumSizeEstimate(),
-                    link.getAttributes().getContentTypes()
-                )
-            );
+            resultSet
+                .add(
+                    new DiscoveredResource(
+                        link.getURI(),
+                        link.getAttributes().hasObservable(),
+                        link.getAttributes().getTitle(),
+                        link.getAttributes().getInterfaceDescriptions(),
+                        link.getAttributes().getResourceTypes(),
+                        link.getAttributes().getMaximumSizeEstimate(),
+                        link.getAttributes().getContentTypes()
+                    )
+                );
         }
         return resultSet;
     }
@@ -359,7 +350,7 @@ public class ClientOperations
     {
         try
         {
-            client.startObserver( observerAddParams, responseHandlerParams );
+            client.addObserver( observerAddParams, responseHandlerParams );
         }
         catch ( InternalUriException e )
         {
@@ -389,7 +380,7 @@ public class ClientOperations
     {
         try
         {
-            client.stopObserver( observerRemoveParams );
+            client.removeObserver( observerRemoveParams );
         }
         catch ( InternalUriException e )
         {
@@ -433,14 +424,11 @@ public class ClientOperations
     public Set< String > observerList( @Config
     Client client )
     {
-        Supplier< ConcurrentSkipListSet< String > > supplier= new Supplier< ConcurrentSkipListSet< String > >()
-            {
-                @Override
-                public ConcurrentSkipListSet< String > get()
-                {
-                    return new ConcurrentSkipListSet<>();
-                }
-            };
-        return client.getRelations().keySet().stream().map( URI::toString ).collect( Collectors.toCollection( supplier ) );
+        return client
+            .getRelations()
+            .keySet()
+            .stream()
+            .map( URI::toString )
+            .collect( Collectors.toCollection( ConcurrentSkipListSet< String >::new ) );
     }
 }

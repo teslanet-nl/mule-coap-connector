@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -34,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 
@@ -76,14 +79,52 @@ public class MulticastUDPEndpoint extends UDPEndpoint
         multicastParams= new MulticastParams( new CopyOnWriteArrayList<>() );
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
         multicastParams.accept( visitor );
         visitor.visit( this );
     }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        MulticastUDPEndpoint rhs= (MulticastUDPEndpoint) obj;
+        return new EqualsBuilder()
+            .appendSuper( super.equals( obj ) )
+            .append( multicastParams, rhs.multicastParams )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 13, 33 )
+            .appendSuper( super.hashCode() )
+            .append( multicastParams )
+            .toHashCode();
+    }
+
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,12 +25,15 @@ package nl.teslanet.mule.connectors.coap.internal.client;
 
 import java.net.URI;
 
+import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 
 
@@ -60,8 +63,14 @@ public interface CoapRequestBuilder
      * @throws InternalInvalidRequestCodeException When given requestCode is invalid.
      * @throws InternalUriException When parameters do not assemble to valid URI.
      * @throws InternalRequestException When given payload could not be added the request.
+     * @throws InternalUnkownOptionException When an unknown other option alias is given.
+     * @throws InternalInvalidOptionValueException When an invalid option value is given.
      */
-    public Request build() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException;
+    public Request build() throws InternalInvalidRequestCodeException,
+        InternalUriException,
+        InternalRequestException,
+        InternalInvalidOptionValueException,
+        InternalUnkownOptionException;
 
     /**
      * Build an empty CoAP request based on given parameters.
@@ -81,4 +90,10 @@ public interface CoapRequestBuilder
      * @return The requestCode of the request to build.
      */
     public CoapRequestCode buildRequestCode();
+
+    /**
+     * Build the options of the request.
+     * @return The options of the request to build.
+     */
+    public OptionSet buildOptionSet();
 }

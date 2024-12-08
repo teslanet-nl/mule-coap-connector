@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,17 +23,20 @@
 package nl.teslanet.mule.connectors.coap.test.config;
 
 
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
+import nl.teslanet.mule.connectors.coap.api.config.TriState;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.BasicRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.Cocoa;
@@ -41,11 +44,53 @@ import nl.teslanet.mule.connectors.coap.api.config.congestion.CocoaStrong;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.LinuxRto;
 import nl.teslanet.mule.connectors.coap.api.config.congestion.PeakhopperRto;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation;
+import nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator;
 import nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep;
+import nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DatagramFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientParams.DefaultHandshakeMode;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams.FragmentSize;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsResponseMatching;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsRetransmissionParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams.AuthenticationMode;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
+import nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm;
+import nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmName;
+import nl.teslanet.mule.connectors.coap.api.config.security.CipherSuite;
+import nl.teslanet.mule.connectors.coap.api.config.security.CipherSuiteName;
+import nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId;
+import nl.teslanet.mule.connectors.coap.api.config.security.Curve;
+import nl.teslanet.mule.connectors.coap.api.config.security.ExtendedMasterSecretModeName;
+import nl.teslanet.mule.connectors.coap.api.config.security.HashAlgorithmName;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString;
+import nl.teslanet.mule.connectors.coap.api.config.security.KeyStore;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyGroup;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore;
+import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm;
+import nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithmName;
+import nl.teslanet.mule.connectors.coap.api.config.security.SupportedGroupName;
+import nl.teslanet.mule.connectors.coap.api.config.security.TrustStore;
 
 
 /**
@@ -54,31 +99,311 @@ import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
  */
 public class SetValueVisitor implements ConfigVisitor
 {
-    private ConfigParamName configParamName;
+    private ConfigParam param;
 
     private String value= null;
 
-    public SetValueVisitor( ConfigParamName configParamName, String value )
+    public SetValueVisitor( ConfigParam param, String value )
     {
-        this.configParamName= configParamName;
+        this.param= param;
         this.value= value;
     }
 
     //TODO client and server config support 
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint)
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( UDPEndpoint toVisit )
+    {
+        switch ( param )
+        {
+            case responseMatching:
+                toVisit.strictResponseMatching= DtlsResponseMatching.STRICT.name().equals( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( DTLSEndpoint toVisit )
+    {
+        switch ( param )
+        {
+            case responseMatching:
+                toVisit.responseMatching= DtlsResponseMatching.valueOf( value );
+                break;
+            case DTLS_ROLE:
+                switch ( value )
+                {
+                    case "CLIENT_ONLY":
+                        toVisit.dtlsRole= new DtlsClientRole();
+                        break;
+                    case "SERVER_ONLY":
+                        toVisit.dtlsRole= new DtlsServerRole();
+                        break;
+                    case "BOTH":
+                    default:
+                        toVisit.dtlsRole= new DtlsClientAndServerRole();
+                        break;
+                }
+                break;
+            case DTLS_USE_ANTI_REPLAY_FILTER:
+                switch ( value )
+                {
+                    case "NO":
+                        toVisit.replayFilter= new NoReplayFilter();
+                        break;
+                    case "DEFAULT":
+                        toVisit.replayFilter= new DefaultReplayFilter();
+                        break;
+                    case "EXTENDED":
+                        toVisit.replayFilter= new ExtendedReplayFilter();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
+                switch ( value )
+                {
+                    case "0":
+                        toVisit.replayFilter= new DefaultReplayFilter();
+                        break;
+                    default:
+                        toVisit.replayFilter= new ExtendedReplayFilter();
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( AbstractEndpoint toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
-            case logCoapMessages:
-                toVisit.logCoapMessages= new Boolean( value );
+            case ENDPOINT_OTHEROPTION_ALIAS:
+                toVisit.optionParams= new OptionParams();
                 break;
-            case useCongestionControl:
-                toVisit.congestionControl= ( Boolean.parseBoolean( value ) ? new Cocoa() : null );
+            case ENDPOINT_LOGTRAFFIC:
+                toVisit.logTraffic= Boolean.valueOf( value );
+                break;
+            case logHealthStatus:
+                toVisit.logHealthStatus= ( Boolean.parseBoolean( value ) ? new LogHealthStatus() : null );
+                break;
+            case HEALTH_STATUS_INTERVAL:
+                if ( toVisit.logHealthStatus == null )
+                {
+                    toVisit.logHealthStatus= new LogHealthStatus();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit security configuration.
+     */
+    @Override
+    public void visit( BlockwiseParams toVisit )
+    {
+        switch ( param )
+        {
+            case preferredBlockSize:
+                toVisit.preferredBlockSize= Integer.valueOf( value );
+                break;
+            case maxMessageSize:
+                toVisit.maxMessageSize= Integer.valueOf( value );
+                break;
+            case maxResourceBodySize:
+                toVisit.maxResourceBodySize= Integer.valueOf( value );
+                break;
+            case blockwiseStatusLifetime:
+                toVisit.statusLifetime= value;
+                break;
+            case blockwiseStatusInterval:
+                toVisit.statusInterval= value;
+                break;
+            case blockwiseStrictBlock1Option:
+                toVisit.strictBlock1Option= Boolean.valueOf( value );
+                break;
+            case blockwiseStrictBlock2Option:
+                toVisit.strictBlock2Option= Boolean.valueOf( value );
+                break;
+            case blockwiseEntityTooLargeAutoFailover:
+                toVisit.entityTooLargeFailover= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit security configuration.
+     */
+    @Override
+    public void visit( OptionParams toVisit )
+    {
+        switch ( param )
+        {
+            case ENDPOINT_OTHEROPTION_ALIAS:
+                toVisit.setAcceptOtherOptions( new ArrayList< AcceptOtherOption >() );
+                for ( String item : value.split( "," ) )
+                {
+                    String alias= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.getAcceptOtherOptions().add( new AcceptOtherOption( alias ) );
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( ExchangeParams toVisit )
+    {
+        switch ( param )
+        {
+            case maxActivePeers:
+                toVisit.maxActivePeers= Integer.valueOf( value );
+                break;
+            case maxPeerInactivityPeriod:
+                toVisit.maxPeerInactivityPeriod= value;
+                break;
+            case ackTimeout:
+                toVisit.ackTimeout= value;
+                break;
+            case maxAckTimeout:
+                toVisit.maxAckTimeout= value;
+                break;
+            case ackRandomFactor:
+                toVisit.ackRandomFactor= Float.valueOf( value );
+                break;
+            case ackTimeoutScale:
+                toVisit.ackTimeoutScale= Float.valueOf( value );
+                break;
+            case maxRetransmit:
+                toVisit.maxRetransmit= Integer.valueOf( value );
+                break;
+            case exchangeLifetime:
+                toVisit.exchangeLifetime= value;
+                break;
+            case nonLifetime:
+                toVisit.nonLifetime= value;
+                break;
+            case maxLatency:
+                toVisit.maxLatency= value;
+                break;
+            case maxTransmitWait:
+                toVisit.maxTransmitWait= value;
+                break;
+            case maxServerResponseDelay:
+                toVisit.maxResponseDelay= value;
+                break;
+            case nstart:
+                toVisit.nstart= Integer.valueOf( value );
+                break;
+            case tokenSizeLimit:
+                toVisit.tokenSizeLimit= Integer.valueOf( value );
+                break;
+            case multicastMidBase:
+                toVisit.multicastMidBase= Integer.valueOf( value );
+                break;
+            case leisure:
+                toVisit.leisure= value;
+                break;
+            case strictEmptyMessageFormat:
+                toVisit.strictEmptyMessageFormat= Boolean.valueOf( value );
+                break;
+            case useRandomMidStart:
+                toVisit.useRandomMidStart= Boolean.valueOf( value );
+                break;
+            case midTracker:
+                if ( value == null )
+                {
+                    toVisit.midTracker= null;
+                }
+                else
+                {
+                    switch ( value )
+                    {
+                        case "GroupedMidTracker":
+                            toVisit.midTracker= new GroupedMidTracker();
+                            break;
+                        case "MapBasedMidTracker":
+                            toVisit.midTracker= new MapBasedMidTracker();
+                            break;
+                        case "NullMidTracker":
+                            toVisit.midTracker= new NullMidTracker();
+                            break;
+                        default:
+                            toVisit.midTracker= null;
+                            break;
+                    }
+                }
+                break;
+            case deduplicator:
+                if ( value == null )
+                {
+                    toVisit.deduplicator= null;
+                }
+                else
+                {
+                    switch ( value )
+                    {
+                        case "CropRotation":
+                            toVisit.deduplicator= new CropRotation();
+                            break;
+                        case "MarkAndSweep":
+                            toVisit.deduplicator= new MarkAndSweep();
+                            break;
+                        case "PeersMarkAndSweep":
+                            toVisit.deduplicator= new PeersMarkAndSweep();
+                            break;
+                        default:
+                            toVisit.deduplicator= null;
+                            break;
+                    }
+                }
+                break;
+            case deduplicationAutoReplace:
+                if ( toVisit.deduplicator == null )
+                {
+                    toVisit.deduplicator= new PeersMarkAndSweep();
+                }
+                break;
+            case cropRotationPeriod:
+                if ( toVisit.deduplicator == null )
+                {
+                    toVisit.deduplicator= new CropRotation();
+                }
+                break;
+            case markAndSweepInterval:
+                if ( toVisit.deduplicator == null )
+                {
+                    toVisit.deduplicator= new MarkAndSweep();
+                }
+                break;
+            case peersMarkAndSweepMessages:
+                if ( toVisit.deduplicator == null )
+                {
+                    toVisit.deduplicator= new PeersMarkAndSweep();
+                }
                 break;
             case congestionControlAlgorithm:
                 if ( value == null )
@@ -109,186 +434,37 @@ public class SetValueVisitor implements ConfigVisitor
                     }
                     break;
                 }
-            case logHealthStatus:
-                toVisit.logHealthStatus= ( Boolean.parseBoolean( value ) ? new LogHealthStatus() : null );
-                break;
-            case healthStatusInterval:
-                if ( toVisit.logHealthStatus == null )
-                {
-                    toVisit.logHealthStatus= new LogHealthStatus();
-                }
-                break;
             default:
                 break;
         }
     }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams)
-     */
-    @Override
-    public void visit( BlockwiseParams toVisit )
-    {
-        switch ( configParamName )
-        {
-            case preferredBlockSize:
-                toVisit.preferredBlockSize= new Integer( value );
-                break;
-            case maxMessageSize:
-                toVisit.maxMessageSize= new Integer( value );
-                break;
-            case maxResourceBodySize:
-                toVisit.maxResourceBodySize= new Integer( value );
-                break;
-            case blockwiseStatusLifetime:
-                toVisit.blockwiseStatusLifetime= new Integer( value );
-                break;
-            default:
-                break;
-        }
-    }
-
 
     /**
-     * Visit security configuration.
-     */
-    @Override
-    public void visit( SecurityParams toVisit )
-    {
-        //            case keyStoreLocation:
-        //                result= config.getKeyStoreLocation();
-        //                break;
-        //            case keyStorePassword:
-        //                result= config.getKeyStorePassword();
-        //                break;
-        //            case trustStoreLocation:
-        //                result= config.getTrustStoreLocation();
-        //                break;
-        //            case trustStorePassword:
-        //                result= config.getTrustStorePassword;
-        //                break;
-        //            case privateKeyAlias:
-        //                result= config.getPrivateKeyAlias;
-        //                break;
-        //            case privateKeyPassword:
-        //                result= config.getPrivateKeyPassword;
-        //                break;
-        //            case trustedRootCertificateAlias:
-        //                result= config.getTrustedRootCertificateAlias;
-        //                break;
-        //            case secureSessionTimeout:
-        //                result= ( config.getSecureSessionTimeout != null ? config.getSecureSessionTimeout.toString() : null );
-        //                break;
-        //            case dtlsAutoResumeTimeout:
-        //                result= ( config.dtlsAutoResumeTimeout() != null ? config.dtlsAutoResumeTimeout.toString() : null );
-        //                break;
-        //            case responseMatching:
-        //                result= ( config.getResponseMatching != null ? config.getResponseMatching().name() : null );
-        //                break;
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.ExchangeParams)
-     */
-    @Override
-    public void visit( ExchangeParams toVisit )
-    {
-        switch ( configParamName )
-        {
-            case maxActivePeers:
-                toVisit.maxActivePeers= new Integer( value );
-                break;
-            case maxPeerInactivityPeriod:
-                toVisit.maxPeerInactivityPeriod= new Integer( value );
-                break;
-            case ackTimeout:
-                toVisit.ackTimeout= new Integer( value );
-                break;
-            case ackRandomFactor:
-                toVisit.ackRandomFactor= new Float( value );
-                break;
-            case ackTimeoutScale:
-                toVisit.ackTimeoutScale= new Float( value );
-                break;
-            case maxRetransmit:
-                toVisit.maxRetransmit= new Integer( value );
-                break;
-            case exchangeLifetime:
-                toVisit.exchangeLifetime= new Long( value );
-                break;
-            case nonLifetime:
-                toVisit.nonLifetime= new Long( value );
-                break;
-            case nstart:
-                toVisit.nstart= new Integer( value );
-                break;
-            case tokenSizeLimit:
-                toVisit.tokenSizeLimit= new Integer( value );
-                break;
-            case deduplicator:
-                if ( value == null )
-                {
-                    toVisit.deduplicator= null;
-                }
-                else
-                {
-                    switch ( value )
-                    {
-                        case "CropRotation":
-                            toVisit.deduplicator= new CropRotation();
-                            break;
-                        case "MarkAndSweep":
-                            toVisit.deduplicator= new MarkAndSweep();
-                            break;
-                        default:
-                            toVisit.deduplicator= null;
-                            break;
-                    }
-                }
-                break;
-            case cropRotationPeriod:
-                if ( toVisit.deduplicator == null )
-                {
-                    toVisit.deduplicator= new CropRotation();
-                }
-                break;
-            case markAndSweepInterval:
-                if ( toVisit.deduplicator == null )
-                {
-                    toVisit.deduplicator= new MarkAndSweep();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker)
+     * Visit configuration.
      */
     @Override
     public void visit( GroupedMidTracker toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case midTracker:
                 //noop
                 break;
             case midTrackerGroups:
-                toVisit.midTrackerGroups= new Integer( value );
+                toVisit.midTrackerGroups= Integer.valueOf( value );
                 break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( MapBasedMidTracker toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case midTracker:
                 //noop
@@ -298,13 +474,13 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( NullMidTracker toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case midTracker:
                 //noop
@@ -314,67 +490,102 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation)
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( Deduplicator toVisit )
+    {
+        switch ( param )
+        {
+            case deduplicationAutoReplace:
+                toVisit.autoReplace= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( CropRotation toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case deduplicator:
                 //noop
                 break;
             case cropRotationPeriod:
-                toVisit.cropRotationPeriod= new Long( value );
+                toVisit.cropRotationPeriod= value;
                 break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( MarkAndSweep toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case deduplicator:
                 //noop
                 break;
             case markAndSweepInterval:
-                toVisit.markAndSweepInterval= new Long( value );
+                toVisit.markAndSweepInterval= value;
                 break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus)
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PeersMarkAndSweep toVisit )
+    {
+        switch ( param )
+        {
+            case deduplicator:
+                //noop
+                break;
+            case peersMarkAndSweepMessages:
+                toVisit.maxMessagesPerPeer= Integer.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( LogHealthStatus toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
-            case healthStatusInterval:
-                toVisit.healthStatusInterval= new Integer( value );
+            case HEALTH_STATUS_INTERVAL:
+                toVisit.healthStatusInterval= value;
                 break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.congestion.BasicRto)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( BasicRto toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case congestionControlAlgorithm:
                 //noop
@@ -384,13 +595,13 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.congestion.Cocoa)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( Cocoa toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case congestionControlAlgorithm:
                 //noop
@@ -400,13 +611,13 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.congestion.CocoaStrong)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( CocoaStrong toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case congestionControlAlgorithm:
                 //noop
@@ -416,13 +627,13 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.congestion.LinuxRto)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( LinuxRto toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case congestionControlAlgorithm:
                 //noop
@@ -432,13 +643,13 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.congestion.PeakhopperRto)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( PeakhopperRto toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case congestionControlAlgorithm:
                 //noop
@@ -448,96 +659,585 @@ public class SetValueVisitor implements ConfigVisitor
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.UdpParams)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( UdpParams toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
-            case useRandomMidStart:
-                toVisit.useRandomMidStart= new Boolean( value );
+            case UDP_RECEIVER_THREAD_COUNT:
+                toVisit.receiverThreadCount= Integer.valueOf( value );
                 break;
-            case networkStageReceiverThreadCount:
-                toVisit.receiverThreadCount= new Integer( value );
+            case UDP_SENDER_THREAD_COUNT:
+                toVisit.senderThreadCount= Integer.valueOf( value );
                 break;
-            case networkStageSenderThreadCount:
-                toVisit.senderThreadCount= new Integer( value );
+            case UDP_DATAGRAM_SIZE:
+                toVisit.datagramSize= Integer.valueOf( value );
                 break;
-            case udpConnectorDatagramSize:
-                toVisit.datagramSize= new Integer( value );
+            case UDP_CONNECTOR_OUT_CAPACITY:
+                toVisit.outCapacity= Integer.valueOf( value );
                 break;
-            case udpConnectorReceiveBuffer:
-                toVisit.receiveBuffer= new Integer( value );
+            default:
                 break;
-            case udpConnectorSendBuffer:
-                toVisit.sendBuffer= new Integer( value );
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( KeyStore toVisit )
+    {
+        switch ( param )
+        {
+            case keyStoreLocation:
+                toVisit.path= value;
                 break;
-            case midTracker:
-                if ( value == null )
+            case keyStorePassword:
+                toVisit.password= value;
+                break;
+            case privateKeyAlias:
+                toVisit.privateKeyAlias= value;
+                break;
+            case privateKeyPassword:
+                toVisit.privateKeyPassword= value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( TrustStore toVisit )
+    {
+        switch ( param )
+        {
+            case trustStoreLocation:
+                toVisit.path= value;
+            case trustStorePassword:
+                toVisit.password= value;
+                break;
+            case trustedRootCertificateAlias:
+                toVisit.rootCertificateAlias= value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( SecurityParams toVisit )
+    {
+        switch ( param )
+        {
+            case pskHost:
+            case pskPort:
+            case pskIdentity:
+            case pskKey:
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyParams= new PreSharedKeyParams();
+                break;
+            case keyStoreLocation:
+            case keyStorePassword:
+            case privateKeyAlias:
+            case privateKeyPassword:
+                toVisit.keyStore= new KeyStore();
+                break;
+            case trustStoreLocation:
+            case trustStorePassword:
+            case trustedRootCertificateAlias:
+                toVisit.trustStore= new TrustStore();
+                break;
+            case DTLS_RECOMMENDED_CIPHER_SUITES_ONLY:
+                toVisit.recommendedCipherSuitesOnly= Boolean.valueOf( value );
+                break;
+            case DTLS_RECOMMENDED_CURVES_ONLY:
+                toVisit.recommendedCurvesOnly= Boolean.valueOf( value );
+                break;
+            case DTLS_RECOMMENDED_SIGNATURE_AND_HASH_ALGORITHMS_ONLY:
+                toVisit.recommendedSignatureAndHashAlgorithmsOnly= Boolean.valueOf( value );
+                break;
+            case DTLS_PRESELECTED_CIPHER_SUITES:
+                toVisit.preselectedCipherSuites= new ArrayList<>();
+                for ( String item : value.split( "," ) )
                 {
-                    toVisit.midTracker= null;
+                    toVisit.preselectedCipherSuites
+                        .add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
                 }
-                else
+                break;
+            case DTLS_CIPHER_SUITES:
+                toVisit.cipherSuites= new ArrayList<>();
+                for ( String item : value.split( "," ) )
                 {
-                    switch ( value )
+                    toVisit.cipherSuites
+                        .add( new CipherSuite( CipherSuiteName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                }
+                break;
+            case DTLS_CURVES:
+                toVisit.curves= new ArrayList<>();
+                for ( String item : value.split( "," ) )
+                {
+                    toVisit.curves
+                        .add( new Curve( SupportedGroupName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) ) ) );
+                }
+                break;
+            case DTLS_SIGNATURE_AND_HASH_ALGORITHMS:
+                toVisit.signatureAlgorithms= new ArrayList<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String algorithmConfig= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    int index= algorithmConfig.indexOf( "with" );
+                    if ( index > 0 )
                     {
-                        case "GroupedMidTracker":
-                            toVisit.midTracker= new GroupedMidTracker();
-                            break;
-                        case "MapBasedMidTracker":
-                            toVisit.midTracker= new MapBasedMidTracker();
-                            break;
-                        case "NullMidTracker":
-                            toVisit.midTracker= new NullMidTracker();
-                            break;
-                        default:
-                            toVisit.midTracker= null;
-                            break;
+                        String hash= algorithmConfig.substring( 0, index );
+                        String signature= algorithmConfig.substring( index + 4 );
+
+                        toVisit.signatureAlgorithms
+                            .add(
+                                new SignatureAlgorithm(
+                                    HashAlgorithmName.valueOf( hash ),
+                                    SignatureAlgorithmName.valueOf( signature )
+                                )
+                            );
                     }
                 }
                 break;
+            case DTLS_CERTIFICATE_KEY_ALGORITHMS:
+                toVisit.certificateKeyAlgorithms= new ArrayList<>();
+                for ( String item : value.split( "," ) )
+                {
+                    toVisit.certificateKeyAlgorithms
+                        .add(
+                            new CertificateKeyAlgorithm(
+                                CertificateKeyAlgorithmName.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) )
+                            )
+                        );
+                }
+                break;
+            case DTLS_EXTENDED_MASTER_SECRET_MODE:
+                toVisit.extendedMasterSecretMode= ExtendedMasterSecretModeName.valueOf( value );
+                break;
+            case DTLS_SUPPORT_CONNECTION_ID:
+                if ( Boolean.valueOf( value ) ) toVisit.supportConnectionId= new ConnectionId();
+                break;
+            case DTLS_CONNECTION_ID_LENGTH:
+            case DTLS_UPDATE_ADDRESS_USING_CID_ON_NEWER_RECORDS:
+                toVisit.supportConnectionId= new ConnectionId();
+                break;
+            case DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION:
+                toVisit.truncateCertificatePathForValidation= Boolean.valueOf( value );
+                break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.SocketParams)
+    /**
+     * Visit configuration.
      */
+    @Override
+    public void visit( PreSharedKeyParams toVisit )
+    {
+        switch ( param )
+        {
+            case pskHost:
+            case pskPort:
+            case pskIdentity:
+            case pskKey:
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyGroup= new PreSharedKeyGroup();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PreSharedKeyGroup toVisit )
+    {
+        switch ( param )
+        {
+            case pskHost:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String host= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys
+                        .add( new PreSharedKey( host + "identity", new KeyFromString( host ), host, 5684 ) );
+                }
+                break;
+            case pskPort:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    Integer port= Integer.valueOf( item.replaceAll( "[\\[\\]\\s]+", "" ) );
+                    toVisit.preSharedKeys
+                        .add(
+                            new PreSharedKey(
+                                "identity" + port,
+                                new KeyFromNumber( Long.valueOf( port ) ),
+                                "host" + port,
+                                port
+                            )
+                        );
+                }
+                break;
+            case pskIdentity:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String identity= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys.add( new PreSharedKey( identity, new KeyFromString( identity ) ) );
+                }
+                break;
+            case pskKey:
+                toVisit.preSharedKeys= new CopyOnWriteArraySet<>();
+                for ( String item : value.split( "," ) )
+                {
+                    String key= item.replaceAll( "[\\[\\]\\s]+", "" );
+                    toVisit.preSharedKeys.add( new PreSharedKey( key + "identity", new KeyFromString( key ) ) );
+                }
+                break;
+            case pskKeyFileLocation:
+            case pskKeyFilePassword:
+                toVisit.preSharedKeyStore= new PreSharedKeyStore();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( PreSharedKeyStore toVisit )
+    {
+        switch ( param )
+        {
+            case pskKeyFileLocation:
+                toVisit.path= value;
+                break;
+            case pskKeyFilePassword:
+                toVisit.password= value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( ConnectionId toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_SUPPORT_CONNECTION_ID:
+                toVisit.connectionIdLength= null;
+                break;
+            case DTLS_CONNECTION_ID_LENGTH:
+                toVisit.connectionIdLength= Integer.valueOf( value );
+                break;
+            case DTLS_UPDATE_ADDRESS_USING_CID_ON_NEWER_RECORDS:
+                toVisit.updateAddressOnNewerRecords= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( DtlsServerParams toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_CLIENT_AUTHENTICATION_MODE:
+                toVisit.clientAuthentication= AuthenticationMode.valueOf( value );
+                break;
+            case DTLS_SERVER_USE_SESSION_ID:
+                toVisit.serverUseSessionId= Boolean.valueOf( value );
+                break;
+            case DTLS_USE_SERVER_NAME_INDICATION:
+                toVisit.serverNameIndication= Boolean.valueOf( value );
+                break;
+            case DTLS_USE_HELLO_VERIFY_REQUEST:
+                toVisit.helloVerifyRequest= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( DtlsClientParams toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_VERIFY_SERVER_CERTIFICATES_SUBJECT:
+                toVisit.verifyServerCertificateSubject= Boolean.valueOf( value );
+                break;
+            case DTLS_DEFAULT_HANDSHAKE_MODE:
+                toVisit.defaultHandshakeMode= DefaultHandshakeMode.valueOf( value );
+                break;
+            case DTLS_TRUNCATE_CLIENT_CERTIFICATE_PATH:
+                toVisit.truncateClientCertificatePaths= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( DtlsParams toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_MAX_CONNECTIONS:
+                toVisit.maxConnections= Integer.valueOf( value );
+                break;
+            case DTLS_STALE_CONNECTION_THRESHOLD:
+                toVisit.staleConnectionThreshold= value;
+                break;
+            case DTLS_UPDATE_ADDRESS_USING_CID_ON_NEWER_RECORDS:
+                toVisit.updateAddressOnNewerCidRecords= Boolean.valueOf( value );
+                break;
+            case DTLS_REMOVE_STALE_DOUBLE_PRINCIPALS:
+                toVisit.removeStaleDoublePrincipals= Boolean.valueOf( value );
+                break;
+            case DTLS_MAX_PENDING_OUTBOUND_JOBS:
+                toVisit.outboundMsgCapacity= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_PENDING_INBOUND_JOBS:
+                toVisit.inboundMsgCapacity= Integer.valueOf( value );
+                break;
+            case DTLS_RECEIVER_THREAD_COUNT:
+                toVisit.dtlsReceiverThreadCount= Integer.valueOf( value );
+                break;
+            case DTLS_CONNECTOR_THREAD_COUNT:
+                toVisit.dtlsConnectorThreadCount= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_PENDING_HANDSHAKE_RESULT_JOBS:
+                toVisit.handshakeCapacity= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_DEFERRED_INBOUND_RECORDS_SIZE:
+                toVisit.handshakeRecordBufferSize= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_DEFERRED_OUTBOUND_APPLICATION_MESSAGES:
+                toVisit.deferredMsgCapacity= Integer.valueOf( value );
+                break;
+            case DTLS_AUTO_HANDSHAKE_TIMEOUT:
+                toVisit.autoHandshakeTimeout= value;
+                break;
+            case DTLS_USE_ANTI_REPLAY_FILTER:
+                toVisit.useAntiReplayFilter= Boolean.valueOf( value );
+                break;
+            case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
+                int intValue= Integer.valueOf( value );
+                toVisit.useExtendedAntiReplayFilterWindow= Boolean.valueOf( intValue != 0 );
+                toVisit.antiReplayFilterWindowExtension= intValue == -1 ? null : intValue;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( DtlsMessageParams toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_RECORD_SIZE_LIMIT:
+                toVisit.recordSizeLimit= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_FRAGMENT_LENGTH:
+                toVisit.maxFragmentLength= FragmentSize.valueOf( value );
+                break;
+            case DTLS_MAX_FRAGMENTED_HANDSHAKE_MESSAGE_LENGTH:
+                toVisit.maxFragmentedHandshakeMsgLength= Integer.valueOf( value );
+                break;
+            case DTLS_USE_MULTI_RECORD_MESSAGES:
+                toVisit.multiRecords= TriState.valueOf( value );
+                break;
+            case DTLS_USE_MULTI_HANDSHAKE_MESSAGE_RECORDS:
+                toVisit.multiHandshakeMsgRecords= TriState.valueOf( value );
+                break;
+            case DTLS_MAX_TRANSMISSION_UNIT:
+                toVisit.mtu= Integer.valueOf( value );
+                break;
+            case DTLS_MAX_TRANSMISSION_UNIT_LIMIT:
+                toVisit.mtuLimit= Integer.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+    * Visit configuration.
+    */
+    @Override
+    public void visit( DtlsRetransmissionParams toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_RETRANSMISSION_TIMEOUT:
+                toVisit.initialTimeout= value;
+                break;
+            case DTLS_MAX_RETRANSMISSION_TIMEOUT:
+                toVisit.maxTimeout= value;
+                break;
+            case DTLS_RETRANSMISSION_INIT_RANDOM:
+                toVisit.timeoutRandomFactor= Float.valueOf( value );
+                break;
+            case DTLS_RETRANSMISSION_TIMEOUT_SCALE:
+                toVisit.timeoutScaleFactor= Float.valueOf( value );
+                break;
+            case DTLS_ADDITIONAL_ECC_TIMEOUT:
+                toVisit.additionalEccTimeout= value;
+                break;
+            case DTLS_MAX_RETRANSMISSIONS:
+                toVisit.maxRetransmissions= Integer.valueOf( value );
+                break;
+            case DTLS_RETRANSMISSION_BACKOFF:
+                toVisit.backoffThreshold= Integer.valueOf( value );
+                break;
+            case DTLS_USE_EARLY_STOP_RETRANSMISSION:
+                toVisit.earlyStop= Boolean.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+    * Visit configuration.
+    */
+    @Override
+    public void visit( DatagramFilter toVisit )
+    {
+        switch ( param )
+        {
+            case DTLS_MAC_ERROR_FILTER_THRESHOLD:
+                toVisit.macErrorThreshold= Integer.valueOf( value );
+                break;
+            case DTLS_MAC_ERROR_FILTER_QUIET_TIME:
+                toVisit.quitTime= value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    public void visit( NoReplayFilter toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit configuration.
+     */
+    public void visit( DefaultReplayFilter toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit configuration.
+     */
+    public void visit( ExtendedReplayFilter toVisit ) throws ConfigException
+    {
+        switch ( param )
+        {
+            case DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER:
+                toVisit.extendedfilterWindow= Integer.valueOf( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+    * Visit configuration.
+    */
     @Override
     public void visit( SocketParams toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
-            case bindToHost:
+            case ENDPOINT_BINDTOHOST:
                 toVisit.bindToHost= value;
                 break;
-            case bindToPort:
-                toVisit.bindToPort= new Integer( value );
+            case ENDPOINT_BINDTOPORT:
+                toVisit.bindToPort= Integer.valueOf( value );
+                break;
+            case ENDPOINT_BINDTOSECUREPORT:
+                toVisit.bindToPort= Integer.valueOf( value );
+                break;
+            case ENDPOINT_REUSEADDRESS:
+                toVisit.reuseAddress= Boolean.valueOf( value );
+                break;
+            case UDP_RECEIVE_BUFFER_SIZE:
+            case DTLS_RECEIVE_BUFFER_SIZE:
+                toVisit.receiveBuffer= Integer.valueOf( value );
+                break;
+            case UDP_SEND_BUFFER_SIZE:
+            case DTLS_SEND_BUFFER_SIZE:
+                toVisit.sendBuffer= Integer.valueOf( value );
                 break;
             default:
                 break;
         }
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
+    /**
+     * Visit configuration.
      */
     @Override
     public void visit( NotificationParams toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
-            case notificationCheckIntervalTime:
-                toVisit.notificationCheckIntervalTime= new Long( value );
+            case MAX_SERVER_OBSERVES:
+                toVisit.maxObserves= Integer.valueOf( value );
                 break;
-            case notificationCheckIntervalCount:
-                toVisit.notificationCheckIntervalCount= new Integer( value );
+            case NOTIFICATION_CHECK_INTERVAL_TIME:
+                toVisit.checkIntervalTime= value;
                 break;
-            case notificationReregistrationBackoff:
-                toVisit.notificationReregistrationBackoff= new Long( value );
+            case NOTIFICATION_CHECK_INTERVAL_COUNT:
+                toVisit.checkIntervalCount= Integer.valueOf( value );
+                break;
+            case NOTIFICATION_REREGISTRATION_BACKOFF:
+                toVisit.reregistrationBackoff= value;
                 break;
             default:
                 break;
@@ -547,18 +1247,20 @@ public class SetValueVisitor implements ConfigVisitor
     @Override
     public void visit( MulticastParams toVisit )
     {
-        switch ( configParamName )
+        switch ( param )
         {
             case multicastGroups:
                 if ( toVisit.join == null )
                 {
                     toVisit.join= new CopyOnWriteArrayList< MulticastGroupConfig >();
                 }
-                String[] values= value.split( "[\\[\\]\\s,]+" );
-                for ( int i= 1; i < values.length; i++ )
+                String[] values= value.split( ";" );
+                for ( int i= 0; i < values.length; i++ )
                 {
-                    String[] fields= values[i].split( "|" );
-                    toVisit.join.add( new MulticastGroupConfig( fields[0], ( fields.length > 0 ? fields[1] : null ) ) );
+                    String[] fields= values[i].split( "," );
+                    String group= fields[0];
+                    String networkIf= ( fields.length > 1 ? fields[1] : null );
+                    toVisit.join.add( new MulticastGroupConfig( group, networkIf ) );
                 }
                 break;
             default:

@@ -28,25 +28,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
 import java.net.URI;
-import java.security.KeyStore;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
+import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
 import org.eclipse.californium.scandium.dtls.CertificateType;
+import org.eclipse.californium.scandium.dtls.SingleNodeConnectionIdGenerator;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedSinglePskStore;
+import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -55,7 +56,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractTestCase;
-import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 /**
@@ -64,6 +64,11 @@ import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
  */
 public abstract class AbstractSecureClientTestCase extends AbstractTestCase
 {
+    private static final char[] KEY_STORE_PASSWORD = "endPass".toCharArray();
+    private static final String KEY_STORE_LOCATION = "certs/keyStore.jks";
+    private static final char[] TRUST_STORE_PASSWORD = "rootPass".toCharArray();
+    private static final String TRUST_STORE_LOCATION = "certs/trustStore.jks";
+
     private static URI uri= null;
 
     private CoapClient client= null;
@@ -114,51 +119,34 @@ public abstract class AbstractSecureClientTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
-        //keyStore
-        KeyStore keyStore= KeyStore.getInstance( "JKS" );
-        InputStream in= Data.readResourceAsStream( "certs/keyStore.jks" );
-        keyStore.load( in, "endPass".toCharArray() );
-        //in.close();
+        Configuration config= Configuration.createStandardWithoutFile();
+        // load key store
+        SslContextUtil.Credentials clientCredentials = SslContextUtil.loadCredentials(
+                SslContextUtil.CLASSPATH_SCHEME + KEY_STORE_LOCATION, "client", KEY_STORE_PASSWORD,
+                KEY_STORE_PASSWORD);
+        Certificate[] trustedCertificates = SslContextUtil.loadTrustedCertificates(
+                SslContextUtil.CLASSPATH_SCHEME + TRUST_STORE_LOCATION, "root", TRUST_STORE_PASSWORD);
 
-        //trustStore
-        KeyStore trustStore= KeyStore.getInstance( "JKS" );
-        in= Data.readResourceAsStream( "certs/trustStore.jks" );
-        trustStore.load( in, "rootPass".toCharArray() );
-        //in.close();
-
-        // You can load multiple certificates if needed
-        Certificate[] trustedCertificates= new Certificate [1];
-        trustedCertificates[0]= trustStore.getCertificate( "root" );
-
-        //pskStore
-        AdvancedSinglePskStore pskStore= new AdvancedSinglePskStore("Client_identity", "secretPSK".getBytes());
-
-        //verifier builder
-        StaticNewAdvancedCertificateVerifier.Builder verifierBuilder= StaticNewAdvancedCertificateVerifier.builder();
-        verifierBuilder.setTrustedCertificates( trustedCertificates );
-        verifierBuilder.setTrustAllRPKs();
-
-        //dtls builder
-        Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
-        dtlsBuilder.setAdvancedPskStore( pskStore );
-        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), CertificateType.X_509 );
-        dtlsBuilder.setAdvancedCertificateVerifier( verifierBuilder.build() );
-        dtlsBuilder.setEnableAddressReuse( false );
-        dtlsBuilder.setConnectionThreadCount( 1 );
+        DtlsConnectorConfig.Builder dtlsBuilder = new DtlsConnectorConfig.Builder(config);
+        dtlsBuilder.setAdvancedPskStore(new AdvancedSinglePskStore("Client_identity", "secretPSK".getBytes()));
+        dtlsBuilder.setCertificateIdentityProvider(new SingleCertificateProvider(clientCredentials.getPrivateKey(), clientCredentials.getCertificateChain(),
+                CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509));
+        dtlsBuilder.setAdvancedCertificateVerifier(StaticNewAdvancedCertificateVerifier.builder()
+                .setTrustedCertificates(trustedCertificates).setTrustAllRPKs().build());
+        dtlsBuilder.setConnectionIdGenerator(new SingleNodeConnectionIdGenerator(0));
 
         //connector
 
-        DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
+        DTLSConnector dtlsConnector = new DTLSConnector(dtlsBuilder.build());
 
         //endpoint
 
         CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
         endpointBuilder.setConnector( dtlsConnector );
-        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-        config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, 20000 );
-        config.setLong( NetworkConfig.Keys.EXCHANGE_LIFETIME, 30000L );
-        //config.setLong(NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, 30000L );
-        endpointBuilder.setNetworkConfig( config );
+        config.set( CoapConfig.ACK_TIMEOUT, 20000, TimeUnit.MILLISECONDS );
+        config.set(CoapConfig.EXCHANGE_LIFETIME, 30000L, TimeUnit.MILLISECONDS );
+        //config.setLong(Configuration.Keys.DTLS_AUTO_RESUME_TIMEOUT, 30000L );
+        endpointBuilder.setConfiguration( config );
         endpoint= endpointBuilder.build();
         endpoint.start();
 

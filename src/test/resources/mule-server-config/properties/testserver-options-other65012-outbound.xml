@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -23,21 +23,31 @@
   -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
+     <coap:global-config name="others">
+		<coap:other-option-configs>
+			<coap:other-option-config alias="option-65012" number="65012" format="OPAQUE" singleValue="false" maxBytes="200" />
+		</coap:other-option-configs>
+	</coap:global-config>
+
+	<coap:udp-endpoint name="udp" logTraffic="true">
 		<coap:socket-params  bindToPort="5683" />
-		<coap:exchange-params exchangeLifetime="1000"/>
+        <coap:option-params >
+			<coap:accept-other-options>
+				<coap:accept-other-option alias="option-65012" />
+			</coap:accept-other-options>
+		</coap:option-params>
+        <coap:exchange-params exchangeLifetime="1s"/>
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -56,11 +66,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 
 	<flow name="listen">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
-				<coap:response-options>
-					<coap:other-response-options>
-						<coap:other-option number="65012" value="#[ vars.value ]"/>
-					</coap:other-response-options>
-				</coap:response-options>
+				<coap:response>
+					<coap:other-options>
+						<coap:other-option alias="option-65012" value="#[ vars.value ]"/>
+					</coap:other-options>
+				</coap:response>
 		</coap:listener>
 		
         <set-variable value="#[import * from dw::core::Binaries --- fromHex('12FF45')]" variableName="value"/>

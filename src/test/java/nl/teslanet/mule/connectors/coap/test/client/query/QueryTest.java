@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -51,8 +51,8 @@ import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParam;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
@@ -108,7 +108,8 @@ public class QueryTest extends AbstractClientTestCase
         return uri.toString();
     }
 
-    private String expectedPayload( CoapRequestCode code, List< ? extends AbstractQueryParam > params ) throws URISyntaxException
+    private String expectedPayload( CoapRequestCode code, List< ? extends AbstractQueryParam > params )
+        throws URISyntaxException
     {
         URI uri= new URI( "coap", null, "localhost", -1, "/query/test", queryString( params ), null );
         return requestCode.toString() + " called on: " + uri.toString();
@@ -129,10 +130,12 @@ public class QueryTest extends AbstractClientTestCase
         params.add( new QueryParam( "query2", "two" ) );
         params.add( new QueryParam( "query3", null ) );
 
-        Event result= flowRunner( "request-sync" ).keepStreamsOpen().withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-sync" )
+            .keepStreamsOpen()
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -145,7 +148,11 @@ public class QueryTest extends AbstractClientTestCase
         assertEquals( "wrong request uri", expectedRequestUri( params ), attributes.getRequestUri() );
 
         CursorStreamProvider responsePayload= (CursorStreamProvider) TypedValue.unwrap( response.getPayload() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, params ).getBytes( Defs.COAP_CHARSET ), IOUtils.toByteArray( responsePayload.openCursor() ) );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, params ).getBytes( Defs.COAP_CHARSET ),
+            IOUtils.toByteArray( responsePayload.openCursor() )
+        );
     }
 
     /**
@@ -163,7 +170,11 @@ public class QueryTest extends AbstractClientTestCase
         params.add( new QueryParam( "query2", "two" ) );
         params.add( new QueryParam( "query3", null ) );
 
-        Event result= flowRunner( "request-async" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable( "query", params ).run();
+        Event result= flowRunner( "request-async" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -180,7 +191,11 @@ public class QueryTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( params ), attributes.getRequestUri() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, params ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, params ).getBytes( Defs.COAP_CHARSET ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 
     /**
@@ -203,10 +218,12 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test4", "four" ) );
         expectedParams.add( new QueryParam( "novalue2", null ) );
 
-        Event result= flowRunner( "request-sync-fixed" ).keepStreamsOpen().withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-sync-fixed" )
+            .keepStreamsOpen()
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -246,7 +263,11 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test4", "four" ) );
         expectedParams.add( new QueryParam( "novalue2", null ) );
 
-        Event result= flowRunner( "request-async-fixed" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable( "query", params ).run();
+        Event result= flowRunner( "request-async-fixed" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -263,7 +284,11 @@ public class QueryTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 
     /**
@@ -289,10 +314,12 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "query2", "two" ) );
         expectedParams.add( new QueryParam( "query3", null ) );
 
-        Event result= flowRunner( "request-sync-with-defaults" ).keepStreamsOpen().withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-sync-with-defaults" )
+            .keepStreamsOpen()
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -335,10 +362,11 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "query2", "two" ) );
         expectedParams.add( new QueryParam( "query3", null ) );
 
-        Event result= flowRunner( "request-async-with-defaults" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-async-with-defaults" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -355,7 +383,11 @@ public class QueryTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 
     /**
@@ -381,10 +413,12 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test2", "two" ) );
         expectedParams.add( new QueryParam( "novalue1", null ) );
 
-        Event result= flowRunner( "request-sync-with-defaults" ).keepStreamsOpen().withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-sync-with-defaults" )
+            .keepStreamsOpen()
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -427,10 +461,11 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test2", "two" ) );
         expectedParams.add( new QueryParam( "novalue1", null ) );
 
-        Event result= flowRunner( "request-async-with-defaults" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-async-with-defaults" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -447,7 +482,11 @@ public class QueryTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 
     /**
@@ -473,10 +512,12 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test4", "four" ) );
         expectedParams.add( new QueryParam( "novalue2", null ) );
 
-        Event result= flowRunner( "request-sync-fixed-with-defaults" ).keepStreamsOpen().withPayload( "nothing_important" ).withVariable(
-            "code",
-            requestCode.toString()
-        ).withVariable( "query", params ).run();
+        Event result= flowRunner( "request-sync-fixed-with-defaults" )
+            .keepStreamsOpen()
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -519,10 +560,11 @@ public class QueryTest extends AbstractClientTestCase
         expectedParams.add( new QueryParam( "test4", "four" ) );
         expectedParams.add( new QueryParam( "novalue2", null ) );
 
-        Event result= flowRunner( "request-async-fixed-with-defaults" ).withPayload( "nothing_important" ).withVariable( "code", requestCode.toString() ).withVariable(
-            "query",
-            params
-        ).run();
+        Event result= flowRunner( "request-async-fixed-with-defaults" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode.toString() )
+            .withVariable( "query", params )
+            .run();
 
         Message response= result.getMessage();
 
@@ -539,6 +581,10 @@ public class QueryTest extends AbstractClientTestCase
         CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
         assertTrue( "error response", attributes.isSuccess() );
         assertEquals( "wrong request uri", expectedRequestUri( expectedParams ), attributes.getRequestUri() );
-        assertArrayEquals( "wrong response payload", expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ), (byte[]) response.getPayload().getValue() );
+        assertArrayEquals(
+            "wrong response payload",
+            expectedPayload( requestCode, expectedParams ).getBytes( Defs.COAP_CHARSET ),
+            (byte[]) response.getPayload().getValue()
+        );
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,18 +22,25 @@
  */
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
+
 /**
  * Test inbound other option property
  *
  */
 public class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTestCase
 {
-    byte[][] values= {{ (byte) 0x12, (byte) 0x00, (byte) 0x45, (byte) 0x33 }};
+    byte[][] values= { { (byte) 0x12, (byte) 0x00, (byte) 0x45, (byte) 0x33 } };
 
     @Override
     protected String getPropertyName()
     {
         return "coap.opt.other." + getOptionNumber();
+    }
+
+    @Override
+    protected String getOptionAlias()
+    {
+        return "option-65013";
     }
 
     @Override
@@ -45,6 +52,6 @@ public class OptOtherInbound2Test extends AbstractOtherOptionInboundPropertyTest
     @Override
     protected byte[][] getOptionValues()
     {
-        return  values;
+        return values;
     }
 }

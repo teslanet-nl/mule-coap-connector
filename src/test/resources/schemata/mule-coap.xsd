@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -30,12 +30,120 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:attribute type="xs:string" use="optional" name="bindToHost"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" name="bindToPort"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="receiveBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="sendBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="reuseAddress"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="optional" default="512" name="preferredBlockSize"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="1024" name="maxMessageSize"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="8192" name="maxResourceBodySize"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="5m" name="statusLifetime"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="5s" name="statusInterval"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="strictBlock1Option"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="strictBlock2Option"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="entityTooLargeFailover"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.NotificationParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="optional" default="50000" name="maxObserves"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="2m" name="checkIntervalTime"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="100" name="checkIntervalCount"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="2s" name="reregistrationBackoff"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="alias"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption" abstract="true" name="abstract-accept-other-option"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-accept-other-option" name="accept-other-option">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.options.AcceptOtherOption"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.options.OptionParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="accept-other-options">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-accept-other-option"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="optional" name="acceptOtherOptions"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" abstract="true" name="abstract-mid-tracker"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-null-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-null-mid-tracker" name="null-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" default="16" name="midTrackerGroups"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-grouped-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-grouped-mid-tracker" name="grouped-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-map-based-mid-tracker"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-map-based-mid-tracker" name="map-based-mid-tracker">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="autoReplace"></xs:attribute>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-deduplicator"></xs:element>
@@ -43,7 +151,7 @@
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.CropRotation">
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableLong" use="optional" default="247000" name="cropRotationPeriod"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="247s" name="cropRotationPeriod"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -58,7 +166,7 @@
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep">
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableLong" use="optional" default="10000" name="markAndSweepInterval"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="10s" name="markAndSweepInterval"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -70,52 +178,22 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.ExchangeParams">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep">
     <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="deduplicator">
-            <xs:complexType>
-              <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-deduplicator"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-deduplicator"></xs:element>
-              </xs:choice>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="150000" name="maxActivePeers"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="600" name="maxPeerInactivityPeriod"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="2000" name="ackTimeout"></xs:attribute>
-        <xs:attribute type="mule:substitutableDecimal" use="optional" default="1.5" name="ackRandomFactor"></xs:attribute>
-        <xs:attribute type="mule:substitutableDecimal" use="optional" default="2.0" name="ackTimeoutScale"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="4" name="maxRetransmit"></xs:attribute>
-        <xs:attribute type="mule:substitutableLong" use="optional" default="247000" name="exchangeLifetime"></xs:attribute>
-        <xs:attribute type="mule:substitutableLong" use="optional" default="145000" name="nonLifetime"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="1" name="nstart"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="8" name="tokenSizeLimit"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="deduplicator"></xs:attribute>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" default="64" name="maxMessagesPerPeer"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="10s" name="markAndSweepInterval"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:substitutableInt" use="optional" default="512" name="preferredBlockSize"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="1024" name="maxMessageSize"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="8192" name="maxResourceBodySize"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="300000" name="blockwiseStatusLifetime"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.NotificationParams">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:substitutableLong" use="optional" default="86400000" name="notificationCheckIntervalTime"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="100" name="notificationCheckIntervalCount"></xs:attribute>
-        <xs:attribute type="mule:substitutableLong" use="optional" default="2000" name="notificationReregistrationBackoff"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep" substitutionGroup="coap:abstract-deduplicator" abstract="true" name="abstract-peers-mark-and-sweep"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-peers-mark-and-sweep" name="peers-mark-and-sweep">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
@@ -188,10 +266,63 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.ExchangeParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="mid-tracker">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-mid-tracker"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-mid-tracker"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="deduplicator">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-deduplicator"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-deduplicator"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="congestion-control">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-congestion-control"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-congestion-control"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="150000" name="maxActivePeers"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="10m" name="maxPeerInactivityPeriod"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="2s" name="ackTimeout"></xs:attribute>
+        <xs:attribute type="mule:substitutableDecimal" use="optional" default="1.5" name="ackRandomFactor"></xs:attribute>
+        <xs:attribute type="mule:substitutableDecimal" use="optional" default="2.0" name="ackTimeoutScale"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="4" name="maxRetransmit"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="1m" name="maxAckTimeout"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="247s" name="exchangeLifetime"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="145s" name="nonLifetime"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="100s" name="maxLatency"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="93s" name="maxTransmitWait"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="250s" name="maxResponseDelay"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="1" name="nstart"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="8" name="tokenSizeLimit"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="65000" name="multicastMidBase"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="5s" name="leisure"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="strictEmptyMessageFormat"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useRandomMidStart"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="deduplicator"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="congestionControl"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:substitutableInt" use="optional" default="600" name="healthStatusInterval"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="10m" name="healthStatusInterval"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -203,13 +334,6 @@
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.SocketParams"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="exchange-params">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.ExchangeParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -227,12 +351,18 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="congestion-control">
+          <xs:element minOccurs="0" maxOccurs="1" name="option-params">
             <xs:complexType>
-              <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-congestion-control"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-congestion-control"></xs:element>
-              </xs:choice>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.options.OptionParams"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="exchange-params">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.ExchangeParams"></xs:extension>
+              </xs:complexContent>
             </xs:complexType>
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="log-health-status">
@@ -244,85 +374,24 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="socketParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="exchangeParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="blockwiseParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="notificationParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="congestionControl"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="optionParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="exchangeParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="logHealthStatus"></xs:attribute>
-        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="logCoapMessages"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="logTraffic"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-abstract-endpoint"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" abstract="true" name="abstract-abstract-endpoint"></xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker" abstract="true" name="abstract-mid-tracker"></xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-null-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-null-mid-tracker" name="null-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker">
-        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" default="16" name="midTrackerGroups"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-grouped-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-grouped-mid-tracker" name="grouped-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker">
-    <xs:complexContent>
-      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MidTracker"></xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker" substitutionGroup="coap:abstract-mid-tracker" abstract="true" name="abstract-map-based-mid-tracker"></xs:element>
-  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-map-based-mid-tracker" name="map-based-mid-tracker">
-    <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker"></xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.UdpParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="mid-tracker">
-            <xs:complexType>
-              <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-mid-tracker"></xs:element>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-mid-tracker"></xs:element>
-              </xs:choice>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useRandomMidStart"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="midTracker"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="receiverThreadCount"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="senderThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="1" name="receiverThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="1" name="senderThreadCount"></xs:attribute>
         <xs:attribute type="mule:substitutableInt" use="optional" default="2048" name="datagramSize"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="receiveBuffer"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" name="sendBuffer"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="outCapacity"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -339,6 +408,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="strictResponseMatching"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -408,6 +478,7 @@
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" name="multicastParams"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="strictResponseMatching"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -421,56 +492,508 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.DtlsParams">
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
     <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.DtlsResponseMatchingNameEnumType" use="optional" default="STRICT" name="responseMatching"></xs:attribute>
-        <xs:attribute type="mule:substitutableInt" use="optional" default="30000" name="dtlsAutoResumeTimeout"></xs:attribute>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-dtls-endpoint-role"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole" abstract="true" name="abstract-dtls-endpoint-role"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
+        <xs:attribute type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams.AuthenticationModeEnumType" use="optional" default="MANDATORY" name="clientAuthentication"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="serverUseSessionId"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="false" name="serverNameIndication"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="helloVerifyRequest"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.SecurityParams">
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole" substitutionGroup="coap:abstract-dtls-endpoint-role" abstract="true" name="abstract-dtls-server-role"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-dtls-server-role" name="dtls-server-role">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="truncateClientCertificatePaths"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="verifyServerCertificateSubject"></xs:attribute>
+        <xs:attribute type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientParams.DefaultHandshakeModeEnumType" use="optional" default="AUTO" name="defaultHandshakeMode"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole" substitutionGroup="coap:abstract-dtls-endpoint-role" abstract="true" name="abstract-dtls-client-role"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-dtls-client-role" name="dtls-client-role">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
+        <xs:attribute type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams.AuthenticationModeEnumType" use="optional" default="MANDATORY" name="clientAuthentication"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="serverUseSessionId"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="false" name="serverNameIndication"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="helloVerifyRequest"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="truncateClientCertificatePaths"></xs:attribute>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="verifyServerCertificateSubject"></xs:attribute>
+        <xs:attribute type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientParams.DefaultHandshakeModeEnumType" use="optional" default="AUTO" name="defaultHandshakeMode"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole" substitutionGroup="coap:abstract-dtls-endpoint-role" abstract="true" name="abstract-dtls-client-and-server-role"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-dtls-client-and-server-role" name="dtls-client-and-server-role">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-key-config"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig" abstract="true" name="abstract-key-config"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromHex">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
+        <xs:attribute type="xs:string" use="required" name="hexValue"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromHex" substitutionGroup="coap:abstract-key-config" abstract="true" name="abstract-key-from-hex"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-key-from-hex" name="key-from-hex">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromHex"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
+        <xs:attribute type="xs:string" use="required" name="numberValue"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber" substitutionGroup="coap:abstract-key-config" abstract="true" name="abstract-key-from-number"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-key-from-number" name="key-from-number">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
+        <xs:attribute type="xs:string" use="required" name="stringValue"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString" substitutionGroup="coap:abstract-key-config" abstract="true" name="abstract-key-from-string"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-key-from-string" name="key-from-string">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="xs:string" use="required" name="keyStoreLocation"></xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="keyStorePassword"></xs:attribute>
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="key">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:abstract-key-config"></xs:element>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="1" maxOccurs="1" ref="coap:global-abstract-key-config"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="xs:string" use="required" name="identity"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="host"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="virtualHost"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="port"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="key"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey" abstract="true" name="abstract-pre-shared-key"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-pre-shared-key" name="pre-shared-key">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKey"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="path"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="password"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="pre-shared-keys">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-pre-shared-key"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="pre-shared-key-store">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyStore"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableName" use="optional" name="preSharedKeys"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="preSharedKeyStore"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.KeyStore">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="path"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="password"></xs:attribute>
         <xs:attribute type="xs:string" use="required" name="privateKeyAlias"></xs:attribute>
         <xs:attribute type="xs:string" use="required" name="privateKeyPassword"></xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="trustStoreLocation"></xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="trustStorePassword"></xs:attribute>
-        <xs:attribute type="xs:string" use="required" name="trustedRootCertificateAlias"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.TrustStore">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="path"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="password"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="rootCertificateAlias"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.CipherSuite">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.CipherSuiteNameEnumType" use="required" name="cipherSuiteName"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.CipherSuite" abstract="true" name="abstract-cipher-suite"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-cipher-suite" name="cipher-suite">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.CipherSuite"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.Curve">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.SupportedGroupNameEnumType" use="required" name="curveName"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.Curve" abstract="true" name="abstract-curve"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-curve" name="curve">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.Curve"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithmNameEnumType" use="required" name="algorithm"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.HashAlgorithmNameEnumType" use="required" name="hashAlgorithm"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm" abstract="true" name="abstract-signature-algorithm"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-signature-algorithm" name="signature-algorithm">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithm"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmNameEnumType" use="required" name="algorithm"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm" abstract="true" name="abstract-certificate-key-algorithm"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-certificate-key-algorithm" name="certificate-key-algorithm">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithm"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="optional" name="connectionIdLength"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="updateAddressOnNewerRecords"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="pre-shared-key-params">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.PreSharedKeyParams"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="key-store">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.KeyStore"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="trust-store">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.TrustStore"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="preselected-cipher-suites">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-cipher-suite"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="cipher-suites">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-cipher-suite"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="curves">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-curve"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="signature-algorithms">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-signature-algorithm"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="certificate-key-algorithms">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-certificate-key-algorithm"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="support-connection-id">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.security.ConnectionId"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="xs:string" use="optional" name="preSharedKeyParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="keyStore"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="trustStore"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="truncateCertificatePathForValidation"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="recommendedCipherSuitesOnly"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="recommendedCurvesOnly"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="recommendedSignatureAndHashAlgorithmsOnly"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="preselectedCipherSuites"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="cipherSuites"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="curves"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="signatureAlgorithms"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="certificateKeyAlgorithms"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.security.ExtendedMasterSecretModeNameEnumType" use="optional" default="ENABLED" name="extendedMasterSecretMode"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="supportConnectionId"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="optional" default="150000" name="maxConnections"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="30m" name="staleConnectionThreshold"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="updateAddressOnNewerCidRecords"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="removeStaleDoublePrincipals"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="50000" name="outboundMsgCapacity"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="50000" name="inboundMsgCapacity"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="dtlsReceiverThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="dtlsConnectorThreadCount"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="5000" name="handshakeCapacity"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="8192" name="handshakeRecordBufferSize"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="10" name="deferredMsgCapacity"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="autoHandshakeTimeout"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="30" name="verifyPeersOnResumptionThreshold"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="useAntiReplayFilter"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="useExtendedAntiReplayFilterWindow"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="antiReplayFilterWindowExtension"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="optional" name="recordSizeLimit"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams.FragmentSizeEnumType" use="optional" name="maxFragmentLength"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="8192" name="maxFragmentedHandshakeMsgLength"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.TriStateEnumType" use="optional" default="UNDEFINED" name="multiRecords"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.config.TriStateEnumType" use="optional" default="UNDEFINED" name="multiHandshakeMsgRecords"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="mtu"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="1500" name="mtuLimit"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsRetransmissionParams">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="optional" default="2s" name="initialTimeout"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="60s" name="maxTimeout"></xs:attribute>
+        <xs:attribute type="mule:substitutableDecimal" use="optional" default="1.0" name="timeoutRandomFactor"></xs:attribute>
+        <xs:attribute type="mule:substitutableDecimal" use="optional" default="2.0" name="timeoutScaleFactor"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="0ms" name="additionalEccTimeout"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="4" name="maxRetransmissions"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="backoffThreshold"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="earlyStop"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-replay-filter"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter" abstract="true" name="abstract-replay-filter"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter" substitutionGroup="coap:abstract-replay-filter" abstract="true" name="abstract-no-replay-filter"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-no-replay-filter" name="no-replay-filter">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter" substitutionGroup="coap:abstract-replay-filter" abstract="true" name="abstract-default-replay-filter"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-default-replay-filter" name="default-replay-filter">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter">
+    <xs:complexContent>
+      <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter">
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableInt" use="optional" name="extendedfilterWindow"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter" substitutionGroup="coap:abstract-replay-filter" abstract="true" name="abstract-extended-replay-filter"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-extended-replay-filter" name="extended-replay-filter">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="dtls-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="dtls-role">
             <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.DtlsParams"></xs:extension>
-              </xs:complexContent>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element minOccurs="1" maxOccurs="1" ref="coap:abstract-dtls-endpoint-role"></xs:element>
+                <xs:element minOccurs="1" maxOccurs="1" ref="coap:global-abstract-dtls-endpoint-role"></xs:element>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="udp-params">
+          <xs:element minOccurs="0" maxOccurs="1" name="dtls-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.UdpParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsParams"></xs:extension>
               </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="dtls-message-params">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="dtls-retransmissions-params">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsRetransmissionParams"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="replay-filter">
+            <xs:complexType>
+              <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element minOccurs="1" maxOccurs="1" ref="coap:abstract-replay-filter"></xs:element>
+                <xs:element minOccurs="1" maxOccurs="1" ref="coap:global-abstract-replay-filter"></xs:element>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="dtlsParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="dtlsRole"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="securityParams"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
+        <xs:attribute type="coap:nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsResponseMatchingEnumType" use="optional" default="STRICT" name="responseMatching"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="dtlsParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="dtlsMessageParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="dtlsRetransmissionsParams"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="replayFilter"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -567,7 +1090,7 @@
           <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -609,7 +1132,7 @@
           <xs:element minOccurs="0" maxOccurs="1" name="security-params">
             <xs:complexType>
               <xs:complexContent>
-                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.SecurityParams"></xs:extension>
+                <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -737,7 +1260,7 @@
       <xs:complexContent>
         <xs:extension base="mule:abstractExtensionType">
           <xs:annotation>
-            <xs:documentation>The Client configuration defines the endpoint to use and provides for default request parameters.</xs:documentation>
+            <xs:documentation>The Client configuration defines the endpoint to use and provides for default request parameters. Clients are light-weight if the endpoint is shared (global reference to one and the same endpoint configuration).</xs:documentation>
           </xs:annotation>
           <xs:sequence minOccurs="0" maxOccurs="1">
             <xs:element minOccurs="0" maxOccurs="1" name="endpoint">
@@ -782,11 +1305,6 @@
               <xs:documentation>The identifier of this element used to reference it in other components</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="confirmable">
-            <xs:annotation>
-              <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
           <xs:attribute type="xs:string" use="optional" name="host">
             <xs:annotation>
               <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
@@ -805,6 +1323,11 @@
           <xs:attribute type="mule:substitutableName" use="optional" name="queryConfigs">
             <xs:annotation>
               <xs:documentation>The default query parameters of requests.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="confirmable">
+            <xs:annotation>
+              <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -915,11 +1438,6 @@
             <xs:documentation>Whether this source should only be executed on the primary node when runnning in Cluster</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
-          <xs:annotation>
-            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="host">
           <xs:annotation>
             <xs:documentation>The hostname or ip of the server to access.</xs:documentation>
@@ -938,6 +1456,11 @@
         <xs:attribute type="mule:substitutableName" use="optional" name="queryConfigs">
           <xs:annotation>
             <xs:documentation>The default query parameters of requests.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
+          <xs:annotation>
+            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1093,6 +1616,11 @@
         <xs:attribute type="mule:expressionString" use="optional" name="path">
           <xs:annotation>
             <xs:documentation>The path of the resource to access.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
+          <xs:annotation>
+            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1265,6 +1793,11 @@
             <xs:documentation>The path of the resource to access.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
+          <xs:annotation>
+            <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1332,13 +1865,6 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-byte-streaming-strategy"></xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="request-options">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequestOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
               <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
@@ -1361,8 +1887,37 @@
             </xs:complexType>
           </xs:element>
           <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="entity-tag-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="if-match-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
+            <xs:annotation>
+              <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="request-options"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="outputMimeType">
           <xs:annotation>
             <xs:documentation>The mime type of the payload that this operation outputs.</xs:documentation>
@@ -1418,6 +1973,51 @@
             <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="accept">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="entityTagOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="ifMatchOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
+          <xs:annotation>
+            <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="target">
           <xs:annotation>
             <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
@@ -1431,10 +2031,25 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.EntityTag">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="value"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.options.EntityTag" abstract="true" name="abstract-entity-tag"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-entity-tag" name="entity-tag">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.options.EntityTag"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.OtherOption">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute type="mule:expressionInt" use="required" name="number"></xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="alias"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="value"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -1447,30 +2062,6 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="other-request-options">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="accept"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="etags"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="ifMatch"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch"></xs:attribute>
-        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize"></xs:attribute>
-        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="otherRequestOptions"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RequestAsyncType" substitutionGroup="mule:abstract-operator" name="request-async">
     <xs:annotation>
       <xs:documentation>The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.</xs:documentation>
@@ -1480,16 +2071,6 @@
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
-          <xs:element minOccurs="0" maxOccurs="1" name="request-options">
-            <xs:annotation>
-              <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequestOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="remote-endpoint">
             <xs:annotation>
               <xs:documentation>The shared server or proxy that will forward requests.</xs:documentation>
@@ -1512,12 +2093,37 @@
             </xs:complexType>
           </xs:element>
           <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-payload"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="entity-tag-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="if-match-options">
+            <xs:annotation>
+              <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
+            <xs:annotation>
+              <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="requestOptions">
-          <xs:annotation>
-            <xs:documentation>The CoAP options to send with the request.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
@@ -1564,9 +2170,107 @@
             <xs:documentation>When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="accept">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="entityTagOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifExists">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="ifMatchOptions">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="ifNoneMatch">
+          <xs:annotation>
+            <xs:documentation>RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" name="requestSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize">
+          <xs:annotation>
+            <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
+          <xs:annotation>
+            <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" substitutionGroup="mule:abstract-shared-extension" name="global-config">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mule:abstractExtensionType">
+          <xs:annotation>
+            <xs:documentation>Global connector configuration.</xs:documentation>
+          </xs:annotation>
+          <xs:sequence minOccurs="0" maxOccurs="1">
+            <xs:element minOccurs="0" maxOccurs="1" name="other-option-configs">
+              <xs:annotation>
+                <xs:documentation>The list of other options that the endpoint understands. Messages containing critical options that are not understood will be refused. Elective options that are not understood will be ignored.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option-config"></xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute type="mule:substitutableName" use="optional" name="otherOptionConfigs">
+            <xs:annotation>
+              <xs:documentation>The list of other options that the endpoint understands. Messages containing critical options that are not understood will be refused. Elective options that are not understood will be ignored.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="xs:string" use="required" name="name">
+            <xs:annotation>
+              <xs:documentation>The identifier of this element used to reference it in other components</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="xs:string" use="required" name="alias"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="required" name="number"></xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.options.OptionFormatEnumType" use="optional" default="OPAQUE" name="format"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="singleValue"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" default="0" name="minBytes"></xs:attribute>
+        <xs:attribute type="mule:substitutableInt" use="optional" name="maxBytes"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig" abstract="true" name="abstract-other-option-config"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-other-option-config" name="other-option-config">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" substitutionGroup="mule:abstract-shared-extension" name="server-config">
     <xs:complexType>
       <xs:complexContent>
@@ -1624,11 +2328,6 @@
           <xs:attribute type="mule:substitutableLong" use="optional" default="250" name="lingerOnShutdown">
             <xs:annotation>
               <xs:documentation>The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
-          <xs:attribute type="mule:substitutableInt" use="optional" name="protocolStageThreadCount">
-            <xs:annotation>
-              <xs:documentation>Thread pool size of endpoint executor. Default value is equal to the number of cores.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute type="xs:string" use="required" name="name">
@@ -1751,13 +2450,6 @@
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="response-options">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.ResponseOptions"></xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence>
         <xs:attribute type="xs:string" use="optional" default="/*" name="pathPattern">
           <xs:annotation>
@@ -1809,7 +2501,7 @@
             <xs:documentation>The encoding of the payload that this operation outputs.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -1820,19 +2512,10 @@
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="response"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="response-options"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ResponseParams">
-    <xs:complexContent>
-      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
-        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapResponseCodeEnumType" use="optional" name="responseCode"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" default="#[payload]" name="responsePayload"></xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.ResponseOptions">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:sequence minOccurs="0" maxOccurs="1">
@@ -1843,7 +2526,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element minOccurs="0" maxOccurs="1" name="other-response-options">
+          <xs:element minOccurs="0" maxOccurs="1" name="other-options">
             <xs:complexType>
               <xs:sequence>
                 <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-other-option"></xs:element>
@@ -1851,14 +2534,16 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapResponseCodeEnumType" use="optional" name="responseCode"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" default="#[payload]" name="responsePayload"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="contentFormat"></xs:attribute>
         <xs:attribute type="mule:expressionLong" use="optional" name="maxAge"></xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="etag"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="entityTagValue"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="locationPath"></xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="locationQuery"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="responseSize"></xs:attribute>
         <xs:attribute type="mule:expressionInt" use="optional" name="acceptableRequestSize"></xs:attribute>
-        <xs:attribute type="mule:expressionList" use="optional" name="otherResponseOptions"></xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="otherOptions"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1876,7 +2561,7 @@
             <xs:documentation>The path pattern specifies the resource(s) that have changed content. Wildcards can be used, like "/*" or "/some/deeper/resources/*".</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -1901,7 +2586,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -1985,7 +2670,7 @@
             <xs:documentation>The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*".</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -2022,7 +2707,7 @@
             <xs:documentation>The mime type of the payload that this operation outputs.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -2054,7 +2739,7 @@
             <xs:documentation>The uri pattern of the resource(s) that will be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*".</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="config-ref">
+        <xs:attribute type="xs:string" use="required" name="config-ref">
           <xs:annotation>
             <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
           </xs:annotation>
@@ -2097,13 +2782,262 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.DtlsResponseMatchingNameEnumType">
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="SetOptionValueType" substitutionGroup="mule:abstract-operator" name="set-option-value">
+    <xs:annotation>
+      <xs:documentation>Operation that constructs an CoAP option byte value. The resulting byte array is complient to CoAP specifications how integer and string values must be converted to bytes.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SetOptionValueType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
+        <xs:attribute type="xs:string" use="optional" name="fromBinary">
+          <xs:annotation>
+            <xs:documentation>The binary from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionLong" use="optional" name="fromNumber">
+          <xs:annotation>
+            <xs:documentation>The long value from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="fromHex">
+          <xs:annotation>
+            <xs:documentation>The hexadecimal value from which bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="fromString">
+          <xs:annotation>
+            <xs:documentation>The string value from which utf8 bytes are formed.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams.AuthenticationModeEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NONE"></xs:enumeration>
+          <xs:enumeration value="OPTIONAL"></xs:enumeration>
+          <xs:enumeration value="MANDATORY"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientParams.DefaultHandshakeModeEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NONE"></xs:enumeration>
+          <xs:enumeration value="AUTO"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.CipherSuiteNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="TLS_ECDHE_PSK_WITH_AES_128_GCM_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_PSK_WITH_AES_256_GCM_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_PSK_WITH_AES_128_CCM_8_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_PSK_WITH_AES_128_CCM_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_128_GCM_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_256_GCM_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_128_CCM_8"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_256_CCM_8"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_128_CCM"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_256_CCM"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_PSK_WITH_AES_128_CBC_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_CCM"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_CCM"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"></xs:enumeration>
+          <xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"></xs:enumeration>
+          <xs:enumeration value="TLS_EMPTY_RENEGOTIATION_INFO_SCSV"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.SupportedGroupNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="sect163k1"></xs:enumeration>
+          <xs:enumeration value="sect163r1"></xs:enumeration>
+          <xs:enumeration value="sect163r2"></xs:enumeration>
+          <xs:enumeration value="sect193r1"></xs:enumeration>
+          <xs:enumeration value="sect193r2"></xs:enumeration>
+          <xs:enumeration value="sect233k1"></xs:enumeration>
+          <xs:enumeration value="sect233r1"></xs:enumeration>
+          <xs:enumeration value="sect239k1"></xs:enumeration>
+          <xs:enumeration value="sect283k1"></xs:enumeration>
+          <xs:enumeration value="sect283r1"></xs:enumeration>
+          <xs:enumeration value="sect409k1"></xs:enumeration>
+          <xs:enumeration value="sect409r1"></xs:enumeration>
+          <xs:enumeration value="sect571k1"></xs:enumeration>
+          <xs:enumeration value="sect571r1"></xs:enumeration>
+          <xs:enumeration value="secp160k1"></xs:enumeration>
+          <xs:enumeration value="secp160r1"></xs:enumeration>
+          <xs:enumeration value="secp160r2"></xs:enumeration>
+          <xs:enumeration value="secp192k1"></xs:enumeration>
+          <xs:enumeration value="secp192r1"></xs:enumeration>
+          <xs:enumeration value="secp224k1"></xs:enumeration>
+          <xs:enumeration value="secp224r1"></xs:enumeration>
+          <xs:enumeration value="secp256k1"></xs:enumeration>
+          <xs:enumeration value="secp256r1"></xs:enumeration>
+          <xs:enumeration value="secp384r1"></xs:enumeration>
+          <xs:enumeration value="secp521r1"></xs:enumeration>
+          <xs:enumeration value="brainpoolP256r1"></xs:enumeration>
+          <xs:enumeration value="brainpoolP384r1"></xs:enumeration>
+          <xs:enumeration value="brainpoolP512r1"></xs:enumeration>
+          <xs:enumeration value="X25519"></xs:enumeration>
+          <xs:enumeration value="X448"></xs:enumeration>
+          <xs:enumeration value="ffdhe2048"></xs:enumeration>
+          <xs:enumeration value="ffdhe3072"></xs:enumeration>
+          <xs:enumeration value="ffdhe4096"></xs:enumeration>
+          <xs:enumeration value="ffdhe6144"></xs:enumeration>
+          <xs:enumeration value="ffdhe8192"></xs:enumeration>
+          <xs:enumeration value="arbitrary_explicit_prime_curves"></xs:enumeration>
+          <xs:enumeration value="arbitrary_explicit_char2_curves"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.SignatureAlgorithmNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ANONYMOUS"></xs:enumeration>
+          <xs:enumeration value="RSA"></xs:enumeration>
+          <xs:enumeration value="DSA"></xs:enumeration>
+          <xs:enumeration value="ECDSA"></xs:enumeration>
+          <xs:enumeration value="ED25519"></xs:enumeration>
+          <xs:enumeration value="ED448"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.HashAlgorithmNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NONE"></xs:enumeration>
+          <xs:enumeration value="MD5"></xs:enumeration>
+          <xs:enumeration value="SHA1"></xs:enumeration>
+          <xs:enumeration value="SHA224"></xs:enumeration>
+          <xs:enumeration value="SHA256"></xs:enumeration>
+          <xs:enumeration value="SHA384"></xs:enumeration>
+          <xs:enumeration value="SHA512"></xs:enumeration>
+          <xs:enumeration value="INTRINSIC"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.CertificateKeyAlgorithmNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="RSA"></xs:enumeration>
+          <xs:enumeration value="EC"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.security.ExtendedMasterSecretModeNameEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NONE"></xs:enumeration>
+          <xs:enumeration value="OPTIONAL"></xs:enumeration>
+          <xs:enumeration value="ENABLED"></xs:enumeration>
+          <xs:enumeration value="REQUIRED"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsResponseMatchingEnumType">
     <xs:union>
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="STRICT"></xs:enumeration>
           <xs:enumeration value="RELAXED"></xs:enumeration>
           <xs:enumeration value="PRINCIPAL"></xs:enumeration>
+          <xs:enumeration value="PRINCIPAL_IDENTITY"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsMessageParams.FragmentSizeEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="BYTES_512"></xs:enumeration>
+          <xs:enumeration value="BYTES_1024"></xs:enumeration>
+          <xs:enumeration value="BYTES_2048"></xs:enumeration>
+          <xs:enumeration value="BYTES_4096"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.config.TriStateEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="UNDEFINED"></xs:enumeration>
+          <xs:enumeration value="YES"></xs:enumeration>
+          <xs:enumeration value="NO"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType>
@@ -2136,6 +3070,21 @@
           <xs:enumeration value="FETCH"></xs:enumeration>
           <xs:enumeration value="PATCH"></xs:enumeration>
           <xs:enumeration value="IPATCH"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.options.OptionFormatEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="EMPTY"></xs:enumeration>
+          <xs:enumeration value="INTEGER"></xs:enumeration>
+          <xs:enumeration value="OPAQUE"></xs:enumeration>
+          <xs:enumeration value="STRING"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType>

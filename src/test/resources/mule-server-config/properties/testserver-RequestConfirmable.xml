@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -22,19 +22,18 @@
   #L%
   -->
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
    <description>Mule CoAP connector test application</description>
    
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
+	<coap:udp-endpoint name="udp" logTraffic="true">
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 

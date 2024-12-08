@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -21,6 +21,7 @@
  * #L%
  */
 package nl.teslanet.mule.connectors.coap.api.query;
+
 
 /**
  * CoAP Query Parameter as attribute. 
@@ -53,7 +54,8 @@ public class QueryParamAttribute extends AbstractQueryParam
     /**
      * @return the key of the query parameter.
      */
-    @Override    public String getKey()
+    @Override
+    public String getKey()
     {
         return key;
     }
@@ -61,8 +63,48 @@ public class QueryParamAttribute extends AbstractQueryParam
     /**
      * @return the value of the query parameter.
      */
-    @Override    public String getValue()
+    @Override
+    public String getValue()
     {
         return value;
+    }
+
+    /**
+     * @see Object#equals(Object)
+     */
+    @Override
+    public boolean equals( Object object )
+    {
+        if ( object instanceof QueryParamAttribute )
+        {
+            return super.equals( object );
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+
+    /**
+     * @see Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        String actualValue= getValue();
+        if ( actualValue != null )
+        {
+            return getKey() + "=" + actualValue;
+        }
+        else
+        {
+            return getKey();
+        }
     }
 }

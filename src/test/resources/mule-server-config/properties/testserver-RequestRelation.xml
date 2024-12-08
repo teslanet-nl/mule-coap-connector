@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -22,19 +22,19 @@
   #L%
   -->
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
+	<coap:udp-endpoint name="udp" logTraffic="true">
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -54,16 +54,8 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.relation]" doc:name="Set value to test" doc:id="22ac78bd-2dd8-4f14-a822-d69a0cdeb96f" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="f080f0ee-d8d8-43bc-8911-eada164750c9" >
-
-			<scripting:code>if ( vars.valueToTest != null )
-				{
-					throw new Exception(&quot;relation should be null&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+		<set-payload value="#[attributes.relation]"/>
+        <validation:is-null value="#[payload]"/>
 	</flow>
 
 </mule>

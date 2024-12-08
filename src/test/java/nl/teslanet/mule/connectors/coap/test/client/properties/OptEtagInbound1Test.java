@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,9 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -40,9 +40,9 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
      * @return the value to use in test
      * @throws InvalidEntityTagException 
      */
-    private EntityTag getValue() throws InvalidEntityTagException
+    private DefaultEntityTag getValue() throws OptionValueException
     {
-        return new EntityTag( 0x1122334455667788L);
+        return new DefaultEntityTag( 0x1122334455667788L );
     }
 
     @Override
@@ -58,13 +58,13 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     }
 
     @Override
-    protected Object getExpectedInboundPropertyValue() throws InvalidEntityTagException
+    protected Object getExpectedInboundPropertyValue() throws OptionValueException
     {
         return getValue();
     }
 
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptEtagStrategy( getValue() );
     }
@@ -72,6 +72,6 @@ public class OptEtagInbound1Test extends AbstractInboundPropertyTestCase
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getEtag();
+        return attributes.getResponseOptions().getEtag();
     }
 }

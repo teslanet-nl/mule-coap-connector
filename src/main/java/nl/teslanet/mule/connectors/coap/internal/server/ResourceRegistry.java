@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -42,17 +42,24 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
 
 
 /**
- * Registry of served resources and listeners on the resources.
- * It maintains consistency of the callback relations they have.
+ * Registry of served resources and listeners on the resources. It maintains
+ * consistency of the callback relations they have.
  */
 public class ResourceRegistry
 {
+    /**
+     * The Logger of this class.
+     */
     private static final Logger LOGGER= LoggerFactory.getLogger( ResourceRegistry.class );
 
-    //TODO maybe list, depending on validation of duplication of resourcenames
+    /**
+     * The hosted resources.
+     */
     private ConcurrentHashMap< String, ServedResource > servedResources;
 
-    //TODO review concurrency
+    /**
+     * The listeners that are active on the resources.
+     */
     private CopyOnWriteArrayList< OperationalListener > listeners;
 
     /**
@@ -61,8 +68,9 @@ public class ResourceRegistry
     Resource root= null;
 
     /**
-     * Construct a registry. The constructor initializes served resources 
-     * and listener repositories. 
+     * Construct a registry. The constructor initializes served resources and
+     * listener repositories.
+     * 
      * @param root Mandatory root resource.
      * @throws InternalResourceRegistryException When the the root resource is null.
      */
@@ -76,17 +84,27 @@ public class ResourceRegistry
     }
 
     /**
-     * Add a new resource to the registry based on given resource configuration. 
-     * The resource will be added as a child of resource with given parentUri. 
-     * When parentUri is null the resource will be added to the root. 
-     * @param parentUri the uri of the parent of the new resource. 
+     * Add a new resource to the registry based on given resource configuration. The
+     * resource will be added as a child of resource with given parentUri. When
+     * parentUri is null the resource will be added to the root.
+     * 
+     * @param parentUri          the uri of the parent of the new resource.
      * @param resourceDesciption the definition of the resource to create
-     * @throws InternalResourceUriException the parent uri does not resolve to an existing resource.
+     * @throws InternalResourceUriException the parent uri does not resolve to an
+     *                                      existing resource or resource parameters are invalid.
      */
     public void add( String parentUri, ResourceConfig resourceDesciption ) throws InternalResourceUriException
     {
         ServedResource parent= getResource( parentUri );
-        ServedResource resource= new ServedResource( resourceDesciption );
+        ServedResource resource;
+        try
+        {
+            resource= new ServedResource( resourceDesciption );
+        }
+        catch ( Exception e )
+        {
+            throw new InternalResourceUriException( "Resource parameters are invalid", e );
+        }
         if ( parent == null )
         {
             root.add( resource );
@@ -99,12 +117,14 @@ public class ResourceRegistry
     }
 
     /**
-     * Add a new resource to the registry based on given resource configuration. 
-     * The resource will be added as a child of resource with given parentUri. 
-     * When parentUri is null the resource will be added to the root. 
-     * @param parentUri The uri of the parent of the new resource. 
+     * Add a new resource to the registry based on given resource configuration. The
+     * resource will be added as a child of resource with given parentUri. When
+     * parentUri is null the resource will be added to the root.
+     * 
+     * @param parentUri          The uri of the parent of the new resource.
      * @param resourceDesciption The definition of the resource to create.
-     * @throws InternalResourceUriException when the parent uri does not resolve to an existing resource.
+     * @throws InternalResourceUriException when the parent uri does not resolve to
+     *                                      an existing resource.
      */
     public void add( String parentUri, ResourceParams resourceDesciption ) throws InternalResourceUriException
     {
@@ -123,13 +143,14 @@ public class ResourceRegistry
 
     /**
      * Register resource and its children.
+     * 
      * @param resource to be registered
      */
     private void register( ServedResource resource )
     {
         servedResources.put( resource.getURI(), resource );
         setResourceCallBack( resource );
-        //also register children recursively 
+        // also register children recursively
         for ( Resource child : resource.getChildren() )
         {
             register( (ServedResource) child );
@@ -137,7 +158,16 @@ public class ResourceRegistry
     }
 
     /**
+     * Remove all resources from the registry
+     */
+    public void removeAll()
+    {
+        remove( "/*" );
+    }
+
+    /**
      * Remove a resource from the registry
+     * 
      * @param uriPattern The uri pattern defining the resources to remove
      */
     public void remove( String uriPattern )
@@ -149,13 +179,14 @@ public class ResourceRegistry
     }
 
     /**
-     * Unregister resource and its children. 
+     * Unregister resource and its children.
+     * 
      * @param resource to be registered
      */
     private void unRegister( ServedResource resource )
     {
         servedResources.remove( resource.getURI() );
-        //also unregister children recursively 
+        // also unregister children recursively
         for ( Resource child : resource.getChildren() )
         {
             unRegister( (ServedResource) child );
@@ -164,22 +195,25 @@ public class ResourceRegistry
     }
 
     /**
-    * Add a listener to the registry.
-    * @param operationalListener The listener to add
-     * @throws InternalUriPatternException When the listeners uri pattern is invalid.
-    */
+     * Add a listener to the registry.
+     * 
+     * @param operationalListener The listener to add
+     * @throws InternalUriPatternException When the listeners uri pattern is
+     *                                     invalid.
+     */
     public void add( OperationalListener operationalListener ) throws InternalUriPatternException
     {
-        //validate wildcard
+        // validate wildcard
         uriHasWildcard( operationalListener.getUriPattern() );
         listeners.add( operationalListener );
         updateResourceCallBack();
     }
 
     /**
-    * Remove a listener from the registry.
-    * @param listener The listener to add
-    */
+     * Remove a listener from the registry.
+     * 
+     * @param listener The listener to add
+     */
     public void remove( OperationalListener listener )
     {
         listeners.remove( listener );
@@ -198,9 +232,10 @@ public class ResourceRegistry
     }
 
     /**
-     * Set the callback of the resource given to the listener that matches best
-     * to the resources uri.
-     * @param toServe the served resource of which the callback is set.
+     * Set the callback of the resource on the listener that matches best the
+     * resources uri.
+     * 
+     * @param resource The served resource.
      */
     private void setResourceCallBack( ServedResource resource )
     {
@@ -227,7 +262,7 @@ public class ResourceRegistry
             }
             catch ( InternalUriPatternException e )
             {
-                //listeners uriPattern is invalid. Should not occur.
+                // listeners uriPattern is invalid. Should not occur.
                 LOGGER.error( e.getMessage() );
                 matchLevel= 0;
             }
@@ -275,7 +310,6 @@ public class ResourceRegistry
         else
         {
             resource.setGetCallback( null );
-            //if ( resource.isHandlingGet()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "GET" );
         }
         // set the Post callback to the best found listener
         if ( bestPostListener != null )
@@ -285,7 +319,6 @@ public class ResourceRegistry
         else
         {
             resource.setPostCallback( null );
-            //if ( resource.isHandlingPost()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "POST" );
         }
         // set the Put callback to the best found listener
         if ( bestPutListener != null )
@@ -295,7 +328,6 @@ public class ResourceRegistry
         else
         {
             resource.setPutCallback( null );
-            //if ( resource.isHandlingPut()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PUT" );
         }
         // set the Delete callback to the best found listener
         if ( bestDeleteListener != null )
@@ -305,7 +337,6 @@ public class ResourceRegistry
         else
         {
             resource.setDeleteCallback( null );
-            //if ( resource.isHandlingDelete()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "DELETE" );
         }
         // set the Fetch callback to the best found listener
         if ( bestFetchListener != null )
@@ -315,7 +346,6 @@ public class ResourceRegistry
         else
         {
             resource.setFetchCallback( null );
-            //if ( resource.isHandlingFetch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "FETCH" );
         }
         // set the Patch callback to the best found listener
         if ( bestPatchListener != null )
@@ -325,7 +355,6 @@ public class ResourceRegistry
         else
         {
             resource.setPatchCallback( null );
-            //if ( resource.isHandlingPatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "PATCH" );
         }
         // set the iPatch callback to the best found listener
         if ( bestIpatchListener != null )
@@ -335,22 +364,23 @@ public class ResourceRegistry
         else
         {
             resource.setIpatchCallback( null );
-            //if ( resource.isHandlingIpatch()) LOGGER.warn( NO_LISTENER_WARNING, serverName, resource.getURI(), "iPatch" );
         }
     }
 
     /**
-     * Get the resources from the registry with given uri.
-     * A null uri, an empty string or "/" is interpreted as the root uri. 
+     * Get the resources from the registry with given uri. A null uri, an empty
+     * string or "/" is interpreted as the root uri.
+     * 
      * @param uri The uri of the resource to get.
-     * @return The served resource that has given uri, or null when the root uri is given.
+     * @return The served resource that has given uri, or null when the root uri is
+     *         given.
      * @throws InternalResourceUriException The resource does not exist.
      */
     public ServedResource getResource( String uri ) throws InternalResourceUriException
     {
         if ( uri == null || uri.length() == 0 || uri.equals( "/" ) )
         {
-            //do not expose root resource
+            // do not expose root resource
             return null;
         }
         else
@@ -369,12 +399,14 @@ public class ResourceRegistry
 
     /**
      * Find all resources of that have matching uri's.
+     * 
      * @param uriPattern the pattern to match to.
-     * @return A list containing all served resource that match. The list is not thread safe.
+     * @return A list containing all served resource that match. The list is not
+     *         thread safe.
      */
     public List< ServedResource > findResources( String uriPattern )
     {
-        //TODO regex support
+        // TODO regex support
         ArrayList< ServedResource > found= new ArrayList<>();
 
         for ( Entry< String, ServedResource > entry : servedResources.entrySet() )
@@ -388,7 +420,7 @@ public class ResourceRegistry
             }
             catch ( InternalUriPatternException e )
             {
-                //uriPattern is invalid. Should not occur, is already validated.
+                // uriPattern is invalid. Should not occur, is already validated.
                 LOGGER.error( e.getMessage() );
                 break;
             }
@@ -397,14 +429,16 @@ public class ResourceRegistry
     }
 
     /**
-     * Establish the degree in which a resource uri matches an uriPattern.
-     * The degree is an indication how good the pattern matches.
-     * It can be used to compare the matching of a resource uri to different patterns.
-     * For example the resource "/one/two/three" will match to both patterns
-     * "/one/*" and "/one/two/*". The latter with an higher degree because it is more 
-     * specific. The degree value returned is 0 when there is no match. An integer > 0 
-     * when there is a match to some degree. MAX_VALUE when there is a perfect match, which means the pattern equals the uri.
-     * @param uriPattern The pattern to match to.
+     * Establish the degree in which a resource uri matches an uriPattern. The
+     * degree is an indication how good the pattern matches. It can be used to
+     * compare the matching of a resource uri to different patterns. For example the
+     * resource "/one/two/three" will match to both patterns "/one/*" and
+     * "/one/two/*". The latter with an higher degree because it is more specific.
+     * The degree value returned is 0 when there is no match. An integer > 0 when
+     * there is a match to some degree. MAX_VALUE when there is a perfect match,
+     * which means the pattern equals the uri.
+     * 
+     * @param uriPattern  The pattern to match to.
      * @param resourceUri The resource uri to do the matching on.
      * @return The degree of matching.
      * @throws InternalUriPatternException when the pattern given is invalid
@@ -427,6 +461,7 @@ public class ResourceRegistry
 
     /**
      * Get the depth of resource hierarchy in an uri.
+     * 
      * @param uri the resource uri
      * @return the depth of the uri
      */
@@ -439,7 +474,8 @@ public class ResourceRegistry
     }
 
     /**
-     * Get the path part of an uri. That is the uri without the resource name. 
+     * Get the path part of an uri. That is the uri without the resource name.
+     * 
      * @param uri The uri of the resouce.
      * @return The path from the uri.
      */
@@ -457,7 +493,9 @@ public class ResourceRegistry
     }
 
     /**
-     * Get the resource name part of an uri. That is the uri without the path preceding the resource name. 
+     * Get the resource name part of an uri. That is the uri without the path
+     * preceding the resource name.
+     * 
      * @param uri The uri of the resource.
      * @return The resource name.
      */
@@ -476,9 +514,10 @@ public class ResourceRegistry
 
     /**
      * Establish whether the uri has a wildcard and is in fact a pattern.
+     * 
      * @param uri The uri of a resource.
      * @return true when a wildcard is found, otherwise false.
-     * @throws InternalUriPatternException 
+     * @throws InternalUriPatternException
      */
     public static boolean uriHasWildcard( String uri ) throws InternalUriPatternException
     {
@@ -493,6 +532,7 @@ public class ResourceRegistry
 
     /**
      * Get the uri of the parent of a resource.
+     * 
      * @param uri The uri of the resource to get the parent from.
      * @return the uri of the parent.
      */

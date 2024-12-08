@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -68,7 +70,7 @@ public class EndpointConfig
     @Summary( value= "DTLS endpoint configuration." )
     public DTLSEndpoint dtlsEndpoint;
 
-    //  TODO add tests
+    //  TODO implement tcp
     //    /**
     //     * TCP server endpoint configuration.
     //     */
@@ -124,4 +126,42 @@ public class EndpointConfig
         return null;
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        EndpointConfig rhs= (EndpointConfig) obj;
+        EqualsBuilder builder= new EqualsBuilder();
+        builder.append( dtlsEndpoint, rhs.dtlsEndpoint );
+        builder.append( multicastUdpEndpoint, rhs.multicastUdpEndpoint );
+        builder.append( udpEndpoint, rhs.udpEndpoint );
+        return builder.isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        HashCodeBuilder builder= new HashCodeBuilder( 13, 33 );
+        builder.append( dtlsEndpoint );
+        builder.append( multicastUdpEndpoint );
+        builder.append( udpEndpoint );
+        return builder.toHashCode();
+    }
 }

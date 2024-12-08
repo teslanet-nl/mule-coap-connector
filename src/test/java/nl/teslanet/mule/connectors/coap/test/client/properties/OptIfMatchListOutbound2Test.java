@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,14 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
+import java.util.LinkedList;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -33,9 +39,9 @@ import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
  */
 public class OptIfMatchListOutbound2Test extends AbstractOutboundPropertiesTestCase
 {
-    private EntityTag getValue() throws InvalidEntityTagException
+    private DefaultEntityTag getValue() throws OptionValueException
     {
-        return new EntityTag( 0xAA001122L );
+        return new DefaultEntityTag( 0xAA001122L );
     }
 
     /* (non-Javadoc)
@@ -51,16 +57,23 @@ public class OptIfMatchListOutbound2Test extends AbstractOutboundPropertiesTestC
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
-        return getValue().getValue();
+        EntityTag etag= new EntityTag();
+        etag
+            .setValue(
+                new TypedValue< Object >( getValue().getValue(), DataType.fromObject( getValue().getValue() ) )
+            );
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        list.add( etag );
+        return list;
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptIfMatchListStrategy( getValue() );
     }

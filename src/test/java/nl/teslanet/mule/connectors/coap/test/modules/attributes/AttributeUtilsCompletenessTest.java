@@ -34,10 +34,10 @@ import org.junit.Test;
 import nl.teslanet.mule.connectors.coap.api.CoapMessageType;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
-import nl.teslanet.mule.connectors.coap.internal.attributes.AttributeUtils;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidResponseCodeException;
+import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**
@@ -130,10 +130,6 @@ public class AttributeUtilsCompletenessTest
     {
         for ( Code requestCode : Code.values() )
         {
-            //TODO implement FETCH, PATCH, iPATCH
-            if ( requestCode == Code.FETCH ) continue;
-            if ( requestCode == Code.PATCH ) continue;
-            if ( requestCode == Code.IPATCH ) continue;
             //not IANA code, ignore
             if ( requestCode == Code.CUSTOM_30 ) continue;
             assertNotNull( requestCode + " translation to requestCode attribute failed", AttributeUtils.toRequestCodeAttribute( requestCode ) );

@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -23,22 +23,21 @@
   -->
 
 <mule
-	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+">
 
 	<description>Mule CoAP connector test application</description>
 
 	<coap:udp-endpoint name="Udp_Endpoint"
-		logCoapMessages="true">
-		<coap:exchange-params exchangeLifetime="1000" />
+		logTraffic="true">
+		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:client-config name="service" host="127.0.0.1"

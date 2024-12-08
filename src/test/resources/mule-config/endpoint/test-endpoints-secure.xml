@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+<mule
+
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+  
+  http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+
+	<description>Mule CoAP connector test application</description>
+
+    <coap:dtls-endpoint name="endpoint1"
+        doc:name="Dtls endpoint" logTraffic="true">
+        <coap:socket-params bindToPort="5681" />
+        <coap:security-params>
+            <coap:key-store path="certs/keyStore.jks" password="endPass" privateKeyAlias="server" privateKeyPassword="endPass" />
+            <coap:trust-store path="certs/trustStore.jks" password="rootPass" rootCertificateAlias="root" />
+        </coap:security-params>
+    </coap:dtls-endpoint>
+    
+    <coap:dtls-endpoint name="endpoint2"
+        logTraffic="true">
+        <coap:socket-params bindToPort="5682" />
+        <coap:security-params>
+            <coap:key-store path="certs/keyStore.jks" password="endPass" privateKeyAlias="client" privateKeyPassword="endPass" />
+            <coap:trust-store path="certs/trustStore.jks" password="rootPass" rootCertificateAlias="root" />
+        </coap:security-params>
+    </coap:dtls-endpoint>
+
+	<coap:server-config name="server1" doc:name="CoAP Server" >
+		<coap:endpoint dtlsEndpoint="endpoint1" />
+		<coap:resources >
+			<coap:resource resourceName="test1" put="true" />
+		</coap:resources>
+	</coap:server-config>
+	
+    <coap:client-config name="client1" doc:name="CoAP Client" host="127.0.0.1" port="5682" path="/test2" >
+        <coap:endpoint dtlsEndpoint="endpoint1" />
+    </coap:client-config>
+    
+    <coap:client-config name="client3" doc:name="CoAP Client" host="127.0.0.1" port="5682" path="/test2" >
+        <coap:endpoint dtlsEndpoint="endpoint1" />
+    </coap:client-config>
+    
+    <coap:client-config name="client2" doc:name="CoAP Client" host="127.0.0.1" port="5681" path="/test1" >
+        <coap:endpoint dtlsEndpoint="endpoint2" />
+    </coap:client-config>
+    
+    <coap:client-config name="client4" doc:name="CoAP Client" host="127.0.0.1" port="5681" path="/test1" >
+        <coap:endpoint dtlsEndpoint="endpoint2" />
+    </coap:client-config>
+    
+	<coap:server-config name="server2" doc:name="CoAP Server" >
+        <coap:endpoint dtlsEndpoint="endpoint2" />
+		<coap:resources >
+			<coap:resource resourceName="test2" put="true" />
+		</coap:resources>
+	</coap:server-config>
+	
+    <flow name="server1-flow" doc:id="5e948e2b-54ff-44e1-b211-eb88f20d663f" >
+        <coap:listener doc:name="/test1" config-ref="server1" pathPattern="/test1" put="true"/>
+        <logger/>
+        <set-payload value="server1 response" doc:name="server1 response" doc:id="8c8e5685-cc7c-4e76-bbad-6cf3e4635990" mimeType="text/plain"/>
+    </flow>
+    
+    <flow name="client1-flow" doc:id="70bb1a3b-67b9-4138-be0e-2c3aa9b4da5d" >
+        <coap:request requestCode="PUT" doc:name="client 1" config-ref="client1">
+            <coap:request-payload ><![CDATA[client 1 request]]></coap:request-payload>
+        </coap:request>
+        <logger/>
+        <coap:request requestCode="PUT" doc:name="client 3" config-ref="client3">
+            <coap:request-payload ><![CDATA[client 3 request]]></coap:request-payload>
+        </coap:request>
+        <logger/>
+	</flow>
+	
+	<flow name="server2-flow" doc:id="0943dfa2-9960-4ae9-9b59-b10f399cba22" >
+        <coap:listener doc:name="/test2" config-ref="server2" pathPattern="/test2" put="true"/>
+        <logger/>
+        <set-payload value="server2 response" doc:name="server2 response" doc:id="573de7df-a592-4d57-9dcf-e6bcca461309" mimeType="text/plain"/>
+    </flow>
+    
+    <flow name="client2-flow" doc:id="06890240-95e2-4311-b132-952f5cbdcd87" >
+        <coap:request requestCode="PUT" doc:name="client 2" config-ref="client2">
+            <coap:request-payload ><![CDATA[client 2 request]]></coap:request-payload>
+        </coap:request>
+        <logger/>
+        <coap:request requestCode="PUT" doc:name="client 4" config-ref="client4">
+            <coap:request-payload ><![CDATA[client 4 request]]></coap:request-payload>
+        </coap:request>
+        <logger/>
+    </flow>
+</mule>

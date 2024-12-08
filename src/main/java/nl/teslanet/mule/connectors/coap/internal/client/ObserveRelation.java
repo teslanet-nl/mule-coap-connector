@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,13 +27,14 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalRequestException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResponseException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUnkownOptionException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriException;
 
 
@@ -45,7 +46,7 @@ public class ObserveRelation implements CoapHandler
     /**
      * The logger.
      */
-    private static final Logger logger= LoggerFactory.getLogger( ObserveRelation.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ObserveRelation.class.getCanonicalName() );
 
     /**
      * 
@@ -64,46 +65,6 @@ public class ObserveRelation implements CoapHandler
     private final CoapRequestBuilder requestBuilder;
 
     /**
-     * The request uri.
-     */
-    private String requestUri= null;
-
-    /**
-     * Failure logmessage.
-     */
-    private final String logMessageFailed;
-
-    /**
-     * Failure logmessage.
-     */
-    private final String logMessageRecreated;
-
-    /**
-     * Failure logmessage.
-     */
-    private final String logMessageRecreatedFailed;
-
-    /**
-     * Failure logmessage.
-     */
-    private final String logMessageReregistered;
-
-    /**
-     * Reregistration failure logmessage
-     */
-    private final String logMessageReregisterFailed;
-
-    /**
-     * Error processing logmessage.
-     */
-    private final String logMessageErrorProcessingFailed;
-
-    /**
-     * Processing failure logmessage.
-     */
-    private final String logMessageProcessingFailed;
-
-    /**
      * processor that will process notifications.
      */
     private final ResponseProcessingStrategy processor;
@@ -117,20 +78,18 @@ public class ObserveRelation implements CoapHandler
      * Constructor
      * @param sourceCallback
      */
-    ObserveRelation( String observerName, CoapClient coapClient, CoapRequestBuilder requestBuilder, ResponseProcessingStrategy processor )
+    ObserveRelation(
+        String observerName,
+        CoapClient coapClient,
+        CoapRequestBuilder requestBuilder,
+        ResponseProcessingStrategy processor
+    )
     {
         super();
         this.observerName= observerName;
         this.coapClient= coapClient;
         this.requestBuilder= requestBuilder;
         this.processor= processor;
-        logMessageFailed= toString() + " failed to observe, trying to restore relation with server...";
-        logMessageRecreated= toString() + " relation with server recreated.";
-        logMessageRecreatedFailed= toString() + " failed to recreate relation with server.";
-        logMessageReregistered= toString() + " reregistered on server.";
-        logMessageReregisterFailed= toString() + " failed to reregister on server.";
-        logMessageErrorProcessingFailed= toString() + " error processing failed.";
-        logMessageProcessingFailed= toString() + " notification processing failed.";
     }
 
     /**
@@ -141,11 +100,14 @@ public class ObserveRelation implements CoapHandler
         try
         {
             coapRelation= sendObserveRequest();
-            logger.info( this + " has started." );
+            LOGGER.info( "{} has started.", this );
         }
-        catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+        catch (
+            InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+            | InternalInvalidOptionValueException | InternalUnkownOptionException e
+        )
         {
-            logger.error( logMessageRecreatedFailed, e );
+            LOGGER.error( String.format( "%s failed to recreate relation with server.", this ), e );
         }
     }
 
@@ -158,7 +120,21 @@ public class ObserveRelation implements CoapHandler
         {
             coapRelation.proactiveCancel();
             coapRelation= null;
-            logger.info( this + " has stopped." );
+            LOGGER.info( "{} has stopped.", this );
+        }
+    }
+
+    /**
+     * Stop observing
+     */
+    public synchronized void stop( boolean confirmable )
+    {
+        if ( coapRelation != null )
+        {
+            coapRelation.setConfirmable( confirmable );
+            coapRelation.proactiveCancel();
+            coapRelation= null;
+            LOGGER.info( "{} has stopped.", this );
         }
     }
 
@@ -168,7 +144,7 @@ public class ObserveRelation implements CoapHandler
     @Override
     public void onError()
     {
-        logger.warn( logMessageFailed );
+        LOGGER.warn( "{} failed to observe, trying to restore relation with server...", this );
         if ( coapRelation != null )
         {
             //TODO wait time?
@@ -178,39 +154,46 @@ public class ObserveRelation implements CoapHandler
                 {
                     coapRelation= sendObserveRequest();
                 }
-                catch ( InternalInvalidRequestCodeException | InternalUriException | InternalRequestException e )
+                catch (
+                    InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+                    | InternalInvalidOptionValueException | InternalUnkownOptionException e
+                )
                 {
-                    logger.error( logMessageRecreatedFailed, e );
+                    LOGGER
+                        .error(
+                            String.format( "%s failed to observe, trying to restore relation with server...", this ),
+                            e
+                        );
                 }
                 if ( coapRelation != null )
                 {
-                    logger.info( logMessageRecreated );
+                    LOGGER.info( "{} relation with server recreated.", this );
                 }
                 else
                 {
-                    logger.error( logMessageRecreatedFailed );
+                    LOGGER.error( "{} failed to recreate relation with server.", this );
                 }
             }
             else
             {
                 if ( coapRelation.reregister() )
                 {
-                    logger.info( logMessageReregistered );
+                    LOGGER.info( "{} reregistered on server.", this );
                 }
                 else
                 {
-                    logger.error( logMessageReregisterFailed );
+                    LOGGER.error( "{} failed to reregister on server.", this );
 
                 }
             }
         }
         try
         {
-            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), null );
+            processor.process( requestBuilder, null );
         }
         catch ( InternalResponseException e )
         {
-            logger.error( logMessageErrorProcessingFailed, e );
+            LOGGER.error( String.format( "%s error processing failed.", this ), e );
         }
     }
 
@@ -222,11 +205,11 @@ public class ObserveRelation implements CoapHandler
     {
         try
         {
-            processor.process( requestUri, requestBuilder.buildMessageType(), requestBuilder.buildRequestCode(), response );
+            processor.process( requestBuilder, response );
         }
         catch ( InternalResponseException e )
         {
-            logger.error( logMessageProcessingFailed, e );
+            LOGGER.error( String.format( "%s notification processing failed.", this ), e );
         }
     }
 
@@ -236,12 +219,16 @@ public class ObserveRelation implements CoapHandler
      * @throws InternalRequestException When the request cannot be constructed.
      * @throws InternalUriException When no valid uri could be constructed.
      * @throws InternalInvalidRequestCodeException When request code is invalid.
+     * @throws InternalUnkownOptionException  When an other option is not accepted.
+     * @throws InternalInvalidOptionValueException  When an option value is invalid.
      */
-    private CoapObserveRelation sendObserveRequest() throws InternalInvalidRequestCodeException, InternalUriException, InternalRequestException
+    private CoapObserveRelation sendObserveRequest() throws InternalInvalidRequestCodeException,
+        InternalUriException,
+        InternalRequestException,
+        InternalInvalidOptionValueException,
+        InternalUnkownOptionException
     {
-        Request request= requestBuilder.build();
-        requestUri= request.getURI();
-        return coapClient.observe( request, this );
+        return coapClient.observe( requestBuilder.build(), this );
     }
 
     /**

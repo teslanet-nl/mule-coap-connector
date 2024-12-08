@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 
 import java.util.List;
 
+import nl.teslanet.mule.connectors.coap.api.binary.BytesValue;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -35,39 +36,87 @@ import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 public class RequestOptionsAttributes
 {
     /**
-     * Execute request only if the resource already exists.
+     * Accept option set on the request. 
+     */
+    protected Integer accept= null;
+
+    /**
+     * Content format of the request payload. 
+     */
+    protected Integer contentFormat= null;
+
+    /**
+     * Resource states known by client that issues the request. (to enable a Valid response.)
+     * The list contains the entity tags representing known states.
+     */
+    protected List< BytesValue > etags= null;
+
+    /**
+     * If {@code true}, execute request only if the resource already exists.
      */
     protected boolean ifExists= false;
 
-    protected List< EntityTag > ifMatch= null;
+    /**
+     * Execute request only if the resource state is known by client. (to prevent concurrent mutations)
+     * The list contains the entity tags representing known states.
+     */
+    protected List< BytesValue > ifMatch= null;
 
-    protected String uriHost= null;
-
-    protected List< EntityTag > etags= null;
-
+    /**
+     * If {@code true}, execute request only if the resource does not exist.
+     */
     protected boolean ifNoneMatch= false;
 
-    protected Integer uriPort= null;
-
-    protected List< String > uriPath= null;
-
-    protected Integer contentFormat= null;
-
-    protected List< QueryParamAttribute > uriQuery;
-
-    protected Integer accept= null;
-
-    protected boolean provideResponseSize= false;
-
-    protected String proxyUri= null;
-
-    protected String proxyScheme= null;
-
-    protected Integer requestSize= null;
-
+    /**
+     * The request is an observe request (observe=0) or an observe cancel request (observe=1)
+     */
     protected Integer observe= null;
 
-    protected List< OtherOptionAttribute > otherOptions= null;
+    /**
+     * The other options of the request.
+     */
+    protected List< OtherOptionAttribute > other= null;
+
+    /**
+     * If {@code true}, client requests to provide size2 option in the response
+     * (indicating response payload size).
+     */
+    protected boolean provideResponseSize= false;
+
+    /**
+     * The scheme to use when the server is a forwarding proxy.
+     */
+    protected String proxyScheme= null;
+
+    /**
+     * The uri to use when the server is a forwarding proxy.
+     */
+    protected String proxyUri= null;
+
+    /**
+     * The indicated request payload size [bytes].
+     */
+    protected Integer requestSize= null;
+
+    /**
+     * The request uri host.
+     */
+    protected String uriHost= null;
+
+    /**
+     * The request uri port..
+     */
+    protected Integer uriPort= null;
+
+    /**
+     * The request uri host path.
+     */
+    protected List< String > uriPath= null;
+
+    /**
+     * The request uri query parameters.
+     */
+    protected List< QueryParamAttribute > uriQuery;
 
     /**
      * @return The ifExists option.
@@ -82,7 +131,7 @@ public class RequestOptionsAttributes
      * Use getIfMatchValue instead.
      * @return null.
      */
-    public List< EntityTag > getIfMatch()
+    public List< BytesValue > getIfMatch()
     {
         return ifMatch;
     }
@@ -100,7 +149,7 @@ public class RequestOptionsAttributes
      * Use getEtagsValue instead.
      * @return null.
      */
-    public List< EntityTag > getEtags()
+    public List< BytesValue > getEtags()
     {
         return etags;
     }
@@ -196,8 +245,8 @@ public class RequestOptionsAttributes
     /**
      * @return the other request options.
      */
-    public List< OtherOptionAttribute > getOtherOptions()
+    public List< OtherOptionAttribute > getOther()
     {
-        return otherOptions;
+        return other;
     }
 }

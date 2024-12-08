@@ -25,13 +25,15 @@ package nl.teslanet.mule.connectors.coap.test.client.blockwise;
 
 import java.net.SocketException;
 
-import nl.teslanet.mule.connectors.coap.test.utils.Data;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.config.CoapConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.elements.config.Configuration;
+
+import nl.teslanet.mule.connectors.coap.test.utils.Data;
 
 
 /**
@@ -53,7 +55,7 @@ public class TestServer extends CoapServer
      */
     public TestServer( int port ) throws SocketException
     {
-        super( NetworkConfig.createStandardWithoutFile(), port );
+        super( Configuration.createStandardWithoutFile(), port );
         addResources();
     }
 
@@ -62,7 +64,7 @@ public class TestServer extends CoapServer
      */
     public TestServer( int port, int resource_size ) throws SocketException
     {
-        super( NetworkConfig.createStandardWithoutFile().setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, resource_size ), port );
+        super( Configuration.createStandardWithoutFile().set( CoapConfig.MAX_RESOURCE_BODY_SIZE, resource_size ), port );
         addResources();
     }
 
@@ -73,7 +75,7 @@ public class TestServer extends CoapServer
     {
         // provide an instance of a Hello-World resource
         add( new PayloadResource( "blockwise", 0, 0 ) );
-        getRoot().getChild( "blockwise" ).add( new PayloadResource( "rq0", -1, 2 ) );
+        getRoot().getChild( "blockwise" ).add( new PayloadResource( "rq0", 0, 2 ) );
         getRoot().getChild( "blockwise" ).add( new PayloadResource( "rsp0", 2, 0 ) );
         getRoot().getChild( "blockwise" ).add( new PayloadResource( "rq10", 10, 2 ) );
         getRoot().getChild( "blockwise" ).add( new PayloadResource( "rsp10", 2, 10 ) );

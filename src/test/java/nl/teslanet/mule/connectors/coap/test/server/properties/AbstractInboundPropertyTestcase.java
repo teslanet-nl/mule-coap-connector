@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,11 +25,13 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +44,7 @@ import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 
@@ -143,12 +146,67 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     }
 
     /**
+     * Implement to specify how option should be retrieved from spied event.
+     * @param object where to fetch the option from
+     * @return
+     */
+    protected Object fetchOption( Object object )
+    {
+        return object;
+    }
+
+    /**
+     * Override and return false to specify that the response is expected to indicate failure.
+     * @return {@code true} when successfull response is expected
+     */
+    protected boolean getExpectedSuccess()
+    {
+        return true;
+    }
+
+    /**
+     * Get the expected response code.
+     * @return The expected response code.
+     * @throws Exception 
+     */
+    protected ResponseCode getExpectedResponseCode( Code requestCode ) throws Exception
+    {
+        ResponseCode responseCode;
+        switch ( requestCode )
+        {
+            case GET:
+                responseCode= ResponseCode.CONTENT;
+                break;
+            case POST:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case PUT:
+                responseCode= ResponseCode.CHANGED;
+                break;
+            case DELETE:
+            default:
+                responseCode= ResponseCode.DELETED;
+                break;
+        }
+        return responseCode;
+    }
+
+    /**
      * Override to specify whether the option value is a byte array
      * @return {@code true} when the option value is a byte array
      */
-    protected Boolean propertyValueIsByteArray()
+    protected boolean propertyValueIsByteArray()
     {
-        return Boolean.FALSE;
+        return false;
+    }
+
+    /**
+     * Override to specify whether the option is an collection of objects of which string representations are to compare
+     * @return {@code true} when option is a collection of ByteArray
+     */
+    protected boolean optionValueIsCollectionOfStringable()
+    {
+        return false;
     }
 
     /**
@@ -164,21 +222,41 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
     }
 
     /**
-     * Assert the spy has collecte the expected object
-     * @param spy the spy that should have colleected the property
+     * Assert the spy has collected the expected object
+     * @param spy the spy that should have collected the property
      * @param expected
      */
     void assertSpy( MuleEventSpy spy, final Object expected )
     {
         assertEquals( "Spy has collected wrong number of events", 1, spy.getEvents().size() );
         assertEquals( "property has wrong class", expected.getClass(), spy.getEvents().get( 0 ).getContent().getClass() );
+        Object fetched= fetchOption( spy.getEvents().get( 0 ).getContent() );
+
         if ( propertyValueIsByteArray() )
         {
-            assertArrayEquals( "property has wrong value", (byte[]) expected, (byte[]) spy.getEvents().get( 0 ).getContent() );
+            assertArrayEquals( "property has wrong value", (byte[]) expected, (byte[]) fetched );
+        }
+        else if ( optionValueIsCollectionOfStringable() )
+        {
+            @SuppressWarnings( "unchecked" )
+            Collection< Object > actualCollection= (Collection< Object >) fetched;
+            @SuppressWarnings( "unchecked" )
+            Collection< Object > expectedCollection= (Collection< Object >) expected;
+
+            assertEquals( "option value list length differ", expectedCollection.size(), actualCollection.size() );
+
+            Iterator< Object > actualIt= actualCollection.iterator();
+            Iterator< Object > expectedIt= expectedCollection.iterator();
+            while ( actualIt.hasNext() && expectedIt.hasNext() )
+            {
+                Object optionValue= actualIt.next();
+                Object expectedValue= expectedIt.next();
+                assertEquals( "value in collection not equal", expectedValue.toString(), optionValue.toString() );
+            }
         }
         else
         {
-            assertEquals( "property has wrong value", expected, spy.getEvents().get( 0 ).getContent() );
+            assertEquals( "property has wrong value", expected, fetched );
         }
     }
 
@@ -186,7 +264,7 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
      * Test inbound property
      * @throws Exception 
      */
-    @Test( timeout= 20000L )
+    @Test
     public void testInbound() throws Exception
     {
         MuleEventSpy spy= spyMessage();
@@ -197,12 +275,18 @@ public abstract class AbstractInboundPropertyTestcase extends AbstractServerTest
         if ( unintendedPayload ) request.setUnintendedPayload();
         addOption( request.setPayload( "<nothing_important/>" ).getOptions() );
 
-        client.setTimeout( 20000L );
-
         CoapResponse response= client.advanced( request );
 
         assertNotNull( "no response", response );
-        assertTrue( "response indicates failure", response.isSuccess() );
-        assertSpy( spy, getExpectedPropertyValue() );
+        assertEquals( "wrong response code", getExpectedResponseCode( requestCode ), response.getCode() );
+        if ( getExpectedSuccess() )
+        {
+            assertTrue( "response indicates failure", response.isSuccess() );
+            assertSpy( spy, getExpectedPropertyValue() );
+        }
+        else
+        {
+            assertFalse( "response indicates success", response.isSuccess() );
+        }
     }
 }

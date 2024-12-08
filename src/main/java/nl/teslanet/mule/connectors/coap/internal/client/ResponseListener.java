@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,8 +35,8 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.ResponseHandler;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidHandlerException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.StartException;
 
@@ -51,7 +51,7 @@ public class ResponseListener extends Source< InputStream, CoapResponseAttribute
     /**
      * The logger of this class.
      */
-    private static final Logger logger= LoggerFactory.getLogger( ResponseListener.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ResponseListener.class.getCanonicalName() );
 
     /**
      * The handler that will deliver responses and notifications to process.
@@ -78,7 +78,7 @@ public class ResponseListener extends Source< InputStream, CoapResponseAttribute
         {
             throw new StartException( this + " failed to start, invalid handler name.", e );
         }
-        logger.info( this + " started." );
+        LOGGER.info( "{} started.", this );
     }
 
     /* (non-Javadoc)
@@ -94,10 +94,10 @@ public class ResponseListener extends Source< InputStream, CoapResponseAttribute
         }
         catch ( InternalInvalidHandlerException e )
         {
-            logger.error( this + " cannot remove listener" );
+            LOGGER.error( "{} cannot remove listener", this );
         }
         sourceCallback= null;
-        logger.info( this + " stopped." );
+        LOGGER.info( "{} stopped.", this );
     }
 
     /**

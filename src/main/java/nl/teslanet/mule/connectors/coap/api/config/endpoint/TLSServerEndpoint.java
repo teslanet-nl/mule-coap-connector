@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,6 +26,7 @@ package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 
 
@@ -34,8 +35,8 @@ import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
  *
  */
 //@Configuration(name="tls-server-endpoint")
-@Alias("tls-server-endpoint")
-@TypeDsl(allowInlineDefinition= true, allowTopLevelDefinition= true)
+@Alias( "tls-server-endpoint" )
+@TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
 public class TLSServerEndpoint extends AbstractTLSEndpoint
 {
     /**
@@ -57,11 +58,12 @@ public class TLSServerEndpoint extends AbstractTLSEndpoint
         super( name );
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPEndpoint#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept a visitor and pass on.
+     * @throws ConfigException 
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
         visitor.visit( this );

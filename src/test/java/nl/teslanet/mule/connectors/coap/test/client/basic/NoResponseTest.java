@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
@@ -117,10 +117,13 @@ public class NoResponseTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "do_request" );
         spy.clear();
 
-        flowRunner( "do_request" ).withPayload( "nothing_important" ).withVariable( "code", requestCode ).withVariable( "host", "127.0.0.1" ).withVariable(
-            "port",
-            "999"
-        ).withVariable( "path", resourcePath ).run();
+        flowRunner( "do_request" )
+            .withPayload( "nothing_important" )
+            .withVariable( "code", requestCode )
+            .withVariable( "host", "127.0.0.1" )
+            .withVariable( "port", "999" )
+            .withVariable( "path", resourcePath )
+            .run();
 
         assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
         Message response= (Message) spy.getEvents().get( 0 ).getContent();

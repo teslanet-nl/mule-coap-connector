@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,27 +30,27 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 
 
-public class CropRotation implements Deduplicator
+public class CropRotation extends Deduplicator
 {
     /**
-     * The period of CROP_ROTATION deduplicators cleanup cycle in milliseconds [ms].
+     * The period of crop rotation cleanup cycle in milliseconds [ms].
      */
     @Parameter
-    @Optional(defaultValue= "247000")
-    @Summary("The period of CROP_ROTATION deduplicator cleanup cycle in milliseconds [ms].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    //really a long, although Cf sometimes uses an integer (bug?) 
-    public Long cropRotationPeriod= null;
+    @Optional( defaultValue= "247s" )
+    @Summary( "The period of crop rotation cleanup cycle." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public String cropRotationPeriod= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }

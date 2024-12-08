@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,19 +26,20 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
 import org.eclipse.californium.core.coap.OptionSet;
+
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
 {
     @Override
-    protected void addOption( OptionSet options ) throws InvalidEntityTagException
+    protected void addOption( OptionSet options ) throws OptionValueException
     {
-        options.addIfMatch( new EntityTag( 0xA0L ).getValue() );
-        options.addIfMatch( new EntityTag( 0x11FFL ).getValue() );
-        options.addIfMatch( new EntityTag( 0x1122334455667788L).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0xA0L ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0x11FFL ).getValue() );
+        options.addIfMatch( new DefaultEntityTag( 0x1122334455667788L ).getValue() );
     }
 
     @Override
@@ -48,18 +49,18 @@ public class OptIfMatchListInbound2Test extends AbstractInboundPropertyTestcase
     }
 
     @Override
-    protected Object getExpectedPropertyValue() throws InvalidEntityTagException
+    protected Object getExpectedPropertyValue() throws OptionValueException
     {
-        LinkedList< EntityTag > list= new LinkedList<>();
-        list.add( new EntityTag( 0xA0L ) );
-        list.add( new EntityTag( 0x11FFL ) );
-        list.add( new EntityTag( 0x1122334455667788L ) );
+        LinkedList< DefaultEntityTag > list= new LinkedList<>();
+        list.add( new DefaultEntityTag( 0xA0L ) );
+        list.add( new DefaultEntityTag( 0x11FFL ) );
+        list.add( new DefaultEntityTag( 0x1122334455667788L ) );
 
         return Collections.unmodifiableList( list );
     }
-    
-    /* (non-Javadoc)
-     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
+
+    /**
+     * Mule configs used in test.
      */
     @Override
     protected String getConfigResources()

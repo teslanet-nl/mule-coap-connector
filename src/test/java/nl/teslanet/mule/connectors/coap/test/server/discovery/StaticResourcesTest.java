@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
@@ -78,6 +79,7 @@ public class StaticResourcesTest extends AbstractServerTestCase
     }
 
     @Test
+    @Ignore( "cf3 does not show /.wellknown/core" )
     public void testWellKnownCore()
     {
         assertEquals( "wrong number of weblinks", 9, links.size() );

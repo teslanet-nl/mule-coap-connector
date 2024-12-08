@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,21 +23,49 @@
 package nl.teslanet.mule.connectors.coap.api.config.deduplication;
 
 
+import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
 
 
 /**
- * Deduplucator algorithm interface.
+ * Deduplucator algorithm definition.
  * 
  */
-public interface Deduplicator extends VisitableConfig
+public abstract class Deduplicator implements VisitableConfig
 {
+    /**
+     * When enabled auto replace is executed of not matching exchanges, mainly triggered by not-aware address changes.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "When enabled auto replace is executed of not matching exchanges, mainly triggered by not-aware address changes." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public boolean autoReplace= true;
 
     /**
      * @return the name of the deduplicator algorithm
      */
-    default String name()
+    public String name()
     {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Accept visitor.
+     */
+    @Override
+    public void accept( ConfigVisitor visitor ) throws ConfigException
+    {
+        visitor.visit( this );
+    }
+
 }

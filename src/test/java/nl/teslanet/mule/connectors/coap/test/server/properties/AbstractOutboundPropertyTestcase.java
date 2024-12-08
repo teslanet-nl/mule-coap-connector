@@ -50,43 +50,45 @@ import org.eclipse.californium.core.coap.Request;
  * Test for outbound properties
  *
  */
-@RunnerDelegateTo(Parameterized.class)
+@RunnerDelegateTo( Parameterized.class )
 public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTestCase
 {
-    @Parameters(name= "Request= {0}, path= {2}")
+    @Parameters( name= "Request= {0}, path= {2}" )
     public static Collection< Object[] > data()
     {
         return Arrays.asList(
-            new Object [] []{
+            new Object [] []
+            {
                 //default maxResourceBodySize on server
                 { Code.GET, 5683, "/service/get_me", true },
                 { Code.PUT, 5683, "/service/put_me", false },
                 { Code.POST, 5683, "/service/post_me", false },
-                { Code.DELETE, 5683, "/service/delete_me", true }, } );
+                { Code.DELETE, 5683, "/service/delete_me", true }, }
+        );
     }
 
     /**
      * Request code to test
      */
-    @Parameter(0)
+    @Parameter( 0 )
     public Code requestCode;
 
     /**
      * Test server port
      */
-    @Parameter(1)
+    @Parameter( 1 )
     public int port;
 
     /**
     * Test resource to call
     */
-    @Parameter(2)
+    @Parameter( 2 )
     public String resourcePath;
 
     /**
      * True when request is not supposed to have a payload, but does
      */
-    @Parameter(3)
+    @Parameter( 3 )
     public boolean unintendedPayload;
 
     /* (non-Javadoc)
@@ -200,10 +202,10 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
 
         if ( optionValueIsCollectionOfByteArray() )
         {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             Collection< byte[] > option= (Collection< byte[] >) fetchOption( response.getOptions() );
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             Collection< byte[] > expected= (Collection< byte[] >) getExpectedOptionValue();
             assertEquals( "option value list length differ", expected.size(), option.size() );
 
@@ -218,10 +220,10 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
         }
         else if ( optionValueIsCollectionOfStringable() )
         {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             Collection< Object > option= (Collection< Object >) fetchOption( response.getOptions() );
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             Collection< Object > expected= (Collection< Object >) getExpectedOptionValue();
             assertEquals( "option value list length differ", expected.size(), option.size() );
 
@@ -234,7 +236,7 @@ public abstract class AbstractOutboundPropertyTestcase extends AbstractServerTes
                 assertEquals( "value in collection not equal", expectedValue.toString(), optionValue.toString() );
             } ;
         }
-       else if ( optionValueIsByteArray() )
+        else if ( optionValueIsByteArray() )
         {
             assertArrayEquals( "option has wrong value", (byte[]) getExpectedOptionValue(), (byte[]) fetchOption( response.getOptions() ) );
         }

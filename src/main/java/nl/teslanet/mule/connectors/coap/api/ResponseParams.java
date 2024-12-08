@@ -29,9 +29,12 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+
+import nl.teslanet.mule.connectors.coap.api.options.ResponseOptionsParams;
 
 
 /**
@@ -45,21 +48,27 @@ public class ResponseParams
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.SUPPORTED)
-    //@OfValues(ResponseCodeValueProvider.class)
-    @Placement(tab= "Response", order= 1)
-    @Summary("The CoAP response code of the response.")
-    @Example("CONTENT")
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Placement( tab= "Response", order= 1 )
+    @Summary( "The CoAP response code of the response." )
+    @Example( "CONTENT" )
     private CoapResponseCode responseCode;
 
     /**
      * The payload of the CoAP response message. 
      */
     @Parameter
-    @Content(primary= true)
-    @Placement(tab= "Response", order= 2)
-    @Summary("The payload of the CoAP response.")
+    @Content( primary= true )
+    @Placement( tab= "Response", order= 2 )
+    @Summary( "The payload of the CoAP response." )
     private TypedValue< Object > responsePayload;
+
+    /**
+     * The CoAP options to send with the response.
+     */
+    @ParameterGroup( name= "Response options" )
+    @Placement( tab= "Options", order= 49 )
+    private ResponseOptionsParams responseOptionsParams= new ResponseOptionsParams();
 
     /**
      * @return the responseCode
@@ -91,5 +100,21 @@ public class ResponseParams
     public void setResponsePayload( TypedValue< Object > responsePayload )
     {
         this.responsePayload= responsePayload;
+    }
+
+    /**
+     * @return the responseOptionsParams
+     */
+    public ResponseOptionsParams getResponseOptionsParams()
+    {
+        return responseOptionsParams;
+    }
+
+    /**
+     * @param responseOptionsParams the responseOptionsParams to set
+     */
+    public void setResponseOptionsParams( ResponseOptionsParams responseOptionsParams )
+    {
+        this.responseOptionsParams= responseOptionsParams;
     }
 }

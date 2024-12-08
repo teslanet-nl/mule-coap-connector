@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,7 +24,6 @@ package nl.teslanet.mule.connectors.coap.internal.config;
 
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -34,8 +33,8 @@ import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.UdpMulticastConnector;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
-import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstructionException;
 
 
@@ -46,9 +45,9 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.EndpointConstruction
 public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
 {
     /**
-     * Error message prefix.
+     * Error message format.
      */
-    private static final String ENDPOINT_MSG_PREFIX= "CoAP Endpoint { ";
+    private static final String EXCEPTION_FORMAT= "CoAP Endpoint { %s } construction failed. %s: { %s }";
 
     /**
      * The UDP MulticasConnetor Builder that collects relevant configuration and will be used to build the connector.
@@ -80,11 +79,11 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
      */
     private String outgoingAddress= null;
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor#visit(nl.teslanet.mule.connectors.coap.api.config.NotificationParams)
+    /**
+     * Visit the configuration object.
      */
     @Override
-    public void visit( MulticastParams toVisit )
+    public void visit( MulticastParams toVisit ) throws ConfigException
     {
         super.visit( toVisit );
         joinMulticastGroups= toVisit.join;
@@ -94,34 +93,14 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
     }
 
     /**
-     * Visit socket parameters.
-     * @param toVisit The object to visit.
+     * Build the endpoint using the configuration this visitor has collected.
+     * @return The Endpoint.
+     * @throws EndpointConstructionException When the configuration cannot be used to create an endpoint.
      */
     @Override
-    public void visit( SocketParams toVisit )
+    public CoapEndpoint getEndpoint() throws EndpointConstructionException
     {
-        //Do not call super because UDP endpoint bind configuration is not allowed by Cf when connector is is set.  
-        //super.visit( toVisit );
-        int port= ( toVisit.bindToPort != null ? toVisit.bindToPort : 0 );
-
-        if ( toVisit.bindToHost != null )
-        {
-            connectorBuilder.setLocalAddress( new InetSocketAddress( toVisit.bindToHost, port ) );
-        }
-        else
-        {
-            connectorBuilder.setLocalAddress( new InetSocketAddress( port ) );
-        }
-    }
-
-    /**
-     * Get the Builder that is ready to build the endpoint.
-     * @return The Endpoint Builder.
-     * @throws EndpointConstructionException  When the configuration cannot be create an endpoint builder.
-     */
-    @Override
-    public CoapEndpoint.Builder getEndpointBuilder() throws EndpointConstructionException
-    {
+        connectorBuilder.setLocalAddress( getLocalAddress() );
         if ( outgoingInterface != null )
         {
             try
@@ -130,10 +109,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             }
             catch ( SocketException e )
             {
-                throw new EndpointConstructionException(
-                    ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Outgoing network interface { " + outgoingInterface + " } is invalid.",
-                    e
-                );
+                throw new EndpointConstructionException( String.format( EXCEPTION_FORMAT, getEndpointName(), "Outgoing network interface is invalid", outgoingInterface ), e );
             }
         }
         if ( outgoingAddress != null )
@@ -144,10 +120,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
             }
             catch ( UnknownHostException e )
             {
-                throw new EndpointConstructionException(
-                    ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Outgoing network address { " + outgoingAddress + " } is invalid.",
-                    e
-                );
+                throw new EndpointConstructionException( String.format( EXCEPTION_FORMAT, getEndpointName(), "Outgoing network address is invalid", outgoingAddress ), e );
             }
         }
         if ( joinMulticastGroups != null )
@@ -168,7 +141,7 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                     catch ( SocketException e )
                     {
                         throw new EndpointConstructionException(
-                            ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Network interface { " + multiCastNetworkInterfaceConfig + " } is invalid.",
+                            String.format( EXCEPTION_FORMAT, getEndpointName(), "Network interface is invalid", multiCastNetworkInterfaceConfig ),
                             e
                         );
                     }
@@ -180,18 +153,15 @@ public class MulticastUdpEndpointConfigVisitor extends EndpointConfigVisitor
                 }
                 catch ( UnknownHostException e )
                 {
-                    throw new EndpointConstructionException(
-                        ENDPOINT_MSG_PREFIX + getEndpointName() + " } construction failed. Multicast group { " + groupConfig + " } is invalid.",
-                        e
-                    );
+                    throw new EndpointConstructionException( String.format( EXCEPTION_FORMAT, getEndpointName(), "Multicast group", groupConfig ), e );
                 }
                 connectorBuilder.addMulticastGroup( groupAddress, networkInterface );
             }
         }
-        endPointBuilder.setNetworkConfig( this.getNetworkConfig() );
+        endpointBuilder.setConfiguration( this.getConfiguration() );
         UdpMulticastConnector connector= connectorBuilder.build();
         connector.setLoopbackMode( disableLoopback );
-        endPointBuilder.setConnectorWithAutoConfiguration( connector );
-        return endPointBuilder;
+        endpointBuilder.setConnector( connector );
+        return endpointBuilder.build();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -31,9 +31,10 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.SecurityParams;
 import nl.teslanet.mule.connectors.coap.api.config.TlsParams;
+import nl.teslanet.mule.connectors.coap.api.config.security.SecurityParams;
 
 
 /**
@@ -48,18 +49,18 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
     @Parameter
     @Optional
     @NullSafe
-    @Summary(value= "TLS session timeout in seconds [s]. Default value is 24 hours.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( value= "TLS session timeout in seconds [s]. Default value is 24 hours." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public TlsParams tlsParams= null;
 
     /**
      * The security parameters.
      */
     @Parameter
-    @Summary(value= "The security parameters.")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
+    @Summary( value= "The security parameters." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
     public SecurityParams securityParams= null;
 
     /**
@@ -84,10 +85,10 @@ public abstract class AbstractTLSEndpoint extends AbstractTCPEndpoint
     }
 
     /**
-     * Accept the visitor.
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
         visitor.visit( this );

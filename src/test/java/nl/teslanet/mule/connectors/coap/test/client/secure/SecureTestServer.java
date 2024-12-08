@@ -26,6 +26,8 @@ package nl.teslanet.mule.connectors.coap.test.client.secure;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 
 import org.eclipse.californium.core.CoapResource;
@@ -33,13 +35,14 @@ import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.pskstore.AdvancedMultiPskStore;
+import org.eclipse.californium.scandium.dtls.x509.CertificateProvider;
+import org.eclipse.californium.scandium.dtls.x509.SingleCertificateProvider;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier.Builder;
 
@@ -60,7 +63,7 @@ public class SecureTestServer extends CoapServer
     }
 
     // allows configuration via Californium.properties
-    //public static final int DTLS_PORT = NetworkConfig.getStandard().getInt(NetworkConfig.Keys.COAP_SECURE_PORT);
+    //public static final int DTLS_PORT = Configuration.getStandard().getInt(Configuration.Keys.COAP_SECURE_PORT);
 
     /**
      * Set truststore password
@@ -104,7 +107,7 @@ public class SecureTestServer extends CoapServer
      */
     public SecureTestServer( int port ) throws IOException, GeneralSecurityException
     {
-        super( NetworkConfig.createStandardWithoutFile() );
+        super( Configuration.createStandardWithoutFile() );
 
         // Pre-shared secrets
         AdvancedMultiPskStore pskStore= new AdvancedMultiPskStore();
@@ -117,23 +120,26 @@ public class SecureTestServer extends CoapServer
             SslContextUtil.CLASSPATH_SCHEME + KEY_STORE_LOCATION,
             "server",
             KEY_STORE_PASSWORD.toCharArray(),
-            KEY_PASSWORD.toCharArray() );
+            KEY_PASSWORD.toCharArray()
+        );
         //load trust store
         Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
             SslContextUtil.CLASSPATH_SCHEME + TRUST_STORE_LOCATION,
             "root",
-            TRUST_STORE_PASSWORD.toCharArray() );
+            TRUST_STORE_PASSWORD.toCharArray()
+        );
 
         verifierBuilder.setTrustedCertificates( trustedCertificates );
-        DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
+        DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder( Configuration.createStandardWithoutFile() );
         builder.setAdvancedCertificateVerifier( verifierBuilder.build() );
         builder.setAddress( new InetSocketAddress( "localhost", port ) );
-        builder.setRecommendedCipherSuitesOnly( false );
         builder.setAdvancedPskStore( pskStore );
-        builder.setIdentity( serverCredentials.getPrivateKey(), serverCredentials.getCertificateChain(), CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509 );
+        PrivateKey privateKey= serverCredentials.getPrivateKey();
+        PublicKey publicKey= serverCredentials.getPublicKey();
+        CertificateProvider identityProvider= new SingleCertificateProvider( privateKey, publicKey );
+        builder.setCertificateIdentityProvider( identityProvider );
         DTLSConnector dtlsConnector= new DTLSConnector( builder.build() );
         CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
-        //endpointBuilder.setNetworkConfig( visitor.getNetworkConfig() );
         endpointBuilder.setConnector( dtlsConnector );
 
         addEndpoint( endpointBuilder.build() );

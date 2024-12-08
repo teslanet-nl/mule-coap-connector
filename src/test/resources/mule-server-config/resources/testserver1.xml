@@ -1,34 +1,45 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!-- #%L Mule CoAP Connector %% Copyright (C) 2019 - 2022 (teslanet.nl) Rogier 
-	Cobben Contributors: (teslanet.nl) Rogier Cobben - initial creation %% This 
-	program and the accompanying materials are made available under the terms 
-	of the Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0. 
-	This Source Code may also be made available under the following Secondary 
-	Licenses when the conditions for such availability set forth in the Eclipse 
-	Public License, v. 2.0 are satisfied: GNU General Public License, version 
-	2 with the GNU Classpath Exception which is available at https://www.gnu.org/software/classpath/license.html. 
-	SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 
-	#L% -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
 
 <mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 	">
 
 	<description>Mule CoAP connector test application</description>
 
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
+	<coap:udp-endpoint name="udp" logTraffic="true">
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config">
@@ -76,8 +87,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<flow name="listen_add_resource">
 		<coap:listener get="true" post="true" put="true"
 			delete="true" pathPattern="/add_resource/*" config-ref="config">
-			<coap:response responseCode="#[vars.response_code]" />
-			<coap:response-options
+			<coap:response  responseCode="#[vars.response_code]" 
 				locationPath="#[vars.resource_path]" />
 		</coap:listener>
 		<set-variable variableName="attr" value="#[ attributes ]"
@@ -131,24 +141,33 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 					value="BAD_REQUEST" />
 			</otherwise>
 		</choice>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3ec655ff-fdca-470b-ade4-e527f3467a88" type="COAP:INVALID_RESOURCE_URI">
+				<set-payload value="#[error.errorType.identifier]" doc:name="Set Payload" doc:id="58135f77-43f0-4094-b601-23492b0e1052" />
+				<set-variable variableName="response_code"
+					value="BAD_REQUEST" />
+			</on-error-continue>
+		</error-handler>
 	</flow>
 
 	<sub-flow name="add_resource">
-		<os:store objectStore="Object_store" doc:name="Store"
-			key="#[ vars.resource_path ]" failOnNullValue="false" />
+		<choice doc:name="Choice" doc:id="5e583f75-4eec-45b4-acab-5e8ae4488bf2" >
+			<when expression="#[!isBlank( vars.resource_path )]">
+				<os:store objectStore="Object_store" doc:name="Store" key="#[vars.resource_path]" failOnNullValue="false" />
+			</when>
+		</choice>
 		<coap:resource-add config-ref="config"
 			resourcePath="#[vars.resource_path]" get="#[vars.get]"
 			put="#[vars.put]" post="#[vars.post]" delete="#[vars.delete]"
 			doc:name="add resource" />
 		<set-variable variableName="location_path"
-			value="#[ vars.resource_path ]" />
+			value="#[vars.resource_path]" />
 		<set-variable variableName="response_code"
 			value="CREATED" />
 	</sub-flow>
 
 	<flow name="listen_exists">
-		<coap:listener get="true" post="true" put="true"
-			delete="true" pathPattern="/exists" config-ref="config">
+		<coap:listener post="true" pathPattern="/exists" config-ref="config">
 			<coap:response responseCode="CONTENT"
 				responsePayload="#[ payload as String ]" />
 		</coap:listener>
@@ -157,8 +176,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</flow>
 	
 	<flow name="listen_list">
-		<coap:listener get="true" post="true" put="true"
-			delete="true" pathPattern="/list" config-ref="config">
+		<coap:listener post="true" pathPattern="/list" config-ref="config">
 			<coap:response responseCode="CONTENT"
 				responsePayload="#[ payload joinBy (',') ]" />
 		</coap:listener>

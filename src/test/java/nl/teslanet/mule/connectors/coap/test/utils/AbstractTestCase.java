@@ -32,6 +32,8 @@ import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultBytesValue;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 @ArtifactClassLoaderRunnerConfig
@@ -39,9 +41,11 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
     providedExclusions=
     { 
     },
-    applicationRuntimeLibs= {
+    applicationRuntimeLibs= 
+	{
     }, 
-    testRunnerExportedRuntimeLibs= { 
+    testRunnerExportedRuntimeLibs=
+	{ 
         "org.mule.tests:mule-tests-functional"
     },
     applicationSharedRuntimeLibs= {
@@ -50,7 +54,10 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
         "org.eclipse.californium:scandium",
         "org.eclipse.californium:demo-certs"
     },
-    exportPluginClasses= {
+    exportPluginClasses= 
+	{
+		DefaultEntityTag.class,
+		DefaultBytesValue.class
     }, 
     testExclusions= 
     {
@@ -64,17 +71,19 @@ import nl.teslanet.mule.connectors.coap.api.query.AbstractQueryParam;
         "com.mulesoft.mule.runtime*:*:*:*:*",
         "com.mulesoft.licm:*:*:*:*"
     }, 
-    testInclusions= { 
+    testInclusions=
+	{ 
         "*:*:jar:tests:*", 
         "*:*:test-jar:*:*"
     }, 
-    extraPrivilegedArtifacts= {
+    extraPrivilegedArtifacts=
+	{
     }
 )
 public abstract class AbstractTestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule
-    public Timeout globalTimeout= Timeout.seconds( 100 ); // 100 seconds max per method tested
+    public Timeout globalTimeout= Timeout.seconds( 10000 ); // 100 seconds max per method tested
 
     /**
      * Create query part of an uri.

@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -24,7 +24,7 @@
 <extension-documentation>
     <configs>
         <config name="client">
-            <description><![CDATA[The Client configuration defines the endpoint to use and provides for default request parameters.]]></description>
+            <description><![CDATA[The Client configuration defines the endpoint to use and provides for default request parameters. Clients are light-weight if the endpoint is shared (global reference to one and the same endpoint configuration).]]></description>
             <parameters>
                 <parameter name="endpoint">
                     <description><![CDATA[The endpoint this client uses.]]></description>
@@ -34,9 +34,6 @@
                 </parameter>
                 <parameter name="name">
                     <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
-                </parameter>
-                <parameter name="confirmable">
-                    <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
                 </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to access.]]></description>
@@ -52,6 +49,20 @@
                 </parameter>
                 <parameter name="remoteEndpointConfig">
                     <description><![CDATA[The shared server or proxy to address the request to.]]></description>
+                </parameter>
+                <parameter name="confirmable">
+                    <description><![CDATA[When true the server is expected to acknowledge reception of the observe request.]]></description>
+                </parameter>
+            </parameters>
+        </config>
+        <config name="global-config">
+            <description><![CDATA[Global connector configuration.]]></description>
+            <parameters>
+                <parameter name="otherOptionConfigs">
+                    <description><![CDATA[The list of other options that the endpoint understands. Messages containing critical options that are not understood will be refused. Elective options that are not understood will be ignored.]]></description>
+                </parameter>
+                <parameter name="name">
+                    <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
                 </parameter>
             </parameters>
         </config>
@@ -72,9 +83,6 @@
                 </parameter>
                 <parameter name="lingerOnShutdown">
                     <description><![CDATA[The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.]]></description>
-                </parameter>
-                <parameter name="protocolStageThreadCount">
-                    <description><![CDATA[Thread pool size of endpoint executor. Default value is equal to the number of cores.]]></description>
                 </parameter>
                 <parameter name="name">
                     <description><![CDATA[The identifier of this element used to reference it in other components]]></description>
@@ -140,6 +148,9 @@
                 </parameter>
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -210,6 +221,9 @@
                 <parameter name="path">
                     <description><![CDATA[The path of the resource to access.]]></description>
                 </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
+                </parameter>
             </parameters>
         </operation>
         <operation name="ping">
@@ -232,9 +246,6 @@
         <operation name="request">
             <description><![CDATA[The Request Processor issues a request on a CoAP server. The processor blocks until a response is received or a timeout occurs.]]></description>
             <parameters>
-                <parameter name="request-options">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
                 </parameter>
@@ -274,6 +285,33 @@
                 <parameter name="forcePayload">
                     <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
                 </parameter>
+                <parameter name="contentFormat">
+                    <description><![CDATA[RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).]]></description>
+                </parameter>
+                <parameter name="accept">
+                    <description><![CDATA[RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).]]></description>
+                </parameter>
+                <parameter name="entityTagOptions">
+                    <description><![CDATA[RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.]]></description>
+                </parameter>
+                <parameter name="ifExists">
+                    <description><![CDATA[RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.]]></description>
+                </parameter>
+                <parameter name="ifMatchOptions">
+                    <description><![CDATA[RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).]]></description>
+                </parameter>
+                <parameter name="ifNoneMatch">
+                    <description><![CDATA[RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.]]></description>
+                </parameter>
+                <parameter name="requestSize">
+                    <description><![CDATA[RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")]]></description>
+                </parameter>
+                <parameter name="requireResponseSize">
+                    <description><![CDATA[RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.]]></description>
+                </parameter>
+                <parameter name="otherOptions">
+                    <description><![CDATA[The other CoAP options to send with the request.]]></description>
+                </parameter>
                 <parameter name="target">
                     <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
                 </parameter>
@@ -285,9 +323,6 @@
         <operation name="requestAsync">
             <description><![CDATA[The RequestAsync Processor issues a request on a CoAP server asynchronously. The processor doea not wait for the response and will not block. The handling of a response (if any) is delegated to the response handler.]]></description>
             <parameters>
-                <parameter name="requestOptions">
-                    <description><![CDATA[The CoAP options to send with the request.]]></description>
-                </parameter>
                 <parameter name="config-ref">
                     <description><![CDATA[The name of the configuration to be used to execute this component]]></description>
                 </parameter>
@@ -320,6 +355,33 @@
                 </parameter>
                 <parameter name="forcePayload">
                     <description><![CDATA[When true the payload will be added to the request, even when not appropriate for the CoAP message-type (i.e. GET, DELETE).]]></description>
+                </parameter>
+                <parameter name="contentFormat">
+                    <description><![CDATA[RFC 7252: The Content-Format Option indicates the representation format of the message payload. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).]]></description>
+                </parameter>
+                <parameter name="accept">
+                    <description><![CDATA[RFC 7252: The CoAP Accept option can be used to indicate which Content-Format is acceptable to the client. The representation format is given as a numeric Content-Format identifier that is defined in the "CoAP Content-Formats" registry (Section 12.3).]]></description>
+                </parameter>
+                <parameter name="entityTagOptions">
+                    <description><![CDATA[RFC 7252: An entity-tag is intended for use as a resource-local identifier for differentiating between representations of the same resource that vary over time. It is generated by the server providing the resource, which may generate it in any number of ways including a version, checksum, hash, or time. An endpoint receiving an entity-tag MUST treat it as opaque and make no assumptions about its content or structure. The ETag Option in a response provides the current value (i.e., after the request was processed) of the entity-tag for the "tagged representation". In a GET request, an endpoint that has one or more representations previously obtained from the resource, and has obtained ETag response options with these, can specify an instance of the ETag Option for one or more of these stored responses. A server can issue a 2.03 Valid response (Section 5.9.1.3) in place of a 2.05 Content response if one of the ETags given is the entity-tag for the current representation, i.e., is valid; the 2.03 Valid response then echoes this specific ETag in a response option.]]></description>
+                </parameter>
+                <parameter name="ifExists">
+                    <description><![CDATA[RFC 7252: The value of an If-Match option is either an ETag or the empty string. An If-Match option with an ETag matches a representation with that exact ETag. An If-Match option with an empty value matches any existing representation (i.e., it places the precondition on the existence of any current representation for the target resource). The If-Match Option can occur multiple times. If any of the options match, then the condition is fulfilled. If there is one or more If-Match Options, but none of the options match, then the condition is not fulfilled.]]></description>
+                </parameter>
+                <parameter name="ifMatchOptions">
+                    <description><![CDATA[RFC 7252: The If-Match Option MAY be used to make a request conditional on the current existence or value of an ETag for one or more representations of the target resource. If-Match is generally useful for resource update requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource (i.e., the "lost update" problem).]]></description>
+                </parameter>
+                <parameter name="ifNoneMatch">
+                    <description><![CDATA[RFC 7252: The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource. If-None-Match is useful for resource creation requests, such as PUT requests, as a means for protecting against accidental overwrites when multiple clients are acting in parallel on the same resource. The If-None-Match Option carries no value. If the target resource does exist, then the condition is not fulfilled.]]></description>
+                </parameter>
+                <parameter name="requestSize">
+                    <description><![CDATA[RFC 7959: In a request carrying a Block1 Option, to indicate the current estimate the client has of the total size of the resource representation, measured in bytes ("size indication")]]></description>
+                </parameter>
+                <parameter name="requireResponseSize">
+                    <description><![CDATA[RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.]]></description>
+                </parameter>
+                <parameter name="otherOptions">
+                    <description><![CDATA[The other CoAP options to send with the request.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -423,6 +485,29 @@
                 </parameter>
             </parameters>
         </operation>
+        <operation name="setOptionValue">
+            <description><![CDATA[Operation that constructs an CoAP option byte value. The resulting byte array is complient to CoAP specifications how integer and string values must be converted to bytes.]]></description>
+            <parameters>
+                <parameter name="fromBinary">
+                    <description><![CDATA[The binary from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromNumber">
+                    <description><![CDATA[The long value from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromHex">
+                    <description><![CDATA[The hexadecimal value from which bytes are formed.]]></description>
+                </parameter>
+                <parameter name="fromString">
+                    <description><![CDATA[The string value from which utf8 bytes are formed.]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+            </parameters>
+        </operation>
     </operations>
     <sources>
         <source name="observer">
@@ -446,9 +531,6 @@
                 <parameter name="redeliveryPolicy">
                     <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
-                <parameter name="type">
-                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
-                </parameter>
                 <parameter name="host">
                     <description><![CDATA[The hostname or ip of the server to access.]]></description>
                 </parameter>
@@ -463,6 +545,9 @@
                 </parameter>
                 <parameter name="remoteEndpointConfig">
                     <description><![CDATA[The shared server or proxy to address the request to.]]></description>
+                </parameter>
+                <parameter name="type">
+                    <description><![CDATA[When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.]]></description>
                 </parameter>
             </parameters>
         </source>
@@ -514,9 +599,6 @@
                 <parameter name="response">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="response-options">
-                    <description><![CDATA[]]></description>
-                </parameter>
             </parameters>
         </source>
         <source name="ResponseListener">
@@ -544,70 +626,6 @@
         </source>
     </sources>
     <types>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoapRequestAttributes">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="localAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="relation">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remoteAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestType">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="localAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="locationUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="notification">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="options">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="remoteAddress">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestType">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestUri">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="responseCode">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="responseType">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="success">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.DiscoveredResource">
             <description><![CDATA[]]></description>
             <parameters>
@@ -773,6 +791,9 @@
                 <parameter name="responsePayload">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="responseOptionsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
             </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.SharedServer">
@@ -793,6 +814,132 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="endpointPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="relation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestOptions">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="clientError">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="localAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="locationUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="noResponse">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="notification">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="remoteAddress">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestHost">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestOptions">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPath">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestPort">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestQuery">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestScheme">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="requestUri">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseCode">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseOptions">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="responseType">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="result">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="serverError">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="success">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.binary.BytesValue">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="valueAsHex">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="valueAsNumber">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="valueAsString">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -827,11 +974,18 @@
                 <parameter name="cropRotationPeriod">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
             </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.Deduplicator">
             <description><![CDATA[]]></description>
-            <parameters/>
+            <parameters>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.MarkAndSweep">
             <description><![CDATA[]]></description>
@@ -839,15 +993,80 @@
                 <parameter name="markAndSweepInterval">
                     <description><![CDATA[]]></description>
                 </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
             </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.deduplication.PeersMarkAndSweep">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="maxMessagesPerPeer">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="markAndSweepInterval">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="autoReplace">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DefaultReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientAndServerRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsServerParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsClientParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsClientRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsClientParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsEndpointRole">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="dtlsServerParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="extendedfilterWindow">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.dtls.ReplayFilter">
+            <description><![CDATA[]]></description>
+            <parameters/>
         </type>
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
                 <parameter name="socketParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -856,13 +1075,16 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -878,19 +1100,28 @@
         <type name="nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="dtlsParams">
+                <parameter name="dtlsRole">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="securityParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="udpParams">
+                <parameter name="responseMatching">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsMessageParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="dtlsRetransmissionsParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="replayFilter">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="socketParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -899,13 +1130,16 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -927,10 +1161,10 @@
                 <parameter name="udpParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="socketParams">
+                <parameter name="strictResponseMatching">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
+                <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -939,13 +1173,16 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -959,22 +1196,22 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -988,22 +1225,22 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1023,22 +1260,22 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1058,22 +1295,22 @@
                 <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="blockwiseParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1084,10 +1321,10 @@
                 <parameter name="udpParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="socketParams">
+                <parameter name="strictResponseMatching">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="exchangeParams">
+                <parameter name="socketParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="blockwiseParams">
@@ -1096,13 +1333,16 @@
                 <parameter name="notificationParams">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="congestionControl">
+                <parameter name="optionParams">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="exchangeParams">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="logHealthStatus">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="logCoapMessages">
+                <parameter name="logTraffic">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>
@@ -1127,83 +1367,72 @@
             <description><![CDATA[]]></description>
             <parameters/>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.options.OtherOptionConfig">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="alias">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="number">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="format">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="singleValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="minBytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="maxBytes">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.security.KeyConfig">
+            <description><![CDATA[]]></description>
+            <parameters/>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromHex">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="hexValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromNumber">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="numberValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.config.security.KeyFromString">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="stringValue">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.options.EntityTag">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="empty">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="value">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="valueAsHexString">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="valueAsNumber">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="valueAsString">
-                    <description><![CDATA[]]></description>
-                </parameter>
             </parameters>
         </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.options.RequestOptions">
+        <type name="nl.teslanet.mule.connectors.coap.api.options.OtherOption">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="contentFormat">
+                <parameter name="alias">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="accept">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="etags">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="ifExists">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="ifMatch">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="ifNoneMatch">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requestSize">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="requireResponseSize">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="otherRequestOptions">
-                    <description><![CDATA[]]></description>
-                </parameter>
-            </parameters>
-        </type>
-        <type name="nl.teslanet.mule.connectors.coap.api.options.ResponseOptions">
-            <description><![CDATA[]]></description>
-            <parameters>
-                <parameter name="contentFormat">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="maxAge">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="etag">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="locationPath">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="locationQuery">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="responseSize">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="acceptableRequestSize">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="otherResponseOptions">
+                <parameter name="value">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

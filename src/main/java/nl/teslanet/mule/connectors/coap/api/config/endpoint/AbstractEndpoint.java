@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -34,13 +36,15 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.ExchangeParams;
 import nl.teslanet.mule.connectors.coap.api.config.LogHealthStatus;
 import nl.teslanet.mule.connectors.coap.api.config.NotificationParams;
 import nl.teslanet.mule.connectors.coap.api.config.SocketParams;
 import nl.teslanet.mule.connectors.coap.api.config.VisitableConfig;
-import nl.teslanet.mule.connectors.coap.api.config.congestion.CongestionControl;
+import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
+import nl.teslanet.mule.connectors.coap.api.config.options.OptionParams;
 
 
 /**
@@ -64,16 +68,6 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public SocketParams socketParams;
 
     /**
-     * The coap exchange parameters.
-     */
-    @Parameter
-    @Optional
-    @NullSafe
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public ExchangeParams exchangeParams= null;
-
-    /**
      * The parameters for blockwise transfer.
      */
     @Parameter
@@ -94,13 +88,23 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public NotificationParams notificationParams= null;
 
     /**
-     * Configuration of the congestion control algorithm, if any.
-     */
+    * The option parameters.
+    */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public CongestionControl congestionControl= null;
+    public OptionParams optionParams= null;
+
+    /**
+     * The coap exchange parameters.
+     */
+    @Parameter
+    @Optional
+    @NullSafe
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public ExchangeParams exchangeParams= null;
 
     /**
      * When activated logHealthStatus is periodically logged.
@@ -113,14 +117,14 @@ public abstract class AbstractEndpoint implements VisitableConfig
     public LogHealthStatus logHealthStatus= null;
 
     /**
-     * When activated incoming and outgoing CoAP messages are logged.
+     * When activated incoming and outgoing CoAP traffic is logged.
      */
     @Parameter
     @Optional( defaultValue= "false" )
-    @Summary( "When activated incoming and outgoing CoAP messages are logged." )
+    @Summary( "When activated incoming and outgoing CoAP traffic is logged." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public boolean logCoapMessages= false;
+    public boolean logTraffic= false;
 
     /**
      * Default Constructor used by Mule. 
@@ -128,6 +132,7 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     protected AbstractEndpoint()
     {
+        //noop
     }
 
     /**
@@ -137,12 +142,12 @@ public abstract class AbstractEndpoint implements VisitableConfig
      */
     protected AbstractEndpoint( String name )
     {
-        configName= name;
+        this.configName= name;
         //initialise nullsafe params
         socketParams= new SocketParams();
-        exchangeParams= new ExchangeParams();
         blockwiseParams= new BlockwiseParams();
         notificationParams= new NotificationParams();
+        exchangeParams= new ExchangeParams( new GroupedMidTracker() );
     }
 
     /**
@@ -154,23 +159,70 @@ public abstract class AbstractEndpoint implements VisitableConfig
     protected AbstractEndpoint( String name, int port )
     {
         this( name );
-        socketParams.setBindToPort( port );
+        socketParams.bindToPort= port;
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.api.config.VisitableConfig#accept(nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor)
+    /**
+     * Accept visitor.
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
         socketParams.accept( visitor );
-        exchangeParams.accept( visitor );
         blockwiseParams.accept( visitor );
         notificationParams.accept( visitor );
-        if ( congestionControl != null ) congestionControl.accept( visitor );
+        if ( optionParams != null ) optionParams.accept( visitor );
+        exchangeParams.accept( visitor );
         if ( logHealthStatus != null ) logHealthStatus.accept( visitor );
-
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        AbstractEndpoint rhs= (AbstractEndpoint) obj;
+        return new EqualsBuilder()
+            .append( configName, rhs.configName )
+            .append( socketParams, rhs.socketParams )
+            .append( blockwiseParams, rhs.blockwiseParams )
+            .append( notificationParams, rhs.notificationParams )
+            .append( optionParams, rhs.optionParams )
+            .append( exchangeParams, rhs.exchangeParams )
+            .append( logHealthStatus, rhs.logHealthStatus )
+            .append( logTraffic, rhs.logTraffic )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 17, 37 )
+            .append( configName )
+            .append( socketParams )
+            .append( blockwiseParams )
+            .append( notificationParams )
+            .append( optionParams )
+            .append( exchangeParams )
+            .append( logHealthStatus )
+            .append( logTraffic )
+            .toHashCode();
+    }
 }

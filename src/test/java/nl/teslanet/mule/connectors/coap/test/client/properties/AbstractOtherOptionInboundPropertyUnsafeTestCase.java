@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
 
 
@@ -35,10 +35,12 @@ import nl.teslanet.mule.connectors.coap.api.options.OtherOptionAttribute;
  * Abstract class for testing inbound other options
  *
  */
-public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends AbstractOtherOptionInboundPropertyTestCase
+public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase
+    extends AbstractOtherOptionInboundPropertyTestCase
 {
-    abstract protected boolean isUnSafe();
-   /**
+    abstract protected boolean isUnsafe();
+
+    /**
      * Fetch the inbound property from the response attributes.
      */
     @Override
@@ -49,7 +51,7 @@ public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends A
         List< Boolean > unsafes= new LinkedList<>();
         for ( OtherOptionAttribute otherOption : options )
         {
-            unsafes.add( otherOption.isUnSafe() );
+            unsafes.add( otherOption.isUnsafe() );
         }
         return Collections.unmodifiableList( unsafes );
     }
@@ -63,7 +65,7 @@ public abstract class AbstractOtherOptionInboundPropertyUnsafeTestCase extends A
         LinkedList< Boolean > unsafes= new LinkedList<>();
         for ( int i= 0; i < getOptionValues().length; i++ )
         {
-            unsafes.add( isUnSafe() );
+            unsafes.add( isUnsafe() );
         }
         return Collections.unmodifiableList( unsafes );
     }

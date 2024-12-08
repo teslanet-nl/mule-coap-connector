@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -22,20 +22,20 @@
   #L%
   -->
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" 
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
    <description>Mule CoAP connector test application</description>
    
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
+	<coap:udp-endpoint name="udp" logTraffic="true">
 		<coap:socket-params bindToHost="[::1]" bindToPort="8883"/>
-		<coap:exchange-params exchangeLifetime="1000" />
+		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -52,9 +52,9 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 	</coap:server-config>
 
 
-	<coap:udp-endpoint name="udpLocal" logCoapMessages="true">
+	<coap:udp-endpoint name="udpLocal" logTraffic="true">
 		<coap:socket-params bindToHost="127.0.0.1" bindToPort="9983" />
-		<coap:exchange-params exchangeLifetime="1000" />
+		<coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="configLocal"><coap:endpoint udpEndpoint="udpLocal" /> 
@@ -74,33 +74,15 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="acfc94b6-5020-4904-b6c3-276f160ae64e" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="6be1cc85-64c6-4930-82f9-076524eadf18" >
-
-			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
-				java.lang.String() ) == false )
-				{
-				throw new Exception(&quot;attribute is not a String&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+        <set-payload value="#[attributes.localAddress]"/>
+        <java:validate-type class="java.lang.String" instance="#[payload]"/>
    </flow>
    	<flow name="listen2">
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/service/*" config-ref="configLocal">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.localAddress]" doc:name="Set value to test" doc:id="4c0e2fb9-716c-42d5-84f7-9caab3e76bc7" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="ca49aa89-6306-4562-8bdf-b1f6575bf0af" >
-
-			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
-				java.lang.String() ) == false )
-				{
-				throw new Exception(&quot;attribute is not a String&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+        <set-payload value="#[attributes.localAddress]"/>
+        <java:validate-type class="java.lang.String" instance="#[payload]"/>
    </flow>
    
 </mule>

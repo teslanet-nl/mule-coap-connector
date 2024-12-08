@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import org.eclipse.californium.core.coap.Option;
 
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
+
 
 /**
  * Test outbound other property, bytearray value
@@ -39,30 +41,27 @@ public class OptOtherOutbound1Test extends AbstractOutboundPropertiesTestCase
     private Option getOption()
     {
         byte[] value= "sometestvalue".getBytes();
-        return new Option( 65008, value );
+        return new Option( TestOptions.OTHER_OPTION_65008, value );
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
-     */
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.other." + getOption().getNumber();
+        return "coap.opt.other";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
-     */
+    @Override
+    protected String getOutboundOptionAlias()
+    {
+        return getOption().getDefinition().getName();
+    }
+
     @Override
     protected Object getOutboundPropertyValue()
     {
         return getOption().getValue();
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
-     */
     @Override
     protected OptionStrategy getStrategy()
     {

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -39,7 +39,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -53,18 +53,19 @@ public class InSecureTest extends AbstractClientTestCase
     @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null },
-                { "do_not_get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
+        return Arrays
+            .asList( new Object [] []
+            { { "get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/get_me", null, null }, {
+                "do_not_get_me", CoapRequestCode.GET.name(), "coap://127.0.0.1:5684/secure/do_not_get_me", null, null },
                 { "post_me", CoapRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/post_me", null, null },
-                { "do_not_post_me", CoapRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null, null },
+                { "do_not_post_me", CoapRequestCode.POST.name(), "coap://127.0.0.1:5684/secure/do_not_post_me", null,
+                    null },
                 { "put_me", CoapRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/put_me", null, null },
-                { "do_not_put_me", CoapRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null, null },
+                { "do_not_put_me", CoapRequestCode.PUT.name(), "coap://127.0.0.1:5684/secure/do_not_put_me", null,
+                    null },
                 { "delete_me", CoapRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/delete_me", null, null },
-                { "do_not_delete_me", CoapRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me", null, null } }
-        );
+                { "do_not_delete_me", CoapRequestCode.DELETE.name(), "coap://127.0.0.1:5684/secure/do_not_delete_me",
+                    null, null } } );
     }
 
     /**

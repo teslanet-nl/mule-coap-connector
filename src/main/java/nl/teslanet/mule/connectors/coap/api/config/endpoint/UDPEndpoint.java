@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,8 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -32,13 +34,13 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
 import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
-import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 
 
 /**
- * UDP coap endpoint configuration
+ * UDP CoAP endpoint configuration
  *
  */
 @TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
@@ -54,6 +56,16 @@ public class UDPEndpoint extends AbstractEndpoint
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public UdpParams udpParams= null;
+
+    /**
+     * When enabled peer response address is checked.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "When enabled peer response address is checked." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public boolean strictResponseMatching= true;
 
     /**
      * Default Constructor used by Mule. 
@@ -72,7 +84,7 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name )
     {
         super( name );
-        udpParams= new UdpParams( new GroupedMidTracker() );
+        udpParams= new UdpParams();
     }
 
     /**
@@ -84,17 +96,57 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name, int port )
     {
         super( name, port );
-        udpParams= new UdpParams( new GroupedMidTracker() );
+        udpParams= new UdpParams();
     }
 
     /**
      * Accept a visitor and pass on.
+     * @throws ConfigException 
      */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
-        visitor.visit( this );
         udpParams.accept( visitor );
+        visitor.visit( this );
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        UDPEndpoint rhs= (UDPEndpoint) obj;
+        return new EqualsBuilder()
+            .appendSuper( super.equals( obj ) )
+            .append( strictResponseMatching, rhs.strictResponseMatching )
+            .append( udpParams, rhs.udpParams )
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder( 13, 33 )
+            .appendSuper( super.hashCode() )
+            .append( strictResponseMatching )
+            .append( udpParams )
+            .toHashCode();
     }
 }

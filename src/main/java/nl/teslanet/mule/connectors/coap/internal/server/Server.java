@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -38,12 +37,13 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.scheduler.Scheduler;
 import org.mule.runtime.api.scheduler.SchedulerConfig;
 import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.core.api.lifecycle.StartException;
-import org.mule.runtime.core.api.lifecycle.StopException;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.NoImplicit;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
@@ -62,8 +62,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
-import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
-import nl.teslanet.mule.connectors.coap.internal.OperationalEndpoint;
+import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 
@@ -73,13 +72,23 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
  * The endpoints make the server resources available to clients.
  */
 @Configuration( name= "server" )
-//TODO upgrade needed to mule 4.3: @NoImplicit
+@NoImplicit
 @Sources( value=
 { Listener.class } )
 @Operations( ServerOperations.class )
 public class Server implements Initialisable, Disposable, Startable, Stoppable
 {
-    private static final Logger logger= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( Server.class.getCanonicalName() );
+
+    /**
+     * The name of the CoapExchange variable.
+     */
+    public static final String VARNAME_COAP_EXCHANGE= "coapExchange";
+
+    /**
+     * The name of the default response code variable.
+     */
+    public static final String VARNAME_DEFAULT_RESPONSE_CODE= "defaultResponseCode";
 
     /**
      * The name of the server.
@@ -98,6 +107,16 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Inject
     private SchedulerConfig schedulerConfig;
+
+    /**
+     * The io scheduler of this server.
+     */
+    private Scheduler ioScheduler= null;
+
+    /**
+     * The cpu light scheduler of this server.
+     */
+    private Scheduler cpuLightScheduler= null;
 
     /**
      * Main endpoint the server uses.
@@ -140,7 +159,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary( value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
+    @Summary(
+                    value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @DisplayName( value= "Notify observing clients on shutdown" )
@@ -154,23 +175,13 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "250" )
-    @Summary( value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms." )
+    @Summary(
+                    value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
     public long lingerOnShutdown= 250L;
-
-    /**
-     * Thread pool size of endpoint executor. Default value is equal to the number
-     * of cores.
-     */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    @Placement( order= 3, tab= "Advanced" )
-    @Summary( "Thread pool size of endpoint executor. Default value is equal to the number of cores." )
-    private Integer protocolStageThreadCount= null;
 
     /**
      * The Californium CoAP server instance.
@@ -188,13 +199,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void initialise() throws InitialisationException
     {
-        CoapConnector.setSchedulerService( schedulerService, schedulerConfig );
-        NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
-        if ( protocolStageThreadCount != null )
-        {
-            networkConfig.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, protocolStageThreadCount );
-        }
-        coapServer= new CoapServer( networkConfig );
+        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration
+            .createStandardWithoutFile();
+        coapServer= new CoapServer( config );
         try
         {
             registry= new ResourceRegistry( coapServer.getRoot() );
@@ -207,20 +214,26 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
 
         if ( endpoint != null )
         {
-            if ( endpoint.getEndpoint() == null ) throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in main server endpoint." ), this );
+            if ( endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null )
+                throw new InitialisationException(
+                    new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
+                    this
+                );
             //add main endpoint config
-            configuredEndpoints.add( endpoint.getEndpoint() );
+            configuredEndpoints.add( endpoint.getEndpointConfig().getEndpoint() );
         }
         else if ( additionalEndpoints.isEmpty() )
         {
             // user wants default endpoint
             configuredEndpoints.add( new UDPEndpoint( this.toString() + " default", CoAP.DEFAULT_COAP_PORT ) );
-            logger.info( this + " is using default udp endpoint." );
+            LOGGER.info( "{} is using default udp endpoint.", this );
         }
         for ( AdditionalEndpoint additionalEndpoint : additionalEndpoints )
         {
-            if ( additionalEndpoint.getEndpoint() == null )
-                throw new InitialisationException( new IllegalArgumentException( "Unexpected null value in additional server endpoint." ), this );
+            if ( additionalEndpoint.getEndpoint() == null ) throw new InitialisationException(
+                new IllegalArgumentException( "Unexpected null value in additional server endpoint." ),
+                this
+            );
             configuredEndpoints.add( additionalEndpoint.getEndpoint() );
         }
         int endpointNr= 0;
@@ -228,21 +241,21 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             if ( configuredEndpoint.configName == null )
             {
-                // inline endpoint will get this as name
+                // inline endpoint name
                 configuredEndpoint.configName= ( this.toString() + " endpont-" + endpointNr++ );
             }
             try
             {
                 OperationalEndpoint operationalEndpoint= OperationalEndpoint.getOrCreate( this, configuredEndpoint );
                 coapServer.addEndpoint( operationalEndpoint.getCoapEndpoint() );
-                logger.info( this + " connected to " + operationalEndpoint );
+                LOGGER.info( "{} connected to {}", this, operationalEndpoint );
             }
             catch ( Exception e )
             {
                 throw new InitialisationException( e, this );
             }
         }
-        logger.info( this + " initalised." );
+        LOGGER.info( "{} initalised.", this );
     }
 
     /**
@@ -252,8 +265,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void dispose()
     {
         coapServer.destroy();
+        coapServer= null;
         OperationalEndpoint.disposeAll( this );
-        logger.info( this + " disposed." );
+        LOGGER.info( "{} disposed.", this );
     }
 
     /**
@@ -270,14 +284,18 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 {
                     registry.add( null, resourceConfig );
                 }
-                coapServer.start();
             }
+            SchedulerConfig config= schedulerConfig.withPrefix( getServerName() );
+            ioScheduler= schedulerService.ioScheduler( config );
+            cpuLightScheduler= schedulerService.cpuLightScheduler( config );
+            coapServer.setExecutors( ioScheduler, cpuLightScheduler, true );
+            coapServer.start();
         }
         catch ( Exception e )
         {
             throw new StartException( e, this );
         }
-        logger.info( this + " started." );
+        LOGGER.info( "{} started.", this );
 
     }
 
@@ -288,30 +306,38 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void stop() throws MuleException
     {
+        //notify clients if desired
+        if ( notifyOnShutdown )
+        {
+            //remove all resources from registry before stopping 
+            //to get observing clients notified of the fact that resources 
+            //are not available anymore. 
+            registry.removeAll();
+        }
+        //linger to get notifications sent.
         try
         {
-            if ( notifyOnShutdown )
-            {
-                //remove all resources from registry before stopping 
-                //to get observing clients notified of the fact that resources 
-                //are not available anymore. 
-                registry.remove( "/*" );
-            }
-            //linger to get notifications sent.
             Thread.sleep( lingerOnShutdown );
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+        }
+        finally
+        {
             //stop server
             coapServer.stop();
             if ( !notifyOnShutdown )
             {
                 //cleanup still needed
-                registry.remove( "/*" );
+                registry.removeAll();
             }
+            ioScheduler.stop();
+            ioScheduler= null;
+            cpuLightScheduler.stop();
+            cpuLightScheduler= null;
+            LOGGER.info( "{} stopped", this );
         }
-        catch ( Exception e )
-        {
-            throw new StopException( e, this );
-        }
-        logger.info( this + " stopped" );
     }
 
     /**
@@ -379,6 +405,22 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public void setAdditionalEndpoints( List< AdditionalEndpoint > endpoints )
     {
         this.additionalEndpoints= endpoints;
+    }
+
+    /**
+     * @return the schedulerService
+     */
+    public SchedulerService getSchedulerService()
+    {
+        return schedulerService;
+    }
+
+    /**
+     * @return the schedulerConfig
+     */
+    public SchedulerConfig getSchedulerConfig()
+    {
+        return schedulerConfig;
     }
 
     /**

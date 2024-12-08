@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,10 +30,11 @@ import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.Response;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.config.Configuration;
 
 
 /**
@@ -59,7 +60,7 @@ class ObserveTestServer extends CoapServer
      */
     public ObserveTestServer( int port ) throws SocketException
     {
-        super( NetworkConfig.createStandardWithoutFile(), port );
+        super( Configuration.createStandardWithoutFile(), port );
         addResources();
     }
 
@@ -140,6 +141,7 @@ class ObserveTestServer extends CoapServer
 
             //make observable
             setObservable( true );
+            setObserveType( Type.NON );
 
             //set max age and notify
             this.maxAge= maxAge;

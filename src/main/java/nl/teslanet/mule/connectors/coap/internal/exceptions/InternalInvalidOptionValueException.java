@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -35,43 +35,29 @@ public class InternalInvalidOptionValueException extends Exception
     private static final long serialVersionUID= 1L;
 
     /**
-     * Construct exception with given message.
-     * @param message Description of the exception
+     * Error message when alias is given.
      */
-    public InternalInvalidOptionValueException( String message )
-    {
-        super( message );
-    }
+    private static final String MSG_FORMAT_WITH_ALIAS= "Option{ %s } has invalid value: %s";
 
     /**
-     * Construct exception with given message.
+     * Construct exception for an option with given message.
+     * @param alias The name of the option the exception occurred on
      * @param message description of the exception
-     * @param cause underlying cause
      */
-    public InternalInvalidOptionValueException( String message, Throwable cause )
+    public InternalInvalidOptionValueException( String alias, String message )
     {
-        super( message, cause );
+        super( String.format( MSG_FORMAT_WITH_ALIAS, alias, message ) );
     }
 
     /**
      * Construct exception for an option with given message.
-     * @param optionName name of the option the exception occurred on
-     * @param message description of the exception
-     */
-    public InternalInvalidOptionValueException( String optionName, String message )
-    {
-        super( "Value of option " + optionName + " is invalid, " + message );
-    }
-
-    /**
-     * Construct exception for an option with given message.
-     * @param optionName name of the option the exception occurred on
+     * @param alias The name of the option the exception occurred on
      * @param message description of the exception
      * @param cause underlying cause
      */
-    public InternalInvalidOptionValueException( String optionName, String message, Throwable cause )
+    public InternalInvalidOptionValueException( String alias, String message, Throwable cause )
     {
-        super( "Value of option " + optionName + " is invalid, " + message, cause );
+        super( String.format( MSG_FORMAT_WITH_ALIAS, alias, message ), cause );
     }
 
 }

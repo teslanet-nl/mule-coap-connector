@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -120,7 +120,7 @@ public class AddResourceTest extends AbstractServerTestCase
      * Test adding a resource on the server
      * @throws Exception
      */
-    @Test( timeout= 3000000L )
+    @Test
     public void testAddResource() throws Exception
     {
         setClientUri( resourcePath );

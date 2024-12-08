@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -100,10 +100,10 @@ import org.mule.test.runner.api.IsolatedServiceProviderDiscoverer;
 import org.slf4j.Logger;
 
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings( "deprecation" )
 public abstract class AbstractMuleStartTestCase
 {
-    private static final Logger logger= getLogger( AbstractMuleStartTestCase.class.getCanonicalName() );
+    private static final Logger LOGGER= getLogger( AbstractMuleStartTestCase.class.getCanonicalName() );
 
     /**
      * As part of providing support for handling different artifacts without unzipping them, the factory for URL must be registered
@@ -130,7 +130,7 @@ public abstract class AbstractMuleStartTestCase
 
     private static ServiceManager serviceRepository;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings( "unused" )
     private static ClassLoaderRepository classLoaderRepository;
 
     private static IsolatedClassLoaderExtensionsManagerConfigurationBuilder extensionsManagerConfigurationBuilder;
@@ -237,7 +237,7 @@ public abstract class AbstractMuleStartTestCase
      * @throws MuleException thrown when mule could not start with given configuration
      */
     @Test
-    @Ignore
+    @Ignore("not working")
     public void startMuleTest() throws MuleException
     {
         expectException();
@@ -260,7 +260,7 @@ public abstract class AbstractMuleStartTestCase
      * @throws MuleException thrown when mule could not start with given configuration
      */
     @Test
-    @Ignore
+    @Ignore("not working in mule 4")
     public void startMuleTest0() throws MuleException
     {
         expectException();
@@ -285,7 +285,7 @@ public abstract class AbstractMuleStartTestCase
      * @throws MuleException thrown when mule could not start with given configuration
      */
     @Test
-    @Ignore
+    @Ignore("not working in mule 4")
     public void startMuleTest1() throws MuleException
     {
         expectException();
@@ -298,7 +298,7 @@ public abstract class AbstractMuleStartTestCase
     }
 
     @Test
-    @Ignore
+    @Ignore("not working in mule 4")
     public void startMuleTest2() throws Exception
     {
 
@@ -357,7 +357,7 @@ public abstract class AbstractMuleStartTestCase
                 MuleContextBuilder contextBuilder= MuleContextBuilder.builder( APP );
                 DefaultMuleConfiguration muleConfiguration= new DefaultMuleConfiguration();
                 String workingDirectory= this.workingDirectory.getRoot().getAbsolutePath();
-                logger.info( "Using working directory for test: " + workingDirectory );
+                LOGGER.info( "Using working directory for test: " + workingDirectory );
                 muleConfiguration.setWorkingDirectory( workingDirectory );
                 muleConfiguration.setId( this.getClass().getSimpleName() + "#" + name.getMethodName() );
                 contextBuilder.setMuleConfiguration( muleConfiguration );
@@ -513,7 +513,7 @@ public abstract class AbstractMuleStartTestCase
                 catch ( IllegalStateException e )
                 {
                     // Ignore
-                    logger.warn( e + " : " + e.getMessage() );
+                    LOGGER.warn( e + " : " + e.getMessage() );
                 }
 
                 verifyAndStopSchedulers();
@@ -546,7 +546,8 @@ public abstract class AbstractMuleStartTestCase
         {
             assertThat(
                 muleContext.getSchedulerService().getSchedulers().stream().filter( s -> !schedulersOnInitNames.contains( s.getName() ) ).collect( toList() ),
-                org.hamcrest.collection.IsEmptyCollection.empty() );
+                org.hamcrest.collection.IsEmptyCollection.empty()
+            );
         }
         finally
         {

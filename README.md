@@ -13,17 +13,20 @@ The complete Mule CoAP Connector documentation can be found at [Teslanet.nl](htt
 ## Mule supported versions
 * Mule 4.3+
 
-## Implemented CoAP specifications
-The CoAP protocol is supported as defined in:
+## The CoAP protocol
+The CoAP protocol is an Internet Standard published by [IETF](https://www.ietf.org/) in:
 
 * [IETF rfc 6690](https://www.rfc-editor.org/rfc/rfc6690)
 * [IETF rfc 7252](https://www.rfc-editor.org/rfc/rfc7252)
 * [IETF rfc 7641](https://www.rfc-editor.org/rfc/rfc7641)
 * [IETF rfc 7959](https://www.rfc-editor.org/rfc/rfc7959)
+* [IETF rfc 8132 ](https://www.rfc-editor.org/rfc/rfc8132)
+
+and other.
 
 ## Uses
 
-* [Californium](https://www.eclipse.org/californium/) 2.8.0
+* [Californium](https://www.eclipse.org/californium/) 3.13.0
 
 ## Installation
 
@@ -33,9 +36,9 @@ add following dependency to your `pom.xml`:
 ```xml
   
     <dependency>
-        <groupId>nl.teslanet.mule.connectors.coap</groupId>
+        <groupId>nl.teslanet.mule.connectors</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>2.1.1</version>
+        <version>3.0.0-RC1</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   

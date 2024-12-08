@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,11 +26,10 @@ package nl.teslanet.mule.connectors.coap.test.server.properties;
 import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Before;
-import org.junit.Ignore;
+
+import nl.teslanet.mule.connectors.coap.test.utils.TestOptions;
 
 
-//TODO implement operation
-@Ignore
 public class OptOtherOptionUnsafeInbound1Test extends AbstractInboundPropertyTestcase
 {
     private Option option;
@@ -39,9 +38,7 @@ public class OptOtherOptionUnsafeInbound1Test extends AbstractInboundPropertyTes
     public void initializeOption()
     {
         byte[] value= { (byte) 0x12, (byte) 0xFF, (byte) 0x45 };
-        option= new Option();
-        option.setNumber( 65008 );
-        option.setValue( value );
+        option= new Option( TestOptions.OTHER_OPTION_65008, value );
     }
 
     @Override
@@ -63,4 +60,9 @@ public class OptOtherOptionUnsafeInbound1Test extends AbstractInboundPropertyTes
 
     }
 
+    @Override
+    protected String getConfigResources()
+    {
+        return "mule-server-config/properties/testserver-options-other65008-unsafe-inbound.xml";
+    };
 }

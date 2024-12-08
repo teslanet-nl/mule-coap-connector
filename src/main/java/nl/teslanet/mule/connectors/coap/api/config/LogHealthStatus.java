@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,19 +38,56 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class LogHealthStatus implements VisitableConfig
 {
     /**
-     * The interval of healthStatus logging in seconds [s].
+     * CoAP defined character set.
+     */
+    public static final String DEFAULT_HEALTH_STATUS_INTERVAL= "10m";
+
+    /**
+     * The interval of healthStatus logging.
      */
     @Parameter
-    @Optional(defaultValue= "600")
-    @Summary(value= "The interval of healthStatus logging in seconds [s].")
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    public Integer healthStatusInterval= null;
+    @Optional( defaultValue= DEFAULT_HEALTH_STATUS_INTERVAL )
+    @Summary( value= "The interval of healthStatus logging." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public String healthStatusInterval= DEFAULT_HEALTH_STATUS_INTERVAL;
 
+    /**
+     * Accept visitor.
+     */
     @Override
-    public void accept( ConfigVisitor visitor )
+    public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         visitor.visit( this );
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( obj == this )
+        {
+            return true;
+        }
+        if ( obj.getClass() != getClass() )
+        {
+            return false;
+        }
+        return healthStatusInterval.equals( ( (LogHealthStatus) obj ).healthStatusInterval );
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return 3 + healthStatusInterval.hashCode();
+    }
 }

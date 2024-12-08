@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,7 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 /**
  * CoAP URI Query Parameter without expression support. 
  */
-public class QueryConfig extends AbstractQueryParam 
+public class QueryConfig extends AbstractQueryParam
 {
     /**
      * The key of the query parameter.
@@ -87,5 +87,27 @@ public class QueryConfig extends AbstractQueryParam
     public void setValue( String value )
     {
         this.value= value;
+    }
+
+    /**
+     * @see Object#equals(Object)
+     */
+    @Override
+    public boolean equals( Object object )
+    {
+        if ( object instanceof QueryConfig )
+        {
+            return super.equals( object );
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,15 +28,16 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.api.streaming.bytes.CursorStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
-import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.api.util.IOUtils;
 import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
 
 
@@ -46,7 +47,7 @@ import org.mule.runtime.core.internal.message.DefaultMessageBuilder;
  */
 public class MuleEventSpy
 {
-    private static ConcurrentSkipListMap< String, SpyData > spyData= new ConcurrentSkipListMap< String, SpyData >();
+    private static ConcurrentHashMap< String, SpyData > spyData= new ConcurrentHashMap< String, SpyData >();
 
     /**
      * Id identifies the spy. Multiple instances can share the same id, 
@@ -83,7 +84,7 @@ public class MuleEventSpy
         //make sure the spyData is there
         if ( !spyData.containsKey( spyId ) )
         {
-            spyData.put( spyId, new SpyData() );
+            spyData.putIfAbsent( spyId, new SpyData() );
         }
         if ( testKey != null )
         {
@@ -134,15 +135,13 @@ public class MuleEventSpy
         }
     }
 
-    //TODO remove deprecation
     /**
      * When msg is a stream it is consumed so t can be stored
      * @param msg to consume
      * @return
      * @throws IOException 
      */
-    @SuppressWarnings("deprecation")
-	private Object consume( Object msg ) throws IOException
+    private Object consume( Object msg ) throws IOException
     {
         Object result= null;
         if ( msg != null )
@@ -151,33 +150,40 @@ public class MuleEventSpy
             {
                 result= msg;
             }
-            else if ( msg instanceof CursorStreamProvider )
-            {
-                result= IOUtils.toByteArray( (CursorStreamProvider) msg );
-            }
             else if ( msg instanceof InputStream )
             {
-                result= IOUtils.toByteArray( (InputStream) msg );
-                IOUtils.closeQuietly( (InputStream) msg );
+                try ( InputStream input= (InputStream) msg )
+                {
+                    result= IOUtils.toByteArray( input );
+                }
+            }
+            else if ( msg instanceof CursorStreamProvider )
+            {
+                CursorStreamProvider provider= (CursorStreamProvider) msg;
+                try ( CursorStream cursor= provider.openCursor() )
+                {
+                    result= IOUtils.toByteArray( cursor );
+                }
             }
             else if ( msg instanceof CursorIteratorProvider )
             {
                 LinkedList< Object > list= new LinkedList< Object >();
                 CursorIteratorProvider provider= (CursorIteratorProvider) msg;
-                @SuppressWarnings("unchecked")
-                CursorIterator< Object > cursor= (CursorIterator< Object >)provider.openCursor();
-                while ( cursor.hasNext() )
+                try ( @SuppressWarnings( "unchecked" )
+                CursorIterator< Object > cursor= (CursorIterator< Object >) provider.openCursor() )
                 {
-                    list.add( cursor.next() );
+                    while ( cursor.hasNext() )
+                    {
+                        list.add( cursor.next() );
+                    }
                 }
                 result= Collections.unmodifiableList( list );
-                cursor.close();
             }
             else if ( msg instanceof Message )
             {
                 Message mulemessage= (Message) msg;
                 TypedValue< Object > payload= mulemessage.getPayload();
-                Object consumedPayload= consume( payload.getValue());
+                Object consumedPayload= consume( payload.getValue() );
                 DefaultMessageBuilder muleMessageBuilder= new DefaultMessageBuilder( mulemessage );
                 muleMessageBuilder.value( consumedPayload );
                 result= muleMessageBuilder.build();

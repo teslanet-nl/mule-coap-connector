@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,6 +38,12 @@ public class OptOtherInbound5UnsafeTest extends AbstractOtherOptionInboundProper
     }
 
     @Override
+    protected String getOptionAlias()
+    {
+        return "option-65010";
+    }
+
+    @Override
     protected int getOptionNumber()
     {
         return 65010;
@@ -50,7 +56,7 @@ public class OptOtherInbound5UnsafeTest extends AbstractOtherOptionInboundProper
     }
 
     @Override
-    protected boolean isUnSafe()
+    protected boolean isUnsafe()
     {
         return true;
     }

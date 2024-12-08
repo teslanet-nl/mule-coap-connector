@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -23,26 +23,24 @@
   -->
 
 <mule xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
 	<coap:dtls-endpoint name="Dtls_endpoint2"
-		doc:name="Dtls endpoint" logCoapMessages="true">
+		doc:name="Dtls endpoint" logTraffic="true">
 		<coap:dtls-params />
-		<coap:security-params
-			keyStoreLocation="certs/keyStore.jks" keyStorePassword="endPass"
-			privateKeyAlias="server" privateKeyPassword="endPass"
-			trustStoreLocation="certs/trustStoreNONEXISTENT.jks"
-			trustStorePassword="rootPass" trustedRootCertificateAlias="root" />
+		<coap:security-params>
+			<coap:key-store path="certs/keyStore.jks" password="endPass" privateKeyAlias="server" privateKeyPassword="endPass" />
+			<coap:trust-store path="certs/trustStoreNONEXISTENT.jks" password="rootPass" rootCertificateAlias="root" />
+		</coap:security-params>
 	</coap:dtls-endpoint>
 
 	<coap:server-config name="config">

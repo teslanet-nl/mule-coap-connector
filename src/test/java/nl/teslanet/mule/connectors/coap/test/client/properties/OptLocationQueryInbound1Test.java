@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,7 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.query.QueryParamAttribute;
 
 
@@ -78,6 +78,6 @@ public class OptLocationQueryInbound1Test extends AbstractInboundPropertyTestCas
     @Override
     protected Object fetchInboundProperty( CoapResponseAttributes attributes )
     {
-        return attributes.getOptions().getLocationQuery();
+        return attributes.getResponseOptions().getLocationQuery();
     }
 }

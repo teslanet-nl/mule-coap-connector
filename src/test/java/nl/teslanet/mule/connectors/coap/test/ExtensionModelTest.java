@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -58,7 +58,7 @@ import nl.teslanet.mule.connectors.coap.internal.CoapConnector;
 public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
 {
 
-    private static final Logger logger= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
+    private static final Logger LOGGER= LoggerFactory.getLogger( ExtensionModelTest.class.getCanonicalName() );
 
     private static final String descriptionPath= "schemata/coap-extension-descriptions.xml";
 
@@ -72,7 +72,7 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
         extensionModel= loadExtension( CoapConnector.class );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     @Override
     protected Class< ? extends GeneratedResourceFactory >[] getResourceFactoryTypes()
     {
@@ -83,29 +83,29 @@ public class ExtensionModelTest extends AbstractGeneratedResourceFactoryTestCase
     public void generate() throws Exception
     {
         GeneratedResource resource= resourceFactory.generateResource( extensionModel ).get();
-        assertEquals( "schemata/" + resource.getPath(), descriptionPath );
+        assertEquals( "unexpected model path", descriptionPath, "schemata/" + resource.getPath() );
         String expected= IOUtils.toString( currentThread().getContextClassLoader().getResource( descriptionPath ).openStream() );
         String content= new String( resource.getContent() );
         Source expectedSource= Input.from( expected ).build();
         Source contentSource= Input.from( content ).build();
         Diff diff= DiffBuilder.compare( expectedSource ).withTest( contentSource ).checkForSimilar()
-                //.checkForIdentical() 
-                .ignoreComments().ignoreWhitespace().normalizeWhitespace()
-                //.withComparisonController(ComparisonController) 
-                //.withComparisonFormatter(comparisonFormatter)
-                //.withComparisonListeners(comparisonListeners) 
-                //.withDifferenceEvaluator(differenceEvaluator) 
-                //.withDifferenceListeners(comparisonListeners)
-                //.withNodeMatcher(nodeMatcher) 
-                //.withAttributeFilter(attributeFilter) 
-                //.withNodeFilter(nodeFilter) 
-                //.withNamespaceContext(map)
-                //.withDocumentBuilerFactory(factory)
-                .ignoreElementContentWhitespace().build();
+                        //.checkForIdentical() 
+                        .ignoreComments().ignoreWhitespace().normalizeWhitespace()
+                        //.withComparisonController(ComparisonController) 
+                        //.withComparisonFormatter(comparisonFormatter)
+                        //.withComparisonListeners(comparisonListeners) 
+                        //.withDifferenceEvaluator(differenceEvaluator) 
+                        //.withDifferenceListeners(comparisonListeners)
+                        //.withNodeMatcher(nodeMatcher) 
+                        //.withAttributeFilter(attributeFilter) 
+                        //.withNodeFilter(nodeFilter) 
+                        //.withNamespaceContext(map)
+                        //.withDocumentBuilerFactory(factory)
+                        .ignoreElementContentWhitespace().build();
 
         if ( diff.hasDifferences() )
         {
-            logger.error( "\n---\n" + content + "\n---" );
+            LOGGER.error( "\n---\n" + content + "\n---" );
         }
         assertFalse( diff.toString(), diff.hasDifferences() );
 

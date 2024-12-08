@@ -31,8 +31,8 @@ import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
@@ -47,7 +47,7 @@ public class VirtualHostTestServer extends CoapServer
     /**
      * Network configuration is set to standards 
      */
-    private static NetworkConfig networkConfig= NetworkConfig.createStandardWithoutFile();
+    private static Configuration networkConfig= Configuration.createStandardWithoutFile();
 
     /**
      * Spy collecting events.
@@ -87,7 +87,7 @@ public class VirtualHostTestServer extends CoapServer
     {
         CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
         builder.setInetSocketAddress( new InetSocketAddress( port ) );
-        builder.setNetworkConfig( networkConfig );
+        builder.setConfiguration( networkConfig );
         addEndpoint( builder.build() );
     }
 

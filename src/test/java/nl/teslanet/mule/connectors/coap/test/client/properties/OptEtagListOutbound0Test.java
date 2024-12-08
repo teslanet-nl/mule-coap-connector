@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,24 +23,35 @@
 package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.error.RequestException;
+import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
- * Test outbound Etag list property, single value
+ * Test outbound Etag list property, single null value
  *
  */
 public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
 {
-    private EntityTag getValue() throws InvalidEntityTagException
+    /**
+     * @return The test value.
+     * @throws OptionValueException
+     */
+    private Object getValue()
     {
-        return new EntityTag();
+        return "";
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getPropertyName()
+    /**
+     * Get property name.
      */
     @Override
     protected String getPropertyName()
@@ -58,21 +69,25 @@ public class OptEtagListOutbound0Test extends AbstractOutboundPropertiesTestCase
         return new RequestException( "CoAP Client { config } failed to execute request." );
     }
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
+    /**
+     * Get property value.
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
-        return getValue();
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        EntityTag etag= new EntityTag();
+        etag.setValue( new TypedValue< Object >( getValue(), DataType.fromObject( getValue() ) ) );
+        list.add( etag );
+        return list;
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
-        return new OptEtagListStrategy( getValue() );
+        return new OptEtagListStrategy( new ArrayList< DefaultEntityTag >() );
     }
 }

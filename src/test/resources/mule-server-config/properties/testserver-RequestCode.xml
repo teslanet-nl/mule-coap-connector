@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -22,19 +22,19 @@
   #L%
   -->
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" 
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd">
 
 	<description>Mule CoAP connector test application</description>
 
-	<coap:udp-endpoint name="udp" logCoapMessages="true">
-		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1000" />
+	<coap:udp-endpoint name="udp" logTraffic="true">
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
 	</coap:udp-endpoint>
 
 	<coap:server-config name="config"><coap:endpoint udpEndpoint="udp" /> 
@@ -54,17 +54,8 @@ http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/
 		<coap:listener get="true" post="true" put="true" delete="true" pathPattern="/requestcode/*" config-ref="config">
 			<coap:response />
 		</coap:listener>
-		<set-variable value="#[attributes.requestCode]" doc:name="Set value to test" doc:id="14a950a8-7b52-4a3c-ad0a-b8cd7d4a6d8d" variableName="valueToTest"/>
-		<scripting:execute engine="Groovy" doc:name="Execute" doc:id="ee736688-f066-4f00-bb62-11ee8e9ee8bf" >
-
-			<scripting:code>if ( vars.valueToTest.getClass().isInstance( new
-				java.lang.String() ) == false )
-				{
-				throw new Exception(&quot;attribute is not a String&quot;);
-				}
-				return  vars.valueToTest;
-			</scripting:code>
-		</scripting:execute>
+        <set-payload value="#[attributes.requestCode]"/>
+        <java:validate-type class="java.lang.String" instance="#[payload]"/>
 	</flow>
 
 </mule>

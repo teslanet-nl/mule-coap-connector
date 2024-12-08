@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,13 +43,13 @@ public class OptMaxAgeOutbound1Test extends AbstractOutboundPropertyTestcase
     @Override
     protected Object getPropertyValue()
     {
-        return new Long( 120 );
+        return Long.valueOf( 120 );
     }
 
     @Override
     protected Object getExpectedOptionValue()
     {
-        return new Long( 120 );
+        return Long.valueOf( 120 );
     }
     
     /* (non-Javadoc)

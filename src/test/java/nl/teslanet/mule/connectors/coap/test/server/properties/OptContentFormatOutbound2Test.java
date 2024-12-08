@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,12 +23,9 @@
 package nl.teslanet.mule.connectors.coap.test.server.properties;
 
 
-import org.junit.Ignore;
-
 import org.eclipse.californium.core.coap.OptionSet;
 
-//TODO support for stringable / Object?
-@Ignore
+
 public class OptContentFormatOutbound2Test extends AbstractOutboundPropertyTestcase
 {
     @Override
@@ -46,15 +43,15 @@ public class OptContentFormatOutbound2Test extends AbstractOutboundPropertyTestc
     @Override
     protected Object getPropertyValue()
     {
-        return new Stringable( new Integer( 41 ) );
+        return String.valueOf( 41 );
     }
 
     @Override
     protected Object getExpectedOptionValue()
     {
-        return new Integer( 41 );
+        return Integer.valueOf( 41 );
     }
-    
+
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */

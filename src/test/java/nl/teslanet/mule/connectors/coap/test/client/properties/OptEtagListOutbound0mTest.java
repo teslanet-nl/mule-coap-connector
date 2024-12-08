@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -26,7 +26,8 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 import java.util.LinkedList;
 
 import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -38,11 +39,11 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidEntityTagException 
+     * @throws OptionValueException 
      */
-    private LinkedList< EntityTag > getValue() throws InvalidEntityTagException
+    private LinkedList< DefaultEntityTag > getValue()
     {
-        LinkedList< EntityTag > list= new LinkedList<>();
+        LinkedList< DefaultEntityTag > list= new LinkedList<>();
 
         return list;
     }
@@ -60,16 +61,16 @@ public class OptEtagListOutbound0mTest extends AbstractOutboundPropertiesTestCas
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
-        return getValue();
+        return new LinkedList< EntityTag >();
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptEtagListStrategy( getValue() );
     }

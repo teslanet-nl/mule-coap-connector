@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,8 +25,12 @@ package nl.teslanet.mule.connectors.coap.test.client.properties;
 
 import java.util.LinkedList;
 
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
+
 import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
-import nl.teslanet.mule.connectors.coap.api.error.InvalidEntityTagException;
+import nl.teslanet.mule.connectors.coap.api.options.OptionValueException;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -38,14 +42,14 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
     /**
      * Test value
      * @return the value to use in test
-     * @throws InvalidEntityTagException 
+     * @throws OptionValueException 
      */
-    private LinkedList< EntityTag > getValue() throws InvalidEntityTagException
+    private LinkedList< DefaultEntityTag > getValue() throws OptionValueException
     {
-        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
-        list.add( new EntityTag( 0x68656C6C6FL ) );
-        list.add( new EntityTag( 0x6F6C6C61L ) );
-        list.add( new EntityTag( 0x686F69L ) );
+        LinkedList< DefaultEntityTag > list= new LinkedList< DefaultEntityTag >();
+        list.add( new DefaultEntityTag( 0x68656C6C6FL ) );
+        list.add( new DefaultEntityTag( 0x6F6C6C61L ) );
+        list.add( new DefaultEntityTag( 0x686F69L ) );
 
         return list;
     }
@@ -63,21 +67,29 @@ public class OptEtagListOutbound3mTest extends AbstractOutboundPropertiesTestCas
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractPropertiesTest#getOutboundPropertyValue()
      */
     @Override
-    protected Object getOutboundPropertyValue() throws InvalidEntityTagException
+    protected Object getOutboundPropertyValue() throws OptionValueException
     {
-        LinkedList< Long > propertyValue= new LinkedList<>();
-        for ( EntityTag value : getValue() )
+        LinkedList< EntityTag > list= new LinkedList< EntityTag >();
+        for ( DefaultEntityTag value : getValue() )
         {
-            propertyValue.add( value.getValueAsNumber() );
+            EntityTag etag= new EntityTag();
+            etag
+                .setValue(
+                    new TypedValue< Object >(
+                        value.getValueAsString(),
+                        DataType.fromObject( value.getValueAsString() )
+                    )
+                );
+            list.add( etag );
         }
-        return propertyValue;
+        return list;
     }
 
     /* (non-Javadoc)
      * @see nl.teslanet.mule.transport.coap.client.test.properties.AbstractOutboundPropertiesTest#getStrategy()
      */
     @Override
-    protected OptionStrategy getStrategy() throws InvalidEntityTagException
+    protected OptionStrategy getStrategy() throws OptionValueException
     {
         return new OptEtagListStrategy( getValue() );
     }

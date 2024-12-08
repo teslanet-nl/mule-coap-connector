@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,8 +43,8 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 
 
@@ -58,15 +58,16 @@ public class ImplicitClientEndpointTest extends AbstractClientTestCase
     @Parameters( name= "flowName= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                { "get_me", "GET", "coap://127.0.0.1/basic/get_me", "CONTENT", "GET called on: coap://localhost/basic/get_me" },
-                { "post_me", "POST", "coap://127.0.0.1/basic/post_me", "CREATED", "POST called on: coap://localhost/basic/post_me" },
-                { "put_me", "PUT", "coap://127.0.0.1/basic/put_me", "CHANGED", "PUT called on: coap://localhost/basic/put_me" },
-                { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me", "DELETED", "DELETE called on: coap://localhost/basic/delete_me" }
-            }
-        );
+        return Arrays
+            .asList( new Object [] []
+            { { "get_me", "GET", "coap://127.0.0.1/basic/get_me", "CONTENT",
+                "GET called on: coap://localhost/basic/get_me" },
+                { "post_me", "POST", "coap://127.0.0.1/basic/post_me", "CREATED",
+                    "POST called on: coap://localhost/basic/post_me" },
+                { "put_me", "PUT", "coap://127.0.0.1/basic/put_me", "CHANGED",
+                    "PUT called on: coap://localhost/basic/put_me" },
+                { "delete_me", "DELETE", "coap://127.0.0.1/basic/delete_me", "DELETED",
+                    "DELETE called on: coap://localhost/basic/delete_me" } } );
     }
 
     /**
@@ -139,7 +140,8 @@ public class ImplicitClientEndpointTest extends AbstractClientTestCase
         assertEquals(
             "wrong response payload",
             expectedPayload,
-            responsePayload == null ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
+            responsePayload == null
+                ? "" : new String( IOUtils.toByteArray( responsePayload.openCursor() ), Defs.COAP_CHARSET )
         );
     }
 }

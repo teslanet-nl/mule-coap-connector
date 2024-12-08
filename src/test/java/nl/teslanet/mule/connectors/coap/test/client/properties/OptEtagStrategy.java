@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,7 +29,7 @@ import java.util.List;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 
-import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
+import nl.teslanet.mule.connectors.coap.internal.options.DefaultEntityTag;
 
 
 /**
@@ -37,13 +37,13 @@ import nl.teslanet.mule.connectors.coap.api.options.EntityTag;
  */
 public class OptEtagStrategy implements OptionStrategy
 {
-    private EntityTag value;
+    private DefaultEntityTag value;
 
     /**
      * Constructor using single etag
      * @param value the test value
      */
-    public OptEtagStrategy( EntityTag value )
+    public OptEtagStrategy( DefaultEntityTag value )
     {
         this.value= value;
     }
@@ -51,8 +51,8 @@ public class OptEtagStrategy implements OptionStrategy
     @Override
     public void setOption( Response response )
     {
-            response.getOptions().addETag( value.getValue() );
-        
+        response.getOptions().addETag( value.getValue() );
+
     }
 
     @Override
