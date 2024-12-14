@@ -30,6 +30,9 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.sdk.api.annotation.JavaVersionSupport;
+import org.mule.sdk.api.annotation.MinMuleVersion;
+import org.mule.sdk.api.meta.JavaVersion;
 
 import nl.teslanet.mule.connectors.coap.api.Proxy;
 import nl.teslanet.mule.connectors.coap.api.ProxyConfig;
@@ -108,6 +111,10 @@ import nl.teslanet.mule.connectors.coap.internal.server.Server;
 { ResponseListener.class } )
 @Operations( GlobalOperations.class )
 @ErrorTypes( Errors.class )
+@JavaVersionSupport(
+    { JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17 }
+)
+@MinMuleVersion( value= "4.3" )
 public class CoapConnector
 {
     private CoapConnector()

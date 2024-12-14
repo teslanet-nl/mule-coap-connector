@@ -1,9 +1,16 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release candidate 3.0.0-RC2
+
+* Release candidate 2
+* Added Java 17 support annotation.
+
 ## Release candidate 3.0.0-RC1
 
 * Release candidate 1
+* Maven group-id changed to: _nl.teslanet.mule.connectors_
+
 
 ## Development milestone 3.0.0-M7
 
@@ -55,5 +62,6 @@
 
 ## Release 2.0.0
 
-* Port of the _Mule CoAP Connector_ to Mule 4.
-The _CoAP Client_ and the _CoAP Server_ implementations have been integrated into one artifact.
+* Port of the _Mule CoAP Connector_ to Mule 4. 
+* The _CoAP Client_ and _CoAP Server_ implementations are integrated into a single artefact.
+* Maven group-id changed to: _nl.teslanet.mule.connectors.coap_

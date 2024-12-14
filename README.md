@@ -10,8 +10,10 @@ The connector uses Californium, a Java CoAP implementation. More information abo
 * [http://coap.technology/](http://coap.technology/).
 
 The complete Mule CoAP Connector documentation can be found at [Teslanet.nl](http://www.teslanet.nl)
-## Mule supported versions
+
+## Supported versions
 * Mule 4.3+
+* Java 1.8, 11, 17
 
 ## The CoAP protocol
 The CoAP protocol is an Internet Standard published by [IETF](https://www.ietf.org/) in:
@@ -38,7 +40,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>3.0.0-RC1</version>
+        <version>3.0.0-RC2</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
@@ -82,12 +84,12 @@ Xml configuration:
 
 ```
 
-	<coap:request 
-		requestCode="PUT"The default endpoint has sensible CoAP parameters for many use cases.
-		type="CONFIRMABLE"
-		host="californium.eclipseprojects.io" 
-		port="5683" path="/test" 
-		config-ref="CoAP_Client">
+    <coap:request 
+        requestCode="PUT"The default endpoint has sensible CoAP parameters for many use cases.
+        type="CONFIRMABLE"
+        host="californium.eclipseprojects.io" 
+        port="5683" path="/test" 
+        config-ref="CoAP_Client">
 
 ```
 
@@ -115,10 +117,10 @@ Xml configuration:
 
 ```
 
-	<coap:client-config 
-		name="CoAP_Client"
-		host="californium.eclipseprojects.io" 
-		port="5683"/>
+    <coap:client-config 
+        name="CoAP_Client"
+        host="californium.eclipseprojects.io" 
+        port="5683"/>
 
 ```
 
@@ -150,20 +152,20 @@ Xml configuration:
 
 ```
 
-	<coap:server-config name="CoAP_Server">
-		<coap:endpoint >
-			<coap:udp-endpoint >
-				<coap:socket-params bindToPort="5683" />
-			</coap:udp-endpoint>
-		</coap:endpoint>
-		<coap:resources >
-			<coap:resource resourceName="my_first_resource" get="true" put="true">
-				<coap:core-info-config title="The first resource of this server." ct="0" />
-				<coap:sub-resources />
-			</coap:resource>
-			<coap:resource resourceName="my_second_resource" get="true" put="true" />
-		</coap:resources>
-	</coap:server-config>
+    <coap:server-config name="CoAP_Server">
+        <coap:endpoint >
+            <coap:udp-endpoint >
+                <coap:socket-params bindToPort="5683" />
+            </coap:udp-endpoint>
+        </coap:endpoint>
+        <coap:resources >
+            <coap:resource resourceName="my_first_resource" get="true" put="true">
+                <coap:core-info-config title="The first resource of this server." ct="0" />
+                <coap:sub-resources />
+            </coap:resource>
+            <coap:resource resourceName="my_second_resource" get="true" put="true" />
+        </coap:resources>
+    </coap:server-config>
 
 ```
 
@@ -199,15 +201,15 @@ Xml configuration:
 
 ```
 
-		<coap:listener 
-			doc:name="listen to PUT requests on my first resource" 
-			config-ref="CoAP_Server" 
-			pathPattern="/my_first_resource" 
-			put="true">
-			<coap:response 
-				responseCode="CHANGED" 
-				responsePayload="#[payload]"/>
-		</coap:listener>
+    <coap:listener 
+        doc:name="listen to PUT requests on my first resource" 
+        config-ref="CoAP_Server" 
+        pathPattern="/my_first_resource" 
+        put="true">
+        <coap:response 
+            responseCode="CHANGED" 
+            responsePayload="#[payload]"/>
+    </coap:listener>
 
 ```
 
