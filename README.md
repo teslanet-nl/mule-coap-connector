@@ -84,12 +84,14 @@ Xml configuration:
 
 ```
 
-    <coap:request 
-        requestCode="PUT"The default endpoint has sensible CoAP parameters for many use cases.
+    <coap:request  
+        doc:name="PUT eclipseprojects test" 
         type="CONFIRMABLE"
-        host="californium.eclipseprojects.io" 
-        port="5683" path="/test" 
-        config-ref="CoAP_Client">
+        requestCode="PUT" 
+        host="californium.eclipseprojects.io"
+        port="5683" 
+        path="/test"
+        config-ref="CoAP_Client" />
 
 ```
 
@@ -117,8 +119,8 @@ Xml configuration:
 
 ```
 
-    <coap:client-config 
-        name="CoAP_Client"
+    <coap:client-config
+        name="CoAP_Client_eclipseprojects"
         host="californium.eclipseprojects.io" 
         port="5683"/>
 
@@ -152,18 +154,25 @@ Xml configuration:
 
 ```
 
-    <coap:server-config name="CoAP_Server">
+    <coap:server-config name="CoAP_Server" doc:name="CoAP Server" >
         <coap:endpoint >
             <coap:udp-endpoint >
                 <coap:socket-params bindToPort="5683" />
             </coap:udp-endpoint>
         </coap:endpoint>
         <coap:resources >
-            <coap:resource resourceName="my_first_resource" get="true" put="true">
+            <coap:resource 
+                resourceName="my_first_resource" 
+                get="true" 
+                put="true">
                 <coap:core-info-config title="The first resource of this server." ct="0" />
-                <coap:sub-resources />
             </coap:resource>
-            <coap:resource resourceName="my_second_resource" get="true" put="true" />
+            <coap:resource 
+                resourceName="my_second_resource" 
+                get="true" 
+                put="true">
+                <coap:core-info-config title="The second resource of this server." ct="0" />
+            </coap:resource>
         </coap:resources>
     </coap:server-config>
 
@@ -201,14 +210,13 @@ Xml configuration:
 
 ```
 
-    <coap:listener 
-        doc:name="listen to PUT requests on my first resource" 
+    <coap:listener doc:name="listen to PUT requests on my first resource" 
         config-ref="CoAP_Server" 
         pathPattern="/my_first_resource" 
         put="true">
         <coap:response 
             responseCode="CHANGED" 
-            responsePayload="#[payload]"/>
+            responsePayload="#[null]"/>
     </coap:listener>
 
 ```
