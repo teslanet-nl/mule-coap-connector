@@ -4,7 +4,7 @@
     <!-- mule coap connector schema-->
     <system systemId="http://www.teslanet.nl/schema/mule/coap"
         uri="./src/test/resources/schemata/mule-coap.xsd"/>
-    <uri name="http://www.teslanet.nl/schema/mule/coap/2.0/mule-coap.xsd"
+    <uri name="http://www.teslanet.nl/schema/mule/coap/3.0/mule-coap.xsd"
         uri="./src/test/resources/schemata/mule-coap.xsd"/>
     <uri name="http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd"
         uri="./src/test/resources/schemata/mule-coap.xsd"/>
