@@ -2390,6 +2390,14 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.NewSubResourceConfig">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="put"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.ResourceConfig" abstract="true" name="abstract-resource"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-resource" name="resource">
     <xs:complexType>
@@ -2406,6 +2414,13 @@
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResourceInfoConfig"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="new-sub-resource-config">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.NewSubResourceConfig"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -2428,6 +2443,7 @@
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="observable"></xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="coreInfoConfig"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="newSubResourceConfig"></xs:attribute>
         <xs:attribute type="mule:substitutableName" use="optional" name="subResources"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -2579,9 +2595,22 @@
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
         <xs:sequence minOccurs="0" maxOccurs="1">
           <xs:element minOccurs="0" maxOccurs="1" name="core-info">
+            <xs:annotation>
+              <xs:documentation>The CoRE information describing the contrained resource for discovery.</xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:complexContent>
                 <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResourceInfoParams"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="new-sub-resource">
+            <xs:annotation>
+              <xs:documentation>The creation of subordinate resources configuration.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.NewSubResourceParams"></xs:extension>
               </xs:complexContent>
             </xs:complexType>
           </xs:element>
@@ -2641,11 +2670,23 @@
             <xs:documentation>When true an acknowledgement is immediately sent to the client, before processing the request and returning the response. Use this when processing takes longer than the acknowledgment-timeout of the client.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute type="xs:string" use="optional" name="coreInfo"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="coreInfo">
+          <xs:annotation>
+            <xs:documentation>The CoRE information describing the contrained resource for discovery.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="newSubResource">
+          <xs:annotation>
+            <xs:documentation>The creation of subordinate resources configuration.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ResourceInfoParams">
+    <xs:annotation>
+      <xs:documentation>The CoRE information describing the contrained resource for discovery.</xs:documentation>
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
         <xs:attribute type="mule:expressionString" use="optional" name="title"></xs:attribute>
@@ -2653,6 +2694,17 @@
         <xs:attribute type="mule:expressionString" use="optional" name="rt"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="sz"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="ct"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.NewSubResourceParams">
+    <xs:annotation>
+      <xs:documentation>The creation of subordinate resources configuration.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="put"></xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

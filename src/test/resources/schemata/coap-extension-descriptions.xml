@@ -433,7 +433,10 @@
                     <description><![CDATA[When true an acknowledgement is immediately sent to the client, before processing the request and returning the response. Use this when processing takes longer than the acknowledgment-timeout of the client.]]></description>
                 </parameter>
                 <parameter name="coreInfo">
-                    <description><![CDATA[]]></description>
+                    <description><![CDATA[The CoRE information describing the contrained resource for discovery.]]></description>
+                </parameter>
+                <parameter name="newSubResource">
+                    <description><![CDATA[The creation of subordinate resources configuration.]]></description>
                 </parameter>
             </parameters>
         </operation>
@@ -652,6 +655,17 @@
                 </parameter>
             </parameters>
         </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.NewSubResourceParams">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="put">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="earlyAck">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
         <type name="nl.teslanet.mule.connectors.coap.api.Proxy">
             <description><![CDATA[]]></description>
             <parameters>
@@ -747,6 +761,9 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="coreInfoConfig">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="newSubResourceConfig">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="subResources">

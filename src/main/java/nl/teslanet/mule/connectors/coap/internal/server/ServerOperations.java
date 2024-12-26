@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -95,17 +95,23 @@ public class ServerOperations
         {
             throw new InvalidResourceUriException( server + ": resource add operation failed,", "null" );
         }
-        String parentUri= ResourceRegistry.getParentUri( resourceParams.getResourcePath() );
         String name= ResourceRegistry.getUriResourceName( resourceParams.getResourcePath() );
-        if ( name.length() <= 0 ) throw new InvalidResourceUriException( server + ": resource add operation failed, empty resource name", resourceParams.getResourcePath() );
+        if ( name.length() <= 0 ) throw new InvalidResourceUriException(
+            server + ": resource add operation failed, empty resource name",
+            resourceParams.getResourcePath()
+        );
 
         try
         {
-            server.getRegistry().add( parentUri, resourceParams );
+            server.getRegistry().add( resourceParams );
         }
         catch ( InternalResourceUriException e )
         {
-            throw new InvalidResourceUriException( server + ": resource add operation failed, ", resourceParams.getResourcePath(), e );
+            throw new InvalidResourceUriException(
+                server + ": resource add operation failed, ",
+                resourceParams.getResourcePath(),
+                e
+            );
 
         }
     }
@@ -168,8 +174,8 @@ public class ServerOperations
      * @throws InvalidResourceUriException Thrown when given uri pattern is not valid.
      */
     @Throws( { ServerOperationErrorProvider.class } )
-    public Set< String > resourceList( 
-        @Config Server server,
+    public Set< String > resourceList( @Config
+    Server server,
         @Alias( "pathPattern" )
         @Summary( "Get the set of paths of the resources that apply to the path-pattern." )
         String pathPattern

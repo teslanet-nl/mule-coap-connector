@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+	">
+
+	<description>Mule CoAP connector test application</description>
+
+	<coap:udp-endpoint name="udp" logTraffic="true">
+		<coap:socket-params bindToPort="5683" /><coap:exchange-params exchangeLifetime="1s" />
+	</coap:udp-endpoint>
+
+	<coap:server-config name="config">
+
+		<coap:endpoint udpEndpoint="udp" />
+
+		<coap:resources >
+			<coap:resource resourceName="parent1" >
+				<coap:new-sub-resource-config put="true" />
+			</coap:resource>
+			<coap:resource resourceName="parent2" >
+				<coap:new-sub-resource-config put="true" earlyAck="true" />
+			</coap:resource>
+		</coap:resources>
+	</coap:server-config>
+
+	<flow name="listen_put_resource1">
+		<coap:listener doc:name="put /parent1/*" config-ref="config" pathPattern="/parent1/*" put="true">
+			<coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
+		</coap:listener>
+		<coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
+		<choice doc:name="Choice" doc:id="f5c634d0-0f0d-49f0-aa1a-83336a8fcefc" >
+			<when expression="#[vars.exists]">
+				<set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="a6a1749e-acbd-48e9-93b9-042af4d989df" variableName="responseCode"/>
+			</when>
+			<otherwise >
+				<coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true"/>
+				<set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="7bac8a50-9088-420f-a7aa-f021ff9b5d00" variableName="responseCode" />
+			</otherwise>
+		</choice>
+	</flow>
+
+	<flow name="listen_put_resource2">
+		<coap:listener doc:name="put /parent2/*" config-ref="config" pathPattern="/parent2/*" put="true">
+			<coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
+		</coap:listener>
+		<coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
+		<choice doc:name="Choice" doc:id="aefe0045-0a7d-4c22-9e3a-184aff3e4147" >
+			<when expression="#[vars.exists]">
+				<set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="51ea9f47-236b-4d41-ab97-6a44ea26b4d2" variableName="responseCode"/>
+			</when>
+			<otherwise >
+				<coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true">
+					<coap:new-sub-resource put="true" />
+				</coap:resource-add>
+				<set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="af4ba4fd-2199-4740-aeea-fecf9c67f11b" variableName="responseCode" />
+			</otherwise>
+		</choice>
+	</flow>
+
+</mule>
+
