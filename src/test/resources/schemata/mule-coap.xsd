@@ -2325,7 +2325,7 @@
               <xs:documentation>Notify observing clients of server shutdown. When true observing clients are notified by Not-Found notifications. Default value is true.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
-          <xs:attribute type="mule:substitutableLong" use="optional" default="250" name="lingerOnShutdown">
+          <xs:attribute type="xs:string" use="optional" default="250ms" name="lingerOnShutdown">
             <xs:annotation>
               <xs:documentation>The linger time (in milliseconds [ms]) on shutdown of the server, giving notifications time to complete. Default value is 250 ms.</xs:documentation>
             </xs:annotation>
