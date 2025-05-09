@@ -65,6 +65,7 @@ import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
+import nl.teslanet.mule.connectors.coap.internal.utils.TimeUtils;
 
 
 /**
@@ -127,7 +128,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @ParameterDsl( allowReferences= false )
     @Summary( value= "Main endpoint the server uses." )
     @Placement( order= 1, tab= "Endpoint" )
-    Endpoint endpoint;
+    private Endpoint endpoint;
 
     /**
      * The additional endpoints the server uses.
@@ -166,7 +167,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @ParameterDsl( allowReferences= false )
     @DisplayName( value= "Notify observing clients on shutdown" )
     @Placement( order= 1, tab= "Advanced" )
-    public boolean notifyOnShutdown= true;
+    private boolean notifyOnShutdown= true;
 
     /**
      * The linger time (in milliseconds [ms]) on shutdown of the server, 
@@ -174,14 +175,14 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      * Default value is 250 ms.
      */
     @Parameter
-    @Optional( defaultValue= "250" )
+    @Optional( defaultValue= "250ms" )
     @Summary(
-                    value= "The linger time (in milliseconds [ms]) on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms."
+                    value= "The linger duration on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms."
     )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
-    public long lingerOnShutdown= 250L;
+    private String lingerOnShutdown= "250ms";
 
     /**
      * The Californium CoAP server instance.
@@ -193,8 +194,13 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     private ResourceRegistry registry= null;
 
-    /* (non-Javadoc)
-     * @see org.mule.runtime.api.lifecycle.Initialisable#initialise()
+    /**
+     * Calculated linger milliseconds.
+     */
+    private long lingerOnShutdownMillis= 250L;
+    
+    /**
+     * Initialize the server and connect to CoAP endpoints.
      */
     @Override
     public void initialise() throws InitialisationException
@@ -279,6 +285,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     {
         try
         {
+            lingerOnShutdownMillis= TimeUtils.toNanos( lingerOnShutdown ) / 1000000L;
             if ( resources != null )
             {
                 for ( ResourceConfig resourceConfig : resources )
@@ -318,7 +325,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         //linger to get notifications sent.
         try
         {
-            Thread.sleep( lingerOnShutdown );
+            Thread.sleep( lingerOnShutdownMillis );
         }
         catch ( InterruptedException e )
         {
@@ -333,9 +340,9 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
                 //cleanup still needed
                 registry.removeAll();
             }
-            ioScheduler.stop();
+            //TODO ioScheduler.stop();
             ioScheduler= null;
-            cpuLightScheduler.stop();
+            //TODO cpuLightScheduler.stop();
             cpuLightScheduler= null;
             LOGGER.info( "{} stopped", this );
         }
