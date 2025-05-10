@@ -1,6 +1,11 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release 3.1.0
+
+* Added put new sub-resource feature.
+* Californium 3.14.0 update
+
 ## Release 3.0.1
 
 * Fixed duration expression of _linger on shutdown_ parameter.
