@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2024 - 2025 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -50,45 +50,94 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			<coap:resource resourceName="parent1" >
 				<coap:new-sub-resource-config put="true" />
 			</coap:resource>
-			<coap:resource resourceName="parent2" >
-				<coap:new-sub-resource-config put="true" earlyAck="true" />
-			</coap:resource>
+            <coap:resource resourceName="parent2" >
+                <coap:new-sub-resource-config put="true" earlyAck="true" />
+            </coap:resource>
+            <coap:resource resourceName="parent3" >
+                <coap:new-sub-resource-config put="false" earlyAck="true" />
+            </coap:resource>
 		</coap:resources>
 	</coap:server-config>
 
-	<flow name="listen_put_resource1">
-		<coap:listener doc:name="put /parent1/*" config-ref="config" pathPattern="/parent1/*" put="true">
+	<flow name="listen_get_resource1">
+		<coap:listener doc:name="get /parent1/*" config-ref="config" pathPattern="/parent1/*" get="true">
 			<coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
 		</coap:listener>
 		<coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
 		<choice doc:name="Choice" doc:id="f5c634d0-0f0d-49f0-aa1a-83336a8fcefc" >
 			<when expression="#[vars.exists]">
-				<set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="a6a1749e-acbd-48e9-93b9-042af4d989df" variableName="responseCode"/>
+                <set-variable value="CONTENT" doc:name="responseCode CHANGED" doc:id="e84b1198-c9e5-4bd3-a705-12a0296e7f6f" variableName="responseCode"/>
+                <set-payload value="OK" doc:name="OK" doc:id="c0149714-97bc-469a-ac6d-1dbbe7f81661"/>
 			</when>
 			<otherwise >
 				<coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true"/>
-				<set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="7bac8a50-9088-420f-a7aa-f021ff9b5d00" variableName="responseCode" />
+				<set-variable value="BAD_GATEWAY" doc:name="responseCode CREATED" doc:id="7bac8a50-9088-420f-a7aa-f021ff9b5d00" variableName="responseCode" />
+                <set-payload value="OK" doc:name="OK" doc:id="efb50133-e382-4f89-9d33-c021aeedcd9d"/>
 			</otherwise>
 		</choice>
 	</flow>
 
-	<flow name="listen_put_resource2">
-		<coap:listener doc:name="put /parent2/*" config-ref="config" pathPattern="/parent2/*" put="true">
+	<flow name="listen_get_resource2">
+		<coap:listener doc:name="get /parent2/*" config-ref="config" pathPattern="/parent2/*" get="true">
 			<coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
 		</coap:listener>
 		<coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
-		<choice doc:name="Choice" doc:id="aefe0045-0a7d-4c22-9e3a-184aff3e4147" >
-			<when expression="#[vars.exists]">
-				<set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="51ea9f47-236b-4d41-ab97-6a44ea26b4d2" variableName="responseCode"/>
-			</when>
-			<otherwise >
-				<coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true">
-					<coap:new-sub-resource put="true" />
-				</coap:resource-add>
-				<set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="af4ba4fd-2199-4740-aeea-fecf9c67f11b" variableName="responseCode" />
-			</otherwise>
-		</choice>
+        <choice doc:name="Choice" doc:id="3188ef6f-ee37-4196-95b1-ba584159619a" >
+            <when expression="#[vars.exists]">
+                <set-variable value="CONTENT" doc:name="responseCode CHANGED" doc:id="599d46d6-a037-42eb-8034-7c40ca29971e" variableName="responseCode"/>
+                <set-payload value="OK" doc:name="OK" doc:id="fec14e3b-5fe2-4d82-a0cb-b42bd35b3482"/>
+            </when>
+            <otherwise >
+                <coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true"/>
+                <set-variable value="BAD_GATEWAY" doc:name="responseCode CREATED" doc:id="d19c1898-e55b-40a8-90fa-cf0a681f912f" variableName="responseCode" />
+                <set-payload value="OK" doc:name="OK" doc:id="6d39e094-4097-4c01-ae64-e6227ff6ce33"/>
+            </otherwise>
+        </choice>
 	</flow>
+	
+	<flow name="listen_put_resource1">
+        <coap:listener doc:name="put /parent1/*" config-ref="config" pathPattern="/parent1/*" put="true">
+            <coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
+        </coap:listener>
+        <coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
+        <coap:resource-exists doc:name="Parent exists" config-ref="config" target="parentExists" pathPattern="#[%dw 2.0 import * from dw::core::Strings --- substringBeforeLast(attributes.requestPath, '/')]"/>
+        <choice doc:name="Choice" doc:id="798fc51d-06a4-44ed-aeaf-5c8850f7aaee" >
+            <when expression="#[vars.exists]">
+                <set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="1672a3c4-cb88-420c-a1a2-c19ea9f883e1" variableName="responseCode"/>
+            </when>
+            <when expression="#[not vars.parentExists]">
+                <set-variable value="BAD_GATEWAY" doc:name="responseCode BAD_GATEWAY" doc:id="4dd7e6cf-83be-41ff-9271-aa8fc8d99b6d" variableName="responseCode"/>
+            </when>
+            <otherwise >
+                <coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true">
+                    <coap:new-sub-resource put="false" earlyAck="true"/>
+                </coap:resource-add>
+                <set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="f0118b96-6449-4684-9ab9-b4b380733d51" variableName="responseCode" />
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="listen_put_resource2">
+        <coap:listener doc:name="put /parent2/*" config-ref="config" pathPattern="/parent2/*" put="true">
+            <coap:response responseCode="#[vars.responseCode]" responsePayload="#[null]"/>
+        </coap:listener>
+        <coap:resource-exists doc:name="Resource exists" config-ref="config" target="exists" pathPattern="#[attributes.requestPath]"/>
+        <coap:resource-exists doc:name="Parent exists" config-ref="config" target="parentExists" pathPattern="#[%dw 2.0 import * from dw::core::Strings --- substringBeforeLast(attributes.requestPath, '/')]"/>
+        <choice doc:name="Choice" doc:id="e3b85c6a-b67d-4269-93cd-b602dae5eb43" >
+            <when expression="#[vars.exists]">
+                <set-variable value="CHANGED" doc:name="responseCode CHANGED" doc:id="0b781f36-2886-4845-ae84-9f8f81657e6a" variableName="responseCode"/>
+            </when>
+            <when expression="#[not vars.parentExists]">
+                <set-variable value="BAD_GATEWAY" doc:name="responseCode BAD_GATEWAY" doc:id="049a049a-1da0-44ad-af18-314c8f61e91a" variableName="responseCode"/>
+            </when>
+            <otherwise >
+                <coap:resource-add doc:name="Resource add" config-ref="config" resourcePath="#[attributes.requestPath default '/']" get="true" put="true" delete="true">
+                   <coap:new-sub-resource put="true" earlyAck="true"/>
+                </coap:resource-add>
+                <set-variable value="CREATED" doc:name="responseCode CREATED" doc:id="03041245-17b0-4cb3-b34a-0374497f44d2" variableName="responseCode" />
+            </otherwise>
+        </choice>
+    </flow>
 
 </mule>
 
