@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -119,14 +119,10 @@ public class ResourceRegistry
     }
 
     /**
-     * Add a new resource to the registry based on given resource configuration. The
-     * resource will be added as a child of resource with given parentUri. When
-     * parentUri is null the resource will be added to the root.
+     * Add a new resource to the registry based on given resource description.
      * 
-     * @param parentUri          The uri of the parent of the new resource.
      * @param resourceDesciption The definition of the resource to create.
-     * @throws InternalResourceUriException when the parent uri does not resolve to
-     *                                      an existing resource.
+     * @throws InternalResourceUriException when the uri is invalid.
      */
     public void add( ResourceParams resourceDesciption ) throws InternalResourceUriException
     {
@@ -442,12 +438,17 @@ public class ResourceRegistry
         return found;
     }
 
-    //TODO v4 root as served resource?
-
     /**
-     * Find the resource responsible for handling requests.
      * @param path The path of the referenced resource.
      * @return
+     */
+    /**
+     * Find the resource responsible for handling requests.
+     * If the request concerned is a Put and the parent resource allows for child creation, 
+     * a virtual resource is returned for creation.
+     * @param path The path of the resource to be found.
+     * @param isPut Flag indicating the request concerned is a put.
+     * @return The resource found or null when the path doesn't match any resource.
      */
     public Resource findResource( List< String > path, boolean isPut )
     {

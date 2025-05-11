@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -93,13 +93,14 @@ public class AbstractResource extends CoapResource
 
     /**
      * Generic handler for processing requests.
-     * @param exchange the CoAP exchange context of the request.
-     * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
+     * @param callback The callback of the Mule flow that will process the request.  
+     * @param exchange The CoAP exchange context of the request.
+     * @param defaultCoapResponseCode The response code that will be used when the Mule flow hasn't set one.
      */
     protected void handleRequest(
         SourceCallback< InputStream, CoapRequestAttributes > callback,
         CoapExchange exchange,
-        CoapResponseCode defaultCoAPResponseCode
+        CoapResponseCode defaultCoapResponseCode
     )
     {
         if ( callback == null )
@@ -149,7 +150,7 @@ public class AbstractResource extends CoapResource
             return;
         }
         SourceCallbackContext requestcontext= callback.createContext();
-        requestcontext.addVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE, defaultCoAPResponseCode );
+        requestcontext.addVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE, defaultCoapResponseCode );
         requestcontext.addVariable( Server.VARNAME_COAP_EXCHANGE, exchange );
         //TODO add streaming & blockwise cooperation
         byte[] requestPayload= exchange.getRequestPayload();

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -45,9 +45,8 @@ public class VirtualResource extends AbstractResource
     private SourceCallback< InputStream, CoapRequestAttributes > putCallback= null;
 
     /**
-     * Constuctor that creates a ServedResource object according to given configuration.
-     * The ServedResource and its child resources will be constructed.
-     * @param resource the configuration of the resource to create. 
+     * Constructor that creates a VirtualResource object.
+     * @param earlyAck Flag indicating that an early acknowledgement must be issued on resource creation.
      */
     public VirtualResource( boolean earlyAck )
     {
