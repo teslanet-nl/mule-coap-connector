@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,3 +20,21 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
+package nl.teslanet.mule.connectors.coap.api;
+
+
+/**
+ * Interface for new-sub-resource settings. 
+ */
+public interface NewSubResource
+{
+    /**
+     * @return The put flag.
+     */
+    public boolean isPut();
+
+    /**
+     * @return The early ack flag.
+     */
+    public boolean isEarlyAck();
+}

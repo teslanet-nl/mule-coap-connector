@@ -23,63 +23,26 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.californium.core.CoapResource;
-import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.coap.Response;
-import org.eclipse.californium.core.network.Exchange;
 import org.eclipse.californium.core.server.resources.CoapExchange;
-import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
-import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ConfigurableResource;
+import nl.teslanet.mule.connectors.coap.api.NewSubResource;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
-import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestAttributesImpl;
-import nl.teslanet.mule.connectors.coap.internal.attributes.CoapRequestOptionsAttributesImpl;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidMessageTypeException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidOptionValueException;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalInvalidRequestCodeException;
-import nl.teslanet.mule.connectors.coap.internal.options.MediaTypeMediator;
-import nl.teslanet.mule.connectors.coap.internal.utils.AttributeUtils;
 
 
 /**
  * The ServedResource class represents a CoAP resource that is active on the server.
  * A ServedResource object handles all requests from clients on the CoAP resource.
  */
-public class ServedResource extends CoapResource
+public class ServedResource extends AbstractResource
 {
-    /**
-     * This class logger.
-     */
-    private static final Logger LOGGER= LoggerFactory.getLogger( ServedResource.class );
-
-    /**
-     * Marker for logging error responses.
-     */
-    private static final Marker ERROR_RESPONSE_MARKER= MarkerFactory.getMarker( "ERROR_RESPONSE" );
-
-    /**
-     * No listener message log format.
-     */
-    private static final String NO_LISTENER_LOG_FORMAT= "NO LISTENER for request { {}, {} }";
-
-    /**
-     * Regular expression for splitting comma separated values.
-     */
-    private static final String CSV_REGEX= ",";
-
     /**
      * The callback of the messagesource for Get requests.
      * It is used to hand messages over to the Mule flow that should process the request.
@@ -128,18 +91,13 @@ public class ServedResource extends CoapResource
     private RequestCodeFlags requestCodeFlags= new RequestCodeFlags();
 
     /**
-     * Flag that indicates whether the resource should acknowledge before processing the request.
-     */
-    private boolean earlyAck= false;
-
-    /**
      * Constuctor that creates a ServedResource object according to given configuration.
      * The ServedResource and its child resources will be constructed.
      * @param resource the configuration of the resource to create. 
      */
     public ServedResource( ResourceConfig resource )
     {
-        super( resource.getResourceName() );
+        super( resource.getResourceName(), true );
         configure( resource );
 
         //process subresources
@@ -152,6 +110,7 @@ public class ServedResource extends CoapResource
                 add( child );
             }
         }
+        configureVirtualSubResource( resource );
     }
 
     /**
@@ -161,8 +120,24 @@ public class ServedResource extends CoapResource
      */
     public ServedResource( ResourceParams resource )
     {
-        super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ) );
+        super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ), true );
         configure( resource );
+        configureVirtualSubResource( resource );
+    }
+
+    /**
+     * Configure virtual sub-resource.
+     * @param resource the configuration to set. 
+     */
+    private void configureVirtualSubResource( ConfigurableResource resource )
+    {
+        NewSubResource newResource= resource.getNewSubResource();
+        if ( newResource != null && newResource.isPut() )
+        {
+            //create virtual sub-resource that accepts put requests.
+            VirtualResource child= new VirtualResource( newResource.isEarlyAck() );
+            add( child );
+        }
     }
 
     /**
@@ -349,113 +324,9 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * Generic handler for processing requests.
-     * @param exchange the CoAP exchange context of the request.
-     * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
-     */
-    private void handleRequest(
-        SourceCallback< InputStream, CoapRequestAttributes > callback,
-        CoapExchange exchange,
-        CoapResponseCode defaultCoAPResponseCode
-    )
-    {
-        if ( callback == null )
-        {
-            exchange.respond( ResponseCode.NOT_IMPLEMENTED, "NO LISTENER" );
-            if ( LOGGER.isWarnEnabled( ERROR_RESPONSE_MARKER ) )
-            {
-                try
-                {
-                    LOGGER
-                        .warn(
-                            ERROR_RESPONSE_MARKER,
-                            NO_LISTENER_LOG_FORMAT,
-                            AttributeUtils.toRequestCodeAttribute( exchange.advanced().getCurrentRequest().getCode() ),
-                            exchange.advanced().getCurrentRequest().getURI()
-                        );
-                }
-                catch ( InternalInvalidRequestCodeException e )
-                {
-                    LOGGER
-                        .warn(
-                            ERROR_RESPONSE_MARKER,
-                            NO_LISTENER_LOG_FORMAT,
-                            exchange.advanced().getCurrentRequest().getCode(),
-                            exchange.advanced().getCurrentRequest().getURI()
-                        );
-                }
-            }
-            return;
-        }
-        if ( earlyAck )
-        {
-            exchange.accept();
-        }
-        CoapRequestAttributes requestAttributes;
-        try
-        {
-            requestAttributes= createRequestAttributes( exchange );
-        }
-        catch ( Exception e1 )
-        {
-            // cannot process the request when an option is not valid,
-            // probably Californium has already dealt with this, so shouldn't occur
-            Response response= new Response( ResponseCode.BAD_OPTION );
-            response.setPayload( e1.getMessage() );
-            exchange.respond( response );
-            return;
-        }
-        SourceCallbackContext requestcontext= callback.createContext();
-        requestcontext.addVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE, defaultCoAPResponseCode );
-        requestcontext.addVariable( Server.VARNAME_COAP_EXCHANGE, exchange );
-        //TODO add streaming & blockwise cooperation
-        byte[] requestPayload= exchange.getRequestPayload();
-        // payload is always initialized, no need to check null
-        callback
-            .handle(
-                Result
-                    .< InputStream, CoapRequestAttributes > builder()
-                    .output( new ByteArrayInputStream( requestPayload ) )
-                    .length( requestPayload.length )
-                    .attributes( requestAttributes )
-                    .mediaType( MediaTypeMediator.toMediaType( exchange.getRequestOptions().getContentFormat() ) )
-                    .build(),
-                requestcontext
-            );
-    }
-
-    /**
-     * Create request attributes.
-     * @param coapExchange
-     * @return The attributes to add to the mule message.
-     * @throws InternalInvalidOptionValueException When request options could not be interpreted.
-     * @throws InternalInvalidMessageTypeException When request type could not be interpreted.
-     * @throws InternalInvalidRequestCodeException When request code could not be interpreted.
-     */
-    private CoapRequestAttributesImpl createRequestAttributes( CoapExchange coapExchange )
-        throws InternalInvalidOptionValueException,
-        InternalInvalidMessageTypeException,
-        InternalInvalidRequestCodeException
-    {
-        Exchange exchange= coapExchange.advanced();
-        CoapRequestAttributesImpl attributes= new CoapRequestAttributesImpl();
-        attributes
-            .setRequestType(
-                AttributeUtils.toMessageTypeAttribute( coapExchange.advanced().getRequest().getType() ).name()
-            );
-        attributes.setRequestCode( AttributeUtils.toRequestCodeAttribute( coapExchange.getRequestCode() ).name() );
-        attributes.setLocalAddress( exchange.getEndpoint().getAddress().toString() );
-        attributes.setRemoteAddress( coapExchange.getSourceSocketAddress().toString() );
-        attributes.setRequestUri( exchange.getRequest().getURI() );
-        attributes.setRequestOptions( new CoapRequestOptionsAttributesImpl( coapExchange.getRequestOptions() ) );
-        attributes
-            .setRelation( ( exchange.getRelation() != null ? exchange.getRelation().getKeyToken().toString() : null ) );
-        return attributes;
-    }
-
-    /**
      * set the Mule callback for this resource for Get requests.
      */
+    @Override
     public void setGetCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         getCallback= sourceCallback;
@@ -465,6 +336,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Get requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getGetCallback()
     {
         return getCallback;
@@ -473,6 +345,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Post requests.
      */
+    @Override
     public void setPostCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         postCallback= sourceCallback;
@@ -482,6 +355,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Post requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getPostCallback()
     {
         return postCallback;
@@ -490,6 +364,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Put requests.
      */
+    @Override
     public void setPutCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         putCallback= sourceCallback;
@@ -499,6 +374,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Put requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getPutCallback()
     {
         return putCallback;
@@ -507,6 +383,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Delete requests.
      */
+    @Override
     public void setDeleteCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         deleteCallback= sourceCallback;
@@ -516,6 +393,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Delete requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getDeleteCallback()
     {
         return deleteCallback;
@@ -524,6 +402,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Fetch requests.
      */
+    @Override
     public void setFetchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         fetchCallback= sourceCallback;
@@ -533,6 +412,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Fetch requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getFetchCallback()
     {
         return fetchCallback;
@@ -541,6 +421,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Patch requests.
      */
+    @Override
     public void setPatchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         patchCallback= sourceCallback;
@@ -550,6 +431,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Patch requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getPatchCallback()
     {
         return patchCallback;
@@ -558,6 +440,7 @@ public class ServedResource extends CoapResource
     /**
      * set the Mule callback for this resource for Ipatch requests.
      */
+    @Override
     public void setIpatchCallback( SourceCallback< InputStream, CoapRequestAttributes > sourceCallback )
     {
         ipatchCallback= sourceCallback;
@@ -567,6 +450,7 @@ public class ServedResource extends CoapResource
      * Get the Mule MessageSource callback for Ipatch requests.
      * @return the callback
      */
+    @Override
     public SourceCallback< InputStream, CoapRequestAttributes > getIpatchCallback()
     {
         return ipatchCallback;

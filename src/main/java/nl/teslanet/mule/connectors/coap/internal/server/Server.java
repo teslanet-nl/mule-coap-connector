@@ -216,6 +216,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
         {
             throw new InitialisationException( e1, this );
         }
+        coapServer.setMessageDeliverer( new ServedResourceMessageDeliverer( registry, config ) );
         ArrayList< AbstractEndpoint > configuredEndpoints= new ArrayList<>();
 
         if ( endpoint != null )

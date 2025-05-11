@@ -35,6 +35,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 /**
  * Parameters of a CoAP resource.
+ * The parameters are used to construct resources on a CoAP server.
  */
 public class ResourceParams implements ConfigurableResource
 {
@@ -54,7 +55,7 @@ public class ResourceParams implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
     @Summary( "When true, GET requests are allowed on the resource." )
-    private boolean get;
+    private boolean get= false;
 
     /**
      * When true, Post requests are allowed on the resource.
@@ -121,13 +122,27 @@ public class ResourceParams implements ConfigurableResource
     @Summary( "When true an acknowledgement is immediately sent to the client, before processing the request." )
     private boolean earlyAck= false;
 
+    /**
+     * The CoRE information describing the contrained resource for discovery.
+     */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.SUPPORTED )
     @ParameterDsl( allowReferences= true )
     @Summary( "The CoRE information describing the contrained resource for discovery." )
     @DisplayName( "Discovery CoRE Info" )
-    private ResourceInfoParams coreInfo;
+    private ResourceInfoParams coreInfo= null;
+
+    /**
+     * The creation of subordinate resources configuration.
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @ParameterDsl( allowReferences= true )
+    @Summary( "The creation of subordinate resources parameters." )
+    @DisplayName( "New sub-resource" )
+    private NewSubResourceParams newSubResource= null;
 
     /**
     * @return the absolute path of the resource.
@@ -146,7 +161,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the get
+     * @return The get.
      */
     @Override
     public boolean isGet()
@@ -163,7 +178,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the post
+     * @return The post.
      */
     @Override
     public boolean isPost()
@@ -172,7 +187,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param post the post to set
+     * @param post The post to set.
      */
     public void setPost( boolean post )
     {
@@ -180,7 +195,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the put
+     * @return The put.
      */
     @Override
     public boolean isPut()
@@ -189,7 +204,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param put the put to set
+     * @param put The put to set.
      */
     public void setPut( boolean put )
     {
@@ -197,7 +212,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the delete
+     * @return The delete.
      */
     @Override
     public boolean isDelete()
@@ -206,7 +221,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param delete the delete to set
+     * @param delete The delete to set.
      */
     public void setDelete( boolean delete )
     {
@@ -214,7 +229,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the fetch
+     * @return The fetch.
      */
     @Override
     public boolean isFetch()
@@ -223,7 +238,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param fetch the fetch to set
+     * @param fetch The fetch to set.
      */
     public void setFetch( boolean fetch )
     {
@@ -231,7 +246,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the patch
+     * @return The patch.
      */
     @Override
     public boolean isPatch()
@@ -240,7 +255,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param patch the patch to set
+     * @param patch The patch to set.
      */
     public void setPatch( boolean patch )
     {
@@ -248,7 +263,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the ipatch
+     * @return The ipatch.
      */
     @Override
     public boolean isIpatch()
@@ -257,7 +272,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param ipatch the ipatch to set
+     * @param ipatch The ipatch to set.
      */
     public void setIpatch( boolean ipatch )
     {
@@ -265,7 +280,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the observable
+     * @return The observable flag.
      */
     @Override
     public boolean isObservable()
@@ -274,7 +289,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param observable the observable to set.
+     * @param observable The observable flag to set.
      */
     public void setObservable( boolean observable )
     {
@@ -282,7 +297,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the earlyAck.
+     * @return The earlyAck.
      */
     @Override
     public boolean isEarlyAck()
@@ -291,7 +306,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param earlyAck the earlyAck to set.
+     * @param earlyAck The earlyAck to set.
      */
     public void setEarlyAck( boolean earlyAck )
     {
@@ -299,7 +314,7 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @return the configured CoRE info.
+     * @return The configured CoRE info.
      */
     @Override
     public CoreInfo getCoreInfo()
@@ -308,11 +323,28 @@ public class ResourceParams implements ConfigurableResource
     }
 
     /**
-     * @param coreInfo the CoRE info configuration to set.
+     * @param coreInfo The CoRE info parameters to set.
      */
     public void setCoreInfo( ResourceInfoParams coreInfo )
     {
         this.coreInfo= coreInfo;
+    }
+
+    /**
+     * @return The new-sub-resource parameters.
+     */
+    @Override
+    public NewSubResource getNewSubResource()
+    {
+        return newSubResource;
+    }
+
+    /**
+     * @param newSubresource The new-sub-resource parameters to set.
+     */
+    public void setNewSubResource( NewSubResource newSubresource )
+    {
+        this.newSubResource= new NewSubResourceParams( newSubresource.isPut(), newSubresource.isEarlyAck() );
     }
 
     /**

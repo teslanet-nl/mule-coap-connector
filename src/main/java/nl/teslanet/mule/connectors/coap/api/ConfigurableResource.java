@@ -29,52 +29,59 @@ package nl.teslanet.mule.connectors.coap.api;
 public interface ConfigurableResource
 {
     /**
-     * @return the get
+     * @return The get.
      */
     public boolean isGet();
 
     /**
-     * @return the post
+     * @return The post.
      */
     public boolean isPost();
 
     /**
-     * @return the put
+     * @return The put.
      */
     public boolean isPut();
 
     /**
-     * @return the delete
+     * @return The delete.
      */
     public boolean isDelete();
 
     /**
-     * @return the fetch
+     * @return The fetch.
      */
     public boolean isFetch();
 
     /**
-     * @return the patch
+     * @return The patch.
      */
     public boolean isPatch();
 
     /**
-     * @return the ipatch
+     * @return The ipatch.
      */
     public boolean isIpatch();
 
     /**
-     * @return the observable
+     * @return The observable.
      */
     public boolean isObservable();
 
     /**
-     * @return the earlyAck.
+     * @return The earlyAck.
      */
     public boolean isEarlyAck();
 
     /**
-     * @return the configured CoRE info.
+     * @return The configured CoRE info.
      */
     public CoreInfo getCoreInfo();
+    
+    /**
+     * @return The new-sub-resource configuration.
+     */
+    public NewSubResource getNewSubResource();
+
+
 }

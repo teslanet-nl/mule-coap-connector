@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -55,7 +55,7 @@ public class ResourceRegistry
     /**
      * The hosted resources.
      */
-    private ConcurrentHashMap< String, ServedResource > servedResources;
+    private ConcurrentHashMap< String, AbstractResource > servedResources;
 
     /**
      * The listeners that are active on the resources.
@@ -76,7 +76,9 @@ public class ResourceRegistry
      */
     public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
     {
-        if ( root == null ) throw new InternalResourceRegistryException( "Cannot construct a ResourceRegistry without root resource." );
+        if ( root == null ) throw new InternalResourceRegistryException(
+            "Cannot construct a ResourceRegistry without root resource."
+        );
         this.root= root;
 
         servedResources= new ConcurrentHashMap<>();
@@ -117,19 +119,16 @@ public class ResourceRegistry
     }
 
     /**
-     * Add a new resource to the registry based on given resource configuration. The
-     * resource will be added as a child of resource with given parentUri. When
-     * parentUri is null the resource will be added to the root.
+     * Add a new resource to the registry based on given resource description.
      * 
-     * @param parentUri          The uri of the parent of the new resource.
      * @param resourceDesciption The definition of the resource to create.
-     * @throws InternalResourceUriException when the parent uri does not resolve to
-     *                                      an existing resource.
+     * @throws InternalResourceUriException when the uri is invalid.
      */
-    public void add( String parentUri, ResourceParams resourceDesciption ) throws InternalResourceUriException
+    public void add( ResourceParams resourceDesciption ) throws InternalResourceUriException
     {
-        ServedResource parent= getResource( parentUri );
-        ServedResource resource= new ServedResource( resourceDesciption );
+        String parentUri= ResourceRegistry.getParentUri( resourceDesciption.getResourcePath() );
+        AbstractResource parent= getResource( parentUri );
+        AbstractResource resource= new ServedResource( resourceDesciption );
         if ( parent == null )
         {
             root.add( resource );
@@ -146,14 +145,14 @@ public class ResourceRegistry
      * 
      * @param resource to be registered
      */
-    private void register( ServedResource resource )
+    private void register( AbstractResource resource )
     {
         servedResources.put( resource.getURI(), resource );
         setResourceCallBack( resource );
         // also register children recursively
         for ( Resource child : resource.getChildren() )
         {
-            register( (ServedResource) child );
+            register( (AbstractResource) child );
         }
     }
 
@@ -172,7 +171,7 @@ public class ResourceRegistry
      */
     public void remove( String uriPattern )
     {
-        for ( ServedResource resource : findResources( uriPattern ) )
+        for ( AbstractResource resource : findResources( uriPattern ) )
         {
             unRegister( resource );
         }
@@ -183,13 +182,13 @@ public class ResourceRegistry
      * 
      * @param resource to be registered
      */
-    private void unRegister( ServedResource resource )
+    private void unRegister( AbstractResource resource )
     {
         servedResources.remove( resource.getURI() );
         // also unregister children recursively
         for ( Resource child : resource.getChildren() )
         {
-            unRegister( (ServedResource) child );
+            unRegister( (AbstractResource) child );
         }
         resource.delete();
     }
@@ -225,7 +224,7 @@ public class ResourceRegistry
      */
     private void updateResourceCallBack()
     {
-        for ( Entry< String, ServedResource > e : servedResources.entrySet() )
+        for ( Entry< String, AbstractResource > e : servedResources.entrySet() )
         {
             setResourceCallBack( e.getValue() );
         }
@@ -237,7 +236,7 @@ public class ResourceRegistry
      * 
      * @param resource The served resource.
      */
-    private void setResourceCallBack( ServedResource resource )
+    private void setResourceCallBack( AbstractResource resource )
     {
         OperationalListener bestGetListener= null;
         OperationalListener bestPostListener= null;
@@ -368,6 +367,16 @@ public class ResourceRegistry
     }
 
     /**
+     * Get the root resource.
+     * 
+     * @return The root resource.
+     */
+    public Resource getRoot()
+    {
+        return root;
+    }
+
+    /**
      * Get the resources from the registry with given uri. A null uri, an empty
      * string or "/" is interpreted as the root uri.
      * 
@@ -385,16 +394,16 @@ public class ResourceRegistry
         }
         else
         {
-            for ( Entry< String, ServedResource > e : servedResources.entrySet() )
+            for ( Entry< String, AbstractResource > entry : servedResources.entrySet() )
             {
-                if ( uri.equals( e.getKey() ) )
+                AbstractResource resource= entry.getValue();
+                if ( uri.equals( entry.getKey() ) && resource instanceof ServedResource )
                 {
-                    return e.getValue();
+                    return (ServedResource) entry.getValue();
                 }
             }
         }
         throw new InternalResourceUriException( "resource { " + uri + " } does not exist." );
-
     }
 
     /**
@@ -409,13 +418,14 @@ public class ResourceRegistry
         // TODO regex support
         ArrayList< ServedResource > found= new ArrayList<>();
 
-        for ( Entry< String, ServedResource > entry : servedResources.entrySet() )
+        for ( Entry< String, AbstractResource > entry : servedResources.entrySet() )
         {
             try
             {
-                if ( matchUri( uriPattern, entry.getKey() ) > 0 )
+                AbstractResource resource= entry.getValue();
+                if ( matchUri( uriPattern, entry.getKey() ) > 0 && resource instanceof ServedResource )
                 {
-                    found.add( entry.getValue() );
+                    found.add( (ServedResource) entry.getValue() );
                 }
             }
             catch ( InternalUriPatternException e )
@@ -426,6 +436,40 @@ public class ResourceRegistry
             }
         }
         return found;
+    }
+
+    /**
+     * @param path The path of the referenced resource.
+     * @return
+     */
+    /**
+     * Find the resource responsible for handling requests.
+     * If the request concerned is a Put and the parent resource allows for child creation, 
+     * a virtual resource is returned for creation.
+     * @param path The path of the resource to be found.
+     * @param isPut Flag indicating the request concerned is a put.
+     * @return The resource found or null when the path doesn't match any resource.
+     */
+    public Resource findResource( List< String > path, boolean isPut )
+    {
+        Resource parent= null;
+        Resource current= root;
+        for ( String name : path )
+        {
+            parent= current;
+            current= parent.getChild( name );
+            if ( current == null )
+            {
+                //Consider parent allowing put create request.
+                Resource virtual= parent.getChild( "" );
+                if ( isPut && virtual != null )
+                {
+                    current= virtual;
+                }
+                break;
+            }
+        }
+        return current;
     }
 
     /**
@@ -469,7 +513,10 @@ public class ResourceRegistry
     {
         int count;
         int index;
-        for ( count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri.indexOf( Defs.COAP_URI_PATHSEP, index + 1 ), count++ );
+        for (
+                        count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri
+                            .indexOf( Defs.COAP_URI_PATHSEP, index + 1 ), count++
+        );
         return count;
     }
 

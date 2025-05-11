@@ -11,3 +11,5 @@ syntax: regexp
 ^Californium\.properties$
 syntax: regexp
 ^\.mule$
+syntax: regexp
+\.log$

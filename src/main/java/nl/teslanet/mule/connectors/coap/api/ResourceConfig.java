@@ -39,7 +39,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 /**
  * Configuration of a CoAP resource.
- * The configuration is the resource description used to construct resources on a CoAP server.
+ * The configuration is used to construct resources on a CoAP server.
  */
 @Alias( "resource" )
 public class ResourceConfig implements ConfigurableResource
@@ -76,7 +76,6 @@ public class ResourceConfig implements ConfigurableResource
      * When true, Put requests are allowed on the resource.
      */
     @Parameter
-    //@ParameterGroup(name= "Methods")
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( "When true, PUT requests are allowed on the resource." )
@@ -88,7 +87,7 @@ public class ResourceConfig implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, DELETE requests are allowed on the resource" )
+    @Summary( "When true, DELETE requests are allowed on the resource." )
     private boolean delete= false;
 
     /**
@@ -97,7 +96,7 @@ public class ResourceConfig implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, Fetch requests are allowed on the resource" )
+    @Summary( "When true, Fetch requests are allowed on the resource." )
     private boolean fetch= false;
 
     /**
@@ -106,7 +105,7 @@ public class ResourceConfig implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, PATCH requests are allowed on the resource" )
+    @Summary( "When true, PATCH requests are allowed on the resource." )
     private boolean patch= false;
 
     /**
@@ -115,7 +114,7 @@ public class ResourceConfig implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, iPatch requests are allowed on the resource" )
+    @Summary( "When true, iPatch requests are allowed on the resource." )
     private boolean ipatch= false;
 
     /**
@@ -124,7 +123,7 @@ public class ResourceConfig implements ConfigurableResource
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "When true, the resource can be observed by clients" )
+    @Summary( "When true, the resource can be observed by clients." )
     private boolean observable= false;
 
     /**
@@ -137,16 +136,30 @@ public class ResourceConfig implements ConfigurableResource
     @Summary( "When true an acknowledgement is immediately sent to the client, before processing the request." )
     private boolean earlyAck= false;
 
+    /**
+     * The CoRE information describing the contrained resource for discovery.
+     */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( "The CoRE information describing the contrained resource for discovery." )
     @DisplayName( "Discovery CoRE Info" )
-    private ResourceInfoConfig coreInfoConfig;
+    private ResourceInfoConfig coreInfoConfig= null;
 
     /**
-     * The subordinate resources of the resource..
+     * The creation by clients of subordinate resources configuration.
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "The creation by clients of subordinate resources configuration." )
+    @DisplayName( "New sub-resource creation by client" )
+    private NewSubResourceConfig newSubResourceConfig= null;
+
+    /**
+     * The subordinate resources of the resource.
      */
     @Parameter
     @Optional
@@ -154,10 +167,10 @@ public class ResourceConfig implements ConfigurableResource
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Summary( value= "The subordinate resources of the resource." )
-    private List< ResourceConfig > subResources;
+    private List< ResourceConfig > subResources= null;
 
     /**
-    * @return the resourceName
+    * @return The resourceName
     */
     public String getResourceName()
     {
@@ -165,7 +178,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param resourceName the name to set
+     * @param resourceName The name to set
      */
     public void setResourceName( String resourceName )
     {
@@ -173,7 +186,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the get
+     * @return The get.
      */
     @Override
     public boolean isGet()
@@ -182,7 +195,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param get the get to set
+     * @param get The get to set.
      */
     public void setGet( boolean get )
     {
@@ -190,7 +203,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the post
+     * @return The post.
      */
     @Override
     public boolean isPost()
@@ -199,7 +212,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param post the post to set
+     * @param post The post to set.
      */
     public void setPost( boolean post )
     {
@@ -207,7 +220,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the put
+     * @return The put.
      */
     @Override
     public boolean isPut()
@@ -216,7 +229,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param put the put to set
+     * @param put The put to set.
      */
     public void setPut( boolean put )
     {
@@ -224,7 +237,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the delete
+     * @return The delete.
      */
     @Override
     public boolean isDelete()
@@ -233,7 +246,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param delete the delete to set
+     * @param delete The delete to set.
      */
     public void setDelete( boolean delete )
     {
@@ -241,7 +254,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the fetch
+     * @return The fetch.
      */
     @Override
     public boolean isFetch()
@@ -250,7 +263,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param fetch the fetch to set
+     * @param fetch The fetch to set.
      */
     public void setFetch( boolean fetch )
     {
@@ -258,7 +271,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the patch
+     * @return The patch.
      */
     @Override
     public boolean isPatch()
@@ -267,7 +280,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param patch the patch to set
+     * @param patch The patch to set.
      */
     public void setPatch( boolean patch )
     {
@@ -275,7 +288,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the ipatch
+     * @return The ipatch.
      */
     @Override
     public boolean isIpatch()
@@ -284,7 +297,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param ipatch the ipatch to set
+     * @param ipatch The ipatch to set.
      */
     public void setIpatch( boolean ipatch )
     {
@@ -292,7 +305,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the observable
+     * @return The observable flag.
      */
     @Override
     public boolean isObservable()
@@ -301,7 +314,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param observable the observable to set.
+     * @param observable The observable flag to set.
      */
     public void setObservable( boolean observable )
     {
@@ -309,7 +322,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the earlyAck.
+     * @return The earlyAck.
      */
     @Override
     public boolean isEarlyAck()
@@ -318,7 +331,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param earlyAck the earlyAck to set.
+     * @param earlyAck The earlyAck to set.
      */
     public void setEarlyAck( boolean earlyAck )
     {
@@ -326,7 +339,7 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @return the configured CoRE info.
+     * @return The configured CoRE info.
      */
     @Override
     public CoreInfo getCoreInfo()
@@ -335,15 +348,32 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param coreInfo the CoRE info configuration to set.
+     * @param coreInfo The CoRE info configuration to set.
      */
-    public void setCoreInfoConfig( ResourceInfoConfig coreInfo )
+    public void setCoreInfo( ResourceInfoConfig coreInfo )
     {
         this.coreInfoConfig= coreInfo;
     }
 
     /**
-     * @return the subordinate resources.
+     * @return The new-sub-resource configuration.
+     */
+    @Override
+    public NewSubResource getNewSubResource()
+    {
+        return newSubResourceConfig;
+    }
+
+    /**
+     * @param newSubresource The new-sub-resource configuration to set.
+     */
+    public void setNewSubResource( NewSubResource newSubresource )
+    {
+        this.newSubResourceConfig= new NewSubResourceConfig( newSubresource.isPut(), newSubresource.isEarlyAck() );
+    }
+
+    /**
+     * @return The subordinate resources.
      */
     public List< ResourceConfig > getSubResources()
     {
@@ -351,9 +381,9 @@ public class ResourceConfig implements ConfigurableResource
     }
 
     /**
-     * @param resources the subordinate resources to set on this resource.
+     * @param resources The subordinate resources to set on this resource.
      */
-    public void setResources( List< ResourceConfig > resources )
+    public void setSubResources( List< ResourceConfig > resources )
     {
         this.subResources= resources;
     }
@@ -361,6 +391,7 @@ public class ResourceConfig implements ConfigurableResource
     /**
      * The string representation.
      */
+    @Override
     public String toString()
     {
         return "CoAP Resource config { " + resourceName + " }";
