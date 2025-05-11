@@ -252,7 +252,7 @@ Contributors:
 		<dependency>
 		   <groupId>org.mule.sdk</groupId>
 		   <artifactId>mule-sdk-api</artifactId>
-		   <version>0.10.3</version>
+		   <version>0.10.5</version>
 		</dependency>
 		<dependency>
             <groupId>org.eclipse.californium</groupId>
@@ -292,14 +292,14 @@ Contributors:
 		<dependency>
 			<groupId>org.mule.module</groupId>
 			<artifactId>mule-java-module</artifactId>
-			<version>1.2.13</version>
+			<version>1.2.14</version>
 			<classifier>mule-plugin</classifier>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-validation-module</artifactId>
-			<version>2.0.6</version>
+			<version>2.0.7</version>
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
@@ -332,7 +332,7 @@ Contributors:
 		<dependency>
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
-			<version>4.2.2</version>
+			<version>4.3.0</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>
