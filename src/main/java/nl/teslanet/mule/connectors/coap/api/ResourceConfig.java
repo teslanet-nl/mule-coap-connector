@@ -148,14 +148,14 @@ public class ResourceConfig implements ConfigurableResource
     private ResourceInfoConfig coreInfoConfig= null;
 
     /**
-     * The creation of subordinate resources configuration.
+     * The creation by clients of subordinate resources configuration.
      */
     @Parameter
     @Optional
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( "The creation of subordinate resources configuration." )
-    @DisplayName( "New sub-resource" )
+    @Summary( "The creation by clients of subordinate resources configuration." )
+    @DisplayName( "New sub-resource creation by client" )
     private NewSubResourceConfig newSubResourceConfig= null;
 
     /**
