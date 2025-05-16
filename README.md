@@ -28,7 +28,7 @@ and other.
 
 ## Uses
 
-* [Californium](https://www.eclipse.org/californium/) 3.13.0
+* [Californium](https://www.eclipse.org/californium/) 3.14.0
 
 ## Installation
 
@@ -40,7 +40,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>3.0.1</version>
+        <version>3.1.0</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   
