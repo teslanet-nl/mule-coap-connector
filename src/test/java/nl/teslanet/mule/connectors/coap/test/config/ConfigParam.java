@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -48,6 +48,8 @@ public enum ConfigParam
     ENDPOINT_OTHEROPTION_SINGLEVALUE(null),
     ENDPOINT_OTHEROPTION_MINBYTES(null),
     ENDPOINT_OTHEROPTION_MAXBYTES(null),
+    //udp endpoint
+    ENDPOINT_UDP_MULTICAST_RECEIVERS(null),
 
     // module COAP
     maxActivePeers(CoapConfig.MAX_ACTIVE_PEERS),

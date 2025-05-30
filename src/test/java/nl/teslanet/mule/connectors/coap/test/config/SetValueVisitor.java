@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -28,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
+import nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
@@ -64,6 +65,7 @@ import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
@@ -115,12 +117,40 @@ public class SetValueVisitor implements ConfigVisitor
      * Visit configuration.
      */
     @Override
-    public void visit( UDPEndpoint toVisit )
+    public void visit( AbstractUDPEndpoint toVisit )
     {
         switch ( param )
         {
             case responseMatching:
                 toVisit.strictResponseMatching= DtlsResponseMatching.STRICT.name().equals( value );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( UDPEndpoint toVisit )
+    {
+        switch ( param )
+        {
+            case ENDPOINT_UDP_MULTICAST_RECEIVERS:
+                if ( toVisit.multicastReceivers == null )
+                {
+                    toVisit.multicastReceivers= new CopyOnWriteArrayList< MulticastReceiverConfig >();
+                }
+                String[] values= value.split( ";" );
+                for ( int i= 0; i < values.length; i++ )
+                {
+                    String[] fields= values[i].split( "," );
+                    int port= Integer.valueOf( fields[0] );
+                    String group= fields[1];
+                    String networkIf= ( fields.length > 2 ? fields[2] : null );
+                    toVisit.multicastReceivers.add( new MulticastReceiverConfig( port, group, networkIf ) );
+                }
                 break;
             default:
                 break;

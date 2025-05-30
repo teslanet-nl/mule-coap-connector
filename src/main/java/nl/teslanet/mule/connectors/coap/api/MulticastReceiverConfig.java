@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,67 +29,53 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
-import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * Configuration of a Multicast group.
+ * Configuration of a Multicast receiver.
  */
-@Alias( "multicast-group" )
-public class MulticastGroupConfig
+@Alias( "multicast-receiver" )
+public class MulticastReceiverConfig extends MulticastGroupConfig
 {
     /**
-    * The multicast group that is joined. This can be the CoAP broadcast address '224.0.1.187' for IPv4, 'FF0X::FD' for IPv6, or a CoAP IPv6 multicast address."
-    */
+     * The port the multicast receiver binds to.  
+     */
     @Parameter
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary(
-        "The multicast group that is joined. This can be the CoAP broadcast address '224.0.1.187' for IPv4, 'FF0X::FD' for IPv6, or a CoAP IPv6 multicast address."
-    )
-    @Example( "224.0.1.187" )
-    public String group;
-
-    /**
-    * The network interface on which to join the group.
-    */
-    @Parameter
-    @Optional
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    @Summary( "The network interface on which to join the group." )
-    @Example( "eth0" )
-    public String networkInterface;
+    @Summary( "The port the multicast receiver binds to." )
+    public Integer bindToPort= null;
 
     /**
      * Default constructor.
      */
-    public MulticastGroupConfig()
+    public MulticastReceiverConfig()
     {
-        //NOOP
+        super();
     }
 
     /**
      * Constructor
+     * @param bindToPort The port the multicast receiver binds to.
      * @param group The group The multicast group that is joined.
      * @param networkInterface The network interface on which to join the group.
      */
-    public MulticastGroupConfig( String group, String networkInterface )
+    public MulticastReceiverConfig( int bindToPort, String group, String networkInterface )
     {
-        this.group= group;
-        this.networkInterface= networkInterface;
+        super( group, networkInterface );
+        this.bindToPort= bindToPort;
     }
 
-    /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
+    /**
+     * Convert to String representation.
+     */
     @Override
     public String toString()
     {
-        return "MulticastGroupConfig { " + group + ( networkInterface != null ? "|" + networkInterface + " }" : " }" );
+        return "MulticastReceiverConfig { " + bindToPort + "|" + group + ( networkInterface != null
+            ? "|" + networkInterface + " }" : " }" );
     }
 
     /**
@@ -110,11 +96,8 @@ public class MulticastGroupConfig
         {
             return false;
         }
-        MulticastGroupConfig rhs= (MulticastGroupConfig) obj;
-        return new EqualsBuilder()
-            .append( group, rhs.group )
-            .append( networkInterface, rhs.networkInterface )
-            .isEquals();
+        MulticastReceiverConfig rhs= (MulticastReceiverConfig) obj;
+        return new EqualsBuilder().append( bindToPort, rhs.bindToPort ).appendSuper( super.equals( rhs ) ).isEquals();
     }
 
     /**
@@ -123,6 +106,6 @@ public class MulticastGroupConfig
     @Override
     public int hashCode()
     {
-        return new HashCodeBuilder( 15, 35 ).append( group ).append( networkInterface ).toHashCode();
+        return new HashCodeBuilder( 19, 35 ).append( bindToPort ).appendSuper( super.hashCode() ).toHashCode();
     }
 }

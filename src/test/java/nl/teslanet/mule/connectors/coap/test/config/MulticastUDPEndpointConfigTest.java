@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -151,7 +151,7 @@ public class MulticastUDPEndpointConfigTest
      */
     private boolean doSkip( ConfigParam param ) throws Exception
     {
-        return !ConfigParams.getConfigDescription( param ).isRelevant( ConfigDescription.TEST_UDP | ConfigDescription.TEST_MULTICAST );
+        return !ConfigParams.getConfigDescription( param ).isRelevant( ConfigDescription.TEST_MULTICAST );
     }
 
 }

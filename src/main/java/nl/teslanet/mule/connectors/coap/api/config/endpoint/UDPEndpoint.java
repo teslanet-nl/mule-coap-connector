@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,6 +23,9 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -34,9 +37,9 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+import nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 
 
 /**
@@ -44,28 +47,18 @@ import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
  *
  */
 @TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
-public class UDPEndpoint extends AbstractEndpoint
+public class UDPEndpoint extends AbstractUDPEndpoint
 {
     /**
-     * UDP endpoint parameters.
-     */
+    * The list of multi-cast receivers the endpint supports.
+    */
     @Parameter
     @Optional
     @NullSafe
-    @Summary( value= "UDP parameters" )
+    @Summary( value= "The list of multi-cast receivers the endpint supports." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public UdpParams udpParams= null;
-
-    /**
-     * When enabled peer response address is checked.
-     */
-    @Parameter
-    @Optional( defaultValue= "true" )
-    @Summary( value= "When enabled peer response address is checked." )
-    @Expression( ExpressionSupport.NOT_SUPPORTED )
-    @ParameterDsl( allowReferences= false )
-    public boolean strictResponseMatching= true;
+    @ParameterDsl( allowInlineDefinition= true, allowReferences= false )
+    public List< MulticastReceiverConfig > multicastReceivers;
 
     /**
      * Default Constructor used by Mule. 
@@ -84,7 +77,7 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name )
     {
         super( name );
-        udpParams= new UdpParams();
+        multicastReceivers= new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -96,7 +89,7 @@ public class UDPEndpoint extends AbstractEndpoint
     public UDPEndpoint( String name, int port )
     {
         super( name, port );
-        udpParams= new UdpParams();
+        multicastReceivers= new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -107,7 +100,6 @@ public class UDPEndpoint extends AbstractEndpoint
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
-        udpParams.accept( visitor );
         visitor.visit( this );
     }
 
@@ -132,8 +124,7 @@ public class UDPEndpoint extends AbstractEndpoint
         UDPEndpoint rhs= (UDPEndpoint) obj;
         return new EqualsBuilder()
             .appendSuper( super.equals( obj ) )
-            .append( strictResponseMatching, rhs.strictResponseMatching )
-            .append( udpParams, rhs.udpParams )
+            .append( multicastReceivers, rhs.multicastReceivers )
             .isEquals();
     }
 
@@ -143,10 +134,6 @@ public class UDPEndpoint extends AbstractEndpoint
     @Override
     public int hashCode()
     {
-        return new HashCodeBuilder( 13, 33 )
-            .appendSuper( super.hashCode() )
-            .append( strictResponseMatching )
-            .append( udpParams )
-            .toHashCode();
+        return new HashCodeBuilder( 13, 33 ).appendSuper( super.hashCode() ).append( multicastReceivers ).toHashCode();
     }
 }

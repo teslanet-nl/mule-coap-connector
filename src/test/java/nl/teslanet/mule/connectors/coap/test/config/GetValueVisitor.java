@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
  * %%
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 
 import nl.teslanet.mule.connectors.coap.api.MulticastGroupConfig;
+import nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig;
 import nl.teslanet.mule.connectors.coap.api.config.BlockwiseParams;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
@@ -59,6 +60,7 @@ import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
@@ -95,7 +97,7 @@ public class GetValueVisitor implements ConfigVisitor
      * Visit configuration.
      */
     @Override
-    public void visit( UDPEndpoint toVisit )
+    public void visit( AbstractUDPEndpoint toVisit )
     {
         switch ( param )
         {
@@ -108,6 +110,39 @@ public class GetValueVisitor implements ConfigVisitor
                 {
                     result= DtlsResponseMatching.RELAXED.name();
                 }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Visit configuration.
+     */
+    @Override
+    public void visit( UDPEndpoint toVisit )
+    {
+        switch ( param )
+        {
+            case ENDPOINT_UDP_MULTICAST_RECEIVERS:
+                StringBuilder builder= new StringBuilder();
+                if ( toVisit.multicastReceivers != null )
+                {
+                    for ( MulticastReceiverConfig receiver : toVisit.multicastReceivers )
+                    {
+                        builder.append( receiver.bindToPort );
+                        builder.append( "," );
+                        builder.append( receiver.group );
+                        if ( receiver.networkInterface != null )
+                        {
+                            builder.append( "," );
+                            builder.append( receiver.networkInterface );
+                        }
+                        builder.append( ";" );
+                    }
+                }
+                result= builder.toString();
+
                 break;
             default:
                 break;

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -67,15 +67,14 @@ public class MulticastIPv4Test extends AbstractServerTestCase
     @Parameters( name= "Request= {0}, port= {1}, path= {2}, contentSize= {3}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
+        return Arrays
+            .asList( new Object [] []
             {
                 //default maxResourceBodySize on server
                 { Code.GET, 5683, "/service/get_me", 10, true, false, "listen1" },
                 { Code.PUT, 5683, "/service/put_me", 10, false, false, "listen1" },
                 { Code.POST, 5683, "/service/post_me", 10, false, false, "listen1" },
-                { Code.DELETE, 5683, "/service/delete_me", 10, true, false, "listen1" }, }
-        );
+                { Code.DELETE, 5683, "/service/delete_me", 10, true, false, "listen1" }, } );
     }
 
     /**
@@ -152,7 +151,8 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         UdpMulticastConnector.Builder multiCastConnectorBuilder= new UdpMulticastConnector.Builder();
         multiCastConnectorBuilder.setLocalAddress( InetAddress.getByName( "127.0.0.1" ), 0 );
         multiCastConnectorBuilder.setOutgoingMulticastInterface( NetworkInterface.getByName( "lo" ) );
-        multiCastConnectorBuilder.addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ) );
+        multiCastConnectorBuilder
+            .addMulticastGroup( InetAddress.getByName( "224.0.1.187" ), NetworkInterface.getByName( "lo" ) );
         UdpMulticastConnector sender= multiCastConnectorBuilder.build();
         sender.setReuseAddress( true );
         sender.setLoopbackMode( true );
@@ -177,21 +177,54 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         if ( !expectTooLarge )
         {
             assertNotNull( "no response", response );
-            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue(
+                "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(),
+                response.isSuccess()
+            );
+            assertEquals(
+                "wrong remote host",
+                "127.0.0.1",
+                response.advanced().getSourceContext().getPeerAddress().getHostString()
+            );
+            assertEquals(
+                "wrong remote port",
+                port,
+                response.advanced().getSourceContext().getPeerAddress().getPort()
+            );
             assertEquals( "wrong spy activation count", 1, spy.getEvents().size() );
-            assertTrue( "wrong payload in requets", Data.validateContent( (byte[]) spy.getEvents().get( 0 ).getContent(), contentSize ) );
+            assertTrue(
+                "wrong payload in requets",
+                Data.validateContent( (byte[]) spy.getEvents().get( 0 ).getContent(), contentSize )
+            );
         }
         else
         {
             assertNotNull( "no response", response );
-            assertEquals( "response is not REQUEST_ENTITY_TOO_LARGE : " + response.getResponseText(), ResponseCode.REQUEST_ENTITY_TOO_LARGE, response.getCode() );
+            assertEquals(
+                "response is not REQUEST_ENTITY_TOO_LARGE : " + response.getResponseText(),
+                ResponseCode.REQUEST_ENTITY_TOO_LARGE,
+                response.getCode()
+            );
+            assertEquals(
+                "wrong remote host",
+                "127.0.0.1",
+                response.advanced().getSourceContext().getPeerAddress().getHostString()
+            );
+            assertEquals(
+                "wrong remote port",
+                port,
+                response.advanced().getSourceContext().getPeerAddress().getPort()
+            );
         }
     }
 
     protected void validateOutboundResponse( CoapResponse response, MuleEventSpy spy )
     {
         assertNotNull( "no response on: " + requestCode, response );
-        assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+        assertTrue(
+            "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(),
+            response.isSuccess()
+        );
         assertEquals( "wrong spy activation count", 1, spy.getEvents().size() );
         assertTrue( "wrong payload in response", Data.validateContent( response.getPayload(), contentSize ) );
     }

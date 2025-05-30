@@ -1,6 +1,11 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release 3.2.0
+
+* Added multicast receiver feature.
+* Updated dependencies.
+
 ## Release 3.1.0
 
 * Added put new sub-resource feature.

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -70,8 +70,8 @@ import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerParams;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.DtlsServerRole;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.ExtendedReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
-import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.GroupedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.MapBasedMidTracker;
 import nl.teslanet.mule.connectors.coap.api.config.midtracker.NullMidTracker;
@@ -95,7 +95,7 @@ public class ConfigurationVisitor implements ConfigVisitor
      * Visit configuration.
      */
     @Override
-    public void visit( UDPEndpoint toVisit )
+    public void visit( AbstractUDPEndpoint toVisit )
     {
         if ( toVisit.strictResponseMatching )
         {
@@ -194,7 +194,11 @@ public class ConfigurationVisitor implements ConfigVisitor
         }
         else
         {
-            config.set( DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER, Math.max( 0, toVisit.extendedfilterWindow ) );
+            config
+                .set(
+                    DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER,
+                    Math.max( 0, toVisit.extendedfilterWindow )
+                );
         }
     }
 
@@ -206,12 +210,24 @@ public class ConfigurationVisitor implements ConfigVisitor
     {
         try
         {
-            if ( toVisit.preferredBlockSize != null ) config.set( CoapConfig.PREFERRED_BLOCK_SIZE, toVisit.preferredBlockSize );
+            if ( toVisit.preferredBlockSize != null ) config
+                .set( CoapConfig.PREFERRED_BLOCK_SIZE, toVisit.preferredBlockSize );
             if ( toVisit.maxMessageSize != null ) config.set( CoapConfig.MAX_MESSAGE_SIZE, toVisit.maxMessageSize );
             // TODO: only transparent blockwise is supported: maxResourceBodySize > 0
-            if ( toVisit.maxResourceBodySize != null && toVisit.maxResourceBodySize > 0 ) config.set( CoapConfig.MAX_RESOURCE_BODY_SIZE, toVisit.maxResourceBodySize );
-            if ( toVisit.statusLifetime != null ) config.set( CoapConfig.BLOCKWISE_STATUS_LIFETIME, TimeUtils.toNanos( toVisit.statusLifetime ), TimeUnit.NANOSECONDS );
-            if ( toVisit.statusInterval != null ) config.set( CoapConfig.BLOCKWISE_STATUS_INTERVAL, TimeUtils.toNanos( toVisit.statusInterval ), TimeUnit.NANOSECONDS );
+            if ( toVisit.maxResourceBodySize != null && toVisit.maxResourceBodySize > 0 ) config
+                .set( CoapConfig.MAX_RESOURCE_BODY_SIZE, toVisit.maxResourceBodySize );
+            if ( toVisit.statusLifetime != null ) config
+                .set(
+                    CoapConfig.BLOCKWISE_STATUS_LIFETIME,
+                    TimeUtils.toNanos( toVisit.statusLifetime ),
+                    TimeUnit.NANOSECONDS
+                );
+            if ( toVisit.statusInterval != null ) config
+                .set(
+                    CoapConfig.BLOCKWISE_STATUS_INTERVAL,
+                    TimeUtils.toNanos( toVisit.statusInterval ),
+                    TimeUnit.NANOSECONDS
+                );
             config.set( CoapConfig.BLOCKWISE_STRICT_BLOCK1_OPTION, toVisit.strictBlock1Option );
             config.set( CoapConfig.BLOCKWISE_STRICT_BLOCK2_OPTION, toVisit.strictBlock2Option );
             config.set( CoapConfig.BLOCKWISE_ENTITY_TOO_LARGE_AUTO_FAILOVER, toVisit.entityTooLargeFailover );
@@ -236,7 +252,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.maxPeerInactivityPeriod != null )
             {
-                config.set( CoapConfig.MAX_PEER_INACTIVITY_PERIOD, TimeUtils.toNanos( toVisit.maxPeerInactivityPeriod ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        CoapConfig.MAX_PEER_INACTIVITY_PERIOD,
+                        TimeUtils.toNanos( toVisit.maxPeerInactivityPeriod ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.ackTimeout != null )
             {
@@ -244,7 +265,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.maxAckTimeout != null )
             {
-                config.set( CoapConfig.MAX_ACK_TIMEOUT, TimeUtils.toNanos( toVisit.maxAckTimeout ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        CoapConfig.MAX_ACK_TIMEOUT,
+                        TimeUtils.toNanos( toVisit.maxAckTimeout ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.ackRandomFactor != null )
             {
@@ -260,7 +286,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.exchangeLifetime != null )
             {
-                config.set( CoapConfig.EXCHANGE_LIFETIME, TimeUtils.toNanos( toVisit.exchangeLifetime ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        CoapConfig.EXCHANGE_LIFETIME,
+                        TimeUtils.toNanos( toVisit.exchangeLifetime ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.nonLifetime != null )
             {
@@ -272,11 +303,21 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.maxTransmitWait != null )
             {
-                config.set( CoapConfig.MAX_TRANSMIT_WAIT, TimeUtils.toNanos( toVisit.maxTransmitWait ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        CoapConfig.MAX_TRANSMIT_WAIT,
+                        TimeUtils.toNanos( toVisit.maxTransmitWait ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.maxResponseDelay != null )
             {
-                config.set( CoapConfig.MAX_SERVER_RESPONSE_DELAY, TimeUtils.toNanos( toVisit.maxResponseDelay ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        CoapConfig.MAX_SERVER_RESPONSE_DELAY,
+                        TimeUtils.toNanos( toVisit.maxResponseDelay ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.nstart != null )
             {
@@ -349,7 +390,12 @@ public class ConfigurationVisitor implements ConfigVisitor
         try
         {
             config.set( CoapConfig.DEDUPLICATOR, CoapConfig.DEDUPLICATOR_CROP_ROTATION );
-            if ( toVisit.cropRotationPeriod != null ) config.set( CoapConfig.CROP_ROTATION_PERIOD, TimeUtils.toNanos( toVisit.cropRotationPeriod ), TimeUnit.NANOSECONDS );
+            if ( toVisit.cropRotationPeriod != null ) config
+                .set(
+                    CoapConfig.CROP_ROTATION_PERIOD,
+                    TimeUtils.toNanos( toVisit.cropRotationPeriod ),
+                    TimeUnit.NANOSECONDS
+                );
         }
         catch ( InternalInvalidDurationException e )
         {
@@ -366,7 +412,12 @@ public class ConfigurationVisitor implements ConfigVisitor
         try
         {
             config.set( CoapConfig.DEDUPLICATOR, CoapConfig.DEDUPLICATOR_MARK_AND_SWEEP );
-            if ( toVisit.markAndSweepInterval != null ) config.set( CoapConfig.MARK_AND_SWEEP_INTERVAL, TimeUtils.toNanos( toVisit.markAndSweepInterval ), TimeUnit.NANOSECONDS );
+            if ( toVisit.markAndSweepInterval != null ) config
+                .set(
+                    CoapConfig.MARK_AND_SWEEP_INTERVAL,
+                    TimeUtils.toNanos( toVisit.markAndSweepInterval ),
+                    TimeUnit.NANOSECONDS
+                );
         }
         catch ( InternalInvalidDurationException e )
         {
@@ -381,7 +432,8 @@ public class ConfigurationVisitor implements ConfigVisitor
     public void visit( PeersMarkAndSweep toVisit )
     {
         config.set( CoapConfig.DEDUPLICATOR, CoapConfig.DEDUPLICATOR_PEERS_MARK_AND_SWEEP );
-        if ( toVisit.maxMessagesPerPeer != null ) config.set( CoapConfig.PEERS_MARK_AND_SWEEP_MESSAGES, toVisit.maxMessagesPerPeer );
+        if ( toVisit.maxMessagesPerPeer != null ) config
+            .set( CoapConfig.PEERS_MARK_AND_SWEEP_MESSAGES, toVisit.maxMessagesPerPeer );
     }
 
     /**
@@ -394,7 +446,12 @@ public class ConfigurationVisitor implements ConfigVisitor
         {
             if ( toVisit.healthStatusInterval != null )
             {
-                config.set( SystemConfig.HEALTH_STATUS_INTERVAL, TimeUtils.toNanos( toVisit.healthStatusInterval ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        SystemConfig.HEALTH_STATUS_INTERVAL,
+                        TimeUtils.toNanos( toVisit.healthStatusInterval ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             else
             {
@@ -458,8 +515,10 @@ public class ConfigurationVisitor implements ConfigVisitor
     @Override
     public void visit( UdpParams toVisit )
     {
-        if ( toVisit.receiverThreadCount != null ) config.set( UdpConfig.UDP_RECEIVER_THREAD_COUNT, toVisit.receiverThreadCount );
-        if ( toVisit.senderThreadCount != null ) config.set( UdpConfig.UDP_SENDER_THREAD_COUNT, toVisit.senderThreadCount );
+        if ( toVisit.receiverThreadCount != null ) config
+            .set( UdpConfig.UDP_RECEIVER_THREAD_COUNT, toVisit.receiverThreadCount );
+        if ( toVisit.senderThreadCount != null ) config
+            .set( UdpConfig.UDP_SENDER_THREAD_COUNT, toVisit.senderThreadCount );
         if ( toVisit.datagramSize != null ) config.set( UdpConfig.UDP_DATAGRAM_SIZE, toVisit.datagramSize );
         if ( toVisit.outCapacity != null ) config.set( UdpConfig.UDP_CONNECTOR_OUT_CAPACITY, toVisit.outCapacity );
     }
@@ -470,9 +529,11 @@ public class ConfigurationVisitor implements ConfigVisitor
     @Override
     public void visit( TcpParams toVisit )
     {
-        if ( toVisit.tcpConnectTimeout != null ) config.set( TcpConfig.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout, TimeUnit.MILLISECONDS );
+        if ( toVisit.tcpConnectTimeout != null ) config
+            .set( TcpConfig.TCP_CONNECT_TIMEOUT, toVisit.tcpConnectTimeout, TimeUnit.MILLISECONDS );
         if ( toVisit.tcpWorkerThreads != null ) config.set( TcpConfig.TCP_WORKER_THREADS, toVisit.tcpWorkerThreads );
-        if ( toVisit.tcpConnectionIdleTimeout != null ) config.set( TcpConfig.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout, TimeUnit.MILLISECONDS );
+        if ( toVisit.tcpConnectionIdleTimeout != null ) config
+            .set( TcpConfig.TCP_CONNECTION_IDLE_TIMEOUT, toVisit.tcpConnectTimeout, TimeUnit.MILLISECONDS );
     }
 
     /**
@@ -481,8 +542,10 @@ public class ConfigurationVisitor implements ConfigVisitor
     @Override
     public void visit( TlsParams toVisit )
     {
-        if ( toVisit.tlsHandshakeTimeout != null ) config.set( TcpConfig.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout, TimeUnit.MILLISECONDS );
-        if ( toVisit.secureSessionTimeout != null ) config.set( TcpConfig.TLS_SESSION_TIMEOUT, toVisit.secureSessionTimeout, TimeUnit.MILLISECONDS );
+        if ( toVisit.tlsHandshakeTimeout != null ) config
+            .set( TcpConfig.TLS_HANDSHAKE_TIMEOUT, toVisit.tlsHandshakeTimeout, TimeUnit.MILLISECONDS );
+        if ( toVisit.secureSessionTimeout != null ) config
+            .set( TcpConfig.TLS_SESSION_TIMEOUT, toVisit.secureSessionTimeout, TimeUnit.MILLISECONDS );
         //TODO complete params, update default
     }
 
@@ -495,10 +558,18 @@ public class ConfigurationVisitor implements ConfigVisitor
     {
         config.set( DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY, toVisit.recommendedCipherSuitesOnly );
         config.set( DtlsConfig.DTLS_RECOMMENDED_CURVES_ONLY, toVisit.recommendedCurvesOnly );
-        config.set( DtlsConfig.DTLS_RECOMMENDED_SIGNATURE_AND_HASH_ALGORITHMS_ONLY, toVisit.recommendedSignatureAndHashAlgorithmsOnly );
+        config
+            .set(
+                DtlsConfig.DTLS_RECOMMENDED_SIGNATURE_AND_HASH_ALGORITHMS_ONLY,
+                toVisit.recommendedSignatureAndHashAlgorithmsOnly
+            );
         if ( toVisit.preselectedCipherSuites != null )
         {
-            config.set( DtlsConfig.DTLS_PRESELECTED_CIPHER_SUITES, SecurityUtils.toCfCipherSuites( toVisit.preselectedCipherSuites ) );
+            config
+                .set(
+                    DtlsConfig.DTLS_PRESELECTED_CIPHER_SUITES,
+                    SecurityUtils.toCfCipherSuites( toVisit.preselectedCipherSuites )
+                );
         }
         if ( toVisit.cipherSuites != null && !toVisit.cipherSuites.isEmpty() )
         {
@@ -510,17 +581,33 @@ public class ConfigurationVisitor implements ConfigVisitor
         }
         if ( toVisit.signatureAlgorithms != null && !toVisit.signatureAlgorithms.isEmpty() )
         {
-            config.set( DtlsConfig.DTLS_SIGNATURE_AND_HASH_ALGORITHMS, SecurityUtils.toCfSignatureAndHashAlgoritms( toVisit.signatureAlgorithms ) );
+            config
+                .set(
+                    DtlsConfig.DTLS_SIGNATURE_AND_HASH_ALGORITHMS,
+                    SecurityUtils.toCfSignatureAndHashAlgoritms( toVisit.signatureAlgorithms )
+                );
         }
         if ( toVisit.certificateKeyAlgorithms != null && !toVisit.certificateKeyAlgorithms.isEmpty() )
         {
-            config.set( DtlsConfig.DTLS_CERTIFICATE_KEY_ALGORITHMS, SecurityUtils.toCfCertificateKeyAlgorithms( toVisit.certificateKeyAlgorithms ) );
+            config
+                .set(
+                    DtlsConfig.DTLS_CERTIFICATE_KEY_ALGORITHMS,
+                    SecurityUtils.toCfCertificateKeyAlgorithms( toVisit.certificateKeyAlgorithms )
+                );
         }
         if ( toVisit.extendedMasterSecretMode != null )
         {
-            config.set( DtlsConfig.DTLS_EXTENDED_MASTER_SECRET_MODE, SecurityUtils.toCfExtendedMasterSecretMode( toVisit.extendedMasterSecretMode ) );
+            config
+                .set(
+                    DtlsConfig.DTLS_EXTENDED_MASTER_SECRET_MODE,
+                    SecurityUtils.toCfExtendedMasterSecretMode( toVisit.extendedMasterSecretMode )
+                );
         }
-        config.set( DtlsConfig.DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION, toVisit.truncateCertificatePathForValidation );
+        config
+            .set(
+                DtlsConfig.DTLS_TRUNCATE_CERTIFICATE_PATH_FOR_VALIDATION,
+                toVisit.truncateCertificatePathForValidation
+            );
     }
 
     /**
@@ -600,7 +687,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.staleConnectionThreshold != null )
             {
-                config.set( DtlsConfig.DTLS_STALE_CONNECTION_THRESHOLD, TimeUtils.toNanos( toVisit.staleConnectionThreshold ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        DtlsConfig.DTLS_STALE_CONNECTION_THRESHOLD,
+                        TimeUtils.toNanos( toVisit.staleConnectionThreshold ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             config.set( DtlsConfig.DTLS_REMOVE_STALE_DOUBLE_PRINCIPALS, toVisit.removeStaleDoublePrincipals );
             if ( toVisit.outboundMsgCapacity != null )
@@ -633,7 +725,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.autoHandshakeTimeout != null )
             {
-                config.set( DtlsConfig.DTLS_AUTO_HANDSHAKE_TIMEOUT, TimeUtils.toNanos( toVisit.autoHandshakeTimeout ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        DtlsConfig.DTLS_AUTO_HANDSHAKE_TIMEOUT,
+                        TimeUtils.toNanos( toVisit.autoHandshakeTimeout ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             config.set( DtlsConfig.DTLS_USE_ANTI_REPLAY_FILTER, toVisit.useAntiReplayFilter );
             if ( toVisit.useExtendedAntiReplayFilterWindow )
@@ -644,7 +741,11 @@ public class ConfigurationVisitor implements ConfigVisitor
                 }
                 else
                 {
-                    config.set( DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER, Math.max( 0, toVisit.antiReplayFilterWindowExtension ) );
+                    config
+                        .set(
+                            DtlsConfig.DTLS_USE_DISABLED_WINDOW_FOR_ANTI_REPLAY_FILTER,
+                            Math.max( 0, toVisit.antiReplayFilterWindowExtension )
+                        );
                 }
             }
             else
@@ -691,7 +792,11 @@ public class ConfigurationVisitor implements ConfigVisitor
         }
         if ( toVisit.maxFragmentedHandshakeMsgLength != null )
         {
-            config.set( DtlsConfig.DTLS_MAX_FRAGMENTED_HANDSHAKE_MESSAGE_LENGTH, toVisit.maxFragmentedHandshakeMsgLength );
+            config
+                .set(
+                    DtlsConfig.DTLS_MAX_FRAGMENTED_HANDSHAKE_MESSAGE_LENGTH,
+                    toVisit.maxFragmentedHandshakeMsgLength
+                );
         }
         if ( toVisit.multiRecords != null )
         {
@@ -743,11 +848,21 @@ public class ConfigurationVisitor implements ConfigVisitor
         {
             if ( toVisit.initialTimeout != null )
             {
-                config.set( DtlsConfig.DTLS_RETRANSMISSION_TIMEOUT, TimeUtils.toNanos( toVisit.initialTimeout ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        DtlsConfig.DTLS_RETRANSMISSION_TIMEOUT,
+                        TimeUtils.toNanos( toVisit.initialTimeout ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.maxTimeout != null )
             {
-                config.set( DtlsConfig.DTLS_MAX_RETRANSMISSION_TIMEOUT, TimeUtils.toNanos( toVisit.maxTimeout ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        DtlsConfig.DTLS_MAX_RETRANSMISSION_TIMEOUT,
+                        TimeUtils.toNanos( toVisit.maxTimeout ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.timeoutRandomFactor != null )
             {
@@ -759,7 +874,12 @@ public class ConfigurationVisitor implements ConfigVisitor
             }
             if ( toVisit.additionalEccTimeout != null )
             {
-                config.set( DtlsConfig.DTLS_ADDITIONAL_ECC_TIMEOUT, TimeUtils.toNanos( toVisit.additionalEccTimeout ), TimeUnit.NANOSECONDS );
+                config
+                    .set(
+                        DtlsConfig.DTLS_ADDITIONAL_ECC_TIMEOUT,
+                        TimeUtils.toNanos( toVisit.additionalEccTimeout ),
+                        TimeUnit.NANOSECONDS
+                    );
             }
             if ( toVisit.maxRetransmissions != null )
             {
@@ -784,12 +904,16 @@ public class ConfigurationVisitor implements ConfigVisitor
     @Override
     public void visit( DatagramFilter toVisit ) throws ConfigException
     {
-        if ( toVisit.macErrorThreshold <= 0 ) throw new ConfigException( "mac-error-filter configuration error: invalid threshold { " + toVisit.macErrorThreshold + " }" );
+        if ( toVisit.macErrorThreshold <= 0 ) throw new ConfigException(
+            "mac-error-filter configuration error: invalid threshold { " + toVisit.macErrorThreshold + " }"
+        );
         config.set( DtlsConfig.DTLS_MAC_ERROR_FILTER_THRESHOLD, toVisit.macErrorThreshold );
         try
         {
             Long quitTime= TimeUtils.toNanos( toVisit.quitTime );
-            if ( quitTime <= 0 ) throw new ConfigException( "mac-error-filter configuration error: invalid quit time { " + quitTime + " }" );
+            if ( quitTime <= 0 ) throw new ConfigException(
+                "mac-error-filter configuration error: invalid quit time { " + quitTime + " }"
+            );
             config.set( DtlsConfig.DTLS_MAC_ERROR_FILTER_QUIET_TIME, quitTime, TimeUnit.NANOSECONDS );
         }
         catch ( InternalInvalidDurationException e )
@@ -841,11 +965,20 @@ public class ConfigurationVisitor implements ConfigVisitor
                     config.set( CoapConfig.MAX_SERVER_OBSERVES, -1 );
                 }
             }
-            if ( toVisit.checkIntervalTime != null )
-                config.set( CoapConfig.NOTIFICATION_CHECK_INTERVAL_TIME, TimeUtils.toNanos( toVisit.checkIntervalTime ), TimeUnit.NANOSECONDS );
-            if ( toVisit.checkIntervalCount != null ) config.set( CoapConfig.NOTIFICATION_CHECK_INTERVAL_COUNT, toVisit.checkIntervalCount );
-            if ( toVisit.reregistrationBackoff != null )
-                config.set( CoapConfig.NOTIFICATION_REREGISTRATION_BACKOFF, TimeUtils.toNanos( toVisit.reregistrationBackoff ), TimeUnit.NANOSECONDS );
+            if ( toVisit.checkIntervalTime != null ) config
+                .set(
+                    CoapConfig.NOTIFICATION_CHECK_INTERVAL_TIME,
+                    TimeUtils.toNanos( toVisit.checkIntervalTime ),
+                    TimeUnit.NANOSECONDS
+                );
+            if ( toVisit.checkIntervalCount != null ) config
+                .set( CoapConfig.NOTIFICATION_CHECK_INTERVAL_COUNT, toVisit.checkIntervalCount );
+            if ( toVisit.reregistrationBackoff != null ) config
+                .set(
+                    CoapConfig.NOTIFICATION_REREGISTRATION_BACKOFF,
+                    TimeUtils.toNanos( toVisit.reregistrationBackoff ),
+                    TimeUnit.NANOSECONDS
+                );
         }
         catch ( InternalInvalidDurationException e )
         {
