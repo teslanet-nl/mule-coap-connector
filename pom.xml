@@ -231,6 +231,7 @@ Contributors:
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
+                    <centralSnapshotsUrl>https://central.sonatype.com/repository/maven-snapshots/</centralSnapshotsUrl>
                 </configuration>
             </plugin>
 		</plugins>
