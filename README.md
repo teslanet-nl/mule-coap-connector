@@ -40,7 +40,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -169,8 +169,8 @@ public class AsyncMulticastTest extends AbstractClientTestCase
             assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
             assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
             assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
+            assertEquals( "wrong remote address", "/127.0.0.1:5690", attributes.getRemoteAddress() );
             assertArrayEquals( "wrong response payload", expectedPayload, (byte[]) response.getPayload().getValue() );
         }
     }
-
 }

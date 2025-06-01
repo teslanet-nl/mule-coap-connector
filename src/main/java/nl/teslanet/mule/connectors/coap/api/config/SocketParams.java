@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,19 +43,26 @@ public class SocketParams implements VisitableConfig
      */
     @Parameter
     @Optional
-    @Summary( "The hostname or IP address the CoAP endpoint binds to. If empty anyLocalAddress is used (typically 0.0.0.0 or ::0)" )
+    @Summary(
+        "The hostname or IP address the CoAP endpoint binds to. If empty anyLocalAddress is used (typically 0.0.0.0 or ::0)"
+    )
     @Example( value= "0.0.0.0" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public String bindToHost= null;
 
     /**
-     * The port the CoAP endpoint binds to.  
+     * The port the CoAP endpoint binds to. 
      * When empty a free ephemeral port will be used, which is usual for client endpoints.
-     * Server endpoint usually will bind to one of the standardized CoAP ports 5683 (coap) and 5684 (coaps), or to other predetermined port value. 
+     * A server endpoint usually binds to one of the standard CoAP ports 5683 (coap) and 5684 (coaps), or to another predetermined port value. 
      */
     @Parameter
     @Optional
+    @Summary(
+        "The port the CoAP endpoint binds to.\n"
+            + "When empty a free ephemeral port will be used, which is usual for client endpoints.\n"
+            + "A server endpoint usually binds to one of the standard CoAP ports 5683 (coap) and 5684 (coaps), or to another predetermined port value."
+    )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     public Integer bindToPort= null;

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -47,6 +47,7 @@ import nl.teslanet.mule.connectors.coap.api.config.dtls.NoReplayFilter;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractTCPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractTLSEndpoint;
+import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.DTLSEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.MulticastUDPEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.TCPClientEndpoint;
@@ -289,6 +290,16 @@ public interface ConfigVisitor
      * @throws ConfigException When the visit is not successful.
      */
     public default void visit( AbstractEndpoint toVisit ) throws ConfigException
+    {
+        //NOOP
+    }
+
+    /**
+     * Visit AbstractUDPEndpoint configuration object.
+     * @param toVisit The object to visit.
+     * @throws ConfigException When the visit is not successful.
+     */
+    public default void visit( AbstractUDPEndpoint toVisit ) throws ConfigException
     {
         //NOOP
     }

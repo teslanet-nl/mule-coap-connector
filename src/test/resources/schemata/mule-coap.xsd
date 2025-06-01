@@ -21,6 +21,7 @@
   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
   #L%
   -->
+
 <xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.teslanet.nl/schema/mule/coap" attributeFormDefault="unqualified" elementFormDefault="qualified">
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
   <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"></xs:import>
@@ -385,6 +386,23 @@
   </xs:complexType>
   <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" substitutionGroup="mule:abstract-shared-extension" abstract="true" name="global-abstract-abstract-endpoint"></xs:element>
   <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint" abstract="true" name="abstract-abstract-endpoint"></xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableInt" use="required" name="bindToPort"></xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="group"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="networkInterface"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" type="coap:nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig" abstract="true" name="abstract-multicast-receiver"></xs:element>
+  <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" substitutionGroup="coap:abstract-multicast-receiver" name="multicast-receiver">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="coap:nl.teslanet.mule.connectors.coap.api.MulticastReceiverConfig"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.config.UdpParams">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
@@ -399,6 +417,13 @@
     <xs:complexContent>
       <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint">
         <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="multicast-receivers">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-multicast-receiver"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="udp-params">
             <xs:complexType>
               <xs:complexContent>
@@ -407,6 +432,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
+        <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableName" use="optional" name="multicastReceivers"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="udpParams"></xs:attribute>
         <xs:attribute xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="mule:substitutableBoolean" use="optional" default="true" name="strictResponseMatching"></xs:attribute>
       </xs:extension>

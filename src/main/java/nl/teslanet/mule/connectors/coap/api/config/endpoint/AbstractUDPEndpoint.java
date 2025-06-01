@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,8 +23,6 @@
 package nl.teslanet.mule.connectors.coap.api.config.endpoint;
 
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mule.runtime.api.meta.ExpressionSupport;
@@ -38,32 +36,42 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.config.ConfigException;
 import nl.teslanet.mule.connectors.coap.api.config.ConfigVisitor;
-import nl.teslanet.mule.connectors.coap.api.config.MulticastParams;
+import nl.teslanet.mule.connectors.coap.api.config.UdpParams;
 
 
 /**
- * UDP endpoint that can receive coap multi-cast messages.
+ * Abstract UDP CoAP endpoint configuration
  *
  */
 @TypeDsl( allowInlineDefinition= true, allowTopLevelDefinition= true )
-public class MulticastUDPEndpoint extends AbstractUDPEndpoint
+public abstract class AbstractUDPEndpoint extends AbstractEndpoint
 {
     /**
-     * Parameters for receiving  multi-cast messages..
+     * UDP endpoint parameters.
      */
     @Parameter
     @Optional
     @NullSafe
-    @Summary( value= "Parameters for multi-cast communication." )
+    @Summary( value= "UDP parameters" )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    public MulticastParams multicastParams;
+    public UdpParams udpParams= null;
+
+    /**
+     * When enabled peer response address is checked.
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Summary( value= "When enabled peer response address is checked." )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    public boolean strictResponseMatching= true;
 
     /**
      * Default Constructor used by Mule. 
      * Mandatory and Nullsafe params are set by Mule.
      */
-    public MulticastUDPEndpoint()
+    public AbstractUDPEndpoint()
     {
         super();
     }
@@ -71,22 +79,35 @@ public class MulticastUDPEndpoint extends AbstractUDPEndpoint
     /**
      * Constructor for manually constructing the endpoint.
      * (Mule uses default constructor and sets Nullsafe params.)
-     * @param name the manually set name of the endpoint
+     * @param name The manually set name of the endpoint
      */
-    public MulticastUDPEndpoint( String name )
+    public AbstractUDPEndpoint( String name )
     {
         super( name );
-        multicastParams= new MulticastParams( new CopyOnWriteArrayList<>() );
+        udpParams= new UdpParams();
     }
 
     /**
-     * Accept visitor.
+     * Constructor for manually constructing the endpoint.
+     * (Mule uses default constructor and sets Nullsafe params.)
+     * @param name The manually set name of the endpoint
+     * @param port The manually set port to bind to.
+     */
+    public AbstractUDPEndpoint( String name, int port )
+    {
+        super( name, port );
+        udpParams= new UdpParams();
+    }
+
+    /**
+     * Accept a visitor and pass on.
+     * @throws ConfigException 
      */
     @Override
     public void accept( ConfigVisitor visitor ) throws ConfigException
     {
         super.accept( visitor );
-        multicastParams.accept( visitor );
+        udpParams.accept( visitor );
         visitor.visit( this );
     }
 
@@ -108,10 +129,11 @@ public class MulticastUDPEndpoint extends AbstractUDPEndpoint
         {
             return false;
         }
-        MulticastUDPEndpoint rhs= (MulticastUDPEndpoint) obj;
+        AbstractUDPEndpoint rhs= (AbstractUDPEndpoint) obj;
         return new EqualsBuilder()
             .appendSuper( super.equals( obj ) )
-            .append( multicastParams, rhs.multicastParams )
+            .append( strictResponseMatching, rhs.strictResponseMatching )
+            .append( udpParams, rhs.udpParams )
             .isEquals();
     }
 
@@ -121,7 +143,10 @@ public class MulticastUDPEndpoint extends AbstractUDPEndpoint
     @Override
     public int hashCode()
     {
-        return new HashCodeBuilder( 13, 33 ).appendSuper( super.hashCode() ).append( multicastParams ).toHashCode();
+        return new HashCodeBuilder( 13, 33 )
+            .appendSuper( super.hashCode() )
+            .append( strictResponseMatching )
+            .append( udpParams )
+            .toHashCode();
     }
-
 }
