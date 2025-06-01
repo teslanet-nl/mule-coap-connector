@@ -31,17 +31,8 @@ pipeline
             }
             steps
             {
- 				sh '''
-		            mvn --errors --batch-mode --settings $MVN_SETTINGS release:clean
-	            '''
-            }
-        }
-        stage('build')
-        {
-            steps
-            {
                 sh '''
-                	mvn --errors --batch-mode --settings $MVN_SETTINGS clean package -DskipTests
+                    mvn --errors --batch-mode --settings $MVN_SETTINGS release:clean
                 '''
             }
         }
@@ -60,7 +51,7 @@ pipeline
             }
             steps
             {
-                sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS verify sonar:sonar -Psonar'
+                sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS clean verify sonar:sonar -Psonar'
             }
         }
         stage('verify and deploy')
@@ -71,10 +62,10 @@ pipeline
             }
              steps
             {
-                sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS deploy sonar:sonar -Psonar'
+                sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS clean deploy sonar:sonar -Psonar'
             }
         }
-        stage('release-prepare')
+        stage('release')
         {
             when
             {
@@ -82,18 +73,15 @@ pipeline
             }
             steps
             {
-		   		sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS release:prepare'
+                sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS clean release:prepare release:perform'
             }
-        }
-        stage('release-perform')
-        {
-            when
+            post
             {
-                expression { params.BUILD_RELEASE }
-            }
-            steps
-            {
-               sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS release:perform'
+                failure
+                {
+                    echo 'An unexpected error occurred. Rollbacking...'
+                    sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS release:rollback'
+                }
             }
         }
     }
