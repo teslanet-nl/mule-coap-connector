@@ -2,8 +2,8 @@ pipeline
 {
     parameters
     {
-        booleanParam (  name: 'DEPLOY_SNAPSHOT',  defaultValue: false, description: 'when true snapshot is deployed' )
-        booleanParam (  name: 'BUILD_RELEASE',  defaultValue: false, description: 'when true  a release is built' )
+        booleanParam (  name: 'DEPLOY',  defaultValue: false, description: 'when true artifact is deployed' )
+        booleanParam (  name: 'RELEASE',  defaultValue: false, description: 'when true  a release is built' )
     }
     environment
     {
@@ -27,7 +27,7 @@ pipeline
         {
             when
             {
-                expression { params.BUILD_RELEASE }
+                expression { params.RELEASE }
             }
             steps
             {
@@ -42,11 +42,11 @@ pipeline
             {
                 not
                 { 
-                	expression { params.DEPLOY_SNAPSHOT }
+                	expression { params.DEPLOY }
                 }
                 not
                 { 
-                	expression { params.BUILD_RELEASE }
+                	expression { params.RELEASE }
                 }
             }
             steps
@@ -54,13 +54,13 @@ pipeline
                 sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS clean verify sonar:sonar -Psonar'
             }
         }
-        stage('verify and deploy')
+        stage('deploy')
         {
             when
             {
-                expression { params.DEPLOY_SNAPSHOT }
+                expression { params.DEPLOY }
             }
-             steps
+            steps
             {
                 sh 'mvn --errors --batch-mode --settings $MVN_SETTINGS clean deploy sonar:sonar -Psonar'
             }
@@ -69,7 +69,7 @@ pipeline
         {
             when
             {
-                expression { params.BUILD_RELEASE }
+                expression { params.RELEASE }
             }
             steps
             {
@@ -87,7 +87,6 @@ pipeline
     }
     post
     {
-        // Clean after build
         always
         {
             cleanWs( cleanWhenNotBuilt: false,
