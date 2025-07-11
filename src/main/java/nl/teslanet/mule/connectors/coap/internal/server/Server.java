@@ -23,8 +23,10 @@
 package nl.teslanet.mule.connectors.coap.internal.server;
 
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 
@@ -57,7 +59,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.api.EndpointInfo;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.ServerInfo;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
@@ -198,7 +202,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      * Calculated linger milliseconds.
      */
     private long lingerOnShutdownMillis= 250L;
-    
+
     /**
      * Initialize the server and connect to CoAP endpoints.
      */
@@ -429,6 +433,21 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     public SchedulerConfig getSchedulerConfig()
     {
         return schedulerConfig;
+    }
+
+    /**
+     * @return The server information.
+     */
+    public ServerInfo getInfo()
+    {
+
+        List< EndpointInfo > endpoints= new CopyOnWriteArrayList<>();
+        for ( org.eclipse.californium.core.network.Endpoint endpoint : coapServer.getEndpoints() )
+        {
+            URI uri= endpoint.getUri();
+            endpoints.add( new EndpointInfo( uri.getScheme(), uri.getHost(), uri.getPort() ) );
+        }
+        return new ServerInfo( serverName, endpoints );
     }
 
     /**

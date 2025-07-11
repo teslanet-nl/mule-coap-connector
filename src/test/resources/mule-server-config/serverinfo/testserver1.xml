@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Mule CoAP Connector
+  %%
+  Copyright (C) 2025 (teslanet.nl) Rogier Cobben
+  
+  Contributors:
+      (teslanet.nl) Rogier Cobben - initial creation
+  %%
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+  
+  This Source Code may also be made available under the following Secondary
+  Licenses when the conditions for such availability set forth in the Eclipse
+  Public License, v. 2.0 are satisfied: GNU General Public License, version 2
+  with the GNU Classpath Exception which is
+  available at https://www.gnu.org/software/classpath/license.html.
+  
+  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+  #L%
+  -->
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+		xmlns:coap="http://www.teslanet.nl/schema/mule/coap"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.teslanet.nl/schema/mule/coap http://www.teslanet.nl/schema/mule/coap/current/mule-coap.xsd
+">
+
+	<description>Mule CoAP connector test application</description>
+
+    <coap:udp-endpoint name="udp_endpoint" logTraffic="true">
+        <coap:socket-params bindToPort="5683" />
+    </coap:udp-endpoint>
+
+    <coap:udp-endpoint name="udp_endpoint_ephemeral" logTraffic="true">
+    </coap:udp-endpoint>
+
+    <coap:dtls-endpoint name="dtls_endpoint" logTraffic="true" >
+        <coap:socket-params bindToHost="127.0.0.1" bindToPort="5699"/>
+        <coap:dtls-role >
+            <coap:dtls-server-role />
+        </coap:dtls-role>
+        <coap:security-params >
+            <coap:pre-shared-key-params >
+                <coap:pre-shared-keys >
+                    <coap:pre-shared-key identity="dtlsidentity">
+                        <coap:key >
+                            <coap:key-from-hex hexValue="AABBCCDD" />
+                        </coap:key>
+                    </coap:pre-shared-key>
+                </coap:pre-shared-keys>
+            </coap:pre-shared-key-params>
+        </coap:security-params>
+    </coap:dtls-endpoint>
+
+	<coap:server-config name="config">
+        <coap:endpoint udpEndpoint="udp_endpoint" />
+        <coap:additional-endpoints >
+            <coap:additional-endpoint dtlsEndpoint="dtls_endpoint" />
+            <coap:additional-endpoint udpEndpoint="udp_endpoint_ephemeral" />
+        </coap:additional-endpoints>
+		<coap:resources>
+			<coap:resource resourceName="serverinfo" get="true" />
+		</coap:resources>
+	</coap:server-config>
+
+	<flow name="listen-all">
+        <coap:listener config-ref="config" get="true" pathPattern="/serverinfo">
+            <coap:response responseCode="CONTENT" responsePayload="#[vars.result]" contentFormat="0"/>
+        </coap:listener>
+        <set-variable value="#['']" variableName="result" mimeType="text/plain"/>
+        <coap:server-info config-ref="config" />
+        <set-variable value="#[%dw 2.0&#10;output text/plain&#10;---&#10;vars.result ++ payload.name as String ++ ':']" variableName="result" mimeType="text/plain" />
+        <foreach doc:name="For Each" collection="#[payload.endpoints]">
+            <set-variable value="#[%dw 2.0&#10;output text/plain&#10;---&#10;vars.result ++ payload.scheme as String ++ ',']" variableName="result" mimeType="text/plain" />
+            <set-variable value="#[%dw 2.0&#10;output text/plain&#10;---&#10;vars.result ++ payload.boundToHost as String ++ ',']" variableName="result" mimeType="text/plain" />
+            <set-variable value="#[%dw 2.0&#10;output text/plain&#10;---&#10;vars.result ++ payload.boundToPort as String ++ ';']" variableName="result" mimeType="text/plain" />
+        </foreach>
+	</flow>
+
+</mule>

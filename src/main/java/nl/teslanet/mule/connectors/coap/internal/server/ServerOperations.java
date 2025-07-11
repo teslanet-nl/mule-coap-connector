@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
+import nl.teslanet.mule.connectors.coap.api.ServerInfo;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ServerOperationErrorProvider;
@@ -191,5 +192,18 @@ public class ServerOperations
             uriList.add( found.getURI() );
         }
         return new ConcurrentSkipListSet<>( uriList );
+    }
+
+    /**
+     * Provides information about the server such as the addresses to which the server's endpoints are bound.
+     * If an endpoint is bound to an random ephemeral port, the actual port number to which it is bound is given.
+     * @param server The server instance to list resources of.
+     * @return The server info.
+     */
+    @Throws( { ServerOperationErrorProvider.class } )
+    public ServerInfo serverInfo( @Config
+    Server server ) throws InvalidResourceUriException
+    {
+        return server.getInfo();
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,10 +40,12 @@ import org.eclipse.californium.core.WebLink;
 import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.MessageObserverAdapter;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.elements.exception.ConnectorException;
+import org.eclipse.californium.scandium.DTLSConnector;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -81,6 +83,7 @@ import nl.teslanet.mule.connectors.coap.api.CoapRequestCode;
 import nl.teslanet.mule.connectors.coap.api.CoapRequestType;
 import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.DiscoverParams;
+import nl.teslanet.mule.connectors.coap.api.ObserveCancel;
 import nl.teslanet.mule.connectors.coap.api.ObserverAddParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverExistsParams;
 import nl.teslanet.mule.connectors.coap.api.ObserverRemoveParams;
@@ -136,8 +139,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
      */
     private static final Logger LOGGER= LoggerFactory.getLogger( Client.class.getCanonicalName() );
 
+    /**
+     * Invalid uri error message.
+     */
     private static final String INVALID_URI_FORMAT= "%s cannot form valid uri { scheme= %s, host= %s, port= %d, path= %s, query= %s }";
 
+    /**
+     * Clients reference name.
+     */
     @RefName
     private String clientName= null;
 
@@ -183,10 +192,10 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
     private boolean throwExceptionOnErrorResponse= true;
 
     /**
-     * Configuration of request defaults.
+     * Configuration of client defaults.
      */
-    @ParameterGroup( name= "Request defaults" )
-    private RequestConfig requestConfig;
+    @ParameterGroup( name= "Client defaults" )
+    private ClientConfig clientConfig;
 
     /**
      * The actual URI scheme
@@ -791,14 +800,14 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         if ( relation != null )
         {
             // only one observe relation allowed per uri
-            // TODO proactive or not, configurable?
-            relation.stop();
+            relation.stop(false, null);
             removeRelation( uri );
         }
         relation= new ObserveRelation(
             String.format( "CoAP Observer { %s::%s }", getClientName(), uri ),
             coapClient,
             requestBuilder,
+            clientConfig.isActiveObserveCancel(),
             ( requestBuilder2, response ) -> ResponseProcessor
                 .processMuleFlow( localAddress, requestBuilder2, response, processor )
         );
@@ -808,6 +817,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
 
     /**
      * Stop observing a resource of a CoAP server.
+     * @see <a href="https://www.rfc-editor.org/rfc/rfc7641.html#section-3.6">IETF RFC 7252 - 3.6. Cancellation</a>
      * @param params The parameters identifying the observer to stop.
      * @throws InternalUriException
      * @throws InternalInvalidObserverException
@@ -820,7 +830,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         ObserveRelation relation= getRelation( uri );
         if ( relation != null )
         {
-            relation.stop( requestBuilder.buildMessageType() == CoapMessageType.CONFIRMABLE );
+            relation
+                .stop(
+                    activeObserveCancel( params.getObserveCancel() ),
+                    requestBuilder.buildMessageType() == CoapMessageType.CONFIRMABLE
+                );
             removeRelation( uri );
         }
         else
@@ -843,6 +857,27 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         URI uri= requestBuilder.buildResourceUri();
         ObserveRelation relation= getRelation( uri );
         return( relation != null );
+    }
+
+    /**
+     * Determine whether an active observe cancel must be issued.
+     * @param cancel The 
+     * @return
+     */
+    boolean activeObserveCancel( ObserveCancel cancel )
+    {
+        if ( cancel == ObserveCancel.ACTIVE )
+        {
+            return true;
+        }
+        if ( cancel == ObserveCancel.PASSIVE )
+        {
+            return false;
+        }
+        else
+        {
+            return clientConfig.isActiveObserveCancel();
+        }
     }
 
     /**
@@ -1032,16 +1067,16 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     params.getPingAddress().getEndpointPort()
                 );
             }
-            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            else if ( clientConfig.getRemoteEndpointConfig() != null )
             {
                 setEndpointAddress(
-                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
-                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                    clientConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    clientConfig.getRemoteEndpointConfig().getEndpointPort()
                 );
             }
             else
             {
-                setEndpointAddress( requestConfig.getHost(), requestConfig.getPort() );
+                setEndpointAddress( clientConfig.getHost(), clientConfig.getPort() );
             }
         }
 
@@ -1064,7 +1099,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             else
             {
-                confirmable= requestConfig.isConfirmable();
+                confirmable= clientConfig.isConfirmable();
             }
             requestCode= CoapRequestCode.GET;
             resourcePath= Defs.COAP_URI_WELLKNOWN_CORE;
@@ -1104,7 +1139,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             else
             {
-                confirmable= requestConfig.isConfirmable();
+                confirmable= clientConfig.isConfirmable();
             }
         }
 
@@ -1120,9 +1155,9 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             {
                 resourcePath= params.getPath();
             }
-            else if ( requestConfig.getPath() != null )
+            else if ( clientConfig.getPath() != null )
             {
-                resourcePath= requestConfig.getPath();
+                resourcePath= clientConfig.getPath();
             }
         }
 
@@ -1134,7 +1169,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
         private CoapRequestBuilderImpl( AbstractQueryParams params )
         {
             this( (AbstractAddressParams) params );
-            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryParams() );
+            resourceQuery= MessageUtils.queryString( clientConfig.getQueryConfigs(), params.getQueryParams() );
         }
 
         /**
@@ -1152,11 +1187,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     params.getRemoteEndpoint().getEndpointPort()
                 );
             }
-            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            else if ( clientConfig.getRemoteEndpointConfig() != null )
             {
                 setEndpointAddress(
-                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
-                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                    clientConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    clientConfig.getRemoteEndpointConfig().getEndpointPort()
                 );
             }
             else
@@ -1167,24 +1202,24 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 }
                 else
                 {
-                    endpointHost= requestConfig.getHost();
+                    endpointHost= clientConfig.getHost();
                 }
                 if ( params.getPort() != null )
                 {
                     endpointPort= params.getPort();
                 }
-                else if ( requestConfig.getPort() != null )
+                else if ( clientConfig.getPort() != null )
                 {
-                    endpointPort= requestConfig.getPort();
+                    endpointPort= clientConfig.getPort();
                 }
             }
             if ( params.getRemoteEndpoint() != null )
             {
                 setProxyScheme( params.getRemoteEndpoint() );
             }
-            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            else if ( clientConfig.getRemoteEndpointConfig() != null )
             {
-                setProxyScheme( requestConfig.getRemoteEndpointConfig() );
+                setProxyScheme( clientConfig.getRemoteEndpointConfig() );
             }
             if ( params.getHost() != null )
             {
@@ -1192,15 +1227,15 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             else
             {
-                resourceHost= requestConfig.getHost();
+                resourceHost= clientConfig.getHost();
             }
             if ( params.getPort() != null )
             {
                 resourcePort= params.getPort();
             }
-            else if ( requestConfig.getPort() != null )
+            else if ( clientConfig.getPort() != null )
             {
-                resourcePort= requestConfig.getPort();
+                resourcePort= clientConfig.getPort();
             }
         }
 
@@ -1243,7 +1278,7 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             else
             {
-                confirmable= requestConfig.isConfirmable();
+                confirmable= clientConfig.isConfirmable();
             }
             //get the endpoint address
             if ( params.getRemoteEndpointConfig() != null )
@@ -1253,11 +1288,11 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                     params.getRemoteEndpointConfig().getEndpointPort()
                 );
             }
-            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            else if ( clientConfig.getRemoteEndpointConfig() != null )
             {
                 setEndpointAddress(
-                    requestConfig.getRemoteEndpointConfig().getEndpointHost(),
-                    requestConfig.getRemoteEndpointConfig().getEndpointPort()
+                    clientConfig.getRemoteEndpointConfig().getEndpointHost(),
+                    clientConfig.getRemoteEndpointConfig().getEndpointPort()
                 );
             }
             else
@@ -1268,24 +1303,24 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
                 }
                 else
                 {
-                    endpointHost= requestConfig.getHost();
+                    endpointHost= clientConfig.getHost();
                 }
                 if ( params.getPort() != null )
                 {
                     endpointPort= params.getPort();
                 }
-                else if ( requestConfig.getPort() != null )
+                else if ( clientConfig.getPort() != null )
                 {
-                    endpointPort= requestConfig.getPort();
+                    endpointPort= clientConfig.getPort();
                 }
             }
             if ( params.getRemoteEndpointConfig() != null )
             {
                 setProxyScheme( params.getRemoteEndpointConfig() );
             }
-            else if ( requestConfig.getRemoteEndpointConfig() != null )
+            else if ( clientConfig.getRemoteEndpointConfig() != null )
             {
-                setProxyScheme( requestConfig.getRemoteEndpointConfig() );
+                setProxyScheme( clientConfig.getRemoteEndpointConfig() );
             }
             if ( params.getHost() != null )
             {
@@ -1293,24 +1328,24 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             else
             {
-                resourceHost= requestConfig.getHost();
+                resourceHost= clientConfig.getHost();
             }
             if ( params.getPort() != null )
             {
                 resourcePort= params.getPort();
             }
-            else if ( requestConfig.getPort() != null )
+            else if ( clientConfig.getPort() != null )
             {
-                resourcePort= requestConfig.getPort();
+                resourcePort= clientConfig.getPort();
             }
-            resourceQuery= MessageUtils.queryString( requestConfig.getQueryConfigs(), params.getQueryConfigs() );
+            resourceQuery= MessageUtils.queryString( clientConfig.getQueryConfigs(), params.getQueryConfigs() );
             if ( params.getPath() != null )
             {
                 resourcePath= params.getPath();
             }
-            else if ( requestConfig.getPath() != null )
+            else if ( clientConfig.getPath() != null )
             {
-                resourcePath= requestConfig.getPath();
+                resourcePath= clientConfig.getPath();
             }
         }
 
@@ -1471,6 +1506,20 @@ public class Client implements Initialisable, Disposable, Startable, Stoppable
             }
             if ( proxyScheme != null ) request.getOptions().setProxyScheme( proxyScheme );
             setPayload( request );
+            if ( operationalEndpoint.getCoapEndpoint().getConnector() instanceof DTLSConnector )
+            {
+                request.addMessageObserver( new MessageObserverAdapter()
+                    {
+                        @Override
+                        protected void failed()
+                        {
+                            DTLSConnector connector= (DTLSConnector) operationalEndpoint
+                                .getCoapEndpoint()
+                                .getConnector();
+                            connector.close( request.getDestinationContext().getPeerAddress() );
+                        }
+                    } );
+            }
             return request;
         }
 

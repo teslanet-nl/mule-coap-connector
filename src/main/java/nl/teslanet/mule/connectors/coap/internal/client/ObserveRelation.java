@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -22,6 +22,8 @@
  */
 package nl.teslanet.mule.connectors.coap.internal.client;
 
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
@@ -65,6 +67,11 @@ public class ObserveRelation implements CoapHandler
     private final CoapRequestBuilder requestBuilder;
 
     /**
+     * The request builder.
+     */
+    private final boolean defaultProactiveCancel;
+
+    /**
      * processor that will process notifications.
      */
     private final ResponseProcessingStrategy processor;
@@ -75,13 +82,23 @@ public class ObserveRelation implements CoapHandler
     private CoapObserveRelation coapRelation= null;
 
     /**
+     * Flag indicating the observer is intended to be active.
+     */
+    private AtomicBoolean started= new AtomicBoolean( false );
+
+    /**
      * Constructor
-     * @param sourceCallback
+     * @param observerName The name of the observer. 
+     * @param coapClient The client this observer belongs to..
+     * @param requestBuilder The builder to issue observe requests.
+     * @param proactiveCancel The default setting indicating whether to proactively terminate the observation.
+     * @param processor The strategy that will process notifications.
      */
     ObserveRelation(
         String observerName,
         CoapClient coapClient,
         CoapRequestBuilder requestBuilder,
+        boolean proactiveCancel,
         ResponseProcessingStrategy processor
     )
     {
@@ -89,6 +106,7 @@ public class ObserveRelation implements CoapHandler
         this.observerName= observerName;
         this.coapClient= coapClient;
         this.requestBuilder= requestBuilder;
+        this.defaultProactiveCancel= proactiveCancel;
         this.processor= processor;
     }
 
@@ -97,43 +115,112 @@ public class ObserveRelation implements CoapHandler
      */
     public synchronized void start()
     {
-        try
+        if ( started.compareAndSet( false, true ) )
         {
-            coapRelation= sendObserveRequest();
-            LOGGER.info( "{} has started.", this );
-        }
-        catch (
-            InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
-            | InternalInvalidOptionValueException | InternalUnkownOptionException e
-        )
-        {
-            LOGGER.error( String.format( "%s failed to recreate relation with server.", this ), e );
+            try
+            {
+                coapRelation= sendObserveRequest();
+                LOGGER.info( "{} has started.", this );
+            }
+            catch (
+                InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+                | InternalInvalidOptionValueException | InternalUnkownOptionException e
+            )
+            {
+                LOGGER.error( String.format( "%s failed to start observe relation with server.", this ), e );
+            }
         }
     }
 
     /**
-     * Stop observing
+     * Resume observing after error.
+     */
+    public synchronized void resume()
+    {
+        if ( started.get() )
+        {
+            LOGGER.warn( "{} trying to restore observe relation with server...", this );
+            if ( coapRelation != null )
+            {
+                if ( coapRelation.isCanceled() )
+                {
+                    try
+                    {
+                        coapRelation= sendObserveRequest();
+                    }
+                    catch (
+                        InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
+                        | InternalInvalidOptionValueException | InternalUnkownOptionException e
+                    )
+                    {
+                        LOGGER
+                            .error(
+                                String
+                                    .format(
+                                        "%s observe request failed, cannot restore relation with server...",
+                                        this
+                                    ),
+                                e
+                            );
+                    }
+                    if ( coapRelation != null )
+                    {
+                        LOGGER.info( "{} observe request sent.", this );
+                    }
+                    else
+                    {
+                        LOGGER.error( "{} failed to recreate relation with server.", this );
+                    }
+                }
+                else
+                {
+                    if ( coapRelation.reregister() )
+                    {
+                        LOGGER.info( "{} reregistered on server.", this );
+                    }
+                    else
+                    {
+                        LOGGER.error( "{} failed to reregister on server.", this );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Stop observing with defaults.
      */
     public synchronized void stop()
     {
-        if ( coapRelation != null )
-        {
-            coapRelation.proactiveCancel();
-            coapRelation= null;
-            LOGGER.info( "{} has stopped.", this );
-        }
+        stop( null, null );
     }
 
     /**
-     * Stop observing
+     * Stop observing.
+     * Parameters are optional and when omitted, default values are used.
+     * @param proactiveCancel If true, a cancellation message is sent to the server. 
+     * @param confirmable If true, a cancellation message sent is confirmable.
      */
-    public synchronized void stop( boolean confirmable )
+    public synchronized void stop( Boolean proactiveCancel, Boolean confirmable )
     {
-        if ( coapRelation != null )
+        if ( started.compareAndSet( true, false ) )
         {
-            coapRelation.setConfirmable( confirmable );
-            coapRelation.proactiveCancel();
-            coapRelation= null;
+            if ( coapRelation != null )
+            {
+                if ( confirmable != null )
+                {
+                    coapRelation.setConfirmable( confirmable );
+                }
+                if ( proactiveCancel != null ? proactiveCancel : defaultProactiveCancel )
+                {
+                    coapRelation.proactiveCancel();
+                }
+                else
+                {
+                    coapRelation.reactiveCancel();
+                }
+                coapRelation= null;
+            }
             LOGGER.info( "{} has stopped.", this );
         }
     }
@@ -144,49 +231,6 @@ public class ObserveRelation implements CoapHandler
     @Override
     public void onError()
     {
-        LOGGER.warn( "{} failed to observe, trying to restore relation with server...", this );
-        if ( coapRelation != null )
-        {
-            //TODO wait time?
-            if ( coapRelation.isCanceled() )
-            {
-                try
-                {
-                    coapRelation= sendObserveRequest();
-                }
-                catch (
-                    InternalInvalidRequestCodeException | InternalUriException | InternalRequestException
-                    | InternalInvalidOptionValueException | InternalUnkownOptionException e
-                )
-                {
-                    LOGGER
-                        .error(
-                            String.format( "%s failed to observe, trying to restore relation with server...", this ),
-                            e
-                        );
-                }
-                if ( coapRelation != null )
-                {
-                    LOGGER.info( "{} relation with server recreated.", this );
-                }
-                else
-                {
-                    LOGGER.error( "{} failed to recreate relation with server.", this );
-                }
-            }
-            else
-            {
-                if ( coapRelation.reregister() )
-                {
-                    LOGGER.info( "{} reregistered on server.", this );
-                }
-                else
-                {
-                    LOGGER.error( "{} failed to reregister on server.", this );
-
-                }
-            }
-        }
         try
         {
             processor.process( requestBuilder, null );
@@ -195,6 +239,8 @@ public class ObserveRelation implements CoapHandler
         {
             LOGGER.error( String.format( "%s error processing failed.", this ), e );
         }
+        //TODO wait time?
+        resume();
     }
 
     /**

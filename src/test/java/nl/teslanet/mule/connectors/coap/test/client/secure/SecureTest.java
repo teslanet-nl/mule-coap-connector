@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -101,6 +101,17 @@ public class SecureTest extends AbstractSecureServerTestCase
     @Parameter( 4 )
     public String expectedPayload;
 
+    /**
+     * Defines the timeout in seconds that will be used to run the test.
+     *
+     * @return the timeout in seconds
+     */
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 120;
+    }
+
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
      */
@@ -130,5 +141,61 @@ public class SecureTest extends AbstractSecureServerTestCase
 
         String payload= getPayloadAsString( response );
         assertEquals( "wrong response payload", expectedPayload, payload );
+    }
+
+    /**
+     * Test CoAP request with a restarted server.
+     * @throws Exception should not happen in this test
+     */
+    @Test
+    public void testRestartedServer() throws Exception
+    {
+        Event result= flowRunner( flowName ).withPayload( "nothing_important" ).keepStreamsOpen().run();
+        Message response= result.getMessage();
+        result.getVariables().get( "saved_payload" );
+
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+
+        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
+
+        String payload= getPayloadAsString( response );
+        assertEquals( "wrong response payload", expectedPayload, payload );
+
+        super.tearDownServer();
+        super.setUpServer();
+
+        //expect no response
+        result= flowRunner( flowName ).withPayload( "nothing_important" ).keepStreamsOpen().run();
+        response= result.getMessage();
+        result.getVariables().get( "saved_payload" );
+
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+
+        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertTrue( "wrong response code", attributes.isNoResponse() );
+
+        payload= getPayloadAsString( response );
+        assertEquals( "wrong response payload", "null", payload );
+
+        //retry and expect reconnect.
+        result= flowRunner( flowName ).withPayload( "nothing_important" ).keepStreamsOpen().run();
+        response= result.getMessage();
+        result.getVariables().get( "saved_payload" );
+
+        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+        attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+
+        assertEquals( "wrong request code", expectedRequestCode.name(), attributes.getRequestCode() );
+        assertEquals( "wrong request uri", expectedRequestUri, attributes.getRequestUri() );
+        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
+
+        payload= getPayloadAsString( response );
+        assertEquals( "wrong response payload", expectedPayload, payload );
+
     }
 }

@@ -21,7 +21,6 @@
   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
   #L%
   -->
-
 <xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.teslanet.nl/schema/mule/coap" attributeFormDefault="unqualified" elementFormDefault="qualified">
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
   <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"></xs:import>
@@ -1356,6 +1355,11 @@
               <xs:documentation>When true the server is expected to acknowledge reception of the observe request.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
+          <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="activeObserveCancel">
+            <xs:annotation>
+              <xs:documentation>When true an observer is by default actively cancelled.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -1487,6 +1491,11 @@
         <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
           <xs:annotation>
             <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.ObserveCancelEnumType" use="optional" default="DEFAULT" name="observeCancel">
+          <xs:annotation>
+            <xs:documentation>When true a cancel message is sent. Otherwise a passive cancel is executed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1822,6 +1831,11 @@
         <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.CoapRequestTypeEnumType" use="optional" default="DEFAULT" name="type">
           <xs:annotation>
             <xs:documentation>When the request type is Confirmable (CON) the server is expected to acknowledge reception of the request. When Non-confirmable (NON) the client will not expect acknowledgement and will not be able to resend the message when needed. When DEFAULT the client default is used.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute xmlns="http://www.teslanet.nl/schema/mule/coap" type="nl.teslanet.mule.connectors.coap.api.ObserveCancelEnumType" use="optional" default="DEFAULT" name="observeCancel">
+          <xs:annotation>
+            <xs:documentation>When true a cancel message is sent. Otherwise a passive cancel is executed. When DEFAULT the client default is used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -2825,6 +2839,33 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ServerInfoType" substitutionGroup="mule:abstract-operator" name="server-info">
+    <xs:annotation>
+      <xs:documentation>Provides information about the server such as the addresses to which the server's endpoints are bound. If an endpoint is bound to an random ephemeral port, the actual port number to which it is bound is given.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ServerInfoType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1"></xs:sequence>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ResponseListenerType" substitutionGroup="mule:abstract-message-source" name="response-listener">
     <xs:annotation>
       <xs:documentation>The Response Handler message source receives responses on asynchronous CoAP client requests and observe notifications. The received CoAP messages are delivered to the handlers mule-flow.</xs:documentation>
@@ -3130,6 +3171,20 @@
           <xs:enumeration value="DEFAULT"></xs:enumeration>
           <xs:enumeration value="CONFIRMABLE"></xs:enumeration>
           <xs:enumeration value="NON_CONFIRMABLE"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:propertyPlaceholderType"></xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nl.teslanet.mule.connectors.coap.api.ObserveCancelEnumType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DEFAULT"></xs:enumeration>
+          <xs:enumeration value="ACTIVE"></xs:enumeration>
+          <xs:enumeration value="PASSIVE"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
       <xs:simpleType>
