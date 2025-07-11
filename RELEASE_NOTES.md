@@ -1,6 +1,13 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
+## Release 3.3.0
+
+* Added server info feature.
+* Added setting active/passive observe-cancel feature.
+* DTLS reconnect fix.
+* Updated dependencies.
+
 ## Release 3.2.0
 
 * Added multicast receiver feature.

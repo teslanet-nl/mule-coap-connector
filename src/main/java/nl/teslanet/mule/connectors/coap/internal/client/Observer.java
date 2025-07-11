@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -63,7 +63,10 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     @Config
     private Client client;
 
-    @ParameterGroup( name= "Observe uri" )
+    /**
+     * Observer configuration.
+     */
+    @ParameterGroup( name= "Observer configuration" )
     private ObserverConfig observerConfig;
 
     //TODO add refresh observe feature
@@ -94,6 +97,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
             this.toString(),
             client.getCoapClient(),
             requestBuilder,
+            client.activeObserveCancel( observerConfig.getObserveCancel() ),
             ( requestBuilder2, response ) -> ResponseProcessor
                 .processMuleFlow( localAdress, requestBuilder2, response, sourceCallback )
         );
@@ -109,8 +113,7 @@ public class Observer extends Source< InputStream, CoapResponseAttributes >
     {
         if ( relation != null )
         {
-            //TODO make type of canceling configurable
-            relation.stop( true );
+            relation.stop();
             relation= null;
         }
         LOGGER.info( "{} stopped.", this );

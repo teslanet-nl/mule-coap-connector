@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,49 +20,46 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.api;
+package nl.teslanet.mule.connectors.coap.internal.client;
 
 
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
- * The request parameters for stopping an CoAP observer.
+ * The configured defaults of a CoAP request.
  *
  */
-public class ObserverRemoveParams extends AbstractResourceRequestParams
+public class ClientConfig extends RequestConfig
 {
+    //TODO v4 replace by CoapRequestType and alter inheritance.
     /**
-     * When true a cancel message is sent. Otherwise a passive cancel is executed.
-     * When DEFAULT the client default is used.
+     * When true an observer is by default actively cancelled.
      */
     @Parameter
-    @Optional( defaultValue= "DEFAULT" )
-    @Expression( ExpressionSupport.SUPPORTED )
-    @Summary(
-        "When true a cancel message is sent. \nOtherwise a passive cancel is executed.\n When DEFAULT the client default is used"
-    )
-    @Placement( order= 71 )
-    private ObserveCancel observeCancel= ObserveCancel.DEFAULT;
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @Summary( "When true an observer is by default actively cancelled." )
+    private boolean activeObserveCancel= true;
 
     /**
-     * @return the observeCancel
+     * @return the activeObserveCancel
      */
-    public ObserveCancel getObserveCancel()
+    public boolean isActiveObserveCancel()
     {
-        return observeCancel;
+        return activeObserveCancel;
     }
 
     /**
-     * @param observeCancel the observeCancel to set
+     * @param activeObserveCancel the activeObserveCancel to set
      */
-    public void setObserveCancel( ObserveCancel observeCancel )
+    public void setActiveObserveCancel( boolean activeObserveCancel )
     {
-        this.observeCancel= observeCancel;
+        this.activeObserveCancel= activeObserveCancel;
     }
+
 }

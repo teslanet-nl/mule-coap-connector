@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -36,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class RequestConfig extends AbstractRequestConfig
 {
+    //TODO v4 replace by CoapRequestType and alter inheritance.
     /**
      * When true the server is expected to acknowledge reception of the observe request.
      */

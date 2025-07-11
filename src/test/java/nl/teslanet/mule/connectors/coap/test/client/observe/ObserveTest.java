@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -326,6 +326,144 @@ public class ObserveTest extends AbstractClientTestCase
      * @throws Exception should not happen in this test
      */
     @Test( timeout= 100000L )
+    public void testTemporaryObservePassive() throws Exception
+    {
+        Event result;
+        Message response;
+
+        MuleEventSpy spy= new MuleEventSpy( "temporary" );
+        spy.clear();
+
+        //let asynchronous work happen
+        pauze();
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
+
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "1st series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        assertEquals( "unexpected observation after 1st test series", 0, spy.getEvents().size() );
+
+        result= flowRunner( "start_temporary" ).withPayload( "nothing_important" ).run();
+        response= result.getMessage();
+        await( "missing observation start response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1;
+        } );
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "2nd series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        await( "number of observation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
+        result= flowRunner( "stop_temporary" )
+            .withPayload( "nothing_important" )
+            .withVariable( "observeCancel", "PASSIVE" )
+            .run();
+        response= result.getMessage();
+        pauze();
+        await( "observation stop response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "3rd series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        await( "number of observation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
+
+        CopyOnWriteArrayList< nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy.Event > events= spy.getEvents();
+        assertEquals( "wrong observation count", contents.size(), events.size() );
+        int i= 0;
+        int obsOffset= 0;
+        for ( nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy.Event spyEvent : events )
+        {
+            Message spyResponse= (Message) spyEvent.getContent();
+            assertTrue(
+                "wrong attributes class",
+                spyResponse.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+            CoapResponseAttributes attributes= (CoapResponseAttributes) spyResponse.getAttributes().getValue();
+            String payload= new String( ( (byte[]) spyResponse.getPayload().getValue() ), Defs.COAP_CHARSET );
+            if ( i == 1 ) obsOffset= attributes.getResponseOptions().getObserve().intValue() - 1;
+            assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
+            assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
+            assertEquals(
+                "observation nr: " + i + " has wrong requestType",
+                "CONFIRMABLE",
+                attributes.getRequestType()
+            );
+            if ( i == 0 || i == 6 )
+            {
+                assertEquals(
+                    "observation nr: " + i + " has wrong responseType",
+                    "ACKNOWLEDGEMENT",
+                    attributes.getResponseType()
+                );
+            }
+            else
+            {
+                assertEquals(
+                    "observation nr: " + i + " has wrong responseType",
+                    "NON_CONFIRMABLE",
+                    attributes.getResponseType()
+                );
+                assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), payload );
+                assertEquals(
+                    "observation nr: " + i + " has wrong observe option",
+                    obsOffset + i,
+                    attributes.getResponseOptions().getObserve().intValue()
+                );
+            }
+            ++i;
+        }
+    }
+
+    /**
+     * Test temporary observe 
+     * @throws Exception should not happen in this test
+     */
+    @Test( timeout= 100000L )
     public void testTemporaryObserve2() throws Exception
     {
         Event result;
@@ -363,7 +501,7 @@ public class ObserveTest extends AbstractClientTestCase
         result= flowRunner( "start_temporary" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         await( "missing observation start response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == 3;
+            return spy.getEvents().size() == 2;
         } );
         for ( int i= 1; i < contents.size(); i++ )
         {
@@ -383,12 +521,12 @@ public class ObserveTest extends AbstractClientTestCase
             );
         }
         await( "number of observation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == contents.size() + 2;
+            return spy.getEvents().size() == contents.size() + 1;
         } );
         result= flowRunner( "stop_temporary" ).withPayload( "nothing_important" ).run();
         response= result.getMessage();
         await( "observation stop response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == contents.size() + 3;
+            return spy.getEvents().size() == contents.size() + 2;
         } );
         for ( int i= 1; i < contents.size(); i++ )
         {
@@ -408,11 +546,11 @@ public class ObserveTest extends AbstractClientTestCase
             );
         }
         await( "number of observation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == contents.size() + 3;
+            return spy.getEvents().size() == contents.size() + 2;
         } );
 
         CopyOnWriteArrayList< nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy.Event > events= spy.getEvents();
-        assertEquals( "wrong observation count", 9, events.size() );
+        assertEquals( "wrong observation count", 8, events.size() );
         int i= 0;
         int obsOffset= 0;
         for ( nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy.Event spyEvent : events )
@@ -424,7 +562,7 @@ public class ObserveTest extends AbstractClientTestCase
             );
             CoapResponseAttributes attributes= (CoapResponseAttributes) spyResponse.getAttributes().getValue();
             String payload= new String( ( (byte[]) spyResponse.getPayload().getValue() ), Defs.COAP_CHARSET );
-            if ( i < 3 || i == 8 )
+            if ( i < 2 || i == 7 )
             {
                 if ( obsOffset == 0 && attributes.getResponseOptions().getObserve() != null )
                 {
@@ -450,10 +588,10 @@ public class ObserveTest extends AbstractClientTestCase
                     "NON_CONFIRMABLE",
                     attributes.getResponseType()
                 );
-                assertEquals( "observation nr: " + i + " has wrong content", contents.get( i - 2 ), payload );
+                assertEquals( "observation nr: " + i + " has wrong content", contents.get( i - 1 ), payload );
                 assertEquals(
                     "observation nr: " + i + " has wrong observe option",
-                    obsOffset + i - 2,
+                    obsOffset + i - 1,
                     attributes.getResponseOptions().getObserve().intValue()
                 );
             }
@@ -610,6 +748,148 @@ public class ObserveTest extends AbstractClientTestCase
         }
         await( "number of observation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
             return spy.getEvents().size() == contents.size() + 1;
+        } );
+
+        int obsOffset= 0;
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            response= (Message) spy.getEvents().get( i ).getContent();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            if ( i == 1 ) obsOffset= attributes.getResponseOptions().getObserve().intValue() - 1;
+            assertNotEquals( "observation nr: " + i + " is empty", null, response.getPayload().getValue() );
+            assertTrue( "observation nr: " + i + " indicates failure", attributes.isSuccess() );
+            assertEquals(
+                "observation nr: " + i + " has wrong requestType",
+                "NON_CONFIRMABLE",
+                attributes.getRequestType()
+            );
+            if ( i == 0 )
+            {
+                assertEquals(
+                    "observation nr: " + i + " has wrong responseType",
+                    "ACKNOWLEDGEMENT",
+                    attributes.getResponseType()
+                );
+            }
+            if ( i > 0 )
+            {
+                assertEquals(
+                    "observation nr: " + i + " has wrong responseType",
+                    "NON_CONFIRMABLE",
+                    attributes.getResponseType()
+                );
+            }
+            assertEquals(
+                "observation nr: " + i + " has wrong content",
+                contents.get( i ),
+                new String( (byte[]) response.getPayload().getValue() )
+            );
+            assertEquals(
+                "observation nr: " + i + " has wrong observe option",
+                obsOffset + i,
+                attributes.getResponseOptions().getObserve().intValue()
+            );
+        }
+    }
+
+    /**
+     * Test temporary observe using NON requests
+     * @throws Exception should not happen in this test
+     */
+    @Test( timeout= 100000L )
+    public void testTemporaryObserveNonPassive() throws Exception
+    {
+        Event result;
+        Message response;
+
+        MuleEventSpy spy= new MuleEventSpy( "temporary" );
+        spy.clear();
+
+        //let asynchronous work happen
+        pauze();
+        assertEquals( "unexpected observation on start test", 0, spy.getEvents().size() );
+
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "1st series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        assertEquals( "unexpected observation after 1st test series", 0, spy.getEvents().size() );
+
+        result= flowRunner( "start_temporary" )
+            .withPayload( "nothing_important" )
+            .withVariable( "msgType", "NON_CONFIRMABLE" )
+            .run();
+        response= result.getMessage();
+        await( "missing observation start response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == 1;
+        } );
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "2nd series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        await( "number of observation after 2nd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
+        result= flowRunner( "stop_temporary" )
+            .withPayload( "nothing_important" )
+            .withVariable( "msgType", "NON_CONFIRMABLE" )
+            .withVariable( "observeCancel", "PASSIVE" )
+            .run();
+        response= result.getMessage();
+        pauze();
+        await( "observation stop response" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
+        } );
+        for ( int i= 1; i < contents.size(); i++ )
+        {
+            pauze();
+            result= flowRunner( "do_put_temporary" ).withPayload( contents.get( i ) ).run();
+            response= result.getMessage();
+            assertTrue(
+                "wrong attributes class",
+                response.getAttributes().getValue() instanceof CoapResponseAttributes
+            );
+
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            assertEquals(
+                "3rd series put nr: " + i + " gave wrong response",
+                ResponseCode.CHANGED.name(),
+                attributes.getResponseCode()
+            );
+        }
+        await( "number of observation after 3rd test series" ).atMost( 10, TimeUnit.SECONDS ).until( () -> {
+            return spy.getEvents().size() == contents.size();
         } );
 
         int obsOffset= 0;

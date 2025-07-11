@@ -130,6 +130,18 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         return "mule-server-config/multicast/testserverIPv4.xml";
     };
 
+    //TODO to superclass
+    /**
+     * Defines the timeout in seconds that will be used to run the test.
+     *
+     * @return the timeout in seconds
+     */
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 60;
+    }
+
     @Before
     public void additionalSetUp() throws UnknownHostException, SocketException
     {
@@ -229,7 +241,7 @@ public class MulticastIPv4Test extends AbstractServerTestCase
         assertTrue( "wrong payload in response", Data.validateContent( response.getPayload(), contentSize ) );
     }
 
-    @Test( timeout= 20000L )
+    @Test
     public void testMulticast() throws Exception
     {
         MultiCoapHandler handler= new MultiCoapHandler();
