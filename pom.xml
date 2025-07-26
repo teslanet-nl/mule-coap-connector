@@ -35,7 +35,7 @@
 
     <groupId>nl.teslanet.mule.connectors</groupId>
     <artifactId>mule-coap-connector</artifactId>
-    <version>3.3.1-SNAPSHOT</version>
+    <version>3.3.1</version>
     <packaging>mule-extension</packaging>
     
     <name>${project.groupId}:${project.artifactId}</name>
@@ -76,7 +76,7 @@
         <connection>${mule-coap-connector.connection}</connection>
         <developerConnection>${mule-coap-connector.developerConnection}</developerConnection>
         <url>${mule-coap-connector.url}</url>
-        <tag>HEAD</tag>
+        <tag>mule-coap-connector-3.3.1</tag>
     </scm>
 
     <build>
