@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -81,7 +81,12 @@ public class RequestOptionsAttributes
      * If {@code true}, client requests to provide size2 option in the response
      * (indicating response payload size).
      */
-    protected boolean provideResponseSize= false;
+    protected boolean requireResponseSize= false;
+
+    /**
+     * Indicates client interest or disinterest in a response or category of responses.
+     */
+    protected RequireResponseAttribute requireResponse= null;
 
     /**
      * The scheme to use when the server is a forwarding proxy.
@@ -205,9 +210,17 @@ public class RequestOptionsAttributes
     /**
      * @return The true when Size2 option is requested, otherwise null.
      */
-    public boolean isProvideResponseSize()
+    public boolean isRequireResponseSize()
     {
-        return provideResponseSize;
+        return requireResponseSize;
+    }
+
+    /**
+     * @return the provideResponse
+     */
+    public RequireResponseAttribute getRequireResponse()
+    {
+        return requireResponse;
     }
 
     /**

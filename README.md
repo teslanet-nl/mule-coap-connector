@@ -22,7 +22,8 @@ The CoAP protocol is an Internet Standard published by [IETF](https://www.ietf.o
 * [IETF rfc 7252](https://www.rfc-editor.org/rfc/rfc7252)
 * [IETF rfc 7641](https://www.rfc-editor.org/rfc/rfc7641)
 * [IETF rfc 7959](https://www.rfc-editor.org/rfc/rfc7959)
-* [IETF rfc 8132 ](https://www.rfc-editor.org/rfc/rfc8132)
+* [IETF rfc 7967](https://www.rfc-editor.org/rfc/rfc7967)
+* [IETF rfc 8132](https://www.rfc-editor.org/rfc/rfc8132)
 
 and other.
 
@@ -40,7 +41,7 @@ add following dependency to your `pom.xml`:
     <dependency>
         <groupId>nl.teslanet.mule.connectors</groupId>
         <artifactId>mule-coap-connector</artifactId>
-        <version>3.3.2</version>
+        <version>3.4.0</version>
         <classifier>mule-plugin</classifier>
     </dependency>
   

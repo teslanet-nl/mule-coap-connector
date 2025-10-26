@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -20,18 +20,26 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
-package nl.teslanet.mule.connectors.coap.test.client.basic;
+package nl.teslanet.mule.connectors.coap.test.server.noresponse;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.SocketException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
-import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.CoAP.Type;
+import org.eclipse.californium.core.config.CoapConfig;
+import org.eclipse.californium.core.coap.NoResponseOption;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.elements.config.Configuration;
+import org.eclipse.californium.elements.exception.ConnectorException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -39,14 +47,17 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
-import nl.teslanet.mule.connectors.coap.api.attributes.Result;
-import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
+import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
+import nl.teslanet.mule.connectors.coap.test.utils.AbstractServerTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
 
 
+/**
+ * Server no response test
+ *
+ */
 @RunnerDelegateTo( Parameterized.class )
-public class NoResponseTest extends AbstractClientTestCase
+public class NoResponseTest extends AbstractServerTestCase
 {
     static boolean bools[]= { true, false };
 
@@ -68,7 +79,7 @@ public class NoResponseTest extends AbstractClientTestCase
                     {
                         for ( boolean serverErrorValue : bools )
                         {
-                            tests.add( new Object []{ "POST", rspCode, successValue, clientErrorValue, serverErrorValue } );
+                            tests.add( new Object []{ Code.POST, rspCode, successValue, clientErrorValue, serverErrorValue } );
                         }
                     }
                 }
@@ -81,7 +92,7 @@ public class NoResponseTest extends AbstractClientTestCase
      * The request code to use.
      */
     @Parameter( 0 )
-    public String requestCode;
+    public Code requestCode;
 
     /**
      * The responseCode to test.
@@ -107,50 +118,46 @@ public class NoResponseTest extends AbstractClientTestCase
     @Parameter( 4 )
     public boolean requireServerError;
 
-    /* (non-Javadoc)
-     * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
-     */
     @Override
     protected String getConfigResources()
     {
-        return "mule-client-config/basic/testclient-noresponse.xml";
+        return "mule-server-config/noresponse/testserver1.xml";
     };
 
-    /* (non-Javadoc)
-     * @see nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase#getTestServer()
+    /**
+     * Create Coap Configuration
      */
     @Override
-    protected CoapServer getTestServer() throws SocketException
+    protected Configuration getCoapConfiguration()
     {
-        return new ResponseTestServer();
+        return super.getCoapConfiguration().set( CoapConfig.EXCHANGE_LIFETIME, 2, TimeUnit.SECONDS );
     }
 
-    /**
-     * Test CoAP request
-     * @throws Exception should not happen in this test
-     */
     @Test
-    public void testNoResponse() throws Exception
+    public void testSuccess() throws ConnectorException, IOException
     {
         MuleEventSpy spy= new MuleEventSpy( "do_request" );
         spy.clear();
 
-        flowRunner( "do_request" )
-            .withPayload( "nothing_important" )
-            .withVariable( "code", requestCode )
-            .withVariable( "host", "127.0.0.1" )
-            .withVariable( "port", "5683" )
-            .withVariable( "path", "/response/" + responseCode.name() )
-            .withVariable( "requireSuccess", requireSuccess )
-            .withVariable( "requireClientError", requireClientError )
-            .withVariable( "requireServerError", requireServerError )
-            .run();
+        String uri= "coap://localhost/do_request";
+        setClientUri( uri );
+
+        Request request= new Request( Code.POST, Type.NON );
+        request
+            .getOptions()
+            .setNoResponse(
+                ( !requireSuccess ? NoResponseOption.SUPPRESS_SUCCESS : 0 ) + ( !requireClientError ? NoResponseOption.SUPPRESS_CLIENT_ERROR : 0 ) + ( !requireServerError
+                    ? NoResponseOption.SUPPRESS_SERVER_ERROR : 0 )
+            );
+        request.setPayload( responseCode.name() );
+        CoapResponse response= client.advanced( request );
 
         assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
-        Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        boolean responseReceived= attributes.getResult() != Result.NO_RESPONSE;
+        Message spied= (Message) spy.getEvents().get( 0 ).getContent();
+        assertTrue( "wrong attributes class", spied.getAttributes().getValue() instanceof CoapRequestAttributes );
+        CoapRequestAttributes attributes= (CoapRequestAttributes) spied.getAttributes().getValue();
+
+        boolean responseReceived= response != null;
         if ( responseCode.isSuccess() )
         {
             assertEquals( "wrong succes response", requireSuccess, responseReceived );
@@ -163,5 +170,14 @@ public class NoResponseTest extends AbstractClientTestCase
         {
             assertEquals( "wrong server error response", requireServerError, responseReceived );
         }
+        assertEquals( "wrong requireSuccess attribute", requireSuccess, attributes.getRequestOptions().getRequireResponse().isSuccess() );
+        assertEquals( "wrong requireClientError attribute", requireClientError, attributes.getRequestOptions().getRequireResponse().isClientError() );
+        assertEquals( "wrong requireServerError attribute", requireServerError, attributes.getRequestOptions().getRequireResponse().isServerError() );
+        assertEquals( "wrong require all attribute", requireSuccess && requireClientError && requireServerError, attributes.getRequestOptions().getRequireResponse().isAll() );
+        assertEquals(
+            "wrong require none attribute",
+            !( requireSuccess || requireClientError || requireServerError ),
+            attributes.getRequestOptions().getRequireResponse().isNone()
+        );
     }
 }

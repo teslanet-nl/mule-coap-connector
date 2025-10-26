@@ -295,7 +295,7 @@ public class DefaultRequestOptionsAttributesTest
 
         CoapRequestOptionsAttributesImpl attributes= new CoapRequestOptionsAttributesImpl( set );
 
-        boolean attr= attributes.isProvideResponseSize();
+        boolean attr= attributes.isRequireResponseSize();
 
         assertTrue( "coap.opt.size2: wrong value", attr );
     }

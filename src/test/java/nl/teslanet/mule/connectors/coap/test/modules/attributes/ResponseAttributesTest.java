@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -275,7 +275,7 @@ public class ResponseAttributesTest
                 + "      BytesValue{ 04 },\n" + "      BytesValue{ 05 }\n" + "   ],\n" + "   observe=1,\n"
                 + "   other=[\n" + "      Option{ alias=X, number=65001, valueAsNumber=401 },\n"
                 + "      Option{ alias=Y, number=65002, valueAsNumber=402 }\n" + "   ],\n"
-                + "   provideResponseSize=true,\n" + "   proxyScheme=http,\n"
+                + "   requireResponseSize=true,\n" + "   proxyScheme=http,\n"
                 + "   proxyUri=http://test:8080/path?x=3,\n" + "   uriHost=myhost,\n" + "   uriPort=6354,\n"
                 + "   uriPath=[\n" + "      parent,\n" + "      child\n" + "   ],\n" + "   uriQuery=[\n"
                 + "      a=1,\n" + "      b=2\n" + "   ]\n" + "}",
@@ -330,7 +330,7 @@ public class ResponseAttributesTest
                 + "         BytesValue{ 05 }\n" + "      ],\n" + "      observe=1,\n" + "      other=[\n"
                 + "         Option{ alias=X, number=65001, valueAsNumber=401 },\n"
                 + "         Option{ alias=Y, number=65002, valueAsNumber=402 }\n" + "      ],\n"
-                + "      provideResponseSize=true,\n" + "      proxyScheme=http,\n"
+                + "      requireResponseSize=true,\n" + "      proxyScheme=http,\n"
                 + "      proxyUri=http://test:8080/path?x=3,\n" + "      uriHost=myhost,\n" + "      uriPort=6354,\n"
                 + "      uriPath=[\n" + "         parent,\n" + "         child\n" + "      ],\n" + "      uriQuery=[\n"
                 + "         a=1,\n" + "         b=2\n" + "      ]\n" + "   },\n"
