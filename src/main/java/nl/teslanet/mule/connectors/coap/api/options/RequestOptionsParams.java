@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -46,9 +46,8 @@ public class RequestOptionsParams
      * Content-Format identifier that is defined in the "CoAP Content-Formats"
      * registry (Section 12.3).
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC 7252 -
-     *      5.10.3. Content-Format</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.3">IETF RFC
+     *      7252 - 5.10.3. Content-Format</a>
      */
     @Parameter
     @Optional
@@ -65,9 +64,8 @@ public class RequestOptionsParams
      * Content-Format identifier that is defined in the "CoAP Content-Formats"
      * registry (Section 12.3).
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.4">IETF RFC 7252 -
-     *      5.10.4. Accept</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.4">IETF RFC
+     *      7252 - 5.10.4. Accept</a>
      */
     @Parameter
     @Optional
@@ -95,9 +93,8 @@ public class RequestOptionsParams
      * entity-tag for the current representation, i.e., is valid; the 2.03 Valid
      * response then echoes this specific ETag in a response option.
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC 7252 -
-     *      5.10.6. ETag</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.6">IETF RFC
+     *      7252 - 5.10.6. ETag</a>
      */
     @Parameter
     @Optional
@@ -108,18 +105,16 @@ public class RequestOptionsParams
 
     /**
      * RFC 7252: The value of an If-Match option is either an ETag or the empty
-     * string.  An If-Match option with an ETag matches a representation
-     * with that exact ETag.  An If-Match option with an empty value matches
-     * any existing representation (i.e., it places the precondition on the
-     * existence of any current representation for the target resource).
-     * The If-Match Option can occur multiple times. If any of the options
-     * match, then the condition is fulfilled.
-     * If there is one or more If-Match Options, but none of the options
+     * string. An If-Match option with an ETag matches a representation with that
+     * exact ETag. An If-Match option with an empty value matches any existing
+     * representation (i.e., it places the precondition on the existence of any
+     * current representation for the target resource). The If-Match Option can
+     * occur multiple times. If any of the options match, then the condition is
+     * fulfilled. If there is one or more If-Match Options, but none of the options
      * match, then the condition is not fulfilled.
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 -
-     *      5.10.8.1. If-Match</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC
+     *      7252 - 5.10.8.1. If-Match</a>
      */
     @Parameter
     @Optional( defaultValue= "false" )
@@ -138,9 +133,8 @@ public class RequestOptionsParams
      * overwrites when multiple clients are acting in parallel on the same resource
      * (i.e., the "lost update" problem).
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC 7252 -
-     *      5.10.8.1. If-Match</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.8.1">IETF RFC
+     *      7252 - 5.10.8.1. If-Match</a>
      */
     @Parameter
     @Optional
@@ -157,26 +151,23 @@ public class RequestOptionsParams
      * the same resource. The If-None-Match Option carries no value. If the target
      * resource does exist, then the condition is not fulfilled.
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc7252#section-5.10.8.2">IETF RFC 7252 -
-     *      5.10.8.2. If-None-Match</a>
+     * @see <a href= "https://tools.ietf.org/html/rfc7252#section-5.10.8.2">IETF RFC
+     *      7252 - 5.10.8.2. If-None-Match</a>
      */
     @Parameter
     @Optional( defaultValue= "false" )
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary(
-        "The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource."
-    )
+    @Summary( "The If-None-Match Option MAY be used to make a request conditional on the nonexistence of the target resource." )
     @Placement( order= 55, tab= "Options" )
     private boolean ifNoneMatch= false;
 
     /**
      * RFC 7959: In a request carrying a Block1 Option, to indicate the current
-      estimate the client has of the total size of the resource
-      representation, measured in bytes ("size indication")
+     * estimate the client has of the total size of the resource representation,
+     * measured in bytes ("size indication")
      * 
-     * @see <a href=
-     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     * @see <a href= "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF
+     *      RFC 7959 - 4. The Size2 and Size1 Options</a>
      */
     @Parameter
     @Optional
@@ -187,11 +178,11 @@ public class RequestOptionsParams
 
     /**
      * RFC 7959: In a request, to ask the server to provide a size estimate along
-      with the usual response ("size request").  For this usage, the
-      value MUST be set to 0.
+     * with the usual response ("size request"). For this usage, the value MUST be
+     * set to 0.
      * 
-     * @see <a href=
-     *      "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF RFC 7959 - 4. The Size2 and Size1 Options</a>
+     * @see <a href= "https://datatracker.ietf.org/doc/html/rfc7959#section-4">IETF
+     *      RFC 7959 - 4. The Size2 and Size1 Options</a>
      */
     @Parameter
     @Optional( defaultValue= "false" )
@@ -201,16 +192,34 @@ public class RequestOptionsParams
     private boolean requireResponseSize= false;
 
     /**
+     * This parameter is used to prevent a server from responding or, conversely, to
+     * cause it to respond when it would not normally do so, for example in the case
+     * of multi-cast error responses.
+     * 
+     * @see <a href= "https://datatracker.ietf.org/doc/html/rfc7967">IETF RFC 7967\n
+     *      - Constrained Application Protocol (CoAP) Option for No Server
+     *      Response</a>
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.SUPPORTED )
+    @Summary(
+        "This parameter is used to prevent a server from responding or, conversely,\n" + "to cause it to respond when it would not normally do so, \n"
+            + "for example in the case of multi-cast error responses."
+    )
+    @Placement( order= 58, tab= "Options" )
+    private RequireResponse requireResponse= null;
+
+    /**
      * RFC 8613: The OSCORE option indicates that the CoAP message is an OSCORE
      * message and that it contains a compressed COSE object.
      * 
      * The OSCORE option includes the OSCORE flag bits.
      * 
-     * @see <a href=
-     *      "https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 - 2. The
-     *      OSCORE Option</a>
+     * @see <a href="https://tools.ietf.org/html/rfc8613#section-2">IETF RFC 8613 -
+     *      2. The OSCORE Option"</a>
      */
-    //TODO add oscore feature
+    // TODO add oscore feature
     // @Parameter
     // @Optional
     // @Expression(ExpressionSupport.SUPPORTED)
@@ -246,6 +255,7 @@ public class RequestOptionsParams
 
     /**
      * The If-Match option contains an ETag value or a collection of ETag values.
+     * 
      * @return The ifMatch options.
      */
     public List< EntityTag > getIfMatchOptions()
@@ -326,22 +336,6 @@ public class RequestOptionsParams
     }
 
     /**
-     * @return True when Size2 option is required in the server response, otherwise false.
-     */
-    public boolean isRequireResponseSize()
-    {
-        return requireResponseSize;
-    }
-
-    /**
-     * @param requireResponseSize The requireResponseSize option to set.
-     */
-    public void setRequireResponseSize( boolean requireResponseSize )
-    {
-        this.requireResponseSize= requireResponseSize;
-    }
-
-    /**
      * @return The Size1 option if present, otherwise null.
      */
     public Integer getRequestSize()
@@ -358,8 +352,41 @@ public class RequestOptionsParams
     }
 
     /**
-    * @return the other options
-    */
+     * @return True when Size2 option is required in the server response, otherwise
+     *         false.
+     */
+    public boolean isRequireResponseSize()
+    {
+        return requireResponseSize;
+    }
+
+    /**
+     * @param requireResponseSize The requireResponseSize option to set.
+     */
+    public void setRequireResponseSize( boolean requireResponseSize )
+    {
+        this.requireResponseSize= requireResponseSize;
+    }
+
+    /**
+     * @return the requireResponse
+     */
+    public RequireResponse getRequireResponse()
+    {
+        return requireResponse;
+    }
+
+    /**
+     * @param requireResponse the requireResponse to set
+     */
+    public void setRequireResponse( RequireResponse requireResponse )
+    {
+        this.requireResponse= requireResponse;
+    }
+
+    /**
+     * @return the other options
+     */
     public List< OtherOption > getOtherOptions()
     {
         return otherOptions;
@@ -368,7 +395,7 @@ public class RequestOptionsParams
     /**
      * @param otherOptions the other options to set
      */
-    public void setOtherRequestOptions( List< OtherOption > otherOptions )
+    public void setOtherOptions( List< OtherOption > otherOptions )
     {
         this.otherOptions= otherOptions;
     }

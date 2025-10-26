@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -95,10 +95,7 @@ public class CoapRequestOptionsAttributesImpl extends RequestOptionsAttributes i
                 Optional< List< DefaultEntityTag > > tmpEtags= MessageUtils.getList( optionSet.getETags() );
                 if ( !tmpEtags.isPresent() )
                 {
-                    throw new InternalInvalidOptionValueException(
-                        "Entity-Tag option with empty value is invalid",
-                        MSG_CANNOT_CREATE
-                    );
+                    throw new InternalInvalidOptionValueException( "Entity-Tag option with empty value is invalid", MSG_CANNOT_CREATE );
                 }
                 else
                 {
@@ -126,9 +123,7 @@ public class CoapRequestOptionsAttributesImpl extends RequestOptionsAttributes i
         if ( !optionSet.getUriQuery().isEmpty() )
         {
             LinkedList< QueryParamAttribute > queryParams= new LinkedList<>();
-            optionSet
-                .getUriQuery()
-                .forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
+            optionSet.getUriQuery().forEach( queryParamString -> AttributeUtils.addQueryParam( queryParams, queryParamString ) );
             uriQuery= Collections.unmodifiableList( queryParams );
         }
         if ( optionSet.hasAccept() )
@@ -149,7 +144,11 @@ public class CoapRequestOptionsAttributesImpl extends RequestOptionsAttributes i
         }
         if ( optionSet.hasSize2() && optionSet.getSize2() == 0 )
         {
-            provideResponseSize= true;
+            requireResponseSize= true;
+        }
+        if ( optionSet.hasNoResponse() )
+        {
+            requireResponse= new RequireResponseAttrImpl( optionSet.getNoResponse() );
         }
         if ( optionSet.hasObserve() )
         {
@@ -196,7 +195,8 @@ public class CoapRequestOptionsAttributesImpl extends RequestOptionsAttributes i
             .append( "ifNoneMatch", ifNoneMatch )
             .append( "observe", observe )
             .append( "other", other )
-            .append( "provideResponseSize", provideResponseSize )
+            .append( "requireResponse", requireResponse )
+            .append( "requireResponseSize", requireResponseSize )
             .append( "proxyScheme", proxyScheme )
             .append( "proxyUri", proxyUri )
             .append( "requestSize", requestSize )

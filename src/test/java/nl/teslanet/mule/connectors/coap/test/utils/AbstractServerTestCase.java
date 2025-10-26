@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:m
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -57,27 +57,27 @@ public abstract class AbstractServerTestCase extends AbstractTestCase
     @Before
     public void setUp() throws Exception
     {
-        OptionDefinition[] optionDefs= {
-            TestOptions.OTHER_OPTION_65003,
-            TestOptions.OTHER_OPTION_65009,
-            TestOptions.OTHER_OPTION_65010,
-            TestOptions.OTHER_OPTION_65012,
-            TestOptions.OTHER_OPTION_65013,
-            TestOptions.OTHER_OPTION_65308 };
+        OptionDefinition[] optionDefs= { TestOptions.OTHER_OPTION_65003, TestOptions.OTHER_OPTION_65009, TestOptions.OTHER_OPTION_65010, TestOptions.OTHER_OPTION_65012,
+            TestOptions.OTHER_OPTION_65013, TestOptions.OTHER_OPTION_65308 };
 
         URI uri= new URI( "coap", "127.0.0.1", null, null );
         client= new CoapClient( uri );
-        client.setTimeout( 1000000L );
+        //client.setTimeout( 1000000L );
         Builder builder= CoapEndpoint.builder();
-        builder.setConfiguration( Configuration.createStandardWithoutFile() );
-        MapBasedOptionRegistry allOptions= new MapBasedOptionRegistry(
-            StandardOptionRegistry.getDefaultOptionRegistry(),
-            optionDefs
-        );
+        builder.setConfiguration( getCoapConfiguration() );
+        MapBasedOptionRegistry allOptions= new MapBasedOptionRegistry( StandardOptionRegistry.getDefaultOptionRegistry(), optionDefs );
         builder.setOptionRegistry( allOptions );
         CoapEndpoint endpoint= builder.build();
         endpoint.addInterceptor( new MessageTracer() );
         client.setEndpoint( endpoint );
+    }
+
+    /**
+     * Create Coap Configuration
+     */
+    protected Configuration getCoapConfiguration()
+    {
+        return Configuration.createStandardWithoutFile();
     }
 
     /**

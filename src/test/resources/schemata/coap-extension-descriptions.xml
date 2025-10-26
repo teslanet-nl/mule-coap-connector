@@ -315,6 +315,9 @@
                 <parameter name="requireResponseSize">
                     <description><![CDATA[RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.]]></description>
                 </parameter>
+                <parameter name="requireResponse">
+                    <description><![CDATA[This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.]]></description>
+                </parameter>
                 <parameter name="otherOptions">
                     <description><![CDATA[The other CoAP options to send with the request.]]></description>
                 </parameter>
@@ -385,6 +388,9 @@
                 </parameter>
                 <parameter name="requireResponseSize">
                     <description><![CDATA[RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.]]></description>
+                </parameter>
+                <parameter name="requireResponse">
+                    <description><![CDATA[This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.]]></description>
                 </parameter>
                 <parameter name="otherOptions">
                     <description><![CDATA[The other CoAP options to send with the request.]]></description>
@@ -1487,6 +1493,20 @@
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="value">
+                    <description><![CDATA[]]></description>
+                </parameter>
+            </parameters>
+        </type>
+        <type name="nl.teslanet.mule.connectors.coap.api.options.RequireResponse">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="success">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="clientError">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="serverError">
                     <description><![CDATA[]]></description>
                 </parameter>
             </parameters>

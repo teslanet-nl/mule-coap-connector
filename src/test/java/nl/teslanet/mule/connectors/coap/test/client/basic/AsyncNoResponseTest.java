@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,7 +25,6 @@ package nl.teslanet.mule.connectors.coap.test.client.basic;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.net.SocketException;
@@ -43,53 +42,73 @@ import org.mule.runtime.api.message.Message;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapResponseAttributes;
+import nl.teslanet.mule.connectors.coap.api.attributes.Result;
 import nl.teslanet.mule.connectors.coap.test.utils.AbstractClientTestCase;
 import nl.teslanet.mule.connectors.coap.test.utils.MuleEventSpy;
+import nl.teslanet.mule.connectors.coap.test.utils.Timing;
 
 
 @RunnerDelegateTo( Parameterized.class )
 public class AsyncNoResponseTest extends AbstractClientTestCase
 {
+    static boolean bools[]= { true, false };
+
     /**
      * The list of tests with their parameters
      * @return Test parameters.
      */
-    @Parameters( name= "code= {0}, resourcePath= {1}, expectedResponseCode= {2}, expectedPayload= {3}" )
+    @Parameters( name= "code= {0}, responseCode= {1}, requireSuccess= {2}, requireClientError {3},  requireServerError {4}" )
     public static Collection< Object[] > getTests()
     {
         ArrayList< Object[] > tests= new ArrayList< Object[] >();
-
-        tests.add( new Object []{ "GET", "/response/" + ResponseCode.CONTENT.name(), null, null } );
-        tests.add( new Object []{ "POST", "/response/" + ResponseCode.CREATED.name(), null, null } );
-        tests.add( new Object []{ "PUT", "/response/" + ResponseCode.CHANGED.name(), null, null } );
-        tests.add( new Object []{ "DELETE", "/response/" + ResponseCode.DELETED.name(), null, null } );
-
+        for ( ResponseCode code : ResponseCode.values() )
+        {
+            if ( code != ResponseCode._UNKNOWN_SUCCESS_CODE )
+            {
+                for ( boolean successValue : bools )
+                {
+                    for ( boolean clientErrorValue : bools )
+                    {
+                        for ( boolean serverErrorValue : bools )
+                        {
+                            tests.add( new Object []{ "POST", code, successValue, clientErrorValue, serverErrorValue } );
+                        }
+                    }
+                }
+            }
+        }
         return tests;
     }
 
     /**
-     * The request code that is expected.
+     * The request code to use.
      */
     @Parameter( 0 )
     public String requestCode;
 
     /**
-     * The path of the resource to call.
+     * The responseCode to test.
      */
     @Parameter( 1 )
-    public String resourcePath;
+    public ResponseCode responseCode;
 
     /**
-     * The response code that is expected.
+     * Required success reponse to test .
      */
     @Parameter( 2 )
-    public String expectedResponseCode;
+    public boolean requireSuccess;
 
     /**
-     * The response payload that is expected.
+     * Required client error reponse to test .
      */
     @Parameter( 3 )
-    public byte[] expectedResponsePayload;
+    public boolean requireClientError;
+
+    /**
+     * Required server error reponse to test .
+     */
+    @Parameter( 4 )
+    public boolean requireServerError;
 
     /* (non-Javadoc)
      * @see org.mule.munit.runner.functional.FunctionalMunitSuite#getConfigResources()
@@ -97,7 +116,7 @@ public class AsyncNoResponseTest extends AbstractClientTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-client-config/basic/testclient4.xml";
+        return "mule-client-config/basic/testclient-noresponse.xml";
     };
 
     /* (non-Javadoc)
@@ -119,25 +138,45 @@ public class AsyncNoResponseTest extends AbstractClientTestCase
         MuleEventSpy spy= new MuleEventSpy( "handler_spy" );
         spy.clear();
 
-        flowRunner( "do_request" )
+        flowRunner( "do_request_async" )
             .withPayload( "nothing_important" )
             .withVariable( "code", requestCode )
             .withVariable( "host", "127.0.0.1" )
-            .withVariable( "port", "999" )
-            .withVariable( "path", resourcePath )
+            .withVariable( "port", "5683" )
+            .withVariable( "path", "/response/" + responseCode.name() )
+            .withVariable( "requireSuccess", requireSuccess )
+            .withVariable( "requireClientError", requireClientError )
+            .withVariable( "requireServerError", requireServerError )
             .run();
-        //let handler do its asynchronous work
-        await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
-            return spy.getEvents().size() == 1;
-        } );
-        Message response= (Message) spy.getEvents().get( 0 ).getContent();
-        assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
-        CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
-        byte[] payload= (byte[]) ( response.getPayload().getValue() );
-        assertEquals( "wrong response code", expectedResponseCode, attributes.getResponseCode() );
-        assertEquals( "wrong response payload", expectedResponsePayload, payload );
-        assertFalse( "wrong success flag", attributes.isSuccess() );
-        //TODO test for property clienterror, servererror
+        if ( !( requireSuccess && responseCode.isSuccess() || requireClientError && responseCode.isClientError() || requireServerError && responseCode.isServerError() ) )
+        {
+            //let handler do its asynchronous work
+            Timing.pauze();
+            assertEquals( "should not receive response", 0, spy.getEvents().size() );
+        }
+        else
+        {
+            //let handler do its asynchronous work
+            await().atMost( 10, TimeUnit.SECONDS ).until( () -> {
+                return spy.getEvents().size() == 1;
+            } );
+            assertEquals( "spy has not been called once", 1, spy.getEvents().size() );
+            Message response= (Message) spy.getEvents().get( 0 ).getContent();
+            assertTrue( "wrong attributes class", response.getAttributes().getValue() instanceof CoapResponseAttributes );
+            CoapResponseAttributes attributes= (CoapResponseAttributes) response.getAttributes().getValue();
+            boolean responseReceived= attributes.getResult() != Result.NO_RESPONSE;
+            if ( responseCode.isSuccess() )
+            {
+                assertEquals( "wrong succes response", requireSuccess, responseReceived );
+            }
+            else if ( responseCode.isClientError() )
+            {
+                assertEquals( "wrong client error response", requireClientError, responseReceived );
+            }
+            else if ( responseCode.isServerError() )
+            {
+                assertEquals( "wrong server error response", requireServerError, responseReceived );
+            }
+        }
     }
-
 }

@@ -1947,6 +1947,16 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="require-response">
+            <xs:annotation>
+              <xs:documentation>This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequireResponse"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="other-options">
             <xs:annotation>
               <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
@@ -2053,6 +2063,11 @@
             <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="requireResponse">
+          <xs:annotation>
+            <xs:documentation>This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
           <xs:annotation>
             <xs:documentation>The other CoAP options to send with the request.</xs:documentation>
@@ -2086,6 +2101,18 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.RequireResponse">
+    <xs:annotation>
+      <xs:documentation>This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="success"></xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="clientError"></xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="serverError"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.options.OtherOption">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
@@ -2151,6 +2178,16 @@
               <xs:sequence>
                 <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-entity-tag"></xs:element>
               </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="require-response">
+            <xs:annotation>
+              <xs:documentation>This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.options.RequireResponse"></xs:extension>
+              </xs:complexContent>
             </xs:complexType>
           </xs:element>
           <xs:element minOccurs="0" maxOccurs="1" name="other-options">
@@ -2248,6 +2285,11 @@
         <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="requireResponseSize">
           <xs:annotation>
             <xs:documentation>RFC 7959: In a request, to ask the server to provide a size estimate along with the usual response ("size request"). For this usage, the value MUST be set to 0.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="requireResponse">
+          <xs:annotation>
+            <xs:documentation>This parameter is used to prevent a server from responding or, conversely, to cause it to respond when it would not normally do so, for example in the case of multi-cast error responses.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:expressionList" use="optional" name="otherOptions">
