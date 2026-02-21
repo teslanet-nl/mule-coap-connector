@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -59,53 +59,20 @@ public class OperationalListenerTest
     {
         return Arrays
             .asList( new Object [] []
-            { { "/some_resource", new RequestCodeFlags(), new TestSourceCallBack() }, { "/some_resource/child",
-                new RequestCodeFlags(), new TestSourceCallBack() },
-                { "/some_resource/child/child", new RequestCodeFlags( true, false, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child", new RequestCodeFlags( true, true, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/child", new RequestCodeFlags( true, true, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/*", new RequestCodeFlags( true, true, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource/*", new RequestCodeFlags( true, true, false, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
+            { { "/some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() }, { "/some_resource/child",
+                new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
+                { "", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource", new RequestCodeFlags( true, false, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/child", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/*", new RequestCodeFlags( true, true, false, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
                 { "*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
-                { "some_resource/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, false, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, false, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, false, false, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, false, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, false ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, false ),
-                    new TestSourceCallBack() },
-                { "/some_resource*", new RequestCodeFlags( true, true, true, true, true, true, true ),
-                    new TestSourceCallBack() },
-                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, true, true, true, true ),
-                    new TestSourceCallBack() },
-                { "some_resource/child/child*", new RequestCodeFlags( true, true, true, true, true, true, true ),
-                    new TestSourceCallBack() },
-
-            } );
+                { "/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() },
+                { "/some_resource/child/child*", new RequestCodeFlags( true, true, true, false, false, false, false ), new TestSourceCallBack() }, } );
     }
 
     /**
@@ -160,10 +127,10 @@ public class OperationalListenerTest
         SourceCallback< InputStream, CoapRequestAttributes > testCallback
     )
     {
-        String expectedUri= ( testUri.startsWith( "/" ) ? testUri : "/" + testUri );
+        //String expectedUri= ( testUri.equals( "" ) || testUri.equals( "/" ) || testUri.equals( "*" ) || testUri.startsWith( "/" ) ? testUri : "/" + testUri );
 
         assertNotNull( "listener construction failed", testListener );
-        assertEquals( "listener uri has wrong value", expectedUri, testListener.getUriPattern() );
+        assertEquals( "listener uri has wrong value", testUri, testListener.getUriPattern() );
         assertEquals( "listener callback has wrong value", testCallback, testListener.getCallback() );
         assertEquals( "listener flags has wrong value", flags, testListener.getRequestCodeFlags() );
     }

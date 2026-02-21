@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,13 +40,13 @@ import org.eclipse.californium.elements.config.Configuration;
  */
 public class ServedResourceMessageDeliverer extends ServerMessageDeliverer
 {
-    private ResourceRegistry registry;
+    private OperationalServer registry;
 
     /**
      * @param registry The resource registry.
      * @param config The server configuration.
      */
-    public ServedResourceMessageDeliverer( ResourceRegistry registry, Configuration config )
+    public ServedResourceMessageDeliverer( OperationalServer registry, Configuration config )
     {
         super( registry.getRoot(), config );
         this.registry= registry;

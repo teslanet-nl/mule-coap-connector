@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -58,31 +58,78 @@ public class PutSubResourceTest extends AbstractServerTestCase
     @Test
     public void testPutResource1() throws Exception
     {
+        String resourceUri0= "coap://127.0.0.1/newSub1";
         String resourceUri1= "coap://127.0.0.1/parent1/newSub1";
         String resourceUri2= "coap://127.0.0.1/parent1/newSub2";
         String resourceUri3= "coap://127.0.0.1/parent2/newSub2/notAllowed";
 
         //setClientUri( resourceUri1 );
+        Request requestGet0= new Request( Code.GET ).setURI( resourceUri0 );
         Request requestGet1= new Request( Code.GET ).setURI( resourceUri1 );
         Request requestGet2= new Request( Code.GET ).setURI( resourceUri2 );
+        Request requestPut0o= new Request( Code.PUT ).setURI( resourceUri0 ).setPayload( "content0o" );
+        Request requestGet0o= new Request( Code.GET ).setURI( resourceUri0 );
+        Request requestGet1o= new Request( Code.GET ).setURI( resourceUri1 );
+        Request requestGet2o= new Request( Code.GET ).setURI( resourceUri2 );
+        Request requestPut0p= new Request( Code.PUT ).setURI( resourceUri0 ).setPayload( "content0p" );
+        Request requestGet0p= new Request( Code.GET ).setURI( resourceUri0 );
+        Request requestGet1p= new Request( Code.GET ).setURI( resourceUri1 );
+        Request requestGet2p= new Request( Code.GET ).setURI( resourceUri2 );
         Request requestPut1a= new Request( Code.PUT ).setURI( resourceUri1 ).setPayload( "content1a" );
+        Request requestGet0a= new Request( Code.GET ).setURI( resourceUri0 );
         Request requestGet1a= new Request( Code.GET ).setURI( resourceUri1 );
         Request requestGet2a= new Request( Code.GET ).setURI( resourceUri2 );
         Request requestPut1b= new Request( Code.PUT ).setURI( resourceUri1 ).setPayload( "content1b" );
+        Request requestGet0b= new Request( Code.GET ).setURI( resourceUri0 );
         Request requestGet1b= new Request( Code.GET ).setURI( resourceUri1 );
         Request requestGet2b= new Request( Code.GET ).setURI( resourceUri2 );
         Request requestPut2c= new Request( Code.PUT ).setURI( resourceUri2 ).setPayload( "content2c" );
+        Request requestGet0c= new Request( Code.GET ).setURI( resourceUri0 );
         Request requestGet1c= new Request( Code.GET ).setURI( resourceUri1 );
         Request requestGet2c= new Request( Code.GET ).setURI( resourceUri2 );
         Request requestPut2d= new Request( Code.PUT ).setURI( resourceUri2 ).setPayload( "content2d" );
+        Request requestGet0d= new Request( Code.GET ).setURI( resourceUri0 );
         Request requestGet1d= new Request( Code.GET ).setURI( resourceUri1 );
         Request requestGet2d= new Request( Code.GET ).setURI( resourceUri2 );
         Request requestPut3= new Request( Code.PUT ).setURI( resourceUri3 ).setPayload( "content3" );
 
-        CoapResponse response= client.advanced( requestGet1 );
+        CoapResponse response= client.advanced( requestGet0 );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+        response= client.advanced( requestGet1 );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
         response= client.advanced( requestGet2 );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+
+        // create resource 0
+        response= client.advanced( requestPut0o );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CREATED, response.getCode() );
+
+        response= client.advanced( requestGet0o );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
+        response= client.advanced( requestGet1o );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+        response= client.advanced( requestGet2o );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+
+        // update resource 0
+        response= client.advanced( requestPut0p );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CHANGED, response.getCode() );
+
+        response= client.advanced( requestGet0p );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
+        response= client.advanced( requestGet1p );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
+        response= client.advanced( requestGet2p );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
 
@@ -91,6 +138,9 @@ public class PutSubResourceTest extends AbstractServerTestCase
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CREATED, response.getCode() );
 
+        response= client.advanced( requestGet0a );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
         response= client.advanced( requestGet1a );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
@@ -103,6 +153,9 @@ public class PutSubResourceTest extends AbstractServerTestCase
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CHANGED, response.getCode() );
 
+        response= client.advanced( requestGet0b );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
         response= client.advanced( requestGet1b );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
@@ -115,6 +168,9 @@ public class PutSubResourceTest extends AbstractServerTestCase
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CREATED, response.getCode() );
 
+        response= client.advanced( requestGet0c );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
         response= client.advanced( requestGet1c );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
@@ -127,6 +183,9 @@ public class PutSubResourceTest extends AbstractServerTestCase
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CHANGED, response.getCode() );
 
+        response= client.advanced( requestGet0d );
+        assertNotNull( "request gave no response", response );
+        assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );
         response= client.advanced( requestGet1d );
         assertNotNull( "request gave no response", response );
         assertEquals( "request gave wrong response", ResponseCode.CONTENT, response.getCode() );

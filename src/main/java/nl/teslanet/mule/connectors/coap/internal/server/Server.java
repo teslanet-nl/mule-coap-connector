@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -30,7 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 
-import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
@@ -48,6 +47,7 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.NoImplicit;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.Sources;
+import org.mule.runtime.extension.api.annotation.deprecated.Deprecated;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -59,15 +59,16 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.EndpointInfo;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
+import nl.teslanet.mule.connectors.coap.api.RootResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ServerInfo;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AbstractEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.AdditionalEndpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.Endpoint;
 import nl.teslanet.mule.connectors.coap.api.config.endpoint.UDPEndpoint;
 import nl.teslanet.mule.connectors.coap.internal.endpoint.OperationalEndpoint;
-import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.utils.TimeUtils;
 
@@ -147,14 +148,25 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     private List< AdditionalEndpoint > additionalEndpoints;
 
     /**
-     * The root resources of the server.
+     * The resource tree of the server, containing the root-resource and sub-resources.
+     */
+    @Parameter
+    @Optional
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( value= "The resource tree of the server, containing the root-resource and sub-resources." )
+    private RootResourceConfig rootResource= null;
+
+    /**
+     * The resources of the server.
      */
     @Parameter
     @Optional
     @NullSafe
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
-    @Summary( value= "The root resources of the server." )
+    @Summary( value= "The resources of the server." )
+    @Deprecated( message= "Use the root-resource element instead.", since= "3.5.0", toRemoveIn= "4.0.0" )
     private List< ResourceConfig > resources;
 
     /**
@@ -164,9 +176,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "true" )
-    @Summary(
-                    value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms."
-    )
+    @Summary( value= "Notify observing clients of server shutdown. \nWhen true observing clients are notified by Not-Found notifications. \nDefault value is 100 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @DisplayName( value= "Notify observing clients on shutdown" )
@@ -180,23 +190,16 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     @Parameter
     @Optional( defaultValue= "250ms" )
-    @Summary(
-                    value= "The linger duration on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms."
-    )
+    @Summary( value= "The linger duration on shutdown of the server, \ngiving notifications time to complete. \nDefault value is 250 ms." )
     @Expression( ExpressionSupport.NOT_SUPPORTED )
     @ParameterDsl( allowReferences= false )
     @Placement( order= 2, tab= "Advanced" )
     private String lingerOnShutdown= "250ms";
 
     /**
-     * The Californium CoAP server instance.
+     * The CoAP server instance.
      */
-    private CoapServer coapServer= null;
-
-    /**
-     * The registry of resources and listeners. 
-     */
-    private ResourceRegistry registry= null;
+    private OperationalServer coapServer= null;
 
     /**
      * Calculated linger milliseconds.
@@ -209,27 +212,16 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void initialise() throws InitialisationException
     {
-        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration
-            .createStandardWithoutFile();
-        coapServer= new CoapServer( config );
-        try
-        {
-            registry= new ResourceRegistry( coapServer.getRoot() );
-        }
-        catch ( InternalResourceRegistryException e1 )
-        {
-            throw new InitialisationException( e1, this );
-        }
-        coapServer.setMessageDeliverer( new ServedResourceMessageDeliverer( registry, config ) );
+        org.eclipse.californium.elements.config.Configuration config= org.eclipse.californium.elements.config.Configuration.createStandardWithoutFile();
+        coapServer= new OperationalServer( config );
         ArrayList< AbstractEndpoint > configuredEndpoints= new ArrayList<>();
 
         if ( endpoint != null )
         {
-            if ( endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null )
-                throw new InitialisationException(
-                    new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
-                    this
-                );
+            if ( endpoint.getEndpointConfig() == null || endpoint.getEndpointConfig().getEndpoint() == null ) throw new InitialisationException(
+                new IllegalArgumentException( "Unexpected null value in main server endpoint." ),
+                this
+            );
             //add main endpoint config
             configuredEndpoints.add( endpoint.getEndpointConfig().getEndpoint() );
         }
@@ -287,15 +279,25 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     @Override
     public void start() throws MuleException
     {
+        ArrayList< ResourceConfig > allSubResources= new ArrayList<>();
         try
         {
             lingerOnShutdownMillis= TimeUtils.toNanos( lingerOnShutdown ) / 1000000L;
+            if ( rootResource != null )
+            {
+                ServedResource root= coapServer.getResource( Defs.COAP_ROOTRESOURCE );
+                root.configure( rootResource );
+                java.util.Optional< VirtualResource > virtual= root.buildVirtualSubResource( rootResource );
+                if ( virtual.isPresent() ) coapServer.register( root, virtual.get() );
+                allSubResources.addAll( rootResource.getSubResources() );
+            }
             if ( resources != null )
             {
-                for ( ResourceConfig resourceConfig : resources )
-                {
-                    registry.add( null, resourceConfig );
-                }
+                allSubResources.addAll( resources );
+            }
+            for ( ResourceConfig resourceConfig : allSubResources )
+            {
+                coapServer.add( Defs.COAP_ROOTRESOURCE, resourceConfig );
             }
             SchedulerConfig config= schedulerConfig.withPrefix( getServerName() );
             ioScheduler= schedulerService.ioScheduler( config );
@@ -308,7 +310,6 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             throw new StartException( e, this );
         }
         LOGGER.info( "{} started.", this );
-
     }
 
     /**
@@ -324,7 +325,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             //remove all resources from registry before stopping 
             //to get observing clients notified of the fact that resources 
             //are not available anymore. 
-            registry.removeAll();
+            coapServer.removeAll();
         }
         //linger to get notifications sent.
         try
@@ -342,7 +343,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
             if ( !notifyOnShutdown )
             {
                 //cleanup still needed
-                registry.removeAll();
+                coapServer.removeAll();
             }
             //TODO ioScheduler.stop();
             ioScheduler= null;
@@ -359,7 +360,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     void addListener( OperationalListener operationalListener ) throws InternalUriPatternException
     {
-        registry.add( operationalListener );
+        coapServer.add( operationalListener );
     }
 
     /**
@@ -368,7 +369,7 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
      */
     void removeListener( OperationalListener listener )
     {
-        registry.remove( listener );
+        coapServer.remove( listener );
     }
 
     /**
@@ -382,9 +383,25 @@ public class Server implements Initialisable, Disposable, Startable, Stoppable
     /**
      * @return the registry
      */
-    public ResourceRegistry getRegistry()
+    public OperationalServer getRegistry()
     {
-        return registry;
+        return coapServer;
+    }
+
+    /**
+     * @return the rootResource
+     */
+    public RootResourceConfig getRootResource()
+    {
+        return rootResource;
+    }
+
+    /**
+     * @param rootResource the rootResource to set
+     */
+    public void setRootResource( RootResourceConfig rootResource )
+    {
+        this.rootResource= rootResource;
     }
 
     /**

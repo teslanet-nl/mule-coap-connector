@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -49,6 +49,6 @@ public class InvalidResourceUriException extends ModuleException
 
     public InvalidResourceUriException( String message, String uri, Throwable cause )
     {
-        super( message + ", invalid resource uri { " + uri + " }." + message, Errors.INVALID_RESOURCE_URI, cause );
+        super( message + ", invalid resource uri { " + uri + " }.", Errors.INVALID_RESOURCE_URI, cause );
     }
 }

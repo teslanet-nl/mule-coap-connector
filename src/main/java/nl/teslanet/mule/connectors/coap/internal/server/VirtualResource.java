@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,6 +29,7 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.attributes.CoapRequestAttributes;
 
 
@@ -50,7 +51,7 @@ public class VirtualResource extends AbstractResource
      */
     public VirtualResource( boolean earlyAck )
     {
-        super( "", false );
+        super( Defs.COAP_VIRTUALRESOURCE_NAME, false );
         this.earlyAck= earlyAck;
     }
 

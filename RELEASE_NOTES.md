@@ -3,6 +3,11 @@
 
 ## Release 3.4.0
 
+* Added root-resource features.
+* Updated dependencies.
+
+## Release 3.4.0
+
 * Added No Server Response option
 * Updated dependencies.
 

@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -61,11 +61,7 @@ public class OperationalListener
      * @param callback
      * @throws InternalResourceUriException 
      */
-    public OperationalListener(
-        String uriPattern,
-        RequestCodeFlags flags,
-        SourceCallback< InputStream, CoapRequestAttributes > callback
-    ) throws InternalResourceUriException
+    public OperationalListener( String uriPattern, RequestCodeFlags flags, SourceCallback< InputStream, CoapRequestAttributes > callback ) throws InternalResourceUriException
     {
         super();
         setUriPattern( uriPattern );
@@ -104,20 +100,23 @@ public class OperationalListener
     {
         // TODO assure no bad chars
         if ( uriPattern == null ) throw new InternalResourceUriException( "null value is not allowed." );
-        this.uriPattern= uriPattern.trim();
-        if ( !this.uriPattern.startsWith( Defs.COAP_URI_PATHSEP ) )
+        if ( uriPattern.length() > 0 && !uriPattern.equals( Defs.COAP_URI_ROOTRESOURCE ) && !uriPattern.equals( String.valueOf( Defs.COAP_URI_WILDCARD ) ) )
         {
-            this.uriPattern= Defs.COAP_URI_PATHSEP + this.uriPattern;
+            if ( uriPattern.charAt( 0 ) != Defs.COAP_URI_PATHSEP )
+            {
+                throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, pattern needs to be absolute (add '/' at the beginning)." );
+            }
+            if ( uriPattern.charAt( uriPattern.length() - 1 ) == Defs.COAP_URI_PATHSEP )
+            {
+                throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, cannot end with path separator." );
+            }
+            int wildcardIndex= uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
+            if ( wildcardIndex >= 0 && wildcardIndex < uriPattern.length() - 1 )
+            {
+                throw new InternalResourceUriException( "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character." );
+            }
         }
-        int wildcardIndex= this.uriPattern.indexOf( Defs.COAP_URI_WILDCARD );
-        if ( wildcardIndex >= 0 && wildcardIndex < this.uriPattern.length() - 1 )
-            throw new InternalResourceUriException(
-                "invalid uriPattern { " + uriPattern + " }, wildcard needs to be last character."
-            );
-        if ( this.uriPattern.length() < 2 ) throw new InternalResourceUriException(
-            "invalid uriPattern { " + uriPattern + " }, uri cannot be empty."
-        );
-
+        this.uriPattern= uriPattern;
     }
 
     /**

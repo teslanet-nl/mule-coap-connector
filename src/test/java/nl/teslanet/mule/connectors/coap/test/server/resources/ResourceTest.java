@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -55,10 +55,10 @@ public class ResourceTest extends AbstractServerTestCase
     @Parameters( name= "Request= {0}, path= {1}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                //default maxResourceBodySize on server
+        return Arrays
+            .asList( new Object [] []
+            { { Code.GET, "", ResponseCode.CONTENT }, { Code.PUT, "", ResponseCode.CHANGED }, { Code.POST, "", ResponseCode.CHANGED }, { Code.DELETE, "",
+                ResponseCode.INTERNAL_SERVER_ERROR },
                 { Code.GET, "/service/resource1", ResponseCode.CONTENT },
                 { Code.PUT, "/service/resource1", ResponseCode.CHANGED },
                 { Code.POST, "/service/resource1", ResponseCode.CHANGED },
@@ -70,8 +70,7 @@ public class ResourceTest extends AbstractServerTestCase
                 { Code.GET, "/service/resource1/resource2/resource3", ResponseCode.CONTENT },
                 { Code.PUT, "/service/resource1/resource2/resource3", ResponseCode.CHANGED },
                 { Code.POST, "/service/resource1/resource2/resource3", ResponseCode.CHANGED },
-                { Code.DELETE, "/service/resource1/resource2/resource3", ResponseCode.DELETED } }
-        );
+                { Code.DELETE, "/service/resource1/resource2/resource3", ResponseCode.DELETED } } );
     }
 
     /**
@@ -106,7 +105,7 @@ public class ResourceTest extends AbstractServerTestCase
      * @throws Exception
      */
     @Test
-    public void testAddResource() throws Exception
+    public void testResource() throws Exception
     {
         setClientUri( resourcePath );
         Request request= new Request( requestCode );

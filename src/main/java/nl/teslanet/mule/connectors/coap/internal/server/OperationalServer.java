@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -29,12 +29,14 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.Defs;
+import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
@@ -42,47 +44,47 @@ import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternEx
 
 
 /**
- * Registry of served resources and listeners on the resources. It maintains
+ * The CoAP server that manages resources, listeners and maintains
  * consistency of the callback relations they have.
  */
-public class ResourceRegistry
+public class OperationalServer extends CoapServer
 {
     /**
      * The Logger of this class.
      */
-    private static final Logger LOGGER= LoggerFactory.getLogger( ResourceRegistry.class );
+    private static final Logger LOGGER= LoggerFactory.getLogger( OperationalServer.class );
 
     /**
      * The hosted resources.
      */
-    private ConcurrentHashMap< String, AbstractResource > servedResources;
+    private ConcurrentHashMap< String, AbstractResource > servedResources= new ConcurrentHashMap<>();
 
     /**
      * The listeners that are active on the resources.
      */
-    private CopyOnWriteArrayList< OperationalListener > listeners;
+    private CopyOnWriteArrayList< OperationalListener > listeners= new CopyOnWriteArrayList<>();
 
     /**
-     * The root resource on the server.
+     * Construct a server  using given configuration.
+     * @param rootResource 
+     * @param config The coap configuration.
      */
-    Resource root= null;
-
-    /**
-     * Construct a registry. The constructor initializes served resources and
-     * listener repositories.
-     * 
-     * @param root Mandatory root resource.
-     * @throws InternalResourceRegistryException When the the root resource is null.
-     */
-    public ResourceRegistry( Resource root ) throws InternalResourceRegistryException
+    public OperationalServer( Configuration config )
     {
-        if ( root == null ) throw new InternalResourceRegistryException(
-            "Cannot construct a ResourceRegistry without root resource."
-        );
-        this.root= root;
+        super( config );
+        setMessageDeliverer( new ServedResourceMessageDeliverer( this, config ) );
+        servedResources.put( Defs.COAP_URI_EMPTY, (AbstractResource) this.getRoot() );
+    }
 
-        servedResources= new ConcurrentHashMap<>();
-        listeners= new CopyOnWriteArrayList<>();
+    /**
+     * Creates a root for this server.
+     *
+     * @return the resource
+     */
+    @Override
+    protected Resource createRoot()
+    {
+        return new ServedResource();
     }
 
     /**
@@ -91,53 +93,66 @@ public class ResourceRegistry
      * parentUri is null the resource will be added to the root.
      * 
      * @param parentUri          the uri of the parent of the new resource.
-     * @param resourceDesciption the definition of the resource to create
+     * @param resourceDescription the definition of the resource to create
      * @throws InternalResourceUriException the parent uri does not resolve to an
      *                                      existing resource or resource parameters are invalid.
      */
-    public void add( String parentUri, ResourceConfig resourceDesciption ) throws InternalResourceUriException
+    public void add( String parentUri, ResourceConfig resourceDescription ) throws InternalResourceUriException
     {
+        if ( resourceDescription.getResourceName() == null || resourceDescription.getResourceName().length() == 0 )
+        {
+            throw new InternalResourceUriException( "An empty resource name is invalid." );
+        }
         ServedResource parent= getResource( parentUri );
+        if ( parent == null )
+        {
+            throw new InternalResourceUriException( "Parent resource not found: " + parentUri );
+        }
         ServedResource resource;
         try
         {
-            resource= new ServedResource( resourceDesciption );
+            resource= new ServedResource( resourceDescription );
         }
         catch ( Exception e )
         {
-            throw new InternalResourceUriException( "Resource parameters are invalid", e );
+            throw new InternalResourceUriException( "Resource parameters are invalid.", e );
         }
-        if ( parent == null )
-        {
-            root.add( resource );
-        }
-        else
-        {
-            parent.add( resource );
-        }
-        register( resource );
+        register( parent, resource );
     }
 
     /**
      * Add a new resource to the registry based on given resource description.
      * 
-     * @param resourceDesciption The definition of the resource to create.
+     * @param resourceDescription The definition of the resource to create.
      * @throws InternalResourceUriException when the uri is invalid.
+     * @throws InternalResourceRegistryException When the resource cannot be added.
      */
-    public void add( ResourceParams resourceDesciption ) throws InternalResourceUriException
+    public void add( ResourceParams resourceDescription ) throws InternalResourceUriException, InternalResourceRegistryException
     {
-        String parentUri= ResourceRegistry.getParentUri( resourceDesciption.getResourcePath() );
+        if (
+            resourceDescription.getResourcePath() == null || resourceDescription.getResourcePath().length() == 0 || getUriResourceName( resourceDescription.getResourcePath() )
+                .length() == 0
+        )
+        {
+            throw new InternalResourceUriException( "An empty resource path is invalid." );
+        }
+        String parentUri= OperationalServer.getParentUri( resourceDescription.getResourcePath() );
         AbstractResource parent= getResource( parentUri );
-        AbstractResource resource= new ServedResource( resourceDesciption );
         if ( parent == null )
         {
-            root.add( resource );
+            throw new InternalResourceRegistryException( "Parent resource not found: " + parentUri );
         }
-        else
+        ServedResource resource;
+        try
         {
-            parent.add( resource );
+            resource= new ServedResource( resourceDescription );
         }
-        register( resource );
+        catch ( Exception e )
+        {
+            //also thrown when resource name is empty
+            throw new InternalResourceRegistryException( "Resource parameters are invalid.", e );
+        }
+        register( parent, resource );
     }
 
     /**
@@ -145,33 +160,36 @@ public class ResourceRegistry
      * 
      * @param resource to be registered
      */
-    private void register( AbstractResource resource )
+    synchronized void register( AbstractResource parent, AbstractResource resource )
     {
+        parent.add( resource );
         servedResources.put( resource.getURI(), resource );
         setResourceCallBack( resource );
         // also register children recursively
         for ( Resource child : resource.getChildren() )
         {
-            register( (AbstractResource) child );
+            register( resource, (AbstractResource) child );
         }
     }
 
     /**
-     * Remove all resources from the registry
+     * Remove all resources from the registry.
      */
     public void removeAll()
     {
-        remove( "/*" );
+        unRegister( servedResources.get( Defs.COAP_ROOTRESOURCE ) );
     }
 
     /**
      * Remove a resource from the registry
      * 
      * @param uriPattern The uri pattern defining the resources to remove
+     * @throws InternalUriPatternException If an attempt is made to remove root resource.
+     * @throws InternalResourceRegistryException 
      */
-    public void remove( String uriPattern )
+    public void remove( String uriPattern ) throws InternalUriPatternException
     {
-        for ( AbstractResource resource : findResources( uriPattern ) )
+        for ( AbstractResource resource : findResources( uriPattern, false ) )
         {
             unRegister( resource );
         }
@@ -182,7 +200,7 @@ public class ResourceRegistry
      * 
      * @param resource to be registered
      */
-    private void unRegister( AbstractResource resource )
+    synchronized void unRegister( AbstractResource resource )
     {
         servedResources.remove( resource.getURI() );
         // also unregister children recursively
@@ -245,25 +263,25 @@ public class ResourceRegistry
         OperationalListener bestFetchListener= null;
         OperationalListener bestPatchListener= null;
         OperationalListener bestIpatchListener= null;
-        int maxGetMatchlevel= 0;
-        int maxPostMatchlevel= 0;
-        int maxPutMatchlevel= 0;
-        int maxDeleteMatchlevel= 0;
-        int maxFetchMatchlevel= 0;
-        int maxPatchMatchlevel= 0;
-        int maxIpatchMatchlevel= 0;
+        int maxGetMatchlevel= -1;
+        int maxPostMatchlevel= -1;
+        int maxPutMatchlevel= -1;
+        int maxDeleteMatchlevel= -1;
+        int maxFetchMatchlevel= -1;
+        int maxPatchMatchlevel= -1;
+        int maxIpatchMatchlevel= -1;
         for ( OperationalListener listener : listeners )
         {
             int matchLevel;
             try
             {
-                matchLevel= matchUri( listener.getUriPattern(), resource.getURI() );
+                matchLevel= matchUri( listener.getUriPattern(), resource );
             }
             catch ( InternalUriPatternException e )
             {
                 // listeners uriPattern is invalid. Should not occur.
                 LOGGER.error( e.getMessage() );
-                matchLevel= 0;
+                matchLevel= -1;
             }
             if ( matchLevel > maxGetMatchlevel && listener.requestCodeFlags.isGet() )
             {
@@ -367,18 +385,8 @@ public class ResourceRegistry
     }
 
     /**
-     * Get the root resource.
-     * 
-     * @return The root resource.
-     */
-    public Resource getRoot()
-    {
-        return root;
-    }
-
-    /**
-     * Get the resources from the registry with given uri. A null uri, an empty
-     * string or "/" is interpreted as the root uri.
+     * Get the resources from the registry with given uri. The 
+     * string "/" is interpreted as the root uri.
      * 
      * @param uri The uri of the resource to get.
      * @return The served resource that has given uri, or null when the root uri is
@@ -387,10 +395,9 @@ public class ResourceRegistry
      */
     public ServedResource getResource( String uri ) throws InternalResourceUriException
     {
-        if ( uri == null || uri.length() == 0 || uri.equals( "/" ) )
+        if ( uri == null )
         {
-            // do not expose root resource
-            return null;
+            throw new InternalResourceUriException( "An empty resource uri is invalid." );
         }
         else
         {
@@ -403,45 +410,60 @@ public class ResourceRegistry
                 }
             }
         }
-        throw new InternalResourceUriException( "resource { " + uri + " } does not exist." );
+        //TODO make a not found exception
+        throw new InternalResourceUriException( "Resource { " + uri + " } does not exist." );
     }
 
     /**
-     * Find all resources of that have matching uri's.
+     * Find all served resources that have matching uri's.
+     * Virtual resources are ignored and omitted from the returned result.
      * 
-     * @param uriPattern the pattern to match to.
-     * @return A list containing all served resource that match. The list is not
-     *         thread safe.
+     * @param uriPattern the pattern to match to. A null or empty string value will match the root resource.
+     * @param includeRoot If <code>true</code> finding the root resource is considered an error and will throw an <code>InternalUriPatternException</code>.
+     * @return A list containing found resources. The list is not thread safe.
+     * @throws InternalUriPatternException If the pattern is invalid.
      */
-    public List< ServedResource > findResources( String uriPattern )
+    public List< ServedResource > findResources( String uriPattern, boolean includeRoot ) throws InternalUriPatternException
     {
         // TODO regex support
         ArrayList< ServedResource > found= new ArrayList<>();
-
-        for ( Entry< String, AbstractResource > entry : servedResources.entrySet() )
+        if ( uriPattern == null )
         {
-            try
+            throw new InternalUriPatternException( "Resource path pattern value is not allowed.", null );
+        }
+        else if ( Defs.COAP_URI_ROOTRESOURCE.equals( uriPattern ) )
+        {
+            if ( includeRoot )
+            {
+                // find root resource
+                found.add( (ServedResource) servedResources.get( Defs.COAP_ROOTRESOURCE ) );
+            }
+            else
+            {
+                throw new InternalUriPatternException( "Reference to root resource is not allowed.", uriPattern );
+            }
+        }
+        else
+        {
+            for ( Entry< String, AbstractResource > entry : servedResources.entrySet() )
             {
                 AbstractResource resource= entry.getValue();
-                if ( matchUri( uriPattern, entry.getKey() ) > 0 && resource instanceof ServedResource )
+                if ( matchUri( uriPattern, resource ) >= 0 && resource instanceof ServedResource )
                 {
-                    found.add( (ServedResource) entry.getValue() );
+                    if ( Defs.COAP_ROOTRESOURCE.equals( entry.getKey() ) && !includeRoot )
+                    {
+                        throw new InternalUriPatternException( "Including root resource is not allowed.", uriPattern );
+                    }
+                    else
+                    {
+                        found.add( (ServedResource) entry.getValue() );
+                    }
                 }
-            }
-            catch ( InternalUriPatternException e )
-            {
-                // uriPattern is invalid. Should not occur, is already validated.
-                LOGGER.error( e.getMessage() );
-                break;
             }
         }
         return found;
     }
 
-    /**
-     * @param path The path of the referenced resource.
-     * @return
-     */
     /**
      * Find the resource responsible for handling requests.
      * If the request concerned is a Put and the parent resource allows for child creation, 
@@ -453,7 +475,7 @@ public class ResourceRegistry
     public Resource findResource( List< String > path, boolean isPut )
     {
         Resource parent= null;
-        Resource current= root;
+        Resource current= this.getRoot();
         for ( String name : path )
         {
             parent= current;
@@ -462,7 +484,7 @@ public class ResourceRegistry
             {
                 //Consider parent allowing put create request.
                 Resource virtual= parent.getChild( "" );
-                if ( isPut && virtual != null )
+                if ( virtual != null && isPut )
                 {
                     current= virtual;
                 }
@@ -487,24 +509,29 @@ public class ResourceRegistry
      * @return The degree of matching.
      * @throws InternalUriPatternException when the pattern given is invalid
      */
-    public static int matchUri( String uriPattern, String resourceUri ) throws InternalUriPatternException
+    public static int matchUri( String uriPattern, AbstractResource resource ) throws InternalUriPatternException
     {
         if ( uriHasWildcard( uriPattern ) )
         {
-            if ( resourceUri.startsWith( getUriPath( uriPattern ) ) )
+            String patternPath= getUriPath( uriPattern );
+            //String resourcePath= getUriPath( resourceUri );
+            if ( resource.getPath().startsWith( patternPath ) )
             {
                 return getUriDepth( uriPattern );
             }
         }
-        else if ( uriPattern.equals( resourceUri ) )
+        else if ( uriPattern.equals( resource.getURI() ) )
         {
             return Integer.MAX_VALUE;
         }
-        return 0;
+        return -1;
     }
 
     /**
      * Get the depth of resource hierarchy in an uri.
+     * The root resource has depth 0.
+     * The sub-resources have depth 1 and higher depending on the nesting level.
+     * An absolute uri path is assumed ( starting with '/' ).
      * 
      * @param uri the resource uri
      * @return the depth of the uri
@@ -513,10 +540,8 @@ public class ResourceRegistry
     {
         int count;
         int index;
-        for (
-                        count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri
-                            .indexOf( Defs.COAP_URI_PATHSEP, index + 1 ), count++
-        );
+        if ( Defs.COAP_URI_ROOTRESOURCE.equals( uri ) ) return 0;
+        for ( count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri.indexOf( Defs.COAP_URI_PATHSEP, index + 1 ), count++ );
         return count;
     }
 
@@ -528,6 +553,7 @@ public class ResourceRegistry
      */
     public static String getUriPath( String uri )
     {
+        if ( Defs.COAP_URI_ROOTRESOURCE.equals( uri ) ) return Defs.COAP_URI_EMPTY;
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
@@ -535,7 +561,7 @@ public class ResourceRegistry
         }
         else
         {
-            return Defs.COAP_URI_PATHSEP;
+            return Defs.COAP_URI_EMPTY;
         }
     }
 
@@ -548,6 +574,7 @@ public class ResourceRegistry
      */
     public static String getUriResourceName( String uri )
     {
+        if ( Defs.COAP_URI_ROOTRESOURCE.equals( uri ) ) return Defs.COAP_ROOTRESOURCE_NAME;
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
@@ -555,12 +582,12 @@ public class ResourceRegistry
         }
         else
         {
-            return Defs.COAP_URI_ROOTRESOURCE_NAME;
+            return Defs.COAP_ROOTRESOURCE_NAME;
         }
     }
 
     /**
-     * Establish whether the uri has a wildcard and is in fact a pattern.
+     * Establish whether the uri pattern has a wildcard and is in fact a pattern.
      * 
      * @param uri The uri of a resource.
      * @return true when a wildcard is found, otherwise false.
@@ -570,9 +597,13 @@ public class ResourceRegistry
     {
         int index= uri.indexOf( Defs.COAP_URI_WILDCARD );
         if ( index == -1 ) return false;
-        if ( index < ( uri.length() - Defs.COAP_URI_WILDCARD.length() ) )
+        if ( index < ( uri.length() - 1 ) )
         {
-            throw new InternalUriPatternException( "Wildcard is only allowed on pattern ending", uri );
+            throw new InternalUriPatternException( "Wildcard is only allowed on pattern ending.", uri );
+        }
+        if ( index > 0 && uri.charAt( index - 1 ) != Defs.COAP_URI_PATHSEP )
+        {
+            throw new InternalUriPatternException( "Wildcard is only allowed on whole resource name.", uri );
         }
         return true;
     }
@@ -586,13 +617,13 @@ public class ResourceRegistry
     public static String getParentUri( String uri )
     {
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
-        if ( lastPathSep > 0 )
+        if ( lastPathSep >= 0 )
         {
             return uri.substring( 0, lastPathSep );
         }
         else
         {
-            return Defs.COAP_URI_ROOTRESOURCE;
+            return Defs.COAP_ROOTRESOURCE;
         }
     }
 }

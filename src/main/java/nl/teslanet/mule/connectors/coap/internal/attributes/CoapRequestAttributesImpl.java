@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -170,7 +170,7 @@ public class CoapRequestAttributesImpl extends CoapRequestAttributes
         {
             try
             {
-                requestUriObject= new URI( ( requestUri == null ? OptionUtils.EMPTY_STRING : requestUri ) );
+                requestUriObject= new URI( ( requestUri == null ? Defs.COAP_URI_EMPTY : requestUri ) );
             }
             catch ( URISyntaxException e )
             {

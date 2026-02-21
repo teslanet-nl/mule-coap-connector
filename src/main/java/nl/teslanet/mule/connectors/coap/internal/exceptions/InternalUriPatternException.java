@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -34,8 +34,9 @@ public class InternalUriPatternException extends Exception
     private static final long serialVersionUID= 1L;
 
     /**
-     * Construct exception with given 
-     * @param message
+     * Construct exception with given message and uriPattern
+     * @param message The explanation of the exception.
+     * @param uriPattern The Uri pattern concerned.
      */
     public InternalUriPatternException( String message, String uriPattern )
     {
@@ -44,8 +45,9 @@ public class InternalUriPatternException extends Exception
 
     /**
      * Construct exception with given 
-     * @param message
-     * @param e The cause of the exception
+     * @param message The explanation of the exception.
+     * @param uriPattern The Uri pattern concerned.
+     * @param e The cause of the exception.
      */
     public InternalUriPatternException( String message, String uriPattern, Throwable e )
     {

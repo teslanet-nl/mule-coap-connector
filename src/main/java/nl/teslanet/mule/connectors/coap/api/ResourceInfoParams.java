@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -40,6 +40,17 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
  */
 public class ResourceInfoParams implements CoreInfo
 {
+    /**
+     * Visibility flag.
+     * If true, the resource is visible for discovery. 
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "If true, the resource is visible for discovery." )
+    private boolean visible= true;
+
     /**
      * Human readable title of the resource. 
      */
@@ -113,6 +124,22 @@ public class ResourceInfoParams implements CoreInfo
         this.rt= info.getRt();
         this.sz= info.getSz();
         this.ct= info.getCt();
+    }
+
+    /**
+     * @return the visible
+     */
+    public boolean isVisible()
+    {
+        return visible;
+    }
+
+    /**
+     * @param visible the visible to set
+     */
+    public void setVisible( boolean visible )
+    {
+        this.visible= visible;
     }
 
     /**
