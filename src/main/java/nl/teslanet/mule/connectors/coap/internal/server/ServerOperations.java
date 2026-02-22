@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,7 +38,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
 import nl.teslanet.mule.connectors.coap.api.ServerInfo;
 import nl.teslanet.mule.connectors.coap.api.error.InvalidResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceRegistryException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalResourceUriException;
+import nl.teslanet.mule.connectors.coap.internal.exceptions.InternalUriPatternException;
 import nl.teslanet.mule.connectors.coap.internal.exceptions.ServerOperationErrorProvider;
 
 
@@ -67,13 +69,16 @@ public class ServerOperations
         String pathPattern
     ) throws InvalidResourceUriException
     {
-        if ( pathPattern == null )
+        try
         {
-            throw new InvalidResourceUriException( server + ": notify operation failed, invalid uri.", "null" );
+            for ( ServedResource resource : server.getRegistry().findResources( pathPattern, true ) )
+            {
+                resource.changed();
+            }
         }
-        for ( ServedResource resource : server.getRegistry().findResources( pathPattern ) )
+        catch ( InternalUriPatternException e )
         {
-            resource.changed();
+            throw new InvalidResourceUriException( server + ": notify operation failed", "null" );
         }
     }
 
@@ -92,28 +97,19 @@ public class ServerOperations
     Server server, @ParameterGroup( name= "Resource to add" )
     ResourceParams resourceParams ) throws InvalidResourceUriException
     {
-        if ( resourceParams.getResourcePath() == null )
+        if ( resourceParams.getResourcePath() == null || resourceParams.getResourcePath().length() <= 0 )
         {
-            throw new InvalidResourceUriException( server + ": resource add operation failed,", "null" );
+            throw new InvalidResourceUriException( server + ": resource add operation failed", "empty" );
         }
-        String name= ResourceRegistry.getUriResourceName( resourceParams.getResourcePath() );
-        if ( name.length() <= 0 ) throw new InvalidResourceUriException(
-            server + ": resource add operation failed, empty resource name",
-            resourceParams.getResourcePath()
-        );
-
+        String name= OperationalServer.getUriResourceName( resourceParams.getResourcePath() );
+        if ( name.length() <= 0 ) throw new InvalidResourceUriException( server + ": resource add operation failed, empty resource name", resourceParams.getResourcePath() );
         try
         {
             server.getRegistry().add( resourceParams );
         }
-        catch ( InternalResourceUriException e )
+        catch ( InternalResourceUriException | InternalResourceRegistryException e )
         {
-            throw new InvalidResourceUriException(
-                server + ": resource add operation failed, ",
-                resourceParams.getResourcePath(),
-                e
-            );
-
+            throw new InvalidResourceUriException( server + ": resource add operation failed", resourceParams.getResourcePath(), e );
         }
     }
 
@@ -135,11 +131,14 @@ public class ServerOperations
         String pathPattern
     ) throws InvalidResourceUriException
     {
-        if ( pathPattern == null )
+        try
         {
-            throw new InvalidResourceUriException( server + ": resource remove operation failed", "null" );
+            server.getRegistry().remove( pathPattern );
         }
-        server.getRegistry().remove( pathPattern );
+        catch ( InternalUriPatternException e )
+        {
+            throw new InvalidResourceUriException( server + ": cannot remove resources", pathPattern, e );
+        }
     }
 
     /**
@@ -159,11 +158,15 @@ public class ServerOperations
         String pathPattern
     ) throws InvalidResourceUriException
     {
-        if ( pathPattern == null )
+        List< ServedResource > found;
+        try
         {
-            throw new InvalidResourceUriException( server + ": resource exists operation failed", "null" );
+            found= server.getRegistry().findResources( pathPattern, true );
         }
-        List< ServedResource > found= server.getRegistry().findResources( pathPattern );
+        catch ( InternalUriPatternException e )
+        {
+            throw new InvalidResourceUriException( server + ": resource exists operation failed", pathPattern );
+        }
         return !found.isEmpty();
     }
 
@@ -182,14 +185,17 @@ public class ServerOperations
         String pathPattern
     ) throws InvalidResourceUriException
     {
-        if ( pathPattern == null )
-        {
-            throw new InvalidResourceUriException( server + ": resource list operation failed", "null" );
-        }
         List< String > uriList= new LinkedList<>();
-        for ( ServedResource found : server.getRegistry().findResources( pathPattern ) )
+        try
         {
-            uriList.add( found.getURI() );
+            for ( ServedResource found : server.getRegistry().findResources( pathPattern, true ) )
+            {
+                uriList.add( found.getURI() );
+            }
+        }
+        catch ( InternalUriPatternException e )
+        {
+            throw new InvalidResourceUriException( server + ": resource list operation failed", pathPattern );
         }
         return new ConcurrentSkipListSet<>( uriList );
     }

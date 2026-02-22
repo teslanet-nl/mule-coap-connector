@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -209,13 +209,13 @@ public class CoapResponseAttributesImpl extends CoapResponseAttributes
     public String getRequestPath()
     {
         String path= getOrCreateRequestUri().getPath();
-        if ( path != null )
+        if ( path != null && !path.isEmpty() )
         {
             return path;
         }
         else
         {
-            return Defs.COAP_URI_ROOTRESOURCE;
+            return Defs.COAP_URI_EMPTY;
         }
     }
 

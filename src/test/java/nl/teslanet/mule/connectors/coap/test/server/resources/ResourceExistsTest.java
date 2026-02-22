@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -44,7 +44,20 @@ public class ResourceExistsTest extends AbstractServerTestCase
         return "mule-server-config/resources/testserver1.xml";
     };
 
-    @Test( timeout= 20000L )
+    @Test
+    public void testRootResourceExists() throws Exception
+    {
+        setClientUri( "/exists" );
+        Request request= new Request( Code.POST );
+        request.setPayload( "/" );
+        CoapResponse response= client.advanced( request );
+        assertNotNull( "get exists gave no response", response );
+        assertTrue( "response get exists indicates failure", response.isSuccess() );
+        assertEquals( "get exists gave wrong response", ResponseCode.CONTENT, response.getCode() );
+        assertEquals( "get exists gave wrong payload", Boolean.TRUE.toString(), response.getResponseText() );
+    }
+
+    @Test
     public void testResourceExists() throws Exception
     {
         setClientUri( "/exists" );
@@ -71,7 +84,7 @@ public class ResourceExistsTest extends AbstractServerTestCase
         assertEquals( "get exists gave wrong payload", Boolean.FALSE.toString(), response.getResponseText() );
     }
 
-    @Test( timeout= 20000L )
+    @Test
     public void testAddedResourceExists() throws Exception
     {
         setClientUri( "/exists" );

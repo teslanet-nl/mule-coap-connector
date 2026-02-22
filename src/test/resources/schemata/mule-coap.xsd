@@ -3,7 +3,7 @@
   #%L
   Mule CoAP Connector
   %%
-  Copyright (C) 2019 - 2025 (teslanet.nl) Rogier Cobben
+  Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
   
   Contributors:
       (teslanet.nl) Rogier Cobben - initial creation
@@ -2381,9 +2381,19 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="root-resource">
+              <xs:annotation>
+                <xs:documentation>The resource tree of the server, containing the root-resource and sub-resources.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.RootResourceConfig"></xs:extension>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
             <xs:element minOccurs="0" maxOccurs="1" name="resources">
               <xs:annotation>
-                <xs:documentation>The root resources of the server.</xs:documentation>
+                <xs:documentation>The resources of the server.</xs:documentation>
               </xs:annotation>
               <xs:complexType>
                 <xs:sequence>
@@ -2399,7 +2409,7 @@
           </xs:attribute>
           <xs:attribute type="mule:substitutableName" use="optional" name="resources">
             <xs:annotation>
-              <xs:documentation>The root resources of the server.</xs:documentation>
+              <xs:documentation>The resources of the server.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="notifyOnShutdown">
@@ -2464,6 +2474,7 @@
   <xs:complexType name="nl.teslanet.mule.connectors.coap.api.ResourceInfoConfig">
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="visible"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="title"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="if"></xs:attribute>
         <xs:attribute type="xs:string" use="optional" name="rt"></xs:attribute>
@@ -2530,6 +2541,50 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="nl.teslanet.mule.connectors.coap.api.RootResourceConfig">
+    <xs:annotation>
+      <xs:documentation>The resource tree of the server, containing the root-resource and sub-resources.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" name="core-info-config">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.ResourceInfoConfig"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="new-sub-resource-config">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension xmlns:coap="http://www.teslanet.nl/schema/mule/coap" base="coap:nl.teslanet.mule.connectors.coap.api.NewSubResourceConfig"></xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="sub-resources">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element xmlns:coap="http://www.teslanet.nl/schema/mule/coap" minOccurs="0" maxOccurs="unbounded" ref="coap:abstract-resource"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="get"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="post"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="put"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="delete"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="fetch"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="patch"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="ipatch"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="observable"></xs:attribute>
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="earlyAck"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="coreInfoConfig"></xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="newSubResourceConfig"></xs:attribute>
+        <xs:attribute type="mule:substitutableName" use="optional" name="subResources"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element xmlns="http://www.teslanet.nl/schema/mule/coap" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ListenerType" substitutionGroup="mule:abstract-message-source" name="listener">
     <xs:annotation>
       <xs:documentation>The Listener message source receives requests on resources of the CoAP server. The requests on the resources that apply to the resource uri-pattern and the request-methods specified, will be listened to. When multiple listeners apply the listener with the most specific uri-pattern will process the requests and deliver it to the flow. When patterns are equally specific, one of the listeners will be selected.</xs:documentation>
@@ -2549,9 +2604,9 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" use="optional" default="/*" name="pathPattern">
+        <xs:attribute type="xs:string" use="optional" default="*" name="pathPattern">
           <xs:annotation>
-            <xs:documentation>The pathPattern defines the resources the listener listens on. The listener will receive the requests to process for a resource when it has the most specific pattern that complies to the resources path.</xs:documentation>
+            <xs:documentation>The pathPattern defines the resource paths that are listened to. Use the wildcard symbol * to listen to multiple resource paths. Leave empty to listen to the root resource." The listener that has the most specific pattern will receive the requests on a resource to handle.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute type="mule:substitutableBoolean" use="optional" default="false" name="get">
@@ -2771,6 +2826,7 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractExtensionType">
+        <xs:attribute type="mule:substitutableBoolean" use="optional" default="true" name="visible"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="title"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="if"></xs:attribute>
         <xs:attribute type="mule:expressionString" use="optional" name="rt"></xs:attribute>

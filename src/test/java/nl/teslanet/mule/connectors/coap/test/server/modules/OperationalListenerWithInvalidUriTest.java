@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -58,9 +58,11 @@ public class OperationalListenerWithInvalidUriTest
             new Object [] []
             {
                 { null, "null value is not allowed." },
-                { "", "invalid uriPattern {  }, uri cannot be empty." },
-                { "/", "invalid uriPattern { / }, uri cannot be empty." },
-                { "**", "invalid uriPattern { ** }, wildcard needs to be last character." },
+                { "relative", "invalid uriPattern { relative }, pattern needs to be absolute (add '/' at the beginning)." },
+                { "relative/sub", "invalid uriPattern { relative/sub }, pattern needs to be absolute (add '/' at the beginning)." },
+                { "**", "invalid uriPattern { ** }, pattern needs to be absolute (add '/' at the beginning)." },
+                { "/**", "invalid uriPattern { /** }, wildcard needs to be last character." },
+                { "/some_resource/", "invalid uriPattern { /some_resource/ }, cannot end with path separator." },
                 { "/some_resource/**", "invalid uriPattern { /some_resource/** }, wildcard needs to be last character." },
                 { "/some_resource/*/*", "invalid uriPattern { /some_resource/*/* }, wildcard needs to be last character." },
                 { "/some_resource/*/child/*", "invalid uriPattern { /some_resource/*/child/* }, wildcard needs to be last character." },

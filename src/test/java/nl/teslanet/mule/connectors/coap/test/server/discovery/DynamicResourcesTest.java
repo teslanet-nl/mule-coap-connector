@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2023 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -25,6 +25,7 @@ package nl.teslanet.mule.connectors.coap.test.server.discovery;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -86,6 +87,13 @@ public class DynamicResourcesTest extends AbstractServerTestCase
         assertEquals( "wrong number of weblinks", 15, links.size() );
         WebLink link= links.get( "/.well-known/core" );
         assertNotNull( "/.well-known/core is missing", link );
+    }
+
+    @Test
+    public void testInvisible()
+    {
+        WebLink link= links.get( "/service/resource2_invisible" );
+        assertNull( "/service/resource2_with_ct is missing", link );
     }
 
     @Test

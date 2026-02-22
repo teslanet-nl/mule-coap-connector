@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -52,15 +52,7 @@ public class RemoveResourceTest extends AbstractServerTestCase
     @Parameters( name= "Request= {0}" )
     public static Collection< Object[] > data()
     {
-        return Arrays.asList(
-            new Object [] []
-            {
-                //default maxResourceBodySize on server
-                { Code.GET },
-                { Code.PUT },
-                { Code.POST },
-                { Code.DELETE } }
-        );
+        return Arrays.asList( new Object [] []{ { Code.GET }, { Code.PUT }, { Code.POST }, { Code.DELETE } } );
     }
 
     /**
@@ -77,6 +69,24 @@ public class RemoveResourceTest extends AbstractServerTestCase
     {
         return "mule-server-config/resources/testserver1.xml";
     };
+
+    @Test
+    public void testRemoveRootResource() throws Exception
+    {
+        setClientUri( "" );
+        CoapResponse response= client.put( "some content", 0 );
+        assertNotNull( "put resource gave no response", response );
+        assertEquals( "put gave wrong response", ResponseCode.CHANGED, response.getCode() );
+
+        response= client.delete();
+        assertNotNull( "got no response on delete", response );
+        assertEquals( "wrong response on delete", ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+
+        Request request= new Request( requestCode );
+        response= client.advanced( request );
+        assertNotNull( "got no response", response );
+        assertEquals( "wrong response code", requestCode != Code.DELETE, response.getCode().isSuccess() );
+    }
 
     @Test( timeout= 20000L )
     public void testRemoveResource() throws Exception

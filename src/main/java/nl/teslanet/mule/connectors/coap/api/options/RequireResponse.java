@@ -26,7 +26,6 @@ package nl.teslanet.mule.connectors.coap.api.options;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 
 /**
@@ -44,27 +43,24 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 public class RequireResponse
 {
     /**
-     * If true, the client has no interest in Success responses.
+     * Indicates interest (true) or disinterest (false) in Success responses.
      */
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "Indicates interest (true) or disinterest (false) in Success responses." )
     private boolean success= false;
 
     /**
-     * If true, the client has no interest in Client-Error responses.
+     * Indicates interest (true) or disinterest (false) in Client-Error responses.
      */
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "Indicates interest (true) or disinterest (false) in Client-Error responses." )
     private boolean clientError= false;
 
     /**
-     * If true, the client has no interest in Server-Error responses.
+     * Indicates interest (true) or disinterest (false) in Server Error responses.
      */
     @Parameter
     @Expression( ExpressionSupport.SUPPORTED )
-    @Summary( "Indicates interest (true) or disinterest (false) in Server Error responses." )
     private boolean serverError= false;
 
     /**

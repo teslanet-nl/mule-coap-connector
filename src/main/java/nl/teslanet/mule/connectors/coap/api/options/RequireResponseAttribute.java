@@ -37,7 +37,7 @@ package nl.teslanet.mule.connectors.coap.api.options;
 public class RequireResponseAttribute
 {
     /**
-     * @return the success
+     * @return the success interest.
      */
     public boolean isSuccess()
     {
@@ -45,7 +45,7 @@ public class RequireResponseAttribute
     }
 
     /**
-     * @return the clientError
+     * @return the clientError interest.
      */
     public boolean isClientError()
     {
@@ -53,7 +53,7 @@ public class RequireResponseAttribute
     }
 
     /**
-     * @return the serverError
+     * @return the serverError interest.
      */
     public boolean isServerError()
     {

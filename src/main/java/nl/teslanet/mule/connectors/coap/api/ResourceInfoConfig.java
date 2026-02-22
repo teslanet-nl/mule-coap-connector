@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -42,13 +42,24 @@ public class ResourceInfoConfig implements CoreInfo
 
 {
     /**
+     * Visibility flag.
+     * If true, the resource is visible for discovery. 
+     */
+    @Parameter
+    @Optional( defaultValue= "true" )
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "If true, the resource is visible for discovery." )
+    private boolean visible= true;
+
+    /**
      * Human readable title of the resource. 
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("Human readable title of the resource. ")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "Human readable title of the resource. " )
     private String title;
 
     /**
@@ -56,10 +67,10 @@ public class ResourceInfoConfig implements CoreInfo
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("Comma separated list of interface descriptions that apply to the resource.")
-    @Alias("if")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "Comma separated list of interface descriptions that apply to the resource." )
+    @Alias( "if" )
     private String ifdesc;
 
     /**
@@ -67,10 +78,10 @@ public class ResourceInfoConfig implements CoreInfo
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("Comma separated list of resource types that apply to the resource.")
-    @DisplayName("rt")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "Comma separated list of resource types that apply to the resource." )
+    @DisplayName( "rt" )
     private String rt;
 
     /**
@@ -78,10 +89,10 @@ public class ResourceInfoConfig implements CoreInfo
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("Maximum size estimate of the resource. [bytes]")
-    @DisplayName("sz")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "Maximum size estimate of the resource. [bytes]" )
+    @DisplayName( "sz" )
     private String sz;
 
     /**
@@ -90,11 +101,11 @@ public class ResourceInfoConfig implements CoreInfo
      */
     @Parameter
     @Optional
-    @Expression(ExpressionSupport.NOT_SUPPORTED)
-    @ParameterDsl(allowReferences= false)
-    @Summary("Comma separated list of CoAP content types that are available on the resource.")
-    @Example("0,41")
-    @DisplayName("ct")
+    @Expression( ExpressionSupport.NOT_SUPPORTED )
+    @ParameterDsl( allowReferences= false )
+    @Summary( "Comma separated list of CoAP content types that are available on the resource." )
+    @Example( "0,41" )
+    @DisplayName( "ct" )
     private String ct;
 
     /**
@@ -102,8 +113,8 @@ public class ResourceInfoConfig implements CoreInfo
      */
     public ResourceInfoConfig()
     {
-    }    
-    
+    }
+
     /**
      * Default constructor of ResourceInfo.
      */
@@ -126,6 +137,22 @@ public class ResourceInfoConfig implements CoreInfo
         this.rt= info.getRt();
         this.sz= info.getSz();
         this.ct= info.getCt();
+    }
+
+    /**
+     * @return the visible
+     */
+    public boolean isVisible()
+    {
+        return visible;
+    }
+
+    /**
+     * @param visible the visible to set
+     */
+    public void setVisible( boolean visible )
+    {
+        this.visible= visible;
     }
 
     /**

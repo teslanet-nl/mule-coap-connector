@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2022 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -38,13 +38,19 @@ public class Defs
      */
     public static final Charset COAP_CHARSET= StandardCharsets.UTF_8;
 
-    public static final String COAP_URI_WILDCARD= "*";
+    public static final String COAP_URI_EMPTY= "";
 
-    public static final String COAP_URI_PATHSEP= "/";
+    public static final char COAP_URI_WILDCARD= '*';
 
-    public static final String COAP_URI_ROOTRESOURCE= COAP_URI_PATHSEP;
+    public static final char COAP_URI_PATHSEP= '/';
 
-    public static final String COAP_URI_ROOTRESOURCE_NAME= "";
+    public static final String COAP_ROOTRESOURCE_NAME= COAP_URI_EMPTY;
+
+    public static final String COAP_VIRTUALRESOURCE_NAME= COAP_URI_EMPTY;
+
+    public static final String COAP_ROOTRESOURCE= COAP_URI_EMPTY;
+
+    public static final String COAP_URI_ROOTRESOURCE= String.valueOf( COAP_URI_PATHSEP );
 
     public static final String COAP_URI_WELLKNOWN_CORE= "/.well-known/core";
 

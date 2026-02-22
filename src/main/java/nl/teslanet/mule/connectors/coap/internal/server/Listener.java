@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -43,6 +43,7 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.source.EmitsResponse;
@@ -92,13 +93,18 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     private TransformationService transformationService;
 
     /**
-     * The pathPattern defines the resources the listener listens on.
-     * The listener will receive the requests to process for a resource when it 
-     * has the most specific pattern that complies to the resources path.
+     * The pathPattern defines the resource paths that are listened to.
+     * Use the wildcard symbol * to listen to multiple resource paths.
+     * Leave empty to listen to the root resource."
+     * The listener that has the most specific pattern will receive the requests on a resource to handle.
      */
     @Parameter
-    @Optional( defaultValue= "/*" )
-    @Summary( "The pathPattern defines the resources the listener listens on." )
+    @Optional( defaultValue= "*" )
+    @Example( value= "/my_resources/*" )
+    @Summary(
+        "The pathPattern defines the resource paths that are listened to.\n" + "Use the wildcard symbol * to listen to multiple resource paths.\n"
+            + "Leave empty to listen to the root resource."
+    )
     private String pathPattern;
 
     /**
@@ -177,11 +183,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     {
         try
         {
-            operationalListener= new OperationalListener(
-                pathPattern,
-                new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch ),
-                sourceCallback
-            );
+            operationalListener= new OperationalListener( pathPattern, new RequestCodeFlags( get, post, put, delete, fetch, patch, ipatch ), sourceCallback );
             server.addListener( operationalListener );
         }
         catch ( InternalResourceUriException | InternalUriPatternException e )
@@ -218,24 +220,12 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
     {
         CoapResponseCode defaultCoapResponseCode= (CoapResponseCode) callbackContext
             .getVariable( Server.VARNAME_DEFAULT_RESPONSE_CODE )
-            .orElseThrow(
-                () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" )
-            );
-        Response coapResponse= new Response(
-            AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode )
-        );
+            .orElseThrow( () -> new InternalInvalidResponseCodeException( "Internal error: no defaultCoAPResponseCode provided" ) );
+        Response coapResponse= new Response( AttributeUtils.toResponseCode( response.getResponseCode(), defaultCoapResponseCode ) );
         TypedValue< Object > responsePayload= response.getResponsePayload();
-        coapResponse
-            .getOptions()
-            .setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
-        MessageUtils
-            .copyOptions( response.getResponseOptionsParams(), coapResponse.getOptions(), transformationService );
-        MessageUtils
-            .copyOptions(
-                response.getResponseOptionsParams().getOtherOptions(),
-                coapResponse.getOptions(),
-                transformationService
-            );
+        coapResponse.getOptions().setContentFormat( MediaTypeMediator.toContentFormat( responsePayload.getDataType().getMediaType() ) );
+        MessageUtils.copyOptions( response.getResponseOptionsParams(), coapResponse.getOptions(), transformationService );
+        MessageUtils.copyOptions( response.getResponseOptionsParams().getOtherOptions(), coapResponse.getOptions(), transformationService );
         //TODO add streaming & blockwise cooperation
         try
         {
@@ -247,9 +237,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
         }
         ( (CoapExchange) callbackContext
             .getVariable( Server.VARNAME_COAP_EXCHANGE )
-            .orElseThrow(
-                () -> new InternalExchangeException( "Not able to issue CoAP response: no exchange object provided." )
-            ) ).respond( coapResponse );
+            .orElseThrow( () -> new InternalExchangeException( "Not able to issue CoAP response: no exchange object provided." ) ) ).respond( coapResponse );
     }
 
     /**
@@ -265,11 +253,7 @@ public class Listener extends Source< InputStream, CoapRequestAttributes >
             CoapExchange exchange= (CoapExchange) sourceResult
                 .getSourceCallbackContext()
                 .getVariable( Server.VARNAME_COAP_EXCHANGE )
-                .orElseThrow(
-                    () -> new InternalExchangeException(
-                        "Not able to issue CoAP internal server error response: no exchange object provided."
-                    )
-                );
+                .orElseThrow( () -> new InternalExchangeException( "Not able to issue CoAP internal server error response: no exchange object provided." ) );
             if ( sourceResult.getInvocationError().isPresent() )
             {
                 exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "EXCEPTION IN PROCESSING REQUEST" );

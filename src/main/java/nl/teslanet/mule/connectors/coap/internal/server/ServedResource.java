@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2019 - 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2019 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -24,6 +24,7 @@ package nl.teslanet.mule.connectors.coap.internal.server;
 
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.californium.core.server.resources.CoapExchange;
@@ -31,6 +32,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.api.CoapResponseCode;
 import nl.teslanet.mule.connectors.coap.api.ConfigurableResource;
+import nl.teslanet.mule.connectors.coap.api.Defs;
 import nl.teslanet.mule.connectors.coap.api.NewSubResource;
 import nl.teslanet.mule.connectors.coap.api.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.api.ResourceParams;
@@ -91,7 +93,16 @@ public class ServedResource extends AbstractResource
     private RequestCodeFlags requestCodeFlags= new RequestCodeFlags();
 
     /**
-     * Constuctor that creates a ServedResource object according to given configuration.
+     * Constructor that creates a not configured ServedResource.
+     * The ServedResource needs to configured manually..
+     */
+    public ServedResource()
+    {
+        super( Defs.COAP_ROOTRESOURCE_NAME, true );
+    }
+
+    /**
+     * Constuctor that creates a ServedResource using given configuration.
      * The ServedResource and its child resources will be constructed.
      * @param resource the configuration of the resource to create. 
      */
@@ -110,41 +121,42 @@ public class ServedResource extends AbstractResource
                 add( child );
             }
         }
-        configureVirtualSubResource( resource );
+        buildVirtualSubResource( resource ).ifPresent( this::add );
     }
 
     /**
-     * Constructor that creates a ServedResource object using given builder.
+     * Constructor that creates a ServedResource using given parameters.
      * The ServedResource and its child resources will be constructed.
      * @param resource the builder of the resource to create. 
      */
     public ServedResource( ResourceParams resource )
     {
-        super( ResourceRegistry.getUriResourceName( resource.getResourcePath() ), true );
+        super( OperationalServer.getUriResourceName( resource.getResourcePath() ), true );
         configure( resource );
-        configureVirtualSubResource( resource );
+        buildVirtualSubResource( resource ).ifPresent( this::add );
     }
 
     /**
-     * Configure virtual sub-resource.
+     * Build virtual sub-resource.
      * @param resource the configuration to set. 
+     * @return The virual resource built.
      */
-    private void configureVirtualSubResource( ConfigurableResource resource )
+    public Optional< VirtualResource > buildVirtualSubResource( ConfigurableResource resource )
     {
         NewSubResource newResource= resource.getNewSubResource();
         if ( newResource != null && newResource.isPut() )
         {
             //create virtual sub-resource that accepts put requests.
-            VirtualResource child= new VirtualResource( newResource.isEarlyAck() );
-            add( child );
+            return Optional.of( new VirtualResource( newResource.isEarlyAck() ) );
         }
+        return Optional.empty();
     }
 
     /**
      * Configure the resource.
      * @param resource the configuration to set. 
      */
-    private void configure( ConfigurableResource resource )
+    public void configure( ConfigurableResource resource )
     {
         requestCodeFlags.setGet( resource.isGet() );
         requestCodeFlags.setPost( resource.isPost() );
@@ -164,10 +176,10 @@ public class ServedResource extends AbstractResource
         {
             setObservable( false );
         }
-
         //process info configuration
         if ( resource.getCoreInfo() != null )
         {
+            setVisible( resource.getCoreInfo().isVisible() );
             if ( resource.getCoreInfo().getTitle() != null )
             {
                 getAttributes().setTitle( resource.getCoreInfo().getTitle() );
@@ -181,11 +193,7 @@ public class ServedResource extends AbstractResource
             }
             if ( resource.getCoreInfo().getIfdesc() != null )
             {
-                for (
-                    String ifdesc : StringUtils
-                        .deleteWhitespace( resource.getCoreInfo().getIfdesc() )
-                        .split( CSV_REGEX )
-                )
+                for ( String ifdesc : StringUtils.deleteWhitespace( resource.getCoreInfo().getIfdesc() ).split( CSV_REGEX ) )
                 {
                     getAttributes().addInterfaceDescription( ifdesc );
                 }

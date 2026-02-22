@@ -2,7 +2,7 @@
  * #%L
  * Mule CoAP Connector
  * %%
- * Copyright (C) 2024 (teslanet.nl) Rogier Cobben
+ * Copyright (C) 2024 - 2026 (teslanet.nl) Rogier Cobben
  * 
  * Contributors:
  *     (teslanet.nl) Rogier Cobben - initial creation
@@ -23,11 +23,17 @@
 package nl.teslanet.mule.connectors.coap.api;
 
 
+//TODO v4 rename to Discovery
 /**
  * Interface for core info retrieval. 
  */
 public interface CoreInfo
 {
+    /**
+     * @return the title
+     */
+    public boolean isVisible();
+
     /**
      * @return the title
      */
