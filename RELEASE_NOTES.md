@@ -1,7 +1,7 @@
 # Mule CoAP Connector Release Notes
 ![Mule-Coap logo](icon/icon.svg)
 
-## Release 3.4.0
+## Release 3.5.0
 
 * Added root-resource features.
 * Updated dependencies.
